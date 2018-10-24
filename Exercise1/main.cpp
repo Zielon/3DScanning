@@ -65,7 +65,7 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 
 int main()
 {
-	std::string filenameIn = "./data/rgbd_dataset_freiburg1_xyz/";
+	std::string filenameIn = "../data/rgbd_dataset_freiburg1_xyz/";
 	std::string filenameBaseOut = "mesh_";
 
 	// load video
