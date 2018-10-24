@@ -110,7 +110,7 @@ int main()
 		int width = sensor.GetDepthImageWidth();
 		int height = sensor.GetDepthImageHeight();
 
-		Vertex* vertices = new Vertex[width * height];
+		auto vertices = new Vertex[width * height];
 
 		for(int y = 0; y < height; y++)
 		    for(int x = 0; x < width; x++){
@@ -120,15 +120,13 @@ int main()
                     vertices[idx].position = Vector4f(MINF, MINF, MINF, MINF);
                     vertices[idx].color = Vector4uc(0,0,0,0);
                 }else{
-                	int colorIdx = idx + 4;
+                	int colorIdx = idx * 4;
                     Vector4f screen = Vector4f(x, y, 0, 0);
                     Vector4f world = screen.transpose() * depthExtrinsicsInv * trajectoryInv;
-
-                    // TODO
-					//Vector4uc color = Vector4uc(colorMap[colorIdx], colorMap[colorIdx + 1], colorMap[colorIdx + 2], colorMap[colorIdx + 3]);
+					Vector4uc color = Vector4uc(colorMap[colorIdx], colorMap[colorIdx + 1], colorMap[colorIdx + 2], colorMap[colorIdx + 3]);
 
 					vertices[idx].position = world;
-					//vertices[idx].color = color;
+					vertices[idx].color = color;
                 }
         }
 
