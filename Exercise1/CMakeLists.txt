@@ -15,3 +15,7 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lfreeimage")
 include_directories(${LIBS}/Eigen)
 
 add_executable(Exercise1 FreeImageHelper.cpp main.cpp)
+
+if (UNIX)
+    target_link_libraries(Exercise1 freeimage)
+endif (UNIX)
