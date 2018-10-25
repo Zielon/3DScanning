@@ -20,7 +20,7 @@ inline bool ValidTriangle (Vector4f p0, Vector4f p1, Vector4f p2, float edgeThre
 
     if (p0.x() == MINF || p1.x() == MINF || p2.x() == MINF) return false;
 
-    if( (p0-p1).norm() <= edgeThreshold && (p1-p2).norm() <= edgeThreshold && (p2-p1).norm() <= edgeThreshold) return false;
+    if( (p0-p1).norm() >= edgeThreshold || (p1-p2).norm() >= edgeThreshold || (p2-p1).norm() >= edgeThreshold) return false;
 
     return true;
 }
