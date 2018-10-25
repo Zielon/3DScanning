@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 #include "Eigen.h"
 
@@ -14,6 +15,13 @@ struct Vertex
 	// color stored as 4 unsigned char
 	Vector4uc color;
 };
+
+inline bool ValidTriangle (Vector4f p0, Vector4f p1, Vector4f p2){
+
+    if (p0.x() == MINF || p1.x() == MINF || p2.x() == MINF) return false;
+
+    return true;
+}
 
 bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const std::string& filename)
 {
@@ -31,8 +39,39 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 	unsigned int nVertices = height*width;
 
 	// TODO: Get number of faces
-	unsigned nFaces = 2 * (height-1)* (width-1);
-    //unsigned nFaces = 0;
+	//unsigned nFaces = 2 * (height-1)* (width-1);//Without discarding faces
+
+    //Compute faces of the grid
+    std::vector<Vector3i> faces;
+
+    for(int y = 0; y < height-1; y++) {
+        for (int x = 0; x < width - 1; x++) {
+
+            //Indices
+            unsigned int idx0 = y * width + x;
+            unsigned int idx1 = idx0 + 1;
+            unsigned int idx2 = idx0 + width;
+            unsigned int idx3 = idx2 + 1;
+
+            //Points
+            auto p0 = vertices[idx0].position;
+            auto p1 = vertices[idx1].position;
+            auto p2 = vertices[idx2].position;
+            auto p3 = vertices[idx3].position;
+
+            //Upper Triangle
+            if (ValidTriangle(p0, p2, p1)) {
+                faces.push_back(Vector3i(idx0, idx2, idx1));
+            }
+
+            //Bottom Triangle
+            if (ValidTriangle(p2, p3, p1)) {
+                faces.push_back(Vector3i(idx2, idx3, idx1));
+            }
+        }
+    }
+
+    unsigned nFaces = faces.size();
 
 	// Write off file
 	std::ofstream outFile(filename);
@@ -63,18 +102,13 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
     outFile << "# list of faces" << std::endl;
     outFile << "# nVerticesPerFace idx0 idx1 idx2 ..." << std::endl;
 
-    for(int y = 0; y < height-1; y++)
-        for(int x = 0; x < width-1; x++){
+    for (int i = 0; i < nFaces; i++){
 
-            int idx = y * width + x;
-            int idx2 = idx+width; //Next row
+        auto face = faces[i];
 
-            //Upper Triangle
-            outFile << idx << " " << idx2 << " " << idx+1 << std::endl;
-
-            //Bottom Triangle
-            outFile << idx2 << " " << idx2+1 << " " << idx+1 << std::endl;
-        }
+        std::cout << face[0] << " " << face[1] << " " << face[2] << std::endl;
+        outFile << face[0] << " " << face[1] << " " << face[2] << std::endl;
+    }
 
 
 	// close file
