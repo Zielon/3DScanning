@@ -28,13 +28,11 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 	// - only write triangles with valid vertices and an edge length smaller then edgeThreshold
 
 	// TODO: Get number of vertices
-	unsigned int nVertices = 0;
+	unsigned int nVertices = height*width;
 
 	// TODO: Get number of faces
-	unsigned nFaces = 0;
-
-
-
+	unsigned nFaces = 2 * (height-1)* (width-1);
+    //unsigned nFaces = 0;
 
 	// Write off file
 	std::ofstream outFile(filename);
@@ -46,15 +44,37 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 
 	// TODO: save vertices
 
+    outFile << "# list of vertices" << std::endl;
+    outFile << "# X Y Z R G B A" << std::endl;
 
+    for (int i = 0; i < nVertices; i++){
 
+        auto position = (vertices[i].position.x() == MINF)? Vector4f(0.0, 0.0, 0.0, 0.0): vertices[i].position;
+        auto color = vertices[i].color;
 
+        //std::cout  << position[0] << " " << position[1] << " " << position[2] << std::endl;
+        //std::cout  << +color[0] << " " << +color[1] << " " << +color[2] << " " << +color[3] << std::endl;
+
+        outFile << position[0] << " " << position[1] << " " << position[2] << " ";
+        outFile << +color[0] << " " << +color[1] << " " << +color[2] << " " << +color[3] << std::endl;//+ to force to print as a int
+    }
 
 	// TODO: save faces
+    outFile << "# list of faces" << std::endl;
+    outFile << "# nVerticesPerFace idx0 idx1 idx2 ..." << std::endl;
 
+    for(int y = 0; y < height-1; y++)
+        for(int x = 0; x < width-1; x++){
 
+            int idx = y * width + x;
+            int idx2 = idx+width; //Next row
 
+            //Upper Triangle
+            outFile << idx << " " << idx2 << " " << idx+1 << std::endl;
 
+            //Bottom Triangle
+            outFile << idx2 << " " << idx2+1 << " " << idx+1 << std::endl;
+        }
 
 
 	// close file
@@ -119,10 +139,10 @@ int main()
 		// vertices[idx].color = Vector4uc(0,0,0,0);
 		// otherwise apply back-projection and transform the vertex to world space, use the corresponding color from the colormap
 
-		int width = sensor.GetDepthImageWidth();
-		int height = sensor.GetDepthImageHeight();
+		unsigned int width = sensor.GetDepthImageWidth();
+		unsigned int height = sensor.GetDepthImageHeight();
 
-		auto vertices = new Vertex[width * height];
+		auto vertices = new Vertex[height * width];
 
 		for(int y = 0; y < height; y++)
 		    for(int x = 0; x < width; x++){
@@ -148,6 +168,9 @@ int main()
 					vertices[idx].position = world;
 					vertices[idx].color = color;
                 }
+
+                //std::cout << vertices[idx].position << std::endl;
+                //std::cout << vertices[idx].color << std::endl;
         }
 
 		// write mesh file
