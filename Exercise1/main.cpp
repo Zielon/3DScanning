@@ -100,6 +100,18 @@ int main()
 		Matrix4f trajectory = sensor.GetTrajectory();
 		Matrix4f trajectoryInv = sensor.GetTrajectory().inverse();
 
+        // compute inverse depth intrinsics
+        MatrixXf depthIntrinsicsInv(4,3);
+
+        depthIntrinsicsInv << 1.0f/fovX, 0.0f , -cX/fovX,
+                0.0f , 1.0f/fovY, -cY/fovY,
+                0.0f , 0.0f , 1.0f ,
+                0.0f, 0.0f, 0.0f;
+
+        //MatrixXf depthIntrinsicsInv = sensor.GetDepthIntrinsics().inverse();
+
+        std::cout << depthIntrinsicsInv << std::endl << std::endl;
+
 		// TODO 1: back-projection
 		// write result to the vertices array below, keep pixel ordering!
 		// if the depth value at idx is invalid (MINF) write the following values to the vertices array
@@ -114,16 +126,24 @@ int main()
 
 		for(int y = 0; y < height; y++)
 		    for(int x = 0; x < width; x++){
+
 		        int idx = y * width + x;
                 float depth = depthMap[idx];
+
                 if(depth == MINF){
                     vertices[idx].position = Vector4f(MINF, MINF, MINF, MINF);
                     vertices[idx].color = Vector4uc(0,0,0,0);
                 }else{
                 	int colorIdx = idx * 4;
-                    Vector4f screen = Vector4f(x, y, 0, 0);
-                    Vector4f world = screen.transpose() * depthExtrinsicsInv * trajectoryInv;
-					Vector4uc color = Vector4uc(colorMap[colorIdx], colorMap[colorIdx + 1], colorMap[colorIdx + 2], colorMap[colorIdx + 3]);
+
+                    Vector4uc color = Vector4uc(colorMap[colorIdx], colorMap[colorIdx + 1], colorMap[colorIdx + 2], colorMap[colorIdx + 3]);
+
+                    Vector3f image = Vector3f(x*depth, y*depth, depth);
+                    Vector4f camera = depthIntrinsicsInv * image;
+                    Vector4f world = trajectoryInv * depthExtrinsicsInv * camera;
+
+                    //Vector4f screen = Vector4f(x, y, 0, 0);
+                    //Vector4f world = screen.transpose() * depthExtrinsicsInv * trajectoryInv;
 
 					vertices[idx].position = world;
 					vertices[idx].color = color;
