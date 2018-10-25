@@ -16,9 +16,11 @@ struct Vertex
 	Vector4uc color;
 };
 
-inline bool ValidTriangle (Vector4f p0, Vector4f p1, Vector4f p2){
+inline bool ValidTriangle (Vector4f p0, Vector4f p1, Vector4f p2, float edgeThreshold){
 
     if (p0.x() == MINF || p1.x() == MINF || p2.x() == MINF) return false;
+
+    if( (p0-p1).norm() <= edgeThreshold && (p1-p2).norm() <= edgeThreshold && (p2-p1).norm() <= edgeThreshold) return false;
 
     return true;
 }
@@ -60,12 +62,12 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
             auto p3 = vertices[idx3].position;
 
             //Upper Triangle
-            if (ValidTriangle(p0, p2, p1)) {
+            if (ValidTriangle(p0, p2, p1, edgeThreshold)) {
                 faces.push_back(Vector3i(idx0, idx2, idx1));
             }
 
             //Bottom Triangle
-            if (ValidTriangle(p2, p3, p1)) {
+            if (ValidTriangle(p2, p3, p1, edgeThreshold)) {
                 faces.push_back(Vector3i(idx2, idx3, idx1));
             }
         }
@@ -106,7 +108,7 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 
         auto face = faces[i];
 
-        std::cout << face[0] << " " << face[1] << " " << face[2] << std::endl;
+        //std::cout << face[0] << " " << face[1] << " " << face[2] << std::endl;
         outFile << face[0] << " " << face[1] << " " << face[2] << std::endl;
     }
 
