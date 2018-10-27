@@ -1,3 +1,12 @@
+/**
+ * Course: 3D Scanning and Motion Capture
+ * File: main.cpp
+ * Purpose: First exercise of the course.
+ * @author Juan Raul Padron Griffe, Wojciech Zielonka
+ * @version 1.0 26/10/2018
+*/
+
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -16,10 +25,13 @@ struct Vertex
 	Vector4uc color;
 };
 
+//A triangle is valid to save when its vertices and edges are valid
 inline bool ValidTriangle (Vector4f p0, Vector4f p1, Vector4f p2, float edgeThreshold){
 
+    //Valid vertex
     if (p0.x() == MINF || p1.x() == MINF || p2.x() == MINF) return false;
 
+    //Valid edges: distance of the edges must be smaller than the edge threadhold
     if( (p0-p1).norm() >= edgeThreshold || (p1-p2).norm() >= edgeThreshold || (p2-p1).norm() >= edgeThreshold) return false;
 
     return true;
@@ -43,23 +55,25 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 	// TODO: Get number of faces
 	//unsigned nFaces = 2 * (height-1)* (width-1);//Without discarding faces
 
-    //Compute faces of the grid
+    //Building mesh (Slide 16 of the exercise).
     std::vector<Vector3i> faces;
+    unsigned int idx0, idx1, idx2, idx3;
+    Vector4f p0, p1, p2, p3;
 
     for(int y = 0; y < height-1; y++) {
         for (int x = 0; x < width - 1; x++) {
 
             //Indices
-            unsigned int idx0 = y * width + x;
-            unsigned int idx1 = idx0 + 1;
-            unsigned int idx2 = idx0 + width;
-            unsigned int idx3 = idx2 + 1;
+            idx0 = y * width + x;
+            idx1 = idx0 + 1;
+            idx2 = idx0 + width;
+            idx3 = idx2 + 1;
 
             //Points
-            auto p0 = vertices[idx0].position;
-            auto p1 = vertices[idx1].position;
-            auto p2 = vertices[idx2].position;
-            auto p3 = vertices[idx3].position;
+            p0 = vertices[idx0].position;
+            p1 = vertices[idx1].position;
+            p2 = vertices[idx2].position;
+            p3 = vertices[idx3].position;
 
             //Upper Triangle
             if (ValidTriangle(p0, p2, p1, edgeThreshold)) {
@@ -84,13 +98,12 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
 	outFile << nVertices << " " << nFaces << " 0" << std::endl;
 
 	// TODO: save vertices
-
     outFile << "# list of vertices" << std::endl;
     outFile << "# X Y Z R G B A" << std::endl;
 
     for (int i = 0; i < nVertices; i++){
 
-        auto position = (vertices[i].position.x() == MINF)? Vector4f(0.0, 0.0, 0.0, 0.0): vertices[i].position;
+        auto position = (vertices[i].position.x() == MINF)? Vector4f(0.0, 0.0, 0.0, 1.0): vertices[i].position;
         auto color = vertices[i].color;
 
         //std::cout  << position[0] << " " << position[1] << " " << position[2] << std::endl;
@@ -109,9 +122,11 @@ bool WriteMesh(Vertex* vertices, unsigned int width, unsigned int height, const 
         auto face = faces[i];
 
         //std::cout << face[0] << " " << face[1] << " " << face[2] << std::endl;
-        outFile << face[0] << " " << face[1] << " " << face[2] << std::endl;
+        outFile << "3 " << face[0] << " " << face[1] << " " << face[2] << std::endl;
     }
 
+    //Release vector memory
+    faces.clear();
 
 	// close file
 	outFile.close();
@@ -156,17 +171,13 @@ int main()
 		Matrix4f trajectory = sensor.GetTrajectory();
 		Matrix4f trajectoryInv = sensor.GetTrajectory().inverse();
 
-        // compute inverse depth intrinsics
-        MatrixXf depthIntrinsicsInv(4,3);
+        //Inverse of depth camera intrinsics (Slides 12, 25 of the exercise)
+        Matrix4f depthIntrinsicsInv;
 
-        depthIntrinsicsInv << 1.0f/fovX, 0.0f , -cX/fovX,
-                0.0f , 1.0f/fovY, -cY/fovY,
-                0.0f , 0.0f , 1.0f ,
-                0.0f, 0.0f, 0.0f;
-
-        //MatrixXf depthIntrinsicsInv = sensor.GetDepthIntrinsics().inverse();
-
-        std::cout << depthIntrinsicsInv << std::endl << std::endl;
+        depthIntrinsicsInv << 1.0f/fovX, 0.0f , -cX/fovX, 0.0f,
+                0.0f , 1.0f/fovY, -cY/fovY, 0.0f,
+                0.0f , 0.0f , 1.0f , 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f;
 
 		// TODO 1: back-projection
 		// write result to the vertices array below, keep pixel ordering!
@@ -194,19 +205,20 @@ int main()
 
                     Vector4uc color = Vector4uc(colorMap[colorIdx], colorMap[colorIdx + 1], colorMap[colorIdx + 2], colorMap[colorIdx + 3]);
 
-                    Vector3f image = Vector3f(x*depth, y*depth, depth);
-                    Vector4f camera = depthIntrinsicsInv * image;
-                    Vector4f world = trajectoryInv * depthExtrinsicsInv * camera;
+                    //Transformations based on projection pipeline (Slide 12 of the exercise).
 
-                    //Vector4f screen = Vector4f(x, y, 0, 0);
-                    //Vector4f world = screen.transpose() * depthExtrinsicsInv * trajectoryInv;
+                    //Pixel space -> image space
+                    Vector4f image = Vector4f(x*depth, y*depth, depth, 1.0f);
+
+                    //Image space -> camera space
+                    Vector4f camera = depthIntrinsicsInv * image;
+
+                    //Camera space to world space
+                    Vector4f world = trajectoryInv * depthExtrinsicsInv * camera;
 
 					vertices[idx].position = world;
 					vertices[idx].color = color;
                 }
-
-                //std::cout << vertices[idx].position << std::endl;
-                //std::cout << vertices[idx].color << std::endl;
         }
 
 		// write mesh file
