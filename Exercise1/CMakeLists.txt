@@ -6,10 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(LIBS "${CMAKE_SOURCE_DIR}/libs") #Local Setting
 
 #Compiler options
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
-
-#External libraries
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lfreeimage")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -O3 -lfreeimage")
 
 #Search path for include files
 include_directories(${LIBS}/Eigen)
