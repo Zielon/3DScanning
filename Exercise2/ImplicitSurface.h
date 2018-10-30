@@ -23,7 +23,8 @@ public:
 	double Eval(const Eigen::Vector3d& _x)
 	{
 		// TODO: implement the implicit sphere formula using the member variables m_center and m_radius
-		return 0.0;
+
+		return (_x-m_center).transpose()*(_x-m_center)-m_radius*m_radius;
 	}
 
 private:

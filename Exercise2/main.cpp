@@ -29,6 +29,10 @@ int main()
 			{
 				Eigen::Vector3d p = vol.pos(x, y, z);
 				double val = surface->Eval(p);
+
+				std::cout << p << std::endl;
+				std::cout << val << std::endl;
+
 				vol.set(x,y,z, val);
 			}
 		}
