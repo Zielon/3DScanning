@@ -84,13 +84,16 @@ public:
 	{
 		Eigen::Vector3f x = Eigen::Vector3f((float)_x.x(), (float)_x.y(), (float)_x.z());
 		unsigned int idx = m_pointcloud.GetClosestPoint(x);
+
 		if (idx == m_pointcloud.GetPoints().size()) return 0.0;
 
 		Eigen::Vector3f p = m_pointcloud.GetPoints()[idx];
 		Eigen::Vector3f n = m_pointcloud.GetNormals()[idx];
 
 		// TODO: implement the evaluation using Hoppe's method (see lecture slides)
-		return 0.0;
+		//return 0.0;
+
+		return (x-p).transpose()*n;
 	}
 
 private:
