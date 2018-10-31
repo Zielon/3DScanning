@@ -342,7 +342,13 @@ Vector3d VertexInterp(double isolevel, const Vector3d& p1, const Vector3d& p2, d
 	// x
 	// f(p1) = valp1
 
-	return (p1+p2)/2; // replace me
+	Vector3d v = (p2-p1);//p1 ---> p2 direction
+	double L = fabs(valp2-valp1);//Length of the segment
+	double t = fabs(isolevel-valp1)/L;//Percent of the segment
+
+	return p1+t*v;
+
+	//return (p1+p2)/2; // replace me
 }
 
 /*

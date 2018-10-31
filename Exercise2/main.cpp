@@ -13,8 +13,8 @@ int main()
 	// implicit surface
 	ImplicitSurface* surface;
 	// TODO: you have to switch between these surface types
-	//surface = new Sphere(Eigen::Vector3d(0.5, 0.5, 0.5), 0.4);
-	surface = new Torus(Eigen::Vector3d(0.5, 0.5, 0.5), 0.4, 0.1);
+	surface = new Sphere(Eigen::Vector3d(0.5, 0.5, 0.5), 0.4);
+	//surface = new Torus(Eigen::Vector3d(0.5, 0.5, 0.5), 0.4, 0.1);
 	//surface = new Hoppe(filenameIn);
 	//surface = new RBF(filenameIn);
 
