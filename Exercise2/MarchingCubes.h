@@ -1,3 +1,12 @@
+
+/**
+ * Course: 3D Scanning and Motion Capture
+ * File: MarchingCubes.h
+ * Purpose: Second exercise of the course.
+ * @author Juan Raul Padron Griffe, Wojciech Zielonka
+ * @version 1.0 31/10/2018
+*/
+
 #pragma once
 
 #ifndef MARCHING_CUBES_H
@@ -341,14 +350,13 @@ Vector3d VertexInterp(double isolevel, const Vector3d& p1, const Vector3d& p2, d
 	//  /
 	// x
 	// f(p1) = valp1
+	//return (p1+p2)/2; // replace me
 
 	Vector3d v = (p2-p1);//p1 ---> p2 direction
 	double L = fabs(valp2-valp1);//Length of the segment
 	double t = fabs(isolevel-valp1)/L;//Percent of the segment
 
 	return p1+t*v;
-
-	//return (p1+p2)/2; // replace me
 }
 
 /*

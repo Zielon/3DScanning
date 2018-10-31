@@ -1,3 +1,11 @@
+/**
+ * Course: 3D Scanning and Motion Capture
+ * File: ImplicitSurface.h
+ * Purpose: Second exercise of the course.
+ * @author Juan Raul Padron Griffe, Wojciech Zielonka
+ * @version 1.0 31/10/2018
+*/
+
 #pragma once
 
 #ifndef IMPLICIT_SURFACE_H
