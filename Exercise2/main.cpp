@@ -13,8 +13,8 @@ int main()
 	// implicit surface
 	ImplicitSurface* surface;
 	// TODO: you have to switch between these surface types
-	surface = new Sphere(Eigen::Vector3d(0.5, 0.5, 0.5), 0.4);
-	//surface = new Torus(Eigen::Vector3d(0.5, 0.5, 0.5), 0.4, 0.1);
+	//surface = new Sphere(Eigen::Vector3d(0.5, 0.5, 0.5), 0.4);
+	surface = new Torus(Eigen::Vector3d(0.5, 0.5, 0.5), 0.4, 0.1);
 	//surface = new Hoppe(filenameIn);
 	//surface = new RBF(filenameIn);
 
@@ -30,8 +30,8 @@ int main()
 				Eigen::Vector3d p = vol.pos(x, y, z);
 				double val = surface->Eval(p);
 
-				std::cout << p << std::endl;
-				std::cout << val << std::endl;
+				//std::cout << p << std::endl;
+				//std::cout << val << std::endl;
 
 				vol.set(x,y,z, val);
 			}
