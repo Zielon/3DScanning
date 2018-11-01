@@ -196,7 +196,7 @@ private:
             for (int j = 0; j < m_numCenters; j++) A(i, j) = phi(i, j);
 
             //Normal constraints
-            if(i >= m_numCenters) {
+            if (i >= m_numCenters) {
                 b(i) = eps;
                 eps *= -1;
             }
