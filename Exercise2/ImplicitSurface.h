@@ -190,15 +190,22 @@ private:
         // you can access matrix elements using for example A(i,j) for the i-th row and j-th column
         // similar you access the elements of the vector b, e.g. b(i) for the i-th element
 
+        double eps = 0.01f;
+
         for (int i = 0; i < 2 * m_numCenters; i++) {
             for (int j = 0; j < m_numCenters; j++) A(i, j) = phi(i, j);
 
-            if(i >= m_numCenters) b(i) = -0.01f;
+            if(i >= m_numCenters) {
+                b(i) = eps;
+                eps *= -1;
+            }
 
             for (int o = 0; o < 3; o++) A(i, m_numCenters + o) = m_funcSamp.m_pos[i][o];
 
             A(i, m_numCenters + 3) = 1;
         }
+
+        std::cout << b << std::endl;
 
         // build the system matrix and the right hand side of the normal equation
         m_systemMatrix = A.transpose() * A;
