@@ -11,4 +11,11 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -O3")
 #Search path for include files
 include_directories(${LIBS}/Eigen)
 
-add_executable(Exercise2 Volume.cpp main.cpp)
+add_executable(Exercise2
+    Volume.cpp
+    main.cpp
+    ImplicitSurface.h
+    MarchingCubes.h
+    SimpleMesh.h
+    Volume.h
+)
