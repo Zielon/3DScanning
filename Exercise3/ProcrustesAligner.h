@@ -32,7 +32,9 @@ private:
 	Vector3f computeMean(const std::vector<Vector3f>& points) {
 		// TODO: Compute the mean of input points.
 
-		return Vector3f::Zero();
+		Vector3f result = Vector3f::Zero();
+		for(const auto &point : points) result += point;
+		return result / points.size();
 	}
 
 	Matrix3f estimateRotation(const std::vector<Vector3f>& sourcePoints, const Vector3f& sourceMean, const std::vector<Vector3f>& targetPoints, const Vector3f& targetMean) {
@@ -40,12 +42,28 @@ private:
 		// To compute the singular value decomposition you can use JacobiSVD() from Eigen.
 		// Important: The covariance matrices should contain mean-centered source/target points.
 
-		return Matrix3f::Identity();
+		MatrixXf sourcePointsCentered(sourcePoints.size(), 3);
+		MatrixXf targetPointsCentered(sourcePoints.size(), 3);
+
+		// Centered matrices
+		for(int i = 0; i < sourcePoints.size(); i++){
+			auto source = sourcePoints[i] - sourceMean;
+			auto target = targetPoints[i] - targetMean;
+
+			for(int j = 0; j < 3; j++){
+				sourcePointsCentered(i, j) = source[j];
+				targetPointsCentered(i, j) = target[j];
+			}
+		}
+
+        JacobiSVD<MatrixXf> svd((targetPointsCentered.transpose() * sourcePointsCentered), ComputeThinU | ComputeThinV);
+
+		return svd.matrixU() * svd.matrixV().transpose();
 	}
 
 	Vector3f computeTranslation(const Vector3f& sourceMean, const Vector3f& targetMean) {
 		// TODO: Compute the translation vector from source to target points.
 
-		return Vector3f::Zero();
+		return targetMean - sourceMean;
 	}
 };
