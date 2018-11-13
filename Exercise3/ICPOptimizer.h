@@ -60,10 +60,26 @@ public:
 			//       sourcePoints[i] matches targetPoints[i]. For every source point, the
 			//       'matches' vector holds the index of the matching target point and target normal.
 
+			auto source_points = source.getPoints();
+			auto target_points = target.getPoints();
+			auto target_normals = target.getNormals();
 
+			for(int i = 0; i < matches.size(); i++){
 
+				unsigned int idx = matches[i].idx;
 
+				if (idx != -1){
 
+					sourcePoints.emplace_back(source_points[i]);
+					targetPoints.emplace_back(target_points[idx]);
+					targetNormals.emplace_back(target_normals[idx]);
+
+				}else{
+					sourcePoints.emplace_back(source_points[i]);
+					targetPoints.emplace_back(target_points[i]);
+					targetNormals.emplace_back(target_normals[i]);
+				}
+			}
 
 
 			// Estimate the new pose
@@ -147,7 +163,7 @@ private:
 		MatrixXf A = MatrixXf::Zero(4 * nPoints, 6);
 		VectorXf b = VectorXf::Zero(4 * nPoints);
 
-		//std::cout << sourcePoints.size() <<std::endl;
+		std::cout << sourcePoints.size() <<std::endl;
 
 		for (unsigned i = 0; i < nPoints; i++) {
 			const auto& s = sourcePoints[i];
@@ -165,8 +181,8 @@ private:
 			b(i) = n.dot(d) - n.dot(s);
 		}
 
-		//std::cout << A << std::endl;
-		//std::cout << b << std::endl;
+		std::cout << A << std::endl;
+		std::cout << b << std::endl;
 
 		// TODO: Solve the system
 		VectorXf x(6);
