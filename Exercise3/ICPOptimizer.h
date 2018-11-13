@@ -175,7 +175,7 @@ private:
                 A(i, j+3) = n[j];
 			}
 
-			b(i) = -(s-d).dot(n);
+			b(i) = n.dot(d) - n.dot(s);
 
 			// TODO: Add the point-to-point constraints to the system
 

@@ -9,8 +9,8 @@
 
 #define USE_POINT_TO_PLANE	0
 
-#define RUN_PROCRUSTES		1
-#define RUN_SHAPE_ICP		0
+#define RUN_PROCRUSTES		0
+#define RUN_SHAPE_ICP		1
 
 void debugCorrespondenceMatching() {
 	// Load the source and target mesh.
@@ -129,7 +129,7 @@ int alignBunnyWithICP() {
 	}
 	else {
 		optimizer.usePointToPlaneConstraints(false);
-		optimizer.setNbOfIterations(20);
+		optimizer.setNbOfIterations(50);
 	}
 
 	PointCloud source{ sourceMesh };
