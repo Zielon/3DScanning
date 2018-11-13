@@ -14,7 +14,7 @@ class ICPOptimizer {
 public:
 	ICPOptimizer() : 
 		m_bUsePointToPlaneConstraints{ false },
-		m_nIterations{ 20 },
+		m_nIterations{ 100 },
 		m_nearestNeighborSearch{ std::make_unique<NearestNeighborSearchFlann>() }
 	{ }
 
@@ -64,23 +64,17 @@ public:
 			auto target_points = target.getPoints();
 			auto target_normals = target.getNormals();
 
-			for(int i = 0; i < matches.size(); i++){
+			for(int j = 0; j < matches.size(); j++){
 
-				unsigned int idx = matches[i].idx;
+			    int idx = matches[j].idx; // Get source matches index
 
-				if (idx != -1){
+				if(idx <= -1) continue;
 
-					sourcePoints.emplace_back(source_points[i]);
-					targetPoints.emplace_back(target_points[idx]);
-					targetNormals.emplace_back(target_normals[idx]);
-
-				}else{
-					sourcePoints.emplace_back(source_points[i]);
-					targetPoints.emplace_back(target_points[i]);
-					targetNormals.emplace_back(target_normals[i]);
-				}
+				// Match exists
+                sourcePoints.emplace_back(source_points[j]);
+                targetPoints.emplace_back(target_points[idx]);
+                targetNormals.emplace_back(target_normals[idx]);
 			}
-
 
 			// Estimate the new pose
  			if (m_bUsePointToPlaneConstraints) {
@@ -178,10 +172,7 @@ private:
 
 			for(int j = 0; j < 3; j++){
 				A(i, j) = nxs[j];
-			}
-
-			for(int j = 0; j < 3; j++){
-				A(i, j+3) = n[j];
+                A(i, j+3) = n[j];
 			}
 
 			b(i) = -(s-d).dot(n);
@@ -198,6 +189,7 @@ private:
 
 		JacobiSVD<MatrixXf> svd(A.transpose() * A, ComputeThinU | ComputeThinV);
 		x = svd.solve(A.transpose() * b);
+
 
 		//Manual approach
 		//MatrixXf Ainv = svd.matrixV() * svd.matrixU().transpose();//Pseudo inverse using SVD decomposition
