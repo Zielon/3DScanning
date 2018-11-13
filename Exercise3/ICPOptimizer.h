@@ -123,6 +123,12 @@ private:
 
 				// TODO: Invalidate the match (set it to -1) if the angle between the normals is greater than 60
 
+				float normal_angle = std::acos (sourceNormal.dot(targetNormal)) * 180.0f / M_PI;
+
+				if (normal_angle > 60.0f){
+
+					match.idx = -1;
+				}
 			}
 		}
 	}
