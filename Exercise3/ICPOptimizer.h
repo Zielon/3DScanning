@@ -160,10 +160,12 @@ private:
 		const unsigned nPoints = sourcePoints.size();
 
 		// Build the system
-		MatrixXf A = MatrixXf::Zero(4 * nPoints, 6);
-		VectorXf b = VectorXf::Zero(4 * nPoints);
+		//MatrixXf A = MatrixXf::Zero(4 * nPoints, 6);
+		//VectorXf b = VectorXf::Zero(4 * nPoints);
 
-		std::cout << sourcePoints.size() <<std::endl;
+		MatrixXf A = MatrixXf::Zero(nPoints, 6);
+		VectorXf b = VectorXf::Zero(nPoints);
+		//std::cout << sourcePoints.size() <<std::endl;
 
 		for (unsigned i = 0; i < nPoints; i++) {
 			const auto& s = sourcePoints[i];
@@ -171,25 +173,31 @@ private:
 			const auto& n = targetNormals[i];
 
 			// TODO: Add the point-to-plane constraints to the system
-			VectorXf nxs = -n.cross(s);
+
+			VectorXf nxs = s.cross(n);
 
 			for(int j = 0; j < 3; j++){
 				A(i, j) = nxs[j];
 			}
 
+			for(int j = 0; j < 3; j++){
+				A(i, j+3) = n[j];
+			}
+
+			b(i) = -(s-d).dot(n);
+
 			// TODO: Add the point-to-point constraints to the system
-			b(i) = n.dot(d) - n.dot(s);
+
 		}
 
-		std::cout << A << std::endl;
-		std::cout << b << std::endl;
+		//std::cout << A << std::endl;
+		//std::cout << b << std::endl;
 
 		// TODO: Solve the system
 		VectorXf x(6);
 
-		JacobiSVD<MatrixXf> svd(A, ComputeThinU | ComputeThinV);
-
-		x = svd.solve(b);
+		JacobiSVD<MatrixXf> svd(A.transpose() * A, ComputeThinU | ComputeThinV);
+		x = svd.solve(A.transpose() * b);
 
 		//Manual approach
 		//MatrixXf Ainv = svd.matrixV() * svd.matrixU().transpose();//Pseudo inverse using SVD decomposition
@@ -208,6 +216,8 @@ private:
 		Matrix4f estimatedPose = Matrix4f::Identity();
 		estimatedPose.block(0, 0, 3, 3) = rotation;
 		estimatedPose.block(0, 3, 3, 1) = translation;
+
+		std::cout << estimatedPose << std::endl;
 
 		return estimatedPose;
 	}
