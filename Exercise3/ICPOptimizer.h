@@ -147,35 +147,37 @@ private:
 		MatrixXf A = MatrixXf::Zero(4 * nPoints, 6);
 		VectorXf b = VectorXf::Zero(4 * nPoints);
 
+		//std::cout << sourcePoints.size() <<std::endl;
+
 		for (unsigned i = 0; i < nPoints; i++) {
 			const auto& s = sourcePoints[i];
 			const auto& d = targetPoints[i];
 			const auto& n = targetNormals[i];
 
 			// TODO: Add the point-to-plane constraints to the system
+			VectorXf nxs = -n.cross(s);
 
-
-
-
-
+			for(int j = 0; j < 3; j++){
+				A(i, j) = nxs[j];
+			}
 
 			// TODO: Add the point-to-point constraints to the system
-
-
-
-
-
+			b(i) = n.dot(d) - n.dot(s);
 		}
+
+		//std::cout << A << std::endl;
+		//std::cout << b << std::endl;
 
 		// TODO: Solve the system
 		VectorXf x(6);
 
+		JacobiSVD<MatrixXf> svd(A, ComputeThinU | ComputeThinV);
 
+		x = svd.solve(b);
 
-
-
-
-
+		//Manual approach
+		//MatrixXf Ainv = svd.matrixV() * svd.matrixU().transpose();//Pseudo inverse using SVD decomposition
+		//x = Ainv.transpose()*b;
 		
 		float alpha = x(0), beta = x(1), gamma = x(2);
 
@@ -188,11 +190,8 @@ private:
 
 		// TODO: Build the pose matrix using the rotation and translation matrices
 		Matrix4f estimatedPose = Matrix4f::Identity();
-
-
-
-
-
+		estimatedPose.block(0, 0, 3, 3) = rotation;
+		estimatedPose.block(0, 3, 3, 1) = translation;
 
 		return estimatedPose;
 	}
