@@ -9,7 +9,3 @@
 cmake-build-*/
 
 # Project-specific
-
-data/*
-
-
