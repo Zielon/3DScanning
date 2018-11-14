@@ -7,6 +7,8 @@
 #include "PointCloud.h"
 #include "ProcrustesAligner.h"
 
+#define M_PI           3.14159265358979323846  /* pi */
+
 /**
  * ICP optimizer.
  */
@@ -64,17 +66,25 @@ public:
 			auto target_points = target.getPoints();
 			auto target_normals = target.getNormals();
 
+			int numberOfMatches = 0;
+
 			for(int j = 0; j < matches.size(); j++){
 
 			    int idx = matches[j].idx; // Get source matches index
 
 				if(idx <= -1) continue;
 
+                numberOfMatches++;
+
 				// Match exists
-                sourcePoints.emplace_back(source_points[j]);
+                sourcePoints.emplace_back(source_points[idx]);
                 targetPoints.emplace_back(target_points[idx]);
                 targetNormals.emplace_back(target_normals[idx]);
 			}
+
+			std::cout << std::endl << "Number of matches: " << numberOfMatches << " iteration: " << i + 1 << std::endl << std::endl;
+
+			if(numberOfMatches == 0) return estimatedPose;
 
 			// Estimate the new pose
  			if (m_bUsePointToPlaneConstraints) {
@@ -126,20 +136,18 @@ private:
 		const unsigned nPoints = sourceNormals.size();
 
 		for (unsigned i = 0; i < nPoints; i++) {
-			Match& match = matches[i];
-			if (match.idx >= 0) {
-				const auto& sourceNormal = sourceNormals[i];
-				const auto& targetNormal = targetNormals[match.idx];
 
-				// TODO: Invalidate the match (set it to -1) if the angle between the normals is greater than 60
+		    Match match = matches[i];
+            const auto& sourceNormal = sourceNormals[match.idx];
+            const auto& targetNormal = targetNormals[match.idx];
 
-				float normal_angle = std::acos (sourceNormal.dot(targetNormal)) * 180.0f / M_PI;
+            // TODO: Invalidate the match (set it to -1) if the angle between the normals is greater than 60
 
-				if (normal_angle > 60.0f){
+            double normal_angle = std::acos(targetNormal.dot(sourceNormal)) * 180.0 / M_PI;
 
-					match.idx = -1;
-				}
-			}
+            if (normal_angle > 60.0){
+                matches[i] = Match{ -1, 0.f };
+            }
 		}
 	}
 

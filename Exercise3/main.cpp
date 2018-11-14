@@ -129,7 +129,7 @@ int alignBunnyWithICP() {
 	}
 	else {
 		optimizer.usePointToPlaneConstraints(false);
-		optimizer.setNbOfIterations(50);
+		optimizer.setNbOfIterations(25);
 	}
 
 	PointCloud source{ sourceMesh };
