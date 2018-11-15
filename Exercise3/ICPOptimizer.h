@@ -14,232 +14,248 @@
  */
 class ICPOptimizer {
 public:
-	ICPOptimizer() : 
-		m_bUsePointToPlaneConstraints{ false },
-		m_nIterations{ 100 },
-		m_nearestNeighborSearch{ std::make_unique<NearestNeighborSearchFlann>() }
-	{ }
+    ICPOptimizer() :
+            m_bUsePointToPlaneConstraints{false},
+            m_nIterations{100},
+            m_nearestNeighborSearch{std::make_unique<NearestNeighborSearchFlann>()} {}
 
-	void setMatchingMaxDistance(float maxDistance) {
-		m_nearestNeighborSearch->setMatchingMaxDistance(maxDistance);
-	}
+    void setMatchingMaxDistance(float maxDistance) {
+        m_nearestNeighborSearch->setMatchingMaxDistance(maxDistance);
+    }
 
-	void usePointToPlaneConstraints(bool bUsePointToPlaneConstraints) {
-		m_bUsePointToPlaneConstraints = bUsePointToPlaneConstraints;
-	}
+    void usePointToPlaneConstraints(bool bUsePointToPlaneConstraints) {
+        m_bUsePointToPlaneConstraints = bUsePointToPlaneConstraints;
+    }
 
-	void setNbOfIterations(unsigned nIterations) {
-		m_nIterations = nIterations;
-	}
+    void setNbOfIterations(unsigned nIterations) {
+        m_nIterations = nIterations;
+    }
 
-	Matrix4f estimatePose(const PointCloud& source, const PointCloud& target, Matrix4f initialPose = Matrix4f::Identity()) {
-		// Build the index of the FLANN tree (for fast nearest neighbor lookup).
-		m_nearestNeighborSearch->buildIndex(target.getPoints());
+    Matrix4f
+    estimatePose(const PointCloud &source, const PointCloud &target, Matrix4f initialPose = Matrix4f::Identity()) {
+        // Build the index of the FLANN tree (for fast nearest neighbor lookup).
+        m_nearestNeighborSearch->buildIndex(target.getPoints());
 
-		// The initial estimate can be given as an argument.
-		Matrix4f estimatedPose = initialPose;
+        // The initial estimate can be given as an argument.
+        Matrix4f estimatedPose = initialPose;
 
-		for (int i = 0; i < m_nIterations; ++i) {
-			// Compute the matches.
-			std::cout << "Matching points ..." << std::endl;
-			clock_t begin = clock();
+        for (int i = 0; i < m_nIterations; ++i) {
+            // Compute the matches.
+            std::cout << "Matching points ..." << std::endl;
+            clock_t begin = clock();
 
-			auto transformedPoints = transformPoints(source.getPoints(), estimatedPose);
-			auto transformedNormals = transformNormals(source.getNormals(), estimatedPose);
+            auto transformedPoints = transformPoints(source.getPoints(), estimatedPose);
+            auto transformedNormals = transformNormals(source.getNormals(), estimatedPose);
 
-			auto matches = m_nearestNeighborSearch->queryMatches(transformedPoints);
-			pruneCorrespondences(transformedNormals, target.getNormals(), matches);
+            auto matches = m_nearestNeighborSearch->queryMatches(transformedPoints);
+            pruneCorrespondences(transformedNormals, target.getNormals(), matches);
 
-			clock_t end = clock();
-			double elapsedSecs = double(end - begin) / CLOCKS_PER_SEC;
-			std::cout << "Completed in " << elapsedSecs << " seconds." << std::endl;
+            clock_t end = clock();
+            double elapsedSecs = double(end - begin) / CLOCKS_PER_SEC;
+            std::cout << "Completed in " << elapsedSecs << " seconds." << std::endl;
 
-			std::vector<Vector3f> sourcePoints;
-			std::vector<Vector3f> targetPoints;
-			std::vector<Vector3f> targetNormals;
+            std::vector<Vector3f> sourcePoints;
+            std::vector<Vector3f> targetPoints;
+            std::vector<Vector3f> targetNormals;
 
-			// TODO: Add all matches to the sourcePoints and targetPoints vector, so that
-			//       sourcePoints[i] matches targetPoints[i]. For every source point, the
-			//       'matches' vector holds the index of the matching target point and target normal.
+            // TODO: Add all matches to the sourcePoints and targetPoints vector, so that
+            //       sourcePoints[i] matches targetPoints[i]. For every source point, the
+            //       'matches' vector holds the index of the matching target point and target normal.
 
-			auto target_points = target.getPoints();
+            auto target_points = target.getPoints();
 
-			int numberOfMatches = 0;
+            int numberOfMatches = 0;
 
-			for(int j = 0; j < matches.size(); j++){
+            for (int j = 0; j < matches.size(); j++) {
 
-			    int idx = matches[j].idx; // Get source matches index
+                int idx = matches[j].idx; // Get source matches index
 
-				if(idx <= -1) continue;
+                if (idx <= -1) continue;
 
                 numberOfMatches++;
 
-				// Match exists
+                // Match exists
                 sourcePoints.emplace_back(transformedPoints[j]);
                 targetPoints.emplace_back(target_points[idx]);
                 targetNormals.emplace_back(transformedNormals[idx]);
-			}
+            }
 
-			std::cout << std::endl << "Number of matches: " << numberOfMatches << " iteration: " << i + 1 << std::endl << std::endl;
+            std::cout << std::endl << "Number of matches: " << numberOfMatches << " iteration: " << i + 1 << std::endl
+                      << std::endl;
 
-			if(numberOfMatches == 0) return estimatedPose;
+            if (numberOfMatches == 0) return estimatedPose;
 
-			// Estimate the new pose
- 			if (m_bUsePointToPlaneConstraints) {
-				estimatedPose = estimatePosePointToPlane(sourcePoints, targetPoints, targetNormals) * estimatedPose;
-			}
-			else {
-				estimatedPose = estimatePosePointToPoint(sourcePoints, targetPoints) * estimatedPose;
-			}
+            // Estimate the new pose
+            if (m_bUsePointToPlaneConstraints) {
+                estimatedPose = estimatePosePointToPlane(sourcePoints, targetPoints, targetNormals) * estimatedPose;
+            } else {
+                estimatedPose = estimatePosePointToPoint(sourcePoints, targetPoints) * estimatedPose;
+            }
 
-			std::cout << "Optimization iteration done." << std::endl;
-		}
+            std::cout << "Optimization iteration done." << std::endl;
+        }
 
-		return estimatedPose;
-	}
+        return estimatedPose;
+    }
 
 private:
-	bool m_bUsePointToPlaneConstraints;
-	unsigned m_nIterations;
-	std::unique_ptr<NearestNeighborSearch> m_nearestNeighborSearch;
+    bool m_bUsePointToPlaneConstraints;
+    unsigned m_nIterations;
+    std::unique_ptr<NearestNeighborSearch> m_nearestNeighborSearch;
 
-	std::vector<Vector3f> transformPoints(const std::vector<Vector3f>& sourcePoints, const Matrix4f& pose) {
-		std::vector<Vector3f> transformedPoints;
-		transformedPoints.reserve(sourcePoints.size());
+    std::vector<Vector3f> transformPoints(const std::vector<Vector3f> &sourcePoints, const Matrix4f &pose) {
+        std::vector<Vector3f> transformedPoints;
+        transformedPoints.reserve(sourcePoints.size());
 
-		const auto rotation = pose.block(0, 0, 3, 3);
-		const auto translation = pose.block(0, 3, 3, 1);
+        const auto rotation = pose.block(0, 0, 3, 3);
+        const auto translation = pose.block(0, 3, 3, 1);
 
-		for (const auto& point : sourcePoints) {
-			transformedPoints.push_back(rotation * point + translation);
-		}
+        for (const auto &point : sourcePoints) {
+            transformedPoints.push_back(rotation * point + translation);
+        }
 
-		return transformedPoints;
-	}
+        return transformedPoints;
+    }
 
-	std::vector<Vector3f> transformNormals(const std::vector<Vector3f>& sourceNormals, const Matrix4f& pose) {
-		std::vector<Vector3f> transformedNormals;
-		transformedNormals.reserve(sourceNormals.size());
+    std::vector<Vector3f> transformNormals(const std::vector<Vector3f> &sourceNormals, const Matrix4f &pose) {
+        std::vector<Vector3f> transformedNormals;
+        transformedNormals.reserve(sourceNormals.size());
 
-		const auto rotation = pose.block(0, 0, 3, 3);
+        const auto rotation = pose.block(0, 0, 3, 3);
 
-		for (const auto& normal : sourceNormals) {
-			transformedNormals.push_back(rotation.inverse().transpose() * normal);
-		}
+        for (const auto &normal : sourceNormals) {
+            transformedNormals.push_back(rotation.inverse().transpose() * normal);
+        }
 
-		return transformedNormals;
-	}
+        return transformedNormals;
+    }
 
-	void pruneCorrespondences(const std::vector<Vector3f>& sourceNormals, const std::vector<Vector3f>& targetNormals, std::vector<Match>& matches) {
-		const unsigned nPoints = sourceNormals.size();
+    void pruneCorrespondences(const std::vector<Vector3f> &sourceNormals, const std::vector<Vector3f> &targetNormals,
+                              std::vector<Match> &matches) {
+        const unsigned nPoints = sourceNormals.size();
 
-		for (unsigned i = 0; i < nPoints; i++) {
+        for (unsigned i = 0; i < nPoints; i++) {
 
-		    Match match = matches[i];
-            const auto& sourceNormal = sourceNormals[match.idx];
-            const auto& targetNormal = targetNormals[match.idx];
+            Match match = matches[i];
+            const auto &sourceNormal = sourceNormals[match.idx];
+            const auto &targetNormal = targetNormals[match.idx];
 
 
             // TODO: Invalidate the match (set it to -1) if the angle between the normals is greater than 60
 
-            float normal_angle = std::acos(targetNormal.dot(sourceNormal)) * 180.0 / M_PI;
+            double normal_angle = std::acos(targetNormal.dot(sourceNormal)) * 180.0 / M_PI;
 
-            if (normal_angle > 60.0f){
-                matches[i] = Match{ -1, 0.f };
+            if (normal_angle > 60.0f) {
+                matches[i] = Match{-1, 0.f};
             }
-		}
-	}
+        }
+    }
 
-	Matrix4f estimatePosePointToPoint(const std::vector<Vector3f>& sourcePoints, const std::vector<Vector3f>& targetPoints) {
-		ProcrustesAligner procrustAligner;
-		Matrix4f estimatedPose = procrustAligner.estimatePose(sourcePoints, targetPoints);
+    Matrix4f
+    estimatePosePointToPoint(const std::vector<Vector3f> &sourcePoints, const std::vector<Vector3f> &targetPoints) {
+        ProcrustesAligner procrustAligner;
+        Matrix4f estimatedPose = procrustAligner.estimatePose(sourcePoints, targetPoints);
 
-		return estimatedPose;
-	}
+        return estimatedPose;
+    }
 
-	Matrix4f estimatePosePointToPlane(const std::vector<Vector3f>& sourcePoints, const std::vector<Vector3f>& targetPoints, const std::vector<Vector3f>& targetNormals) {
-		const unsigned nPoints = sourcePoints.size();
+    Matrix4f
+    estimatePosePointToPlane(const std::vector<Vector3f> &sourcePoints, const std::vector<Vector3f> &targetPoints,
+                             const std::vector<Vector3f> &targetNormals) {
+        const unsigned nPoints = sourcePoints.size();
 
-		// Build the system
-		MatrixXf A = MatrixXf::Zero(4 * nPoints, 6);
-		VectorXf b = VectorXf::Zero(4 * nPoints);
+        // Build the system
+        MatrixXf A = MatrixXf::Zero(4 * nPoints, 6);
+        VectorXf b = VectorXf::Zero(4 * nPoints);
 
-		//MatrixXf A = MatrixXf::Zero(nPoints, 6);
-		//VectorXf b = VectorXf::Zero(nPoints);
+        //MatrixXf A = MatrixXf::Zero(nPoints, 6);
+        //VectorXf b = VectorXf::Zero(nPoints);
 
-		//std::cout << sourcePoints.size() <<std::endl;
+        //std::cout << sourcePoints.size() <<std::endl;
 
-		for (unsigned i = 0; i < nPoints; i++) {
-			const auto& s = sourcePoints[i];
-			const auto& d = targetPoints[i];
-			const auto& n = targetNormals[i];
+        for (unsigned i = 0; i < nPoints; i++) {
+            const auto &s = sourcePoints[i];
+            const auto &d = targetPoints[i];
+            const auto &n = targetNormals[i];
 
-			// TODO: Add the point-to-plane constraints to the system
+            // TODO: Add the point-to-plane constraints to the system
 
-			VectorXf nxs = s.cross(n);
+            VectorXf nxs = s.cross(n);
 
-			for(int j = 0; j < 3; j++){
-				A(i, j) = nxs[j];
-                A(i, j+3) = n[j];
-			}
+            for (int j = 0; j < 3; j++) {
+                A(i, j) = nxs[j];
+                A(i, j + 3) = n[j];
+            }
 
-			b(i) = n.dot(d) - n.dot(s);
+            b(i) = n.dot(d) - n.dot(s);
 
-			// TODO: Add the point-to-point constraints to the system
+            // TODO: Add the point-to-point constraints to the system
 
-			unsigned int j = i+1;
+            unsigned int j = i + 1;
 
-			// Coordinate x
-			A(j, 0) = 0; A(j, 1) = s[2]; A(j, 2) = -s[1];
-			A(j, 3) = 1; A(j, 4) = 0; A(j, 5) = 0;
+            // Coordinate x
+            A(j, 0) = 0;
+            A(j, 1) = s[2];
+            A(j, 2) = -s[1];
+            A(j, 3) = 1;
+            A(j, 4) = 0;
+            A(j, 5) = 0;
 
-			b(j) = d[0]-s[0];
-			j++;
+            b(j) = d[0] - s[0];
+            j++;
 
             // Coordinate y
-			A(j, 0) = -s[2]; A(j, 1) = 0; A(j, 2) = s[0];
-			A(j, 3) = 0; A(j, 4) = 1; A(j, 5) = 0;
+            A(j, 0) = -s[2];
+            A(j, 1) = 0;
+            A(j, 2) = s[0];
+            A(j, 3) = 0;
+            A(j, 4) = 1;
+            A(j, 5) = 0;
 
-			b(j) = d[1]-s[1];
-			j++;
+            b(j) = d[1] - s[1];
+            j++;
 
             // Coordinate z
-			A(j, 0) = s[1]; A(j, 1) = -s[0]; A(j, 2) = 0;
-			A(j, 3) = 0; A(j, 4) = 0; A(j, 5) = 1;
+            A(j, 0) = s[1];
+            A(j, 1) = -s[0];
+            A(j, 2) = 0;
+            A(j, 3) = 0;
+            A(j, 4) = 0;
+            A(j, 5) = 1;
 
-			b(j) = d[2]-s[2];
-		}
+            b(j) = d[2] - s[2];
+        }
 
-		//std::cout << A << std::endl;
-		//std::cout << b << std::endl;
+        //std::cout << A << std::endl;
+        //std::cout << b << std::endl;
 
-		// TODO: Solve the system
-		VectorXf x(6);
+        // TODO: Solve the system
+        VectorXf x(6);
 
-		JacobiSVD<MatrixXf> svd(A.transpose() * A, ComputeThinU | ComputeThinV);
-		x = svd.solve(A.transpose() * b);
+        JacobiSVD<MatrixXf> svd(A.transpose() * A, ComputeThinU | ComputeThinV);
+        x = svd.solve(A.transpose() * b);
 
 
-		//Manual approach
-		//MatrixXf Ainv = svd.matrixV() * svd.matrixU().transpose();//Pseudo inverse using SVD decomposition
-		//x = Ainv.transpose()*b;
-		
-		float alpha = x(0), beta = x(1), gamma = x(2);
+        //Manual approach
+        //MatrixXf Ainv = svd.matrixV() * svd.matrixU().transpose();//Pseudo inverse using SVD decomposition
+        //x = Ainv.transpose()*b;
 
-		// Build the pose matrix
-		Matrix3f rotation = AngleAxisf(alpha, Vector3f::UnitX()).toRotationMatrix() *
-			                AngleAxisf(beta, Vector3f::UnitY()).toRotationMatrix() *
-			                AngleAxisf(gamma, Vector3f::UnitZ()).toRotationMatrix();
+        float alpha = x(0), beta = x(1), gamma = x(2);
 
-		Vector3f translation = x.tail(3);
+        // Build the pose matrix
+        Matrix3f rotation = AngleAxisf(alpha, Vector3f::UnitX()).toRotationMatrix() *
+                            AngleAxisf(beta, Vector3f::UnitY()).toRotationMatrix() *
+                            AngleAxisf(gamma, Vector3f::UnitZ()).toRotationMatrix();
 
-		// TODO: Build the pose matrix using the rotation and translation matrices
-		Matrix4f estimatedPose = Matrix4f::Identity();
-		estimatedPose.block(0, 0, 3, 3) = rotation;
-		estimatedPose.block(0, 3, 3, 1) = translation;
+        Vector3f translation = x.tail(3);
 
-		std::cout << estimatedPose << std::endl;
+        // TODO: Build the pose matrix using the rotation and translation matrices
+        Matrix4f estimatedPose = Matrix4f::Identity();
+        estimatedPose.block(0, 0, 3, 3) = rotation;
+        estimatedPose.block(0, 3, 3, 1) = translation;
 
-		return estimatedPose;
-	}
+        std::cout << estimatedPose << std::endl;
+
+        return estimatedPose;
+    }
 };
