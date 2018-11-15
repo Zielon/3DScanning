@@ -161,11 +161,12 @@ private:
 		const unsigned nPoints = sourcePoints.size();
 
 		// Build the system
-		//MatrixXf A = MatrixXf::Zero(4 * nPoints, 6);
-		//VectorXf b = VectorXf::Zero(4 * nPoints);
+		MatrixXf A = MatrixXf::Zero(4 * nPoints, 6);
+		VectorXf b = VectorXf::Zero(4 * nPoints);
 
-		MatrixXf A = MatrixXf::Zero(nPoints, 6);
-		VectorXf b = VectorXf::Zero(nPoints);
+		//MatrixXf A = MatrixXf::Zero(nPoints, 6);
+		//VectorXf b = VectorXf::Zero(nPoints);
+
 		//std::cout << sourcePoints.size() <<std::endl;
 
 		for (unsigned i = 0; i < nPoints; i++) {
@@ -186,6 +187,27 @@ private:
 
 			// TODO: Add the point-to-point constraints to the system
 
+			unsigned int j = i+1;
+
+			// Coordinate x
+			A(j, 0) = 0; A(j, 1) = s[2]; A(j, 2) = -s[1];
+			A(j, 3) = 1; A(j, 4) = 0; A(j, 5) = 0;
+
+			b(j) = d[0]-s[0];
+			j++;
+
+            // Coordinate y
+			A(j, 0) = -s[2]; A(j, 1) = 0; A(j, 2) = s[0];
+			A(j, 3) = 0; A(j, 4) = 1; A(j, 5) = 0;
+
+			b(j) = d[1]-s[1];
+			j++;
+
+            // Coordinate z
+			A(j, 0) = s[1]; A(j, 1) = -s[0]; A(j, 2) = 0;
+			A(j, 3) = 0; A(j, 4) = 0; A(j, 5) = 1;
+
+			b(j) = d[2]-s[2];
 		}
 
 		//std::cout << A << std::endl;
