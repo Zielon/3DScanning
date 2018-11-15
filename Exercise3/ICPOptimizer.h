@@ -60,9 +60,7 @@ public:
 			//       sourcePoints[i] matches targetPoints[i]. For every source point, the
 			//       'matches' vector holds the index of the matching target point and target normal.
 
-			auto source_points = source.getPoints();
 			auto target_points = target.getPoints();
-			auto target_normals = target.getNormals();
 
 			for(int j = 0; j < matches.size(); j++){
 
@@ -71,9 +69,9 @@ public:
 				if(idx <= -1) continue;
 
 				// Match exists
-                sourcePoints.emplace_back(source_points[j]);
+                sourcePoints.emplace_back(transformedPoints[j]);
                 targetPoints.emplace_back(target_points[idx]);
-                targetNormals.emplace_back(target_normals[idx]);
+                targetNormals.emplace_back(transformedNormals[idx]);
 			}
 
 			// Estimate the new pose
@@ -133,11 +131,15 @@ private:
 
 				// TODO: Invalidate the match (set it to -1) if the angle between the normals is greater than 60
 
+                //std::cout << sourceNormal.norm() << std::endl;
+                //std::cout << targetNormal.norm() << std::endl;
+
 				float normal_angle = std::acos (sourceNormal.dot(targetNormal)) * 180.0f / M_PI;
 
 				if (normal_angle > 60.0f){
 
 					match.idx = -1;
+					match.weight = 0.0f;
 				}
 			}
 		}

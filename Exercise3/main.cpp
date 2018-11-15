@@ -7,7 +7,7 @@
 #include "ProcrustesAligner.h"
 #include "PointCloud.h"
 
-#define USE_POINT_TO_PLANE	0
+#define USE_POINT_TO_PLANE	1
 
 #define RUN_PROCRUSTES		0
 #define RUN_SHAPE_ICP		1
@@ -129,7 +129,7 @@ int alignBunnyWithICP() {
 	}
 	else {
 		optimizer.usePointToPlaneConstraints(false);
-		optimizer.setNbOfIterations(50);
+		optimizer.setNbOfIterations(20);
 	}
 
 	PointCloud source{ sourceMesh };

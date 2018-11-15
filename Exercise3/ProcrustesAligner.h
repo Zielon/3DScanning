@@ -34,7 +34,8 @@ private:
 
 		Vector3f result = Vector3f::Zero();
 		for(const auto &point : points) result += point;
-		return result / points.size();
+
+        return result / points.size();
 	}
 
 	Matrix3f estimateRotation(const std::vector<Vector3f>& sourcePoints, const Vector3f& sourceMean, const std::vector<Vector3f>& targetPoints, const Vector3f& targetMean) {
@@ -45,7 +46,7 @@ private:
 		MatrixXf sourcePointsCentered(sourcePoints.size(), 3);
 		MatrixXf targetPointsCentered(sourcePoints.size(), 3);
 
-		// Centered matrices
+        // Centered matrices
 		for(int i = 0; i < sourcePoints.size(); i++){
 			auto source = sourcePoints[i] - sourceMean;
 			auto target = targetPoints[i] - targetMean;
