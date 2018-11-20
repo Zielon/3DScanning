@@ -1,3 +1,11 @@
+/**
+ * Course: 3D Scanning and Motion Capture
+ * File: main.cpp
+ * Purpose: Third exercise of the course.
+ * @author Juan Raul Padron Griffe, Wojciech Zielonka
+ * @version 1.0 15/11/2018
+*/
+
 #include <iostream>
 #include <fstream>
 

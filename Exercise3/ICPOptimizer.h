@@ -1,3 +1,11 @@
+/**
+ * Course: 3D Scanning and Motion Capture
+ * File: ICPOptimizer.h
+ * Purpose: Third exercise of the course.
+ * @author Juan Raul Padron Griffe, Wojciech Zielonka
+ * @version 1.0 15/11/2018
+*/
+
 #pragma once
 
 #include <flann/flann.hpp>
@@ -164,11 +172,6 @@ private:
 		MatrixXf A = MatrixXf::Zero(4 * nPoints, 6);
 		VectorXf b = VectorXf::Zero(4 * nPoints);
 
-		//MatrixXf A = MatrixXf::Zero(nPoints, 6);
-		//VectorXf b = VectorXf::Zero(nPoints);
-
-		//std::cout << sourcePoints.size() <<std::endl;
-
 		for (unsigned i = 0; i < nPoints; i++) {
 			const auto& s = sourcePoints[i];
 			const auto& d = targetPoints[i];
@@ -218,11 +221,6 @@ private:
 
 		JacobiSVD<MatrixXf> svd(A.transpose() * A, ComputeThinU | ComputeThinV);
 		x = svd.solve(A.transpose() * b);
-
-
-		//Manual approach
-		//MatrixXf Ainv = svd.matrixV() * svd.matrixU().transpose();//Pseudo inverse using SVD decomposition
-		//x = Ainv.transpose()*b;
 		
 		float alpha = x(0), beta = x(1), gamma = x(2);
 
@@ -238,7 +236,7 @@ private:
 		estimatedPose.block(0, 0, 3, 3) = rotation;
 		estimatedPose.block(0, 3, 3, 1) = translation;
 
-		std::cout << estimatedPose << std::endl;
+		//std::cout << estimatedPose << std::endl;
 
 		return estimatedPose;
 	}
