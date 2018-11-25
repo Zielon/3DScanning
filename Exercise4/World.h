@@ -229,12 +229,25 @@ public:
 
 	void filter_matches(int idx0, int idx1, std::vector<std::pair<int, int>> &matches, std::vector<cv::DMatch> &filtered) {
 		// -> TODO Task 2.2
-		for (int i = 0; i < (int)matches.size(); i++) {
-			// if (matches[i].second < ...
 
-			// double dist_p2p = ...
-			// if (dist_p2p < ...
+		for (int i = 0; i < (int)matches.size(); i++) {
+
+			//The Hamming distance should be lower than 40
+			if (matches[i].second >= 40) continue;
+
+
+			//The L2-distance between keypoints should be lower than 40 pixels
+
+			cv::Point2f p1 = keypoints[idx0][i].pt;
+			cv::Point2f p2 = keypoints[idx1][matches[i].first].pt;
+
+			double dist = cv::norm(p1 - p2);
+
+			if ( (int)dist >= 40) continue;
+
+			filtered.emplace_back(cv::DMatch(i, matches[i].first, matches[i].second));
 		}
+
 		// <-
 	}
 
