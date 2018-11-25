@@ -199,12 +199,29 @@ public:
 
 	void brute_force(int idx0, int idx1, std::vector<std::pair<int, int>> &matches) {
 		// -> TODO Task 2.1
-		matches.resize(descriptors[idx0].rows, { -1, INT_MAX });
-		for (int i = 0; i < descriptors[idx0].rows; i++) {
-			cv::Mat d0 = descriptors[idx0].row(i);
-			for (int j = 0; j < descriptors[idx1].rows; j++) {
-				// cv::Mat d1 = ...;
 
+		matches.resize(descriptors[idx0].rows, { -1, INT_MAX });
+
+		//std::cout << descriptors[idx0] << std::endl << "***************" << std::endl;
+
+		for (int i = 0; i < descriptors[idx0].rows; i++) {
+
+			cv::Mat d0 = descriptors[idx0].row(i);
+			int32_t dist = 0;
+
+			//std::cout << d0 << std::endl;
+
+			for (int j = 0; j < descriptors[idx1].rows; j++) {
+
+				cv::Mat d1 = descriptors[idx1].row(j);
+
+				dist = this->hamming_distance(d0, d1);
+
+				if (dist < matches[i].second){
+
+					matches[i].first = j;
+					matches[i].second = dist;
+				}
 			}
 		}
 		// <-
