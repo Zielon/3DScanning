@@ -179,9 +179,13 @@ public:
 
 	void describe_features() {
 		// -> TODO Task 1.3
+
+		cv::Ptr< cv::DescriptorExtractor > descriptor = cv::ORB::create();//Create ORB Descriptor
+
 		for (int i = 0; i < N_FRAMES; i++) {
-			continue;
+			descriptor->compute ( rgb[i], keypoints[i], descriptors[i] );
 		}
+
 		// <-
 	}
 
