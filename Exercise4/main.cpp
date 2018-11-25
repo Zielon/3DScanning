@@ -96,7 +96,7 @@ int main() {
 	// <-
 
 	// -> show images
-	world.show_pics();
+	//world.show_pics();
 	// <-
 
 	// -> extract keypoints

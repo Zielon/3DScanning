@@ -166,11 +166,15 @@ public:
 
 	void extract_features() {
 		// -> TODO Task 1.2
+
+		cv::Ptr< cv::FeatureDetector > detector = cv::ORB::create();//Create ORB Detector
+
+
 		for (int i = 0; i < N_FRAMES; i++) {
-			continue;
+
+			detector->detect(rgb[i], keypoints[i]);
 		}
 		// <-
-
 	}
 
 	void describe_features() {
