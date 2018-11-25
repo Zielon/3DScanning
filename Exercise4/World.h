@@ -147,6 +147,20 @@ public:
 	void show_pics() {
 		// -> TODO: Task 1.1
 
+		//Color maps
+		//cv::namedWindow( "Pictures", cv::WINDOW_AUTOSIZE );// Create a window for display.
+
+		for (int i = 0; i < rgb.size(); i++){
+			cv::imshow( "Color maps", rgb[i] );
+			cv::waitKey();
+		}
+
+		//Depth maps (improve visualization)
+		for (int i = 0; i < rgb.size(); i++){
+			cv::imshow( "Depth maps", depth[i] );
+			cv::waitKey();
+		}
+
 		// <-
 	}
 
