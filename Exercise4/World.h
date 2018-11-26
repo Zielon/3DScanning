@@ -92,9 +92,9 @@ struct CostFunctor {
 
 		// -> img0 to world
 		T p0[3];
-		// p0[0] = ...
-		// p0[1] = ...
-		// p0[2] = ...
+        p0[0] = fx;
+        p0[1] = fy;
+        //p0[2] = 0.0;
 
 		T pw[3];
 		apply_pose(params0, p0, pw);
@@ -102,11 +102,11 @@ struct CostFunctor {
 
 		// -> world to img1
 		T p1[3];
-		// apply_pose(?, pw, p1);
+		apply_pose(params0_inv, pw, p1);
 
 		T pred[2];
-		// pred[0] = ...
-		// pred[1] = ...
+		pred[0] = cx;
+		pred[1] = cy;
 		// <-
 
 		// figure out dim (tip: residuals are in pixel space)
@@ -302,8 +302,8 @@ public:
 					if (d == 0)
 						continue;
 					CostFunctor *ref = new CostFunctor(i, j, {kp0.x, kp0.y}, {kp1.x, kp1.y}, d, poses.col(0).data(), &K);
-					ceres::CostFunction* cost_function = new ceres::AutoDiffCostFunction<CostFunctor, 6, 6 * (N_FRAMES - 1)>(ref);
-					problem.AddResidualBlock(cost_function, NULL, params.data());
+					ceres::CostFunction* cost_function = new ceres::AutoDiffCostFunction<CostFunctor, 6, 6 * (N_FRAMES-1)>(ref);
+					problem.AddResidualBlock(cost_function, nullptr, params.data());
 					counter++;
 				}
 			}
