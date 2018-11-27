@@ -100,9 +100,9 @@ struct CostFunctor {
 
 		// -> img0 to world
 		T p0[3];
-		// p0[0] = ...
-		// p0[1] = ...
-		// p0[2] = ...
+        p0[0] = fx;
+        p0[1] = fy;
+        //p0[2] = 0.0;
 
 		T pw[3];
 		apply_pose(params0, p0, pw);
@@ -110,11 +110,11 @@ struct CostFunctor {
 
 		// -> world to img1
 		T p1[3];
-		// apply_pose(?, pw, p1);
+		apply_pose(params0_inv, pw, p1);
 
 		T pred[2];
-		// pred[0] = ...
-		// pred[1] = ...
+		pred[0] = cx;
+		pred[1] = cy;
 		// <-
 
 		// figure out dim (tip: residuals are in pixel space)
@@ -289,7 +289,6 @@ public:
 		cv::Mat img_matches;
 		cv::drawMatches(rgb[0], keypoints[0], rgb[2], keypoints[2], matches[make_key(0, 2)], img_matches);
 		cv::imshow("Good Matches", img_matches);
-		cv::waitKey();
 	}
 
 	void bootstrap() {
@@ -303,16 +302,16 @@ public:
 		int counter = 0;
 		for (int i = 0; i < N_FRAMES; i++) {
 			for (int j = 0; j < N_FRAMES; j++) {
-				std::vector<cv::DMatch> matches_filtered; // = ...
+				std::vector<cv::DMatch> matches_filtered = matches[make_key(i, j)];
 				for (auto & m : matches_filtered) {
-					cv::Point2i kp0; // = ...
-					cv::Point2i kp1; // = ...
+					cv::Point2i kp0 = keypoints[i].data()->pt;
+					cv::Point2i kp1 = keypoints[j].data()->pt;
 					float d = depth[i].at<float>(kp0.y, kp0.x);
 					if (d == 0)
 						continue;
-					// CostFunctor *ref = new CostFunctor(?, ?, {?, ?}, {?, ?}, d, poses.col(0).data(), &K);
-					// ceres::CostFunction* cost_function = new ceres::AutoDiffCostFunction<CostFunctor, ?, 6*?>(ref);
-					// problem.AddResidualBlock(cost_function, NULL, params.data());
+					CostFunctor *ref = new CostFunctor(i, j, {kp0.x, kp0.y}, {kp1.x, kp1.y}, d, poses.col(0).data(), &K);
+					ceres::CostFunction* cost_function = new ceres::AutoDiffCostFunction<CostFunctor, 6, 6 * (N_FRAMES-1)>(ref);
+					problem.AddResidualBlock(cost_function, nullptr, params.data());
 					counter++;
 				}
 			}
