@@ -98,24 +98,35 @@ struct CostFunctor {
 		T params1_inv[6]; inv(params1, params1_inv);
 		// <-
 
-		// -> img0 to world
-		T p0[3];
-        p0[0] = fx;
-        p0[1] = fy;
-        //p0[2] = 0.0;
+		// ----------------------- img0 to world
 
-		T pw[3];
+        // Unproject point of img0 to world
+        T p0[3];
+        p0[0] = T ( (depth / fx) * (kp0[0] - cx) );
+        p0[1] = T ( (depth / fy) * (kp0[1] - cy) );
+        p0[2] = T (depth);
+
+        T pw[3];//point in the world (reference frame 0)
+
+        //Orientation frame 0
 		apply_pose(params0, p0, pw);
 		// <-
 
-		// -> world to img1
-		T p1[3];
-		apply_pose(params0_inv, pw, p1);
+		// --------------------- world to img1
+		T p1[3];//Point in the world (reference frame 1)
+
+		//Orientation frame 1
+		apply_pose(params1, pw, p1);
+
+
+		//Projection from world to frame 1
 
 		T pred[2];
-		pred[0] = cx;
-		pred[1] = cy;
-		// <-
+		pred[0] = ((fx * p1[0]) / p1[2]) + cx;
+		pred[1] = ((fy * p1[1]) / p1[2]) + cy;
+
+		// ----------- Residual computation
+
 
 		// figure out dim (tip: residuals are in pixel space)
 		// residual[0] = ...
@@ -123,13 +134,18 @@ struct CostFunctor {
 		// residual[...] = ...
 		// residual[dim - 1] = ...
 
+		residual[0] = T (kp1[0]);
+        residual[1] = T (kp1[1]);
+        residual[2] = pred[0];
+        residual[3] = pred[1];
+
 		return true;
 		// <-
 	}
 
 	Eigen::Vector2d kp0, kp1;
 	int idx0, idx1;
-	float depth;
+	double depth;
 	const double* pose0;
 	const Eigen::Matrix4d* K;
 
@@ -300,9 +316,17 @@ public:
 		// -> TODO: Task 3.1
 		bootstrap();
 		int counter = 0;
+
+		std::cout << params.size() << std::endl;
+		//std::cout << params << std::endl;
+        std::cout << N_FRAMES << std::endl;
+
+
 		for (int i = 0; i < N_FRAMES; i++) {
 			for (int j = 0; j < N_FRAMES; j++) {
+
 				std::vector<cv::DMatch> matches_filtered = matches[make_key(i, j)];
+
 				for (auto & m : matches_filtered) {
 					cv::Point2i kp0 = keypoints[i].data()->pt;
 					cv::Point2i kp1 = keypoints[j].data()->pt;
@@ -310,12 +334,14 @@ public:
 					if (d == 0)
 						continue;
 					CostFunctor *ref = new CostFunctor(i, j, {kp0.x, kp0.y}, {kp1.x, kp1.y}, d, poses.col(0).data(), &K);
-					ceres::CostFunction* cost_function = new ceres::AutoDiffCostFunction<CostFunctor, 6, 6 * (N_FRAMES-1)>(ref);
+					ceres::CostFunction* cost_function = new ceres::AutoDiffCostFunction<CostFunctor, 4, 6 * (N_FRAMES-1)>(ref);
 					problem.AddResidualBlock(cost_function, nullptr, params.data());
 					counter++;
 				}
+
 			}
 		}
+
 		std::cout << "n-residuals: " << counter << std::endl;
 		// <-
 	}
