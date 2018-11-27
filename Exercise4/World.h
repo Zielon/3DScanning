@@ -81,7 +81,7 @@ struct CostFunctor {
 		T cx = T((*K)(0, 2));
 		T cy = T((*K)(1, 2));
 
-		// -> camera poses
+		// -> camera poses (Vicon Motion Capture system captures inverse poses)
 		T params0[6], params1[6];
 
 		if (idx0 == 0)
@@ -116,7 +116,7 @@ struct CostFunctor {
 		T p1[3];//Point in the world (reference frame 1)
 
 		//Orientation frame 1
-		apply_pose(params1, pw, p1);
+		apply_pose(params1_inv, pw, p1);
 
 
 		//Projection from world to frame 1
@@ -129,15 +129,9 @@ struct CostFunctor {
 
 
 		// figure out dim (tip: residuals are in pixel space)
-		// residual[0] = ...
-		// residual[0 + 1] = ...
-		// residual[...] = ...
-		// residual[dim - 1] = ...
 
-		residual[0] = T (kp1[0]);
-        residual[1] = T (kp1[1]);
-        residual[2] = pred[0];
-        residual[3] = pred[1];
+        residual[0] = T (kp1[0] - pred[0]);
+        residual[1] = T (kp1[1] - pred[1]);
 
 		return true;
 		// <-
@@ -305,6 +299,8 @@ public:
 		cv::Mat img_matches;
 		cv::drawMatches(rgb[0], keypoints[0], rgb[2], keypoints[2], matches[make_key(0, 2)], img_matches);
 		cv::imshow("Good Matches", img_matches);
+
+        cv::waitKey();
 	}
 
 	void bootstrap() {
@@ -334,7 +330,7 @@ public:
 					if (d == 0)
 						continue;
 					CostFunctor *ref = new CostFunctor(i, j, {kp0.x, kp0.y}, {kp1.x, kp1.y}, d, poses.col(0).data(), &K);
-					ceres::CostFunction* cost_function = new ceres::AutoDiffCostFunction<CostFunctor, 4, 6 * (N_FRAMES-1)>(ref);
+					ceres::CostFunction* cost_function = new ceres::AutoDiffCostFunction<CostFunctor, 2, 6 * N_FRAMES>(ref);
 					problem.AddResidualBlock(cost_function, nullptr, params.data());
 					counter++;
 				}
