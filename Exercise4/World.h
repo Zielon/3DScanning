@@ -1,3 +1,11 @@
+/**
+ * Course: 3D Scanning and Motion Capture
+ * File: World.h
+ * Purpose: Fourth exercise of the course.
+ * @author Juan Raul Padron Griffe, Wojciech Zielonka
+ * @version 1.0 27/11/2018
+*/
+
 #pragma once
 
 #include <vector>
