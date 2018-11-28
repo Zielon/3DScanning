@@ -313,7 +313,7 @@ public:
         cv::drawMatches(rgb[0], keypoints[0], rgb[1], keypoints[1], matches[make_key(0, 1)], img_matches);
         cv::imshow("Good Matches", img_matches);
 
-        cv::waitKey();
+        //cv::waitKey();
     }
 
     void bootstrap() {
@@ -337,10 +337,11 @@ public:
                     continue;
 
                 std::vector<cv::DMatch> matches_filtered = matches[make_key(i, j)];
-                cv::Point2i kp0 = keypoints[i].data()->pt;
-                cv::Point2i kp1 = keypoints[j].data()->pt;
 
                 for (auto &m : matches_filtered) {
+                    cv::Point2i kp0 = keypoints[i][m.queryIdx].pt;
+                    cv::Point2i kp1 = keypoints[j][m.trainIdx].pt;
+
                     float d = depth[i].at<float>(kp0.y, kp0.x);
 
                     if (d <= 0.f)
