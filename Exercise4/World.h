@@ -181,6 +181,11 @@ public:
 
         for (int i = 0; i < rgb.size(); i++) {
             cv::imshow("Color maps", rgb[i]);
+
+            /*if (i == 0){
+                cv::imwrite("keypoints.png", rgb[i]);
+            }*/
+
             cv::waitKey();
         }
 
@@ -310,10 +315,12 @@ public:
 
     void show_matches() {
         cv::Mat img_matches;
-        cv::drawMatches(rgb[0], keypoints[0], rgb[1], keypoints[1], matches[make_key(0, 1)], img_matches);
+        cv::drawMatches(rgb[0], keypoints[0], rgb[2], keypoints[2], matches[make_key(0, 2)], img_matches);
         cv::imshow("Good Matches", img_matches);
 
-        //cv::waitKey();
+        /*cv::imwrite("matches.png", img_matches);
+
+        cv::waitKey();*/
     }
 
     void bootstrap() {
@@ -325,10 +332,6 @@ public:
         // -> TODO: Task 3.1
         bootstrap();
         int counter = 0;
-
-        std::cout << params.size() << std::endl;
-        //std::cout << params << std::endl;
-        std::cout << N_FRAMES << std::endl;
 
         for (uint32_t i = 0; i < N_FRAMES; i++) {
             for (uint32_t j = 0; j < N_FRAMES; j++) {
