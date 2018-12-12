@@ -36,7 +36,8 @@ add_executable(project
         Tracker.h
         ICP.cpp
         ICP.h
-        ${SOURCE_FILES_CPP} ${SOURCE_FILES_H})
+        ${SOURCE_FILES_CPP}
+        ${SOURCE_FILES_H})
 
 target_link_libraries(
     project
