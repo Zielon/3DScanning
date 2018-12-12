@@ -30,7 +30,13 @@ set(SOURCE_FILES_H)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/build)
 
-add_executable(project main.cpp ${SOURCE_FILES_CPP} ${SOURCE_FILES_H})
+add_executable(project
+        main.cpp
+        Tracker.cpp
+        Tracker.h
+        ICP.cpp
+        ICP.h
+        ${SOURCE_FILES_CPP} ${SOURCE_FILES_H})
 
 target_link_libraries(
     project
