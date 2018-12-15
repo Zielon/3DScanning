@@ -22,7 +22,7 @@ include_directories (include ${PROJECT_BINARY_DIR})
 # -----------------------------
 
 add_library(
-    tracker STATIC
+    tracker SHARED
     Tracker.cpp
     Tracker.h
     ICP.cpp
