@@ -31,7 +31,7 @@ add_library(
         tracker SHARED
         Tracker.cpp
         ICP.cpp
-        ExportDLL.h
+		ExportDLL.cpp
 )
 
 #--------------Compile library (Linux and Apple development)
