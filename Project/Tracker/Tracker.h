@@ -2,25 +2,25 @@
 #define PROJECT_TRACKER_H
 
 #include <iostream>
+#include <cstddef>
 
-//typedef unsigned char byte; 
+#ifdef linux
 
-/*Fix cmake file
-#include "opencv2/core.hpp"
-#include "opencv2/imgcodecs.hpp"
-#include "opencv2/highgui.hpp"*/
+#include <opencv2/core/mat.hpp>
+
+#endif
+
+#ifdef _WIN32
+// Add your import
+#endif
 
 using namespace std;
 
-class Tracker{
+class Tracker {
 public:
     void computerCameraPose(byte *image, float *pose, int width, int height);
 
 private:
 };
-
-//DLL exports
-extern "C" __declspec(dllexport) void * createTracker();
-extern "C" __declspec(dllexport) void trackerCameraPose(void *object, byte *image, float *pose, int w, int h);
 
 #endif //PROJECT_TRACKER_H

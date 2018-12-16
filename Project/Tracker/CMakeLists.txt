@@ -12,65 +12,56 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 # ---------> REQUIRED PACKAGES
 
-#[[ Ineed to install libraries in Windows
-find_package(Eigen3 3.3 REQUIRED)
-include_directories(${EIGEN3_INCLUDE_DIR})
+if (UNIX)
+    find_package(Eigen3 3.3 REQUIRED)
+    include_directories(${EIGEN3_INCLUDE_DIR})
 
-find_package(OpenCV REQUIRED)
-include_directories(${OPENCV_INCLUDE_DIR})
+    find_package(OpenCV REQUIRED)
+    include_directories(${OPENCV_INCLUDE_DIR})
 
-find_package(Ceres REQUIRED)
-include_directories(${CERES_INCLUDE_DIRS})
-include_directories (include ${PROJECT_BINARY_DIR})
-]]
+    find_package(Ceres REQUIRED)
+    include_directories(${CERES_INCLUDE_DIRS})
+    include_directories(include ${PROJECT_BINARY_DIR})
+endif (UNIX)
 
 # -----------------------------
 
 # ------------Compile dll library (deploy)
 if (WIN32)
-
-	add_library(
-    tracker SHARED
-    Tracker.cpp
-    Tracker.h
-    ICP.cpp
-    ICP.h
-	TrackerExports.h
-	)
-
+    add_library(
+            tracker SHARED
+            Tracker.cpp
+            ICP.cpp
+            TrackerExports.h
+    )
 endif (WIN32)
 
 #--------------Compile library (Linux and Apple development)
 if (UNIX)
+    add_library(
+            tracker SHARED
+            Tracker.cpp
+            ICP.cpp
+    )
 
-	add_library(
-	tracker SHARED
-	Tracker.cpp
-	Tracker.h
-	ICP.cpp
-	ICP.h
-	)
-
+    target_link_libraries(
+            tracker
+            freeimage
+            opencv_core
+            opencv_highgui
+            opencv_features2d
+            opencv_imgcodecs
+            ${CERES_LIBRARIES}
+    )
 endif (UNIX)
 
-#[[ I need to install libraries in Windows
 target_link_libraries(
-    tracker
-    freeimage
-    opencv_core
-    opencv_highgui
-    opencv_features2d
-    opencv_imgcodecs
-    ${CERES_LIBRARIES}
-)]]
-
-target_link_libraries(
-	tracker
+        tracker
 )
 
 add_executable(
-    tracker-bin
-    main.cpp
+        tracker-bin
+        main.cpp
 )
 
 target_link_libraries(tracker-bin tracker)
