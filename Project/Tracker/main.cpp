@@ -18,6 +18,15 @@ extern "C" __declspec(dllexport) int trackerCount(void *object) {
 	return tracker->count();
 }
 
+extern "C" __declspec(dllexport) void trackerCameraPose(void *object, byte *image, float *pose, int w, int h) {
+
+	Tracker *tracker = (Tracker*)object;
+
+	tracker->computerCameraPose(image, pose, w, h);
+
+	//return tracker->count();
+}
+
 int main() {
 
     //Tracker tracker;

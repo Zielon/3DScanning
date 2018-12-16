@@ -11,7 +11,7 @@ using namespace std;
 
 class Tracker{
 public:
-    void computerCameraPose(const float **image, const float *pose, int width, int height);
+    void computerCameraPose(byte *image, float *pose, int width, int height);
 	int count();
 
 private:
