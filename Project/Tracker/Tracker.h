@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-typedef unsigned char byte; 
+//typedef unsigned char byte; 
 
 /*#include "opencv2/core.hpp"
 #include "opencv2/imgcodecs.hpp"

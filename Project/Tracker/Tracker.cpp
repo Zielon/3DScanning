@@ -1,12 +1,8 @@
 #include "Tracker.h"
 
 void Tracker::computerCameraPose(byte *image, float *pose, int width, int height) {
-    cout << "computerCameraPose" << endl;
-
-	//Simple test
-	/*pose[0] = 5.0f;
-
-	image[0] = (std::byte) 255;*/
+    
+	cout << "computerCameraPose" << endl;
 
 	//Set image to white
 
