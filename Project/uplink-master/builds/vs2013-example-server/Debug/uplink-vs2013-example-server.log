@@ -1,0 +1,10 @@
+﻿  UplinkServer.cpp
+c:\users\patrick\desktop\3dscan\3dscanning\project\uplink-master\headers\core\platforms\core\windows-threads.hpp(72): warning C4311: 'reinterpret_cast': pointer truncation from 'void *' to 'DWORD'
+c:\users\patrick\desktop\3dscan\3dscanning\project\uplink-master\headers\core\platforms\core\windows-threads.hpp(72): warning C4302: 'reinterpret_cast': truncation from 'void *' to 'DWORD'
+c:\users\patrick\desktop\3dscan\3dscanning\project\uplink-master\headers\shift-depth-converter.hpp(82): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\patrick\desktop\3dscan\3dscanning\project\uplink-master\headers\shift-depth-converter.hpp(90): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+  uplink-vs2013-example-server.vcxproj -> C:\Users\Patrick\Desktop\3dscan\3DScanning\Project\uplink-master\projects\..\builds\vs2013-example-server\Debug\example-server.exe
+  Copying PNG example resources...
+  C:\Users\Patrick\Desktop\3dscan\3DScanning\Project\uplink-master\projects\\..\examples\auto-level-button.png
+  C:\Users\Patrick\Desktop\3dscan\3DScanning\Project\uplink-master\projects\\..\examples\record-button.png
+          2 file(s) copied.

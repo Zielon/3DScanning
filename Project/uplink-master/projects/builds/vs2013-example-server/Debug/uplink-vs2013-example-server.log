@@ -1,0 +1,4 @@
+﻿  example-desktop-server.cpp
+  uplink.cpp
+  UplinkServer.cpp
+LINK : fatal error LNK1104: cannot open file 'C:\Users\Patrick\Desktop\3dscan\3DScanning\Project\uplink-master\projects\builds\vs2013-example-server\Debug\example-desktop-server.obj'

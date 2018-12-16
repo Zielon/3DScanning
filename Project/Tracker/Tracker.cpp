@@ -13,7 +13,7 @@ void Tracker::computerCameraPose(byte *image, float *pose, int width, int height
 	int N = height * width * 3;
 
 	for (int i = 0; i < height; i++) {
-		image[i] = (std::byte) 255;
+		image[i] = (byte) 255;
 	}
 }
 
