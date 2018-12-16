@@ -2,16 +2,27 @@
 #define PROJECT_TRACKER_H
 
 #include <iostream>
+#include <cstddef>
 
-#include "opencv2/core.hpp"
-#include "opencv2/imgcodecs.hpp"
-#include "opencv2/highgui.hpp"
+#ifdef linux
+
+#include <opencv2/core/mat.hpp>
+
+#endif
+
+#ifdef _WIN32
+// Add your import
+#endif
+
+
+
 
 using namespace std;
 
-class Tracker{
+class Tracker {
 public:
-    void computerCameraPose(const float **image, const float *pose, int width, int height);
+    void computerCameraPose(byte *image, float *pose, int width, int height);
+
 private:
 };
 

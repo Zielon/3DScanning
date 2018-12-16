@@ -7,3 +7,5 @@ build/
 
 # Project-specific
 libs/*
+lib/
+bin/
