@@ -2,6 +2,14 @@
 
 #include "Tracker.h"
 
+extern "C" {
+    const char* PrintHello (){
+        return "Hello";
+    };
+
+}
+
+
 int main() {
 
     Tracker tracker;
