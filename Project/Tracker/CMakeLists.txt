@@ -27,23 +27,15 @@ endif (UNIX)
 # -----------------------------
 
 # ------------Compile dll library (deploy)
-if (WIN32)
-    add_library(
-            tracker SHARED
-            Tracker.cpp
-            ICP.cpp
-            TrackerExports.h
-    )
-endif (WIN32)
+add_library(
+        tracker SHARED
+        Tracker.cpp
+        ICP.cpp
+        Export.h
+)
 
 #--------------Compile library (Linux and Apple development)
 if (UNIX)
-    add_library(
-            tracker SHARED
-            Tracker.cpp
-            ICP.cpp
-    )
-
     target_link_libraries(
             tracker
             freeimage
