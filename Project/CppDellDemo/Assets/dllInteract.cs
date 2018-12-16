@@ -12,6 +12,8 @@ public class dllInteract : MonoBehaviour
     private const string DllFilePath = @"C:\Users\Lukas\Desktop\bin\tracker.dll";
 
     [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern int test();
+    [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern System.IntPtr createTracker();
+    [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern int trackerCount(System.IntPtr tracker_object);
 
     //[DllImport("tracker")] private static extern int test();
 
@@ -32,6 +34,14 @@ public class dllInteract : MonoBehaviour
         //int a = 5;
 
         Debug.Log( string.Format("My favorite number {0}\n", a) );
+
+        System.IntPtr tracker = createTracker();
+
+        Debug.Log("So far so good");
+
+        int b = trackerCount(tracker);
+
+        Debug.Log(string.Format("Class tracker count: {0}\n", b));
 
         Debug.Log("Final Test");
     }

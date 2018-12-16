@@ -4,3 +4,7 @@ void Tracker::computerCameraPose(const float **image, const float *pose, int wid
     cout << "computerCameraPose" << endl;
 }
 
+int Tracker::count() {
+
+	return -1;
+}
