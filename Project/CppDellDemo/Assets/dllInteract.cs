@@ -5,7 +5,45 @@ using System.Threading;
 using UnityEngine;
 
 using UnityEngine.UI;
-public class dllInteract : MonoBehaviour {
+
+
+public class dllInteract : MonoBehaviour
+{
+    private const string DllFilePath = @"C:\Users\Lukas\Desktop\bin\tracker.dll";
+
+    [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern int test();
+
+    //[DllImport("tracker")] private static extern int test();
+
+    Thread cppMainThread;
+
+    // Use this for initialization
+    void Start()
+    {
+        cppMainThread = new Thread(cppMainThreadCaller);
+        cppMainThread.Start(); 
+    }
+
+
+    void cppMainThreadCaller()
+    {
+        Debug.Log("Test 4");
+        int a = test();
+        //int a = 5;
+
+        Debug.Log( string.Format("My favorite number {0}\n", a) );
+
+        Debug.Log("Final Test");
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+}
+
+/*public class dllInteract : MonoBehaviour {
 
     RawImage rawImg;
 
@@ -46,7 +84,5 @@ public class dllInteract : MonoBehaviour {
         Debug.Log("Mark3"); 
         SpriteRenderer videoBg = GetComponent<SpriteRenderer>();
         videoBg.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
-        /**/
-
     }
-}
+}*/

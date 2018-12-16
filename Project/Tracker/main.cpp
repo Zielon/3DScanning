@@ -2,6 +2,10 @@
 
 #include "Tracker.h"
 
+extern "C" __declspec(dllexport) int test() {
+	return 8;
+}
+
 int main() {
 
     Tracker tracker;
