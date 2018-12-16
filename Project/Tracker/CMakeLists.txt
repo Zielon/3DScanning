@@ -12,7 +12,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 # ---------> REQUIRED PACKAGES
 
-#[[ Install libraries Windows
+#[[ Ineed to install libraries in Windows
 find_package(Eigen3 3.3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
@@ -26,16 +26,34 @@ include_directories (include ${PROJECT_BINARY_DIR})
 
 # -----------------------------
 
-add_library(
+# ------------Compile dll library (deploy)
+if (WIN32)
+
+	add_library(
     tracker SHARED
     Tracker.cpp
     Tracker.h
     ICP.cpp
     ICP.h
-	main.cpp
-)
+	TrackerExports.h
+	)
 
-#[[ Install libraries Windows
+endif (WIN32)
+
+#--------------Compile library (Linux and Apple development)
+if (UNIX)
+
+	add_library(
+	tracker SHARED
+	Tracker.cpp
+	Tracker.h
+	ICP.cpp
+	ICP.h
+	)
+
+endif (UNIX)
+
+#[[ I need to install libraries in Windows
 target_link_libraries(
     tracker
     freeimage
