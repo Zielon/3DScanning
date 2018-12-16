@@ -17,6 +17,8 @@ public class dllInteract : MonoBehaviour
     [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern void trackerCameraPose(System.IntPtr tracker_object,
      byte[] image, float [] pose, int w, int h);
 
+    byte[] image = null;
+
     //[DllImport("tracker")] private static extern int test();
 
     Thread cppMainThread;
@@ -31,7 +33,8 @@ public class dllInteract : MonoBehaviour
 
     void cppMainThreadCaller()
     {
-        Debug.Log("Test 4");
+        Debug.Log("Start Test");
+        /*Debug.Log("Test 4");
         int a = test();
         //int a = 5;
 
@@ -43,26 +46,43 @@ public class dllInteract : MonoBehaviour
 
         int b = trackerCount(tracker);
 
-        Debug.Log(string.Format("Class tracker count: {0}\n", b));
+        Debug.Log(string.Format("Class tracker count: {0}\n", b));*/
+
+        System.IntPtr tracker = createTracker();
 
         float[] pose = new float[16];
         int w = 640;
         int h = 480;
 
-        byte[] image = new byte[w * h* 3];
+        image = new byte[w * h * 3];
 
         trackerCameraPose(tracker, image, pose, w, h);
 
-        Debug.Log(string.Format("Check pose: {0}\n", pose[0]));
-        Debug.Log(string.Format("Check image: {0}\n", image[0]));
+        //Debug.Log(string.Format("Check pose: {0}\n", pose[0]));
+        //Debug.Log(string.Format("Check image: {0}\n", image[5]));
 
-        Debug.Log("Final Test");
+        //Debug.Log("Final Test");
     }
 
     // Update is called once per frame
     void Update()
     {
+        Debug.Log("Update test");
 
+        if (image != null)
+        {
+            Debug.Log(string.Format("Check image in update: {0}\n", image[1]));
+
+            //Create texture from image
+            Texture2D tex = new Texture2D(640, 480, TextureFormat.RGB24, false);
+            tex.LoadRawTextureData(image);
+
+            Debug.Log("Texture created successfuly");
+            SpriteRenderer videoBg = GetComponent<SpriteRenderer>();
+            videoBg.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+
+            Debug.Log("Sprite created successfuly");
+        }
     }
 }
 
