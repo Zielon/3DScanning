@@ -31,7 +31,7 @@ add_library(
 
 target_link_libraries(
     tracker
-    freeimage
+#    freeimage
     opencv_core
     opencv_highgui
     opencv_features2d
