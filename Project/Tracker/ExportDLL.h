@@ -7,17 +7,9 @@
 //DLL exports of the tracker
 
 #ifdef _WIN32
-extern "C" __declspec(dllexport) void * createTracker() {
+extern "C" __declspec(dllexport) void * createTracker();
 
-    return new Tracker();
-}
-
-extern "C" __declspec(dllexport) void trackerCameraPose(void *object, byte *image, float *pose, int w, int h) {
-
-    Tracker *tracker = (Tracker*)object;
-
-    tracker->computerCameraPose(image, pose, w, h);
-}
+extern "C" __declspec(dllexport) void trackerCameraPose(void *object, byte *image, float *pose, int w, int h);
 #endif
 
 #endif //EXPORT_DLL_H
