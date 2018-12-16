@@ -1,24 +1,22 @@
 cmake_minimum_required(VERSION 3.10)
 project(tracker VERSION 1.0.0 DESCRIPTION "A library for tracking")
 
-set(PROJECT_DIR "C:/Users/Lukas/Desktop/3DScanning/Project/Tracker")
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3")
 
+#[[
+set(PROJECT_DIR "C:/Users/Lukas/Desktop/3DScanning/Project/Tracker")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_DIR}/bin)]]
 
-#[[
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-]]
 
 # ---------> REQUIRED PACKAGES
 
-#[[
+#[[ Install libraries Windows
 find_package(Eigen3 3.3 REQUIRED)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
@@ -41,7 +39,7 @@ add_library(
 	main.cpp
 )
 
-#[[
+#[[ Install libraries Windows
 target_link_libraries(
     tracker
     freeimage

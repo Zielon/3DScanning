@@ -12,8 +12,3 @@ void Tracker::computerCameraPose(byte *image, float *pose, int width, int height
 		image[i] = (byte) 255;
 	}
 }
-
-int Tracker::count() {
-
-	return -1;
-}
