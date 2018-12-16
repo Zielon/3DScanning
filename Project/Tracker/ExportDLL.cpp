@@ -1,5 +1,7 @@
 #include "ExportDLL.h"
 
+#ifdef _WIN32
+
 __declspec(dllexport) void * createTracker() {
 
 	return new Tracker();
@@ -11,3 +13,5 @@ __declspec(dllexport) void trackerCameraPose(void *object, byte *image, float *p
 
 	tracker->computerCameraPose(image, pose, w, h);
 }
+
+#endif
