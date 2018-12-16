@@ -54,7 +54,7 @@ public class dllInteract : MonoBehaviour
         if (image != null)
         {
             //Create texture from image
-            Texture2D tex = new Texture2D(640, 480, TextureFormat.RGB24, false);
+            Texture2D tex = new Texture2D(w, h, TextureFormat.RGB24, false);
             tex.LoadRawTextureData(image);
 
             //Debug.Log("Texture created successfuly");

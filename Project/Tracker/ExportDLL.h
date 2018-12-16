@@ -1,6 +1,6 @@
-#ifndef TRACKER_EXPORTS_H
+#ifndef EXPORT_DLL_H
 
-#define TRACKER_EXPORTS_H
+#define EXPORT_DLL_H
 
 #include "Tracker.h"
 
@@ -20,4 +20,4 @@ extern "C" __declspec(dllexport) void trackerCameraPose(void *object, byte *imag
 }
 #endif
 
-#endif //TRACKER_EXPORTS_H
+#endif //EXPORT_DLL_H
