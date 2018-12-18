@@ -329,6 +329,7 @@ GameObject:
   - component: {fileID: 1555687159}
   - component: {fileID: 1555687161}
   - component: {fileID: 1555687160}
+  - component: {fileID: 1555687162}
   m_Layer: 0
   m_Name: VideoBG
   m_TagString: Untagged
@@ -388,6 +389,17 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1555687158}
   m_CullTransparentMesh: 0
+--- !u!114 &1555687162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1555687158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31c7d86c210395044bcaf2f7797dcf1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1873586256
 GameObject:
   m_ObjectHideFlags: 0

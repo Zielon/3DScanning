@@ -343,7 +343,7 @@ struct ExampleSessionSetup : uplink::SessionSetup
 #else
 		addSetRegistrationModeAction(uplink::RegistrationMode_RegisteredDepth);
 #endif
-		addSetFrameSyncModeAction(uplink::FrameSyncMode_Depth);
+		//addSetFrameSyncModeAction(uplink::FrameSyncMode_Depth);
 
 		addSetSporadicFrameColorAction(false);
 		addSetSporadicFrameColorDivisorAction(1);
@@ -363,7 +363,7 @@ struct ExampleSessionSetup : uplink::SessionSetup
 
 		addSetDepthCameraCodecAction(uplink::ImageCodecId_CompressedShifts);
 		addSetColorCameraCodecAction(uplink::ImageCodecId_JPEG);
-		addSetFeedbackImageCodecAction(uplink::ImageCodecId_JPEG);
+		//addSetFeedbackImageCodecAction(uplink::ImageCodecId_JPEG);
 
 	}
 };

@@ -320,7 +320,7 @@ inline void
 Endpoint::registerMessages (MessageSerializer& messageSerializer)
 {
 
-//#define MAGIC_USE_SKAN 1
+//#define MAGIC_USE_SKAN 
 #ifdef MAGIC_USE_SKAN
 	messageSerializer.setMagic("skan");
 #else
