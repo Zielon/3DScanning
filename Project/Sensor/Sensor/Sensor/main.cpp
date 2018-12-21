@@ -33,7 +33,31 @@ void saveColorMap(const unsigned char *data, int id, int size) {
 
 	fopen_s(&file, path, "wb");
 
-	fwrite(data, 1, size, file);
+	fwrite(data, sizeof(unsigned char), size, file);
+
+	fclose(file);
+}
+
+void saveDepthMap(const unsigned short *data, int id, int size) {
+
+	//Transform depth from integer to float
+	int N = size / sizeof(unsigned short);
+	float *new_data = new float[N];
+
+	for (int i = 0; i < N; i++) {
+		new_data[i] =  (float) data[i];
+	}
+
+	FILE* file = NULL;
+
+	char path[100] = "";
+
+	sprintf_s(path, "..\\Data\\depth_map_%d.raw", id);
+
+	fopen_s(&file, path, "wb");
+
+	//fwrite(data, sizeof(unsigned short), size, file);
+	fwrite(new_data, sizeof(unsigned char), N * sizeof(float), file);
 
 	fclose(file);
 }
@@ -143,6 +167,8 @@ int main()
 
 
 		const unsigned char *color_map = colorMD.Data();
+		const unsigned short *depth_map = depthMD.Data();
+
 		/*const XnUInt8* color_map = colorMD.Data();
 		const XnDepthPixel* depth_map = depthMD.Data();*/
 
@@ -150,6 +176,7 @@ int main()
 		printf("Depth frame %d: resolution (%d, %d), bytes %d\n", depthMD.FrameID(), depthMD.XRes(), depthMD.YRes(), depthMD.DataSize());
 
 		saveColorMap(color_map, colorMD.FrameID(), colorMD.DataSize());
+		saveDepthMap(depth_map, depthMD.FrameID(), depthMD.DataSize());
 		cin.get();
 		//printf("Depth frame %d: (center: %u, FPS: %f)\n", depthMD.FrameID(), depthMD(depthMD.XRes() / 2, depthMD.YRes() / 2), xnFPSCalc(&xnFPS));
 	}
