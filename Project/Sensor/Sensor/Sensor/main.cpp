@@ -64,40 +64,80 @@ int main()
 		return (nRetVal);
 	}
 
+	//Setting image generator (RGB color)
+	ImageGenerator color_generator;
+	nRetVal = context.FindExistingNode(XN_NODE_TYPE_IMAGE, color_generator);
+	CHECK_RC(nRetVal, "Find color generator");
+
 	//Setting depth degenerator
-	DepthGenerator depth;
-	nRetVal = context.FindExistingNode(XN_NODE_TYPE_DEPTH, depth);
+	DepthGenerator depth_generator;
+	nRetVal = context.FindExistingNode(XN_NODE_TYPE_DEPTH, depth_generator);
 	CHECK_RC(nRetVal, "Find depth generator");
+
+	ImageMetaData colorMD;
+	DepthMetaData depthMD;
+
+	color_generator.GetMetaData(colorMD);
+	depth_generator.GetMetaData(depthMD);
+
+	//Color image must be RGBformat.
+	if (colorMD.PixelFormat() != XN_PIXEL_FORMAT_RGB24)
+	{
+		printf("The device image format must be RGB24\n");
+		return 1;
+	}
+
+	// Color resolution must be equal to depth resolution
+	if (colorMD.FullXRes() != depthMD.FullXRes() || colorMD.FullYRes() != depthMD.FullYRes())
+	{
+		printf("The device depth and image resolution must be equal!\n");
+		return 1;
+	}
 
 	XnFPSData xnFPS;
 	nRetVal = xnFPSInit(&xnFPS, 180);
 	CHECK_RC(nRetVal, "FPS Init");
 
-	cin.get();
-
-	//Processing each frame
-	DepthMetaData depthMD;
-
+	//Processing each frame until the user stops the process by hitting a key
 	while (!xnOSWasKeyboardHit())
 	{
-		nRetVal = context.WaitOneUpdateAll(depth);
+		/*nRetVal = context.WaitOneUpdateAll(depth_generator);
+
 		if (nRetVal != XN_STATUS_OK)
 		{
 			printf("UpdateData failed: %s\n", xnGetStatusString(nRetVal));
+			continue;
+		}*/
+
+		//Read a new frame
+		nRetVal = context.WaitAnyUpdateAll();
+
+		if (nRetVal != XN_STATUS_OK)
+		{
+			printf("ReadData failed: %s\n", xnGetStatusString(nRetVal));
 			continue;
 		}
 
 		xnFPSMarkFrame(&xnFPS);
 
-		//Getting depth data from depth generator
-		depth.GetMetaData(depthMD);
-		const XnDepthPixel* pDepthMap = depthMD.Data();
+		//Getting data from generator
+		color_generator.GetMetaData(colorMD);
+		depth_generator.GetMetaData(depthMD);
 
-		printf("Frame %d Middle point is: %u. FPS: %f\n", depthMD.FrameID(), depthMD(depthMD.XRes() / 2, depthMD.YRes() / 2), xnFPSCalc(&xnFPS));
+		const XnUInt8* color_map = colorMD.Data();
+		const XnDepthPixel* depth_map = depthMD.Data();
+
+		printf("Color frame %d: resolution (%d, %d), bytes %d\n", colorMD.FrameID(), colorMD.XRes(), colorMD.YRes(), colorMD.DataSize());
+		printf("Depth frame %d: resolution (%d, %d), bytes %d\n", depthMD.FrameID(), depthMD.XRes(), depthMD.YRes(), depthMD.DataSize());
+
+		//cin.get();
+		//printf("Color frame %d: (center: %u, FPS: %f)\n", colorMD.FrameID(), colorMD(colorMD.XRes() / 2, colorMD.YRes() / 2), xnFPSCalc(&xnFPS));
+		//printf("Depth frame %d: (center: %u, FPS: %f)\n", depthMD.FrameID(), depthMD(depthMD.XRes() / 2, depthMD.YRes() / 2), xnFPSCalc(&xnFPS));
 	}
 
 	//Release resources
-	depth.Release();
+	color_generator.Release();
+	depth_generator.Release();
 	scriptNode.Release();
 	context.Release();
 
