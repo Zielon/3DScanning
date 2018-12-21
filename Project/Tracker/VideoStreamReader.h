@@ -12,7 +12,6 @@ public:
 	
 	virtual ~VideoStreamReader()
 	{
-		stopReading(); 
 	}
 
 	virtual bool startReading() = 0; 
