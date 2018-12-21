@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+
 //OpenNI
 #include <XnOpenNI.h>
 #include <XnLog.h>
@@ -20,6 +22,21 @@ using namespace xn;
 		return rc;													\
 	}
 
+
+void saveColorMap(const unsigned char *data, int id, int size) {
+
+	FILE* file = NULL;
+
+	char path[100] = "";
+
+	sprintf_s(path, "..\\Data\\color_map_%d.raw", id);
+
+	fopen_s(&file, path, "wb");
+
+	fwrite(data, 1, size, file);
+
+	fclose(file);
+}
 
 XnBool fileExists(const char *fn)
 {
@@ -124,14 +141,16 @@ int main()
 		color_generator.GetMetaData(colorMD);
 		depth_generator.GetMetaData(depthMD);
 
-		const XnUInt8* color_map = colorMD.Data();
-		const XnDepthPixel* depth_map = depthMD.Data();
+
+		const unsigned char *color_map = colorMD.Data();
+		/*const XnUInt8* color_map = colorMD.Data();
+		const XnDepthPixel* depth_map = depthMD.Data();*/
 
 		printf("Color frame %d: resolution (%d, %d), bytes %d\n", colorMD.FrameID(), colorMD.XRes(), colorMD.YRes(), colorMD.DataSize());
 		printf("Depth frame %d: resolution (%d, %d), bytes %d\n", depthMD.FrameID(), depthMD.XRes(), depthMD.YRes(), depthMD.DataSize());
 
-		//cin.get();
-		//printf("Color frame %d: (center: %u, FPS: %f)\n", colorMD.FrameID(), colorMD(colorMD.XRes() / 2, colorMD.YRes() / 2), xnFPSCalc(&xnFPS));
+		saveColorMap(color_map, colorMD.FrameID(), colorMD.DataSize());
+		cin.get();
 		//printf("Depth frame %d: (center: %u, FPS: %f)\n", depthMD.FrameID(), depthMD(depthMD.XRes() / 2, depthMD.YRes() / 2), xnFPSCalc(&xnFPS));
 	}
 
