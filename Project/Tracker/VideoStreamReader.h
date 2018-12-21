@@ -1,5 +1,8 @@
 #pragma once
 
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
 
 class VideoStreamReader
 {
@@ -29,7 +32,7 @@ public:
 	*		skipping frames, however, will have negative influences in accuracy and skipping a too large window will cause registration to fail 
 	*
 	*/
-	void getNextFrame(unsigned char** rgb, float** depth, bool skip = true)
+	void getNextFrame(cv::Mat& rgb, cv::Mat& depth, bool skip = true)
 	{
 		waitForNextFrame(); 
 		++newFrameIndex; 
@@ -58,7 +61,7 @@ public:
 	*
 	* returns: true if frame was read; false, if no frame available
 	*/
-	bool tryGetNextFrame(unsigned char** rgb, float** depth, bool skip = true)
+	bool tryGetNextFrame(cv::Mat& rgb, cv::Mat& depth, bool skip = true)
 	{
 		if (lastFrameReadIndex == newFrameIndex && !nextFrameAvailable()) // no new frames
 		{
@@ -84,8 +87,8 @@ protected:
 
 	virtual bool nextFrameAvailable() = 0; 
 
-	virtual int getSequentialFrame(unsigned char** rgb, float** depth) = 0;
-	virtual int getLatestFrame(unsigned char** rgb, float** depth) = 0;
+	virtual int getSequentialFrame(cv::Mat& rgb, cv::Mat& depth) = 0;
+	virtual int getLatestFrame(cv::Mat& rgb, cv::Mat& depth) = 0;
 
 
 

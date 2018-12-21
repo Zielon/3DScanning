@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "VideoStreamReader.h"
-#include "FreeImageHelper.h"
 
 class DatasetVideoStreamReader :
 	public VideoStreamReader
@@ -30,12 +29,12 @@ public:
 protected: 
 
 	virtual bool nextFrameAvailable() override;
-	virtual int getSequentialFrame(unsigned char ** rgb, float ** depth) override;
-	virtual int getLatestFrame(unsigned char ** rgb, float ** depth) override;
+	virtual int getSequentialFrame(cv::Mat& rgb, cv::Mat& depth) override;
+	virtual int getLatestFrame(cv::Mat& rgb, cv::Mat& depth) override;
 
 private:
 
-	int readAnyFrame(const unsigned long& index, unsigned char ** rgb, float ** depth);
+	int readAnyFrame(const unsigned long& index, cv::Mat& rgb, cv::Mat& depth);
 
 	std::string m_datasetFolderPath; 
 	bool m_realtime; 
