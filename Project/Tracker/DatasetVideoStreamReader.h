@@ -30,12 +30,12 @@ public:
 protected: 
 
 	virtual bool nextFrameAvailable() override;
-	virtual int getSequentialFrame(float ** rgb, float ** depth) override;
-	virtual int getLatestFrame(float ** rgb, float ** depth) override;
+	virtual int getSequentialFrame(unsigned char ** rgb, float ** depth) override;
+	virtual int getLatestFrame(unsigned char ** rgb, float ** depth) override;
 
 private:
 
-	int readAnyFrame(const unsigned long& index, float ** rgb, float ** depth); 
+	int readAnyFrame(const unsigned long& index, unsigned char ** rgb, float ** depth);
 
 	std::string m_datasetFolderPath; 
 	bool m_realtime; 

@@ -77,13 +77,13 @@ bool DatasetVideoStreamReader::nextFrameAvailable()
 	return true;
 }
 
-int DatasetVideoStreamReader::getSequentialFrame(float ** rgb, float ** depth)
+int DatasetVideoStreamReader::getSequentialFrame(unsigned char ** rgb, float ** depth)
 {
 	
 	return readAnyFrame(getCurrentFrameIndex() + 1, rgb, depth); 
 }
 
-int DatasetVideoStreamReader::getLatestFrame(float ** rgb, float ** depth)
+int DatasetVideoStreamReader::getLatestFrame(unsigned char ** rgb, float ** depth)
 {
 	std::chrono::duration<double> timeDiff = m_startTime - std::chrono::high_resolution_clock::now();
 	double timeDiffSec = std::chrono::duration_cast<std::chrono::seconds>(timeDiff).count();
@@ -100,7 +100,7 @@ int DatasetVideoStreamReader::getLatestFrame(float ** rgb, float ** depth)
 	return readAnyFrame(getCurrentFrameIndex() + offset, rgb, depth);
 }
 
-int DatasetVideoStreamReader::readAnyFrame(const unsigned long & index, float ** rgb, float ** depth)
+int DatasetVideoStreamReader::readAnyFrame(const unsigned long & index, unsigned char ** rgb, float ** depth)
 {
 	assert(index <= m_numFrames); 
 
