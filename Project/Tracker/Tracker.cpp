@@ -4,6 +4,9 @@ void Tracker::computerCameraPose(byte *image, float *pose, int width, int height
 
     cout << "computerCameraPose" << endl;
 
+
+
+
     //cv::Mat matrix;
 
     //matrix.size();
@@ -11,4 +14,11 @@ void Tracker::computerCameraPose(byte *image, float *pose, int width, int height
     for (int i = 0; i < height; i++) {
         image[i] = (byte) 255;
     }
+}
+
+
+
+void Tracker::alignToNewFrame(cv::Mat& rgb, cv::Mat& depth, float * outPose)
+{
+	//todo: icp
 }

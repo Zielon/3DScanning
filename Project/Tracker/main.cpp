@@ -1,24 +1,47 @@
 
 #include <iostream>
 
+#include "Context.h"
+
 #include "Tracker.h"
 
 #include "DatasetVideoStreamReader.h" 
 
+#include "ExportDLL.h"
 
-const std::string DATASET_DIR = "D:/user/desktop/3dscanning/assets/rgbd_dataset_freiburg2_xyz/"; 
+void vidReadTest(); 
+void dllVidReadTest(); 
 
 
 int main(int argc, char** argv) 
 {
+	vidReadTest(); 
 
-	VideoStreamReader *videoInputReader = new DatasetVideoStreamReader(DATASET_DIR, true);
+
+    Tracker tracker;
+
+    tracker.computerCameraPose(nullptr, nullptr, 0, 0);
+
+
+	std::cin.get(); 
+
+    return 0;
+}
+
+
+
+//-------------------------------TESTS---------------------------------
+
+
+void vidReadTest()
+{
+	VideoStreamReader *videoInputReader = new DatasetVideoStreamReader(DATASET_DIR, false);
 
 
 	if (!videoInputReader->startReading())
 	{
-		std::cout << "Failed to read input stream" << std::endl; 
-		exit(-1); 
+		std::cout << "Failed to read input stream" << std::endl;
+		exit(-1);
 	}
 
 
@@ -29,7 +52,7 @@ int main(int argc, char** argv)
 	for (int i = 0; i < 3000; ++i)
 	{
 
-		videoInputReader->getNextFrame(rgb, depth, false);
+		videoInputReader->getNextFrame(rgb, depth, true);
 
 		cv::imshow("TestRGB", rgb);
 		double min;
@@ -39,16 +62,28 @@ int main(int argc, char** argv)
 		cv::convertScaleAbs(depth, adjMap, 255 / max);
 		cv::imshow("TestDepth", adjMap);
 
-		cv::waitKey(1); 
+		cv::waitKey(1);
 
 	}
-
-    Tracker tracker;
-
-    tracker.computerCameraPose(nullptr, nullptr, 0, 0);
+}
 
 
-	std::cin.get(); 
+void dllVidReadTest()
+{
 
-    return 0;
+	Context* pc = (Context*)createContext();
+
+	byte* img = new byte[getImageWidth(pc) * getImageHeight(pc) * 3];
+
+	float pose[16];
+
+	dllMain(pc, img, pose);
+
+	cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
+
+
+	cv::imshow("dllTest", dllmat);
+	cv::waitKey(1);
+
+
 }

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Threading; 
+using System.Threading;
 using UnityEngine;
 
 using UnityEngine.UI;
@@ -11,39 +11,44 @@ public class dllInteract : MonoBehaviour
 {
     //Unity automatically find DLL files located on Assets/Plugins
     private const string DllFilePath = @"Tracker";
-    
-    [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern System.IntPtr createTracker();
-    [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern void trackerCameraPose(System.IntPtr tracker_object,
-     byte[] image, float [] pose, int w, int h);
 
-    //General setup image
+    [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern System.IntPtr createContext();
+    [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+    private static extern void trackerCameraPose(System.IntPtr context,
+     byte[] image, float[] pose, int w, int h);
+
+    [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+    private static extern void dllMain(System.IntPtr context, byte[] image, float[] pose);
+
+
+    [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern int getImageWidth(System.IntPtr context);
+
+    [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern int getImageHeight(System.IntPtr context);
+
+    //shared memory
     byte[] image = null;
-    int w = 640;
-    int h = 480;
+    float[] pose = null;
 
-    Thread cppMainThread;
+    System.IntPtr cppContext;
+
+
+    //general setup
+    int w = -1;
+    int h = -1;
 
     // Use this for initialization
     void Start()
     {
-        cppMainThread = new Thread(cppMainThreadCaller);
-        cppMainThread.Start(); 
-    }
+        Debug.Log("Creating Context");
+        cppContext = createContext();
 
+        w = getImageWidth(cppContext);
+        h = getImageHeight(cppContext);
 
-    void cppMainThreadCaller()
-    {
-        
-        //Debug.Log("Thread Start");
+        Debug.Log("Created Contex. Image dimensions: " + w + "x" + h);
 
-        System.IntPtr tracker = createTracker();
-
-        w = 640;
-        h = 480;
-        float[] pose = new float[16];
+        pose = new float[16];
         image = new byte[w * h * 3];
-
-        trackerCameraPose(tracker, image, pose, w, h);
     }
 
     // Update is called once per frame
@@ -51,11 +56,17 @@ public class dllInteract : MonoBehaviour
     {
         //Debug.Log("Update test");
 
+
+        dllMain(cppContext, image, pose);
+
+
         if (image != null)
         {
             //Create texture from image
             Texture2D tex = new Texture2D(w, h, TextureFormat.RGB24, false);
+
             tex.LoadRawTextureData(image);
+            tex.Apply(); 
 
             //Debug.Log("Texture created successfuly");
 
@@ -66,7 +77,7 @@ public class dllInteract : MonoBehaviour
         }
         else
         {
-            Debug.Log("Could not read IMG"); 
+            Debug.Log("Could not read IMG");
         }
     }
 }

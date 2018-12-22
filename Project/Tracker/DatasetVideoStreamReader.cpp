@@ -50,6 +50,9 @@ bool DatasetVideoStreamReader::startReading()
 
 	assert(counter > 0); 
 	m_numFrames = counter; 
+	cv::Mat tmp; 
+	readAnyFrame(0, tmp, tmp); //FIXME: Hack to set img w/h members
+
 
 	m_startTime = std::chrono::high_resolution_clock::now();
 
@@ -69,7 +72,7 @@ bool DatasetVideoStreamReader::nextFrameAvailable()
 	if (getCurrentFrameIndex() == m_numFrames) return false; 
 
 	std::chrono::duration<double> timeDiff = std::chrono::high_resolution_clock::now() - m_startTime;
-	double timeDiffSec = std::chrono::duration_cast<std::chrono::seconds>(timeDiff).count(); 
+	double timeDiffSec = std::chrono::duration_cast<std::chrono::milliseconds>(timeDiff).count()/1000.0; 
 
 	if (m_realtime && timeDiffSec < m_rgb_names[getCurrentFrameIndex() +1].first - m_rgb_names[0].first)
 		return false; 
@@ -86,9 +89,11 @@ int DatasetVideoStreamReader::getSequentialFrame(cv::Mat& rgb, cv::Mat& depth)
 int DatasetVideoStreamReader::getLatestFrame(cv::Mat& rgb, cv::Mat& depth)
 {
 	std::chrono::duration<double> timeDiff = std::chrono::high_resolution_clock::now() - m_startTime;
-	double timeDiffSec = std::chrono::duration_cast<std::chrono::seconds>(timeDiff).count();
+	double timeDiffSec = std::chrono::duration_cast<std::chrono::milliseconds>(timeDiff).count() /1000.0;
 
-	assert(timeDiffSec < m_rgb_names[getCurrentFrameIndex() + 1].first - m_rgb_names[0].first); 
+
+	double frametime = m_rgb_names[getCurrentFrameIndex() + 1].first - m_rgb_names[0].first; 
+
 	unsigned long offset = 1; 
 
 	while (getCurrentFrameIndex() + offset < m_numFrames && 
@@ -127,14 +132,16 @@ int DatasetVideoStreamReader::readAnyFrame(const unsigned long & index, cv::Mat&
 
 
 	rgb = cv::imread(m_datasetFolderPath + m_rgb_names[index].second); 
+
+
 	cv::Mat depthTmp = cv::imread(m_datasetFolderPath + m_depth_names[index].second);
 	depthTmp.convertTo(depth, CV_32FC1, 1.0/5000.0);
 
 	//FIXME: Just assuming constant w/h 
-	m_width_rgb = rgb.rows;
-	m_height_rgb = rgb.cols; 
-	m_width_depth = depth.rows; 
-	m_height_depth = depth.cols; 
+	m_width_rgb = rgb.cols;
+	m_height_rgb = rgb.rows; 
+	m_width_depth = depth.cols;
+	m_height_depth = depth.rows;
 	
 
 
