@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 
 void vidReadTest()
 {
-	VideoStreamReader *videoInputReader = new DatasetVideoStreamReader(DATASET_DIR, false);
+	VideoStreamReaderBase *videoInputReader = new DatasetVideoStreamReader(DATASET_DIR, false);
 
 
 	if (!videoInputReader->startReading())

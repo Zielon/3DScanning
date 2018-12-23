@@ -4,16 +4,16 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
 
-class VideoStreamReader
+class VideoStreamReaderBase
 {
 public:
 
-	VideoStreamReader() : m_height_rgb(0), m_width_rgb(0), m_height_depth(0), m_width_depth(0), newFrameIndex(0), lastFrameReadIndex(0)
+	VideoStreamReaderBase() : m_height_rgb(0), m_width_rgb(0), m_height_depth(0), m_width_depth(0), newFrameIndex(0), lastFrameReadIndex(0)
 	{
 
 	}
 	
-	virtual ~VideoStreamReader()
+	virtual ~VideoStreamReaderBase()
 	{
 	}
 

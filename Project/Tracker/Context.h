@@ -12,5 +12,5 @@ const bool ENFORCE_REALTIME = true;
 struct Context
 {
 	Tracker* tracker; 
-	VideoStreamReader* videoStreamReader; 
+	VideoStreamReaderBase* videoStreamReader; 
 };
