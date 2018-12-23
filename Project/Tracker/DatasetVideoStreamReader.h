@@ -7,11 +7,11 @@
 #include "VideoStreamReader.h"
 
 class DatasetVideoStreamReader :
-	public VideoStreamReader
+	public VideoStreamReaderBase
 {
 public:
 	DatasetVideoStreamReader(std::string datasetFolderPath, bool realtime = false) :
-		VideoStreamReader(),
+		VideoStreamReaderBase(),
 		m_datasetFolderPath(datasetFolderPath),
 		m_realtime(realtime)
 	{
