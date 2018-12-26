@@ -1,89 +1,75 @@
-
 #include <iostream>
 
 #include "Context.h"
-
 #include "Tracker.h"
-
-#include "DatasetVideoStreamReader.h" 
-
+#include "DatasetVideoStreamReader.h"
 #include "ExportDLL.h"
 
-void vidReadTest(); 
-void dllVidReadTest(); 
+void vidReadTest();
 
+//void dllVidReadTest();
 
-int main(int argc, char** argv) 
-{
-	vidReadTest(); 
+int main(int argc, char **argv) {
 
+    vidReadTest();
 
     Tracker tracker;
 
     tracker.computerCameraPose(nullptr, nullptr, 0, 0);
 
-
-	std::cin.get(); 
+    std::cin.get();
 
     return 0;
 }
 
-
-
 //-------------------------------TESTS---------------------------------
 
 
-void vidReadTest()
-{
-	VideoStreamReaderBase *videoInputReader = new DatasetVideoStreamReader(DATASET_DIR, false);
+void vidReadTest() {
+
+    VideoStreamReaderBase *videoInputReader = new DatasetVideoStreamReader(DATASET_DIR, false);
+
+    if (!videoInputReader->startReading()) {
+        std::cout << "Failed to read input stream" << std::endl;
+        exit(-1);
+    }
 
 
-	if (!videoInputReader->startReading())
-	{
-		std::cout << "Failed to read input stream" << std::endl;
-		exit(-1);
-	}
+    cv::Mat rgb;
+    cv::Mat depth;
 
 
-	cv::Mat rgb;
-	cv::Mat depth;
+    for (int i = 0; i < 3000; ++i) {
 
+        videoInputReader->getNextFrame(rgb, depth, true);
 
-	for (int i = 0; i < 3000; ++i)
-	{
+        cv::imshow("TestRGB", rgb);
+        double min;
+        double max;
+        cv::minMaxIdx(depth, &min, &max);
+        cv::Mat adjMap;
+        cv::convertScaleAbs(depth, adjMap, 255 / max);
+        cv::imshow("TestDepth", adjMap);
 
-		videoInputReader->getNextFrame(rgb, depth, true);
+        cv::waitKey(1);
 
-		cv::imshow("TestRGB", rgb);
-		double min;
-		double max;
-		cv::minMaxIdx(depth, &min, &max);
-		cv::Mat adjMap;
-		cv::convertScaleAbs(depth, adjMap, 255 / max);
-		cv::imshow("TestDepth", adjMap);
-
-		cv::waitKey(1);
-
-	}
+    }
 }
 
 
-void dllVidReadTest()
-{
-
-	Context* pc = (Context*)createContext();
-
-	byte* img = new byte[getImageWidth(pc) * getImageHeight(pc) * 3];
-
-	float pose[16];
-
-	dllMain(pc, img, pose);
-
-	cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
-
-
-	cv::imshow("dllTest", dllmat);
-	cv::waitKey(1);
-
-
-}
+//void dllVidReadTest() {
+//
+//    Context *pc = (Context *) createContext();
+//
+//    byte *img = new byte[getImageWidth(pc) * getImageHeight(pc) * 3];
+//
+//    float pose[16];
+//
+//    dllMain(pc, img, pose);
+//
+//    cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
+//
+//
+//    cv::imshow("dllTest", dllmat);
+//    cv::waitKey(1);
+//}

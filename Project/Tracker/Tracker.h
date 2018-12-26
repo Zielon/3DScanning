@@ -15,15 +15,13 @@
 #endif
 
 
-
-
 using namespace std;
 
 class Tracker {
 public:
     void computerCameraPose(byte *image, float *pose, int width, int height);
 
-	void alignToNewFrame(cv::Mat& rgb, cv::Mat& depth, float * outPose);
+    void alignToNewFrame(cv::Mat &rgb, cv::Mat &depth, float *outPose);
 
 
 private:
