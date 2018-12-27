@@ -7,11 +7,11 @@
 
 void vidReadTest();
 
-//void dllVidReadTest();
+void dllVidReadTest();
 
 int main(int argc, char **argv) {
 
-    vidReadTest();
+    dllVidReadTest();
 
     Tracker tracker;
 
@@ -56,20 +56,29 @@ void vidReadTest() {
     }
 }
 
+#ifdef _WIN32
+void dllVidReadTest() {
 
-//void dllVidReadTest() {
-//
-//    Context *pc = (Context *) createContext();
-//
-//    byte *img = new byte[getImageWidth(pc) * getImageHeight(pc) * 3];
-//
-//    float pose[16];
-//
-//    dllMain(pc, img, pose);
-//
-//    cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
-//
-//
-//    cv::imshow("dllTest", dllmat);
-//    cv::waitKey(1);
-//}
+	Context *pc = (Context *)createContext();
+
+	byte *img = new byte[getImageWidth(pc) * getImageHeight(pc) * 3];
+
+	float pose[16];
+
+	dllMain(pc, img, pose);
+
+	cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
+
+
+	cv::imshow("dllTest", dllmat);
+	cv::waitKey(1);
+}
+
+#else
+void dllVidReadTest() {
+
+	std::cout << "This is a Windows only test" << std::endl;
+}
+#endif // _WIN32
+
+
