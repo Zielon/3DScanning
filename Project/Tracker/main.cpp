@@ -56,20 +56,29 @@ void vidReadTest() {
     }
 }
 
-
+#ifdef _WIN32
 void dllVidReadTest() {
 
-    Context *pc = (Context *) createContext();
+	Context *pc = (Context *)createContext();
 
-    byte *img = new byte[getImageWidth(pc) * getImageHeight(pc) * 3];
+	byte *img = new byte[getImageWidth(pc) * getImageHeight(pc) * 3];
 
-    float pose[16];
+	float pose[16];
 
-    dllMain(pc, img, pose);
+	dllMain(pc, img, pose);
 
-    cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
+	cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
 
 
-    cv::imshow("dllTest", dllmat);
-    cv::waitKey(1);
+	cv::imshow("dllTest", dllmat);
+	cv::waitKey(1);
 }
+
+#else
+void dllVidReadTest() {
+
+	std::cout << "This is a Windows only test" << std:endl; 
+}
+#endif // _WIN32
+
+
