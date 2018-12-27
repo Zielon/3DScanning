@@ -53,6 +53,7 @@ target_link_libraries(
 add_executable(
         tracker-bin
         main.cpp
+        Tests/WindowsTests.cpp
 )
 
 target_link_libraries(tracker-bin tracker)
