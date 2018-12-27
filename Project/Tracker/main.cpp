@@ -1,6 +1,6 @@
 #ifdef _WIN32
 
-#include <Tests/WindowsTests.h>
+#include "Tests/WindowsTests.h"
 
 #endif
 
