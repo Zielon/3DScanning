@@ -77,7 +77,7 @@ void dllVidReadTest() {
 #else
 void dllVidReadTest() {
 
-	std::cout << "This is a Windows only test" << std:endl; 
+	std::cout << "This is a Windows only test" << std::endl;
 }
 #endif // _WIN32
 
