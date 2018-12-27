@@ -24,14 +24,13 @@ if (UNIX)
     include_directories(include ${PROJECT_BINARY_DIR})
 endif (UNIX)
 
-# -----------------------------
-
 # ------------Compile dll library (deploy)
 add_library(
         tracker SHARED
         Tracker.cpp
         ICP.cpp
-		ExportDLL.cpp
+        DatasetVideoStreamReader.cpp
+        ExportDLL.cpp
 )
 
 #--------------Compile library (Linux and Apple development)
