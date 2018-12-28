@@ -1,5 +1,5 @@
 #include "ExportDLL.h"
-#include "DatasetVideoStreamReader.h"
+#include "dataStream/headers/DatasetVideoStreamReader.h"
 #include <opencv2/imgproc/imgproc.hpp>
 
 #ifdef _WIN32

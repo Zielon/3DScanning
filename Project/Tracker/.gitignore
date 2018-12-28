@@ -7,5 +7,5 @@ build/
 
 # Project-specific
 libs/*
-lib/
-bin/
+tracker-lib/
+tracker-test/
