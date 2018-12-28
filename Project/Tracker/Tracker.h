@@ -11,7 +11,9 @@
 #endif
 
 #ifdef _WIN32
+
 #include <opencv2/core.hpp>
+
 #endif
 
 

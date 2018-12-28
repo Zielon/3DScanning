@@ -24,12 +24,18 @@ if (UNIX)
     include_directories(include ${PROJECT_BINARY_DIR})
 endif (UNIX)
 
+set(LIBS "${CMAKE_SOURCE_DIR}/dependencies")
+
+if (WIN32)
+	include_directories(${LIBS}/opencv/include)
+endif (WIN32)
+
 # ------------Compile dll library (deploy)
 add_library(
         tracker SHARED
         Tracker.cpp
-        ICP.cpp
         DatasetVideoStreamReader.cpp
+		ICP.cpp
         ExportDLL.cpp
 )
 
@@ -46,9 +52,14 @@ if (UNIX)
     )
 endif (UNIX)
 
-target_link_libraries(
+#--------------Compile library (Windows development)
+if (WIN32)
+	target_link_libraries(
         tracker
-)
+		${LIBS}/opencv/libs/opencv.lib
+	)
+endif (WIN32)
+
 
 add_executable(
         tracker-bin

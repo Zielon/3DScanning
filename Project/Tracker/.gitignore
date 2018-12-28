@@ -7,5 +7,7 @@ build/
 
 # Project-specific
 libs/*
+dependencies/*
+data/*
 lib/
 bin/

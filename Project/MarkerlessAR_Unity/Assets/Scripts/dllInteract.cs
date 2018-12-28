@@ -12,6 +12,8 @@ public class dllInteract : MonoBehaviour
     //Unity automatically find DLL files located on Assets/Plugins
     private const string DllFilePath = @"Tracker";
 
+    //[DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern int test();
+
     [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern System.IntPtr createContext();
     [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
     private static extern void trackerCameraPose(System.IntPtr context,
@@ -40,6 +42,9 @@ public class dllInteract : MonoBehaviour
     void Start()
     {
         Debug.Log("Creating Context");
+        
+        //Debug.Log(test());
+
         cppContext = createContext();
 
         w = getImageWidth(cppContext);
@@ -54,8 +59,7 @@ public class dllInteract : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Debug.Log("Update test");
-
+        Debug.Log("Update test");
 
         dllMain(cppContext, image, pose);
 
