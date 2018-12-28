@@ -63,4 +63,4 @@ if (APPLE)
     #avoid lib prefix
     SET_TARGET_PROPERTIES(tracker PROPERTIES PREFIX "")
 
-endif ()
+endif (APPLE)
