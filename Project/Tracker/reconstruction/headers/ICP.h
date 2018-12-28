@@ -1,8 +1,8 @@
 #ifndef PROJECT_ICP_H
 #define PROJECT_ICP_H
 
-#include "../src/NearestNeighbor.hpp"
-#include "../src/PointCloud.hpp"
+#include "../source/NearestNeighbor.hpp"
+#include "../source/PointCloud.hpp"
 
 class ICP {
 public:

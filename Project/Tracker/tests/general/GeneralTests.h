@@ -1,7 +1,7 @@
 #ifndef TRACKER_GENERALTESTS_H
 #define TRACKER_GENERALTESTS_H
 
-#include "../../reconstruction/src/NearestNeighbor.hpp"
+#include "../../reconstruction/source/NearestNeighbor.hpp"
 
 class GeneralTests {
 public:
