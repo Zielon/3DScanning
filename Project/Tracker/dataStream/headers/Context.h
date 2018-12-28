@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Tracker.h"
+#include "../../reconstruction/headers/Tracker.h"
 #include "VideoStreamReaderBase.h"
 
 // Absolute path to the dataset dir, must end with a backslash

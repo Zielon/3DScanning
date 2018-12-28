@@ -1,9 +1,9 @@
 #ifndef TRACKER_WINDOWSTESTS_H
 #define TRACKER_WINDOWSTESTS_H
 
-#include "../../Context.h"
-#include "../../Tracker.h"
-#include "../../DatasetVideoStreamReader.h"
+#include "../../dataStream/headers/Context.h"
+#include "../../reconstruction/headers/Tracker.h"
+#include "../../dataStream/headers/DatasetVideoStreamReader.h"
 #include "../../ExportDLL.h"
 
 class WindowsTests {

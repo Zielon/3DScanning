@@ -2,7 +2,7 @@
 
 #include <flann/flann.hpp>
 
-#include "Eigen/Eigen"
+#include "../../Eigen.h"
 
 using namespace Eigen;
 
