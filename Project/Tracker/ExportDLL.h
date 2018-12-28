@@ -17,7 +17,10 @@ extern "C" __declspec(dllexport) int getImageWidth(void *context);
 
 extern "C" __declspec(dllexport) int getImageHeight(void *context);
 
-#elif(__APPLE__)
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__)
+	/* Apple OSX and iOS (Darwin). ------------------------------ */
 
 extern "C" void * createContext();
 

@@ -59,7 +59,7 @@ __declspec(dllexport) void dllMain(void *context, byte *image, float *pose)
 
 #if defined(__APPLE__) && defined(__MACH__)
 	/* Apple OSX and iOS (Darwin). ------------------------------ */
-	
+
 void * createContext() {
 
     Context* c = new Context();
