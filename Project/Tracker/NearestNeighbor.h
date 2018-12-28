@@ -2,8 +2,10 @@
 
 #include <flann/flann.hpp>
 
-#include "Eigen.h"
- 
+#include "Eigen/Eigen"
+
+using namespace Eigen;
+
 struct Match {
     int idx;
     float weight;
@@ -17,9 +19,9 @@ public:
         m_maxDistance = maxDistance;
     }
 
-    virtual void buildIndex(const std::vector <Eigen::Vector3f> &targetPoints) = 0;
+    virtual void buildIndex(const std::vector<Eigen::Vector3f> &targetPoints) = 0;
 
-    virtual std::vector <Match> queryMatches(const std::vector <Vector3f> &transformedPoints) = 0;
+    virtual std::vector<Match> queryMatches(const std::vector<Vector3f> &transformedPoints) = 0;
 
 protected:
     float m_maxDistance;
@@ -35,13 +37,13 @@ class NearestNeighborSearchBruteForce : public NearestNeighborSearch {
 public:
     NearestNeighborSearchBruteForce() : NearestNeighborSearch() {}
 
-    void buildIndex(const std::vector <Eigen::Vector3f> &targetPoints) {
+    void buildIndex(const std::vector<Eigen::Vector3f> &targetPoints) {
         m_points = targetPoints;
     }
 
-    std::vector <Match> queryMatches(const std::vector <Vector3f> &transformedPoints) {
+    std::vector<Match> queryMatches(const std::vector<Vector3f> &transformedPoints) {
         const unsigned nMatches = transformedPoints.size();
-        std::vector <Match> matches(nMatches);
+        std::vector<Match> matches(nMatches);
         const unsigned nTargetPoints = m_points.size();
         std::cout << "nMatches: " << nMatches << std::endl;
         std::cout << "nTargetPoints: " << nTargetPoints << std::endl;
@@ -55,7 +57,7 @@ public:
     }
 
 private:
-    std::vector <Eigen::Vector3f> m_points;
+    std::vector<Eigen::Vector3f> m_points;
 
     Match getClosestPoint(const Vector3f &p) {
         int idx = -1;
@@ -97,7 +99,7 @@ public:
         }
     }
 
-    void buildIndex(const std::vector <Eigen::Vector3f> &targetPoints) {
+    void buildIndex(const std::vector<Eigen::Vector3f> &targetPoints) {
         std::cout << "Initializing FLANN index with " << targetPoints.size() << " points." << std::endl;
 
         // FLANN requires that all the points be flat. Therefore we copy the points to a separate flat array.
@@ -111,13 +113,13 @@ public:
         flann::Matrix<float> dataset(m_flatPoints, targetPoints.size(), 3);
 
         // Building the index takes some time.
-        m_index = new flann::Index <flann::L2<float>>(dataset, flann::KDTreeIndexParams(m_nTrees));
+        m_index = new flann::Index<flann::L2<float>>(dataset, flann::KDTreeIndexParams(m_nTrees));
         m_index->buildIndex();
 
         std::cout << "FLANN index created." << std::endl;
     }
 
-    std::vector <Match> queryMatches(const std::vector <Vector3f> &transformedPoints) {
+    std::vector<Match> queryMatches(const std::vector<Vector3f> &transformedPoints) {
         if (!m_index) {
             std::cout << "FLANN index needs to be build before querying any matches." << std::endl;
             return {};
@@ -142,7 +144,7 @@ public:
 
         // Filter the matches.
         const unsigned nMatches = transformedPoints.size();
-        std::vector <Match> matches;
+        std::vector<Match> matches;
         matches.reserve(nMatches);
 
         for (int i = 0; i < nMatches; ++i) {
@@ -162,7 +164,7 @@ public:
 
 private:
     int m_nTrees;
-    flann::Index <flann::L2<float>> *m_index;
+    flann::Index<flann::L2<float>> *m_index;
     float *m_flatPoints;
 };
 

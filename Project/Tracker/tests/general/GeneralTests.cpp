@@ -10,5 +10,5 @@ void GeneralTests::nearestNeighbor() {
 
     auto nn = new NearestNeighborSearchFlann();
 
-    nn->buildIndex(nullptr);
+    nn->queryMatches({});
 }
