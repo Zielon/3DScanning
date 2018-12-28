@@ -57,3 +57,10 @@ add_executable(
 
 target_link_libraries(tracker-bin tracker)
 set_target_properties(tracker-bin PROPERTIES OUTPUT_NAME tracker)
+if (APPLE)
+    #rename the .dylib extension to .bundle. Unity can only recognize .bundle
+    set_target_properties(tracker PROPERTIES SUFFIX ".bundle")
+    #avoid lib prefix
+    SET_TARGET_PROPERTIES(tracker PROPERTIES PREFIX "")
+
+endif ()

@@ -9,6 +9,11 @@
 #include <opencv2/core/mat.hpp>
 
 #endif
+#ifdef __APPLE__
+
+#include <opencv2/core/mat.hpp>
+
+#endif
 
 #ifdef _WIN32
 #include <opencv2/core.hpp>
