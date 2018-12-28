@@ -1,11 +1,18 @@
+#ifdef _WIN32
 
-#include "Tracker.h"
+#include "Tests/WindowsTests.h"
 
-int main() {
+#endif
 
-    Tracker tracker;
+int main(int argc, char **argv) {
 
-    tracker.computerCameraPose(nullptr, nullptr, 0, 0);
+#ifdef _WIN32
+
+    auto windows = new WindowsTests();
+
+    windows->run();
+
+#endif
 
     return 0;
 }
