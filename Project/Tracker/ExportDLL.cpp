@@ -55,7 +55,11 @@ __declspec(dllexport) void dllMain(void *context, byte *image, float *pose)
     std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(byte) * 3);
 
 }
-#elif(__APPLE__)
+#endif
+
+#if defined(__APPLE__) && defined(__MACH__)
+	/* Apple OSX and iOS (Darwin). ------------------------------ */
+	
 void * createContext() {
 
     Context* c = new Context();
