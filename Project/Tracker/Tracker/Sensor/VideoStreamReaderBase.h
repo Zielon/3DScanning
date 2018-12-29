@@ -32,7 +32,7 @@ public:
     *
     */
     void getNextFrame(cv::Mat &rgb, cv::Mat &depth, bool skip = true) {
-        waitForNextFrame();
+        //waitForNextFrame();
         ++newFrameIndex;
         if (skip) {
             lastFrameReadIndex = newFrameIndex;

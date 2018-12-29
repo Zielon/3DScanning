@@ -34,14 +34,16 @@ XtionStreamReader::XtionStreamReader(bool realtime) {
 
 	printf("XN context return value: %d\n", nRetVal);
 
-	this->m_realtime = realtime;
+	m_realtime = realtime;
 }
 
 XtionStreamReader::~XtionStreamReader(){
 	
 	//Release resources
-	this->scriptNode.Release();
-	this->context.Release();
+	color_generator.Release();
+	depth_generator.Release();
+	scriptNode.Release();
+	context.Release();
 }
 
 XnBool XtionStreamReader::fileExists(const char *fn)
@@ -58,7 +60,7 @@ bool XtionStreamReader::nextFrameAvailable() {
 
 int XtionStreamReader::getSequentialFrame(cv::Mat &rgb, cv::Mat &depth) {
 
-	return 0;
+	return readFrame(rgb, depth);
 }
 
 int XtionStreamReader::getLatestFrame(cv::Mat &rgb, cv::Mat &depth) {
@@ -72,12 +74,12 @@ bool XtionStreamReader::startReading() {
 
 	// Setting image generator(RGB color)
 	ImageGenerator color_generator;
-	nRetVal = this->context.FindExistingNode(XN_NODE_TYPE_IMAGE, color_generator);
-	//CHECK_RC(nRetVal, "Find color generator");
+	nRetVal = context.FindExistingNode(XN_NODE_TYPE_IMAGE, color_generator);
+	CHECK_RC(nRetVal, "Find color generator");
 
 	//Setting depth degenerator
-	nRetVal = this->context.FindExistingNode(XN_NODE_TYPE_DEPTH, depth_generator);
-	//CHECK_RC(nRetVal, "Find depth generator");
+	nRetVal = context.FindExistingNode(XN_NODE_TYPE_DEPTH, depth_generator);
+	CHECK_RC(nRetVal, "Find depth generator");
 
 	color_generator.GetMetaData(colorMD);
 	depth_generator.GetMetaData(depthMD);
@@ -96,10 +98,85 @@ bool XtionStreamReader::startReading() {
 		return false;
 	}
 
+	//FPS initialization
+	nRetVal = xnFPSInit(&xnFPS, 180);
+	CHECK_RC(nRetVal, "FPS Init");
+
+	//Processing each frame until the user stops the process by hitting a key
+	
+	while (!xnOSWasKeyboardHit())
+	{
+		//Read a new frame
+		nRetVal = context.WaitAnyUpdateAll();
+
+		if (nRetVal != XN_STATUS_OK)
+		{
+			printf("ReadData failed: %s\n", xnGetStatusString(nRetVal));
+			continue;
+		}
+
+		xnFPSMarkFrame(&xnFPS);
+
+		//Getting data from generator
+		color_generator.GetMetaData(colorMD);
+		depth_generator.GetMetaData(depthMD);
+
+		const unsigned char *color_map = colorMD.Data();
+		const unsigned short *depth_map = depthMD.Data();
+
+		printf("Color frame %d: resolution (%d, %d), bytes %d\n", colorMD.FrameID(), colorMD.XRes(), colorMD.YRes(), colorMD.DataSize());
+		printf("Depth frame %d: resolution (%d, %d), bytes %d\n", depthMD.FrameID(), depthMD.XRes(), depthMD.YRes(), depthMD.DataSize());
+
+		//OpenCV image from raw color map
+		cv::Mat rgb;
+
+		//rgb = cv::Mat::zeros(colorMD.XRes(), colorMD.YRes(), CV_8UC3);
+		rgb = cv::Mat(colorMD.YRes(), colorMD.XRes(), CV_8UC3, (void*) color_map, cv::Mat::AUTO_STEP);
+
+
+		//Debug color image
+		cv::imshow("TestRGB", rgb);
+		cv::waitKey();
+	}
+
+
 	return true;
 }
 
 bool XtionStreamReader::stopReading() {
 
 	return true;
+}
+
+
+int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
+
+	xnOSWasKeyboardHit();
+
+	XnStatus nRetVal = XN_STATUS_OK;
+
+	nRetVal = context.WaitAnyUpdateAll();
+
+	if (nRetVal != XN_STATUS_OK)
+	{
+		printf("ReadData failed: %s\n", xnGetStatusString(nRetVal));
+		return -1;
+	}
+
+	xnFPSMarkFrame(&xnFPS);
+
+	xn::ImageMetaData colorMD_test;
+
+	//Getting data from generator
+	color_generator.GetMetaData(colorMD);
+	//depth_generator.GetMetaData(depthMD);
+
+	const unsigned char *color_map = colorMD.Data();
+	//const unsigned short *depth_map = depthMD.Data();
+
+	/*const XnUInt8* color_map = colorMD.Data();
+	const XnDepthPixel* depth_map = depthMD.Data();*/
+
+	printf("Color frame %d: resolution (%d, %d), bytes %d\n", colorMD.FrameID(), colorMD.XRes(), colorMD.YRes(), colorMD.DataSize());
+	//printf("Depth frame %d: resolution (%d, %d), bytes %d\n", depthMD.FrameID(), depthMD.XRes(), depthMD.YRes(), depthMD.DataSize());
 }

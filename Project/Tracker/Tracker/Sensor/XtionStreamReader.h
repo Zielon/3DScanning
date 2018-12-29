@@ -7,6 +7,17 @@
 #include "VideoStreamReaderBase.h"
 
 //OpenNI
+
+//---------------------------------------------------------------------------
+// Macros
+//---------------------------------------------------------------------------
+#define CHECK_RC(rc, what)											\
+	if (rc != XN_STATUS_OK)											\
+	{																\
+		printf("%s failed: %s\n", what, xnGetStatusString(rc));		\
+		return rc;													\
+	}
+
 #define SAMPLE_XML_PATH "SamplesConfig.xml"
 
 #include <XnOpenNI.h>
@@ -46,8 +57,11 @@ private:
 	xn::ImageMetaData colorMD;
 	xn::DepthGenerator depth_generator;
 	xn::DepthMetaData depthMD;
+	XnFPSData xnFPS;
 
 	XnBool fileExists(const char *fn);
+	int readFrame(cv::Mat &rgb, cv::Mat &depth);
+
 };
 
 #endif XTION_STREAM_READER_H
