@@ -19,12 +19,12 @@ public:
 
     ~Tracker();
 
-private:
-    ICP *m_icp = nullptr;
-
     void alignToNewFrame(
             const std::vector<Vector3f> &sourcePoints,
             const std::vector<Vector3f> &targetPoints, float *outPose);
+
+private:
+    ICP *m_icp = nullptr;
 };
 
 #endif //PROJECT_TRACKER_H
