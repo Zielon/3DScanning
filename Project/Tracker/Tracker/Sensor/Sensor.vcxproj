@@ -125,7 +125,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DatasetVideoStreamReader.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="XtionStreamReader.cpp" />
   </ItemGroup>
@@ -133,7 +132,6 @@
     <Xml Include="SamplesConfig.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DatasetVideoStreamReader.h" />
     <ClInclude Include="VideoStreamReaderBase.h" />
     <ClInclude Include="XtionStreamReader.h" />
   </ItemGroup>

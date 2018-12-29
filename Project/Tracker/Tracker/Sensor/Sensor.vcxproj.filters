@@ -21,9 +21,6 @@
     <ClCompile Include="XtionStreamReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DatasetVideoStreamReader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="SamplesConfig.xml">
@@ -31,9 +28,6 @@
     </Xml>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DatasetVideoStreamReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="XtionStreamReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
