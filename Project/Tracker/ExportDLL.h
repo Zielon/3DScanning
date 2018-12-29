@@ -2,7 +2,7 @@
 
 #define EXPORT_DLL_H
 
-#include "dataStream/headers/Context.h"
+#include "data-stream/headers/Context.h"
 //DLL exports of the tracker
 
 #ifdef _WIN32

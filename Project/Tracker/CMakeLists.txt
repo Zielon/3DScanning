@@ -36,7 +36,7 @@ add_library(
         tracker-lib SHARED
         reconstruction/source/Tracker.cpp
         reconstruction/source/ICP.cpp
-        dataStream/source/DatasetVideoStreamReader.cpp
+        data-stream/source/DatasetVideoStreamReader.cpp
         ExportDLL.cpp
         reconstruction/source/NearestNeighbor.hpp
         Eigen.h
