@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{8C224930-1B1E-4F32-B261-7FB61DFFD7B3}</ProjectGuid>
+    <ProjectGuid>{208536A2-5920-4436-B739-67CBE25CC796}</ProjectGuid>
     <RootNamespace>Sensor</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -76,11 +76,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Lukas\Documents\OpenNI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\opencv\include;$(SolutionDir)Dependencies\OpenNI\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\Users\Lukas\Documents\OpenNI\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>openNI.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\opencv\libs;$(SolutionDir)Dependencies\OpenNI\Lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>openNI.lib;opencv_world400d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -89,11 +89,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Lukas\Documents\OpenNI\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\opencv\include;$(SolutionDir)Dependencies\OpenNI\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\Users\Lukas\Documents\OpenNI\Lib64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>openNI64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\opencv\libs;$(SolutionDir)Dependencies\OpenNI\Lib64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>openNI64.lib;opencv_world400d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,7 +125,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="DatasetVideoStreamReader.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="XtionStreamReader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="SamplesConfig.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DatasetVideoStreamReader.h" />
+    <ClInclude Include="VideoStreamReaderBase.h" />
+    <ClInclude Include="XtionStreamReader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

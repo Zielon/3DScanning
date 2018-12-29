@@ -40,8 +40,12 @@ protected:
 private:
 
 	bool m_realtime;
-	//xn::Context context;
-
+	xn::Context context;
+	xn::ScriptNode scriptNode;
+	xn::ImageGenerator color_generator;
+	xn::ImageMetaData colorMD;
+	xn::DepthGenerator depth_generator;
+	xn::DepthMetaData depthMD;
 
 	XnBool fileExists(const char *fn);
 };

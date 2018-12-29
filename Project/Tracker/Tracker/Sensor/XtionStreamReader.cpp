@@ -2,12 +2,9 @@
 
 XtionStreamReader::XtionStreamReader(bool realtime) {
 
-	/*XnStatus nRetVal = XN_STATUS_OK;
+	XnStatus nRetVal = XN_STATUS_OK;
 
-	Context context;
-	ScriptNode scriptNode;
 	EnumerationErrors errors;
-
 	const char *fn = NULL;
 
 	//Check if the configuration path exists
@@ -35,15 +32,16 @@ XtionStreamReader::XtionStreamReader(bool realtime) {
 		printf("Open failed: %s\n", xnGetStatusString(nRetVal));
 	}
 
-	printf("XN context return value: %d\n", nRetVal);*/
+	printf("XN context return value: %d\n", nRetVal);
 
 	this->m_realtime = realtime;
 }
 
 XtionStreamReader::~XtionStreamReader(){
+	
 	//Release resources
-	//scriptNode.Release();
-	//this->context.Release();
+	this->scriptNode.Release();
+	this->context.Release();
 }
 
 XnBool XtionStreamReader::fileExists(const char *fn)
@@ -69,6 +67,34 @@ int XtionStreamReader::getLatestFrame(cv::Mat &rgb, cv::Mat &depth) {
 }
 
 bool XtionStreamReader::startReading() {
+
+	XnStatus nRetVal = XN_STATUS_OK;
+
+	// Setting image generator(RGB color)
+	ImageGenerator color_generator;
+	nRetVal = this->context.FindExistingNode(XN_NODE_TYPE_IMAGE, color_generator);
+	//CHECK_RC(nRetVal, "Find color generator");
+
+	//Setting depth degenerator
+	nRetVal = this->context.FindExistingNode(XN_NODE_TYPE_DEPTH, depth_generator);
+	//CHECK_RC(nRetVal, "Find depth generator");
+
+	color_generator.GetMetaData(colorMD);
+	depth_generator.GetMetaData(depthMD);
+
+	//Color image must be RGBformat.
+	if (colorMD.PixelFormat() != XN_PIXEL_FORMAT_RGB24)
+	{
+		printf("The device image format must be RGB24\n");
+		return false;
+	}
+
+	// Color resolution must be equal to depth resolution
+	if (colorMD.FullXRes() != depthMD.FullXRes() || colorMD.FullYRes() != depthMD.FullYRes())
+	{
+		printf("The device depth and image resolution must be equal!\n");
+		return false;
+	}
 
 	return true;
 }
