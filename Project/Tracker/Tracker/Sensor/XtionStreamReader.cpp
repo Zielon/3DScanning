@@ -101,48 +101,6 @@ bool XtionStreamReader::startReading() {
 	nRetVal = xnFPSInit(&xnFPS, 180);
 	CHECK_RC(nRetVal, "FPS Init");
 
-	//Processing each frame until the user stops the process by hitting a key
-	
-	/*int t = 0;
-
-	while (t < 100)
-	{
-		//Read a new frame
-		nRetVal = context.WaitAnyUpdateAll();
-
-		if (nRetVal != XN_STATUS_OK)
-		{
-			printf("ReadData failed: %s\n", xnGetStatusString(nRetVal));
-			continue;
-		}
-
-		//xnFPSMarkFrame(&xnFPS);
-
-		//Getting data from generator
-		color_generator.GetMetaData(colorMD);
-		depth_generator.GetMetaData(depthMD);
-
-		const unsigned char *color_map = colorMD.Data();
-		const unsigned short *depth_map = depthMD.Data();
-
-		printf("Color frame %d: resolution (%d, %d), bytes %d\n", colorMD.FrameID(), colorMD.XRes(), colorMD.YRes(), colorMD.DataSize());
-		printf("Depth frame %d: resolution (%d, %d), bytes %d\n", depthMD.FrameID(), depthMD.XRes(), depthMD.YRes(), depthMD.DataSize());
-
-		//OpenCV image from raw color map
-		cv::Mat rgb;
-
-		//rgb = cv::Mat::zeros(colorMD.XRes(), colorMD.YRes(), CV_8UC3);
-		rgb = cv::Mat(colorMD.YRes(), colorMD.XRes(), CV_8UC3, (void*) color_map, cv::Mat::AUTO_STEP);
-
-
-		//Debug color image
-		cv::imshow("TestRGB", rgb);
-		cv::waitKey();
-
-		t++;
-	}*/
-
-
 	return true;
 }
 
@@ -175,8 +133,25 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 	printf("Color frame %d: resolution (%d, %d), bytes %d\n", colorMD.FrameID(), colorMD.XRes(), colorMD.YRes(), colorMD.DataSize());
 	printf("Depth frame %d: resolution (%d, %d), bytes %d\n", depthMD.FrameID(), depthMD.XRes(), depthMD.YRes(), depthMD.DataSize());
 
-	//OpenCV image from raw color map
+	//OpenCV color image from raw color map
 
-	//rgb = cv::Mat::zeros(colorMD.XRes(), colorMD.YRes(), CV_8UC3);
 	rgb = cv::Mat(colorMD.YRes(), colorMD.XRes(), CV_8UC3, (void*)color_map, cv::Mat::AUTO_STEP);
+	/*rgb = cv::Mat(colorMD.YRes(), colorMD.XRes(), CV_8UC3);
+	memcpy(rgb.data, color_map, colorMD.YRes() * colorMD.XRes() * 3 * sizeof(unsigned char));*/
+
+	//OpenCV depth image from raw depth map
+	depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1, (void*)depth_map, cv::Mat::AUTO_STEP);
+
+	//depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1);
+	//memcpy(depth.data, depth_map, depthMD.YRes() * depthMD.XRes() * sizeof(unsigned short));
+
+	//Capture frames
+
+	cv::imwrite("color_map.png", rgb);
+	cv::imwrite("depth_map.png", depth);
+
+	/*xnOSSaveFile("C:\\Users\\Lukas\\Desktop\\data_test\\color_map_test.raw", colorMD.Data(), colorMD.DataSize());
+	xnOSSaveFile("C:\\Users\\Lukas\\Desktop\\data_test\\depth_map_test.raw", depthMD.Data(), depthMD.DataSize());*/
+
+	depth.convertTo(depth, CV_8U, 255);
 }

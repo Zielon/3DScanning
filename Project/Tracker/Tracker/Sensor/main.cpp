@@ -23,6 +23,17 @@ int main(){
 
 		//Debug color image
 		cv::imshow("TestRGB", rgb);
+
+		//Debug depth image
+		/*double min;
+		double max;
+		cv::minMaxIdx(depth, &min, &max);
+		cv::Mat adjMap;
+		cv::convertScaleAbs(depth, adjMap, 255 / max);
+		cv::imshow("TestDepth", adjMap);*/
+
+		cv::imshow("TestDepth", depth);
+
 		cv::waitKey();
 	}
 
