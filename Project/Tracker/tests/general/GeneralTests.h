@@ -3,6 +3,7 @@
 
 #include "../../reconstruction/source/NearestNeighbor.hpp"
 #include "../../reconstruction/headers/ICP.h"
+#include "../../reconstruction/headers/Tracker.h"
 
 class GeneralTests {
 public:
@@ -11,6 +12,7 @@ public:
 private:
     void nearestNeighbor();
     void icp();
+    void tracker();
 };
 
 
