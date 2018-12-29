@@ -38,6 +38,7 @@ add_library(
         reconstruction/source/Tracker.cpp
         reconstruction/source/ICP.cpp
         reconstruction/source/NearestNeighbor.hpp
+        reconstruction/source/ProcrustesAligner.hpp
         reconstruction/source/Fusion.cpp
 
         data-stream/source/DatasetVideoStreamReader.cpp

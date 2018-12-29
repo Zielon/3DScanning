@@ -2,35 +2,43 @@
 
 ICP::ICP() {
     m_nearestNeighbor = new NearestNeighborSearchFlann();
+    m_procrustesAligner = new ProcrustesAligner();
 }
 
 ICP::~ICP() {
     delete m_nearestNeighbor;
+    delete m_procrustesAligner;
 }
 
-Matrix4f ICP::estimatePose(const std::vector<Vector3f> &source, const std::vector<Vector3f> &target, Matrix4f &pose) {
+Matrix4f ICP::estimatePose(const std::vector<Vector3f> &source, const std::vector<Vector3f> &target) {
+
+    Matrix4f pose = Matrix4f::Identity();
 
     m_nearestNeighbor->buildIndex(target);
 
+    std::vector<Vector3f> sourcePoints;
+    std::vector<Vector3f> targetPoints;
+    std::vector<Vector3f> targetNormals;
+
     for (int i = 0; i < m_number_iterations; ++i) {
 
-        // Compute the matches.
-        std::cout << "Matching points ..." << std::endl;
         clock_t begin = clock();
 
         auto transformedPoints = transformPoints(source, pose);
-        auto transformedNormals = transformNormals(source, pose);
+        // TODO calculate normals for points
+        //auto transformedNormals = transformNormals(source, pose);
 
         auto matches = m_nearestNeighbor->queryMatches(transformedPoints);
-        pruneCorrespondences(transformedNormals, target, matches);
+
+        // pruneCorrespondences(transformedNormals, target, matches);
 
         clock_t end = clock();
         double elapsedSecs = double(end - begin) / CLOCKS_PER_SEC;
-        std::cout << "Completed in " << elapsedSecs << " seconds." << std::endl;
+        //std::cout << "Completed in " << elapsedSecs << " seconds." << std::endl;
 
-        std::vector<Vector3f> sourcePoints;
-        std::vector<Vector3f> targetPoints;
-        std::vector<Vector3f> targetNormals;
+        sourcePoints.clear();
+        targetPoints.clear();
+        targetNormals.clear();
 
         int numberOfMatches = 0;
 
@@ -45,34 +53,31 @@ Matrix4f ICP::estimatePose(const std::vector<Vector3f> &source, const std::vecto
             // Match exists
             sourcePoints.emplace_back(transformedPoints[j]);
             targetPoints.emplace_back(target[idx]);
-            targetNormals.emplace_back(transformedNormals[idx]);
+            // targetNormals.emplace_back(transformedNormals[idx]);
         }
 
         if (numberOfMatches == 0) return pose;
 
+        // TODO For now only point to point
         pose = estimatePosePointToPoint(sourcePoints, targetPoints) * pose;
-
-        std::cout << "Optimization iteration done." << std::endl;
 
     }
 
     return pose;
 }
 
-Matrix4f estimatePosePointToPoint(
+Matrix4f ICP::estimatePosePointToPoint(
         const std::vector<Vector3f> &sourcePoints,
         const std::vector<Vector3f> &targetPoints) {
 
-    return Matrix4f();
+    return m_procrustesAligner->estimatePose(sourcePoints, targetPoints);
 }
 
-void pruneCorrespondences(
+void ICP::pruneCorrespondences(
         const std::vector<Vector3f> &sourceNormals,
         const std::vector<Vector3f> &targetNormals, std::vector<Match> &matches) {
 
-    const unsigned nPoints = sourceNormals.size();
-
-    for (unsigned i = 0; i < nPoints; i++) {
+    for (unsigned i = 0; i < sourceNormals.size(); i++) {
 
         Match match = matches[i];
 
@@ -87,7 +92,7 @@ void pruneCorrespondences(
     }
 }
 
-std::vector<Vector3f> transformPoints(const std::vector<Vector3f> &sourcePoints, const Matrix4f &pose) {
+std::vector<Vector3f> ICP::transformPoints(const std::vector<Vector3f> &sourcePoints, const Matrix4f &pose) {
     std::vector<Vector3f> transformedPoints;
     transformedPoints.reserve(sourcePoints.size());
 
@@ -101,7 +106,7 @@ std::vector<Vector3f> transformPoints(const std::vector<Vector3f> &sourcePoints,
     return transformedPoints;
 }
 
-std::vector<Vector3f> transformNormals(const std::vector<Vector3f> &sourceNormals, const Matrix4f &pose) {
+std::vector<Vector3f> ICP::transformNormals(const std::vector<Vector3f> &sourceNormals, const Matrix4f &pose) {
     std::vector<Vector3f> transformedNormals;
     transformedNormals.reserve(sourceNormals.size());
 

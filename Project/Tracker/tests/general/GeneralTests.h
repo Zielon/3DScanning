@@ -2,6 +2,7 @@
 #define TRACKER_GENERALTESTS_H
 
 #include "../../reconstruction/source/NearestNeighbor.hpp"
+#include "../../reconstruction/headers/ICP.h"
 
 class GeneralTests {
 public:
@@ -9,6 +10,7 @@ public:
 
 private:
     void nearestNeighbor();
+    void icp();
 };
 
 
