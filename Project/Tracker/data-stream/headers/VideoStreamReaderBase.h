@@ -19,6 +19,8 @@ public:
 
     virtual bool stopReading() = 0;
 
+    virtual bool isRunning() = 0;
+
     /**
     * returns the next frame for the programm to process
     * will block, if no new frames are available

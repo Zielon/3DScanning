@@ -34,11 +34,16 @@ include_directories(${LIBS}/Flann)
 # ------------Compile dll library (deploy)
 add_library(
         tracker-lib SHARED
+
         reconstruction/source/Tracker.cpp
         reconstruction/source/ICP.cpp
-        data-stream/source/DatasetVideoStreamReader.cpp
-        ExportDLL.cpp
         reconstruction/source/NearestNeighbor.hpp
+        reconstruction/source/ProcrustesAligner.hpp
+        reconstruction/source/Fusion.cpp
+
+        data-stream/source/DatasetVideoStreamReader.cpp
+
+        ExportDLL.cpp
         Eigen.h
 )
 

@@ -38,7 +38,6 @@ void WindowsTests::vidReadTest() {
     cv::Mat rgb;
     cv::Mat depth;
 
-
     for (int i = 0; i < 3000; ++i) {
 
         videoInputReader->getNextFrame(rgb, depth, true);

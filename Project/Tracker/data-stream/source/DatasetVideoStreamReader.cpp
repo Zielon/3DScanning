@@ -74,6 +74,10 @@ int DatasetVideoStreamReader::getSequentialFrame(cv::Mat &rgb, cv::Mat &depth) {
     return readAnyFrame(getCurrentFrameIndex() + 1, rgb, depth);
 }
 
+bool DatasetVideoStreamReader::isRunning() {
+    return !m_rgb_names.empty();
+}
+
 int DatasetVideoStreamReader::getLatestFrame(cv::Mat &rgb, cv::Mat &depth) {
     std::chrono::duration<double> timeDiff = std::chrono::high_resolution_clock::now() - m_startTime;
     double timeDiffSec = std::chrono::duration_cast<std::chrono::milliseconds>(timeDiff).count() / 1000.0;

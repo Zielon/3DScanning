@@ -4,8 +4,6 @@
 
 #include "../../Eigen.h"
 
-using namespace Eigen;
-
 struct Match {
     int idx;
     float weight;
