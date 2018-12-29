@@ -8,7 +8,11 @@ Tracker::~Tracker() {
     delete m_icp;
 }
 
-void Tracker::alignToNewFrame(cv::Mat &rgb, cv::Mat &depth, float *outPose) {
+void Tracker::alignToNewFrame(
+        const std::vector<Vector3f> &source,
+        const std::vector<Vector3f> &target, float *outPose) {
 
-
+    Matrix4f pose;
+    m_icp->estimatePose(source, target, pose);
+    outPose = pose.data();
 }

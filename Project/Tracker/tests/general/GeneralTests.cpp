@@ -6,7 +6,7 @@ void GeneralTests::run() {
 
 void GeneralTests::nearestNeighbor() {
 
-    std::cout << "START nearestNeighbor()" << std::endl;
+    std::cout << "START m_nearestNeighbor()" << std::endl;
 
     auto nn = new NearestNeighborSearchFlann();
 
