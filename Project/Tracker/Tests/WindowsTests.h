@@ -1,7 +1,7 @@
 #ifndef TRACKER_WINDOWSTESTS_H
 #define TRACKER_WINDOWSTESTS_H
 
-#include "../Context.h"
+#include "../TrackerContext.h"
 #include "../Tracker.h"
 #include "../DatasetVideoStreamReader.h"
 #include "../ExportDLL.h"

@@ -11,7 +11,7 @@ void WindowsTests::dllVidReadTest() {
 
     std::cout << "START dllVidReadTest()" << std::endl;
 
-    Context *pc = (Context *)createContext();
+    TrackingContext *pc = (TrackingContext *)createContext();
 
     byte *img = new byte[getImageWidth(pc) * getImageHeight(pc) * 3];
 

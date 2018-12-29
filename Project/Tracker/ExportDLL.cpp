@@ -9,9 +9,20 @@
 
 extern "C" __declspec(dllexport) void * createContext() {
 
-    Context* c = new Context();
+	TrackerContext* c = new  TrackerContext();
     c->tracker = new Tracker();
+
+	#ifdef DATASET
+
     c->videoStreamReader = new DatasetVideoStreamReader(DATASET_DIR, true);
+
+	#endif
+
+	#ifdef XTION_SENSOR
+
+		c->videoStreamReader = new XtionStreamReader(true);
+
+	#endif
 
     c->videoStreamReader->startReading(); //FIXME: mb split this into seperate call?
 
@@ -20,26 +31,26 @@ extern "C" __declspec(dllexport) void * createContext() {
 
 extern "C" __declspec(dllexport) void trackerCameraPose(void *context, byte *image, float *pose, int w, int h) {
 
-    Tracker *tracker = static_cast<Context*>(context)->tracker;
+    Tracker *tracker = static_cast<TrackerContext*>(context)->tracker;
 
     tracker->computerCameraPose(image, pose, w, h);
 }
 
 extern "C" __declspec(dllexport) int getImageWidth(void *context)
 {
-    Context * c = static_cast<Context*>(context);
+	TrackerContext * c = static_cast<TrackerContext*>(context);
     return c->videoStreamReader->m_width_rgb;
 }
 
 extern "C" __declspec(dllexport) int getImageHeight(void *context)
 {
-    Context * c = static_cast<Context*>(context);
+	TrackerContext * c = static_cast<TrackerContext*>(context);
     return c->videoStreamReader->m_height_rgb;
 }
 
 extern "C" __declspec(dllexport) void dllMain(void *context, byte *image, float *pose)
 {
-    Context * c = static_cast<Context*>(context);
+	TrackerContext * c = static_cast<TrackerContext*>(context);
 
     cv::Mat rgb, depth;
 

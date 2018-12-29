@@ -2,13 +2,30 @@
 
 #define EXPORT_DLL_H
 
-#include "Context.h"
-#include "DatasetVideoStreamReader.h"
+//Define data stream case
+#define XTION_SENSOR
+//#define DATASET
+
+#include "TrackerContext.h"
 #include <opencv2/imgproc/imgproc.hpp>
 
-//DLL exports of the tracker
+#ifdef DATASET
 
-//extern "C" __declspec(dllexport) int test();
+#include "DatasetVideoStreamReader.h"
+
+#endif
+
+#ifdef XTION_SENSOR
+
+#include "XtionStreamReader.h"
+
+#endif
+
+/*Just include for test purposes
+extern "C" __declspec(dllexport) int test();*/
+
+
+//DLL exports of the tracker
 
 #ifdef _WIN32
 

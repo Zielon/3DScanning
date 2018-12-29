@@ -11,7 +11,7 @@ C:\\Users\\Lukas\\Desktop\\3DScanning\\Project\\Tracker\\data\\rgbd_dataset_frei
 const std::string DATASET_DIR = "C:\\Users\\Lukas\\Desktop\\3DScanning\\Project\\Tracker\\data\\rgbd_dataset_freiburg1_xyz\\";
 const bool ENFORCE_REALTIME = true;
 
-struct Context {
+struct TrackerContext {
     Tracker *tracker;
     VideoStreamReaderBase *videoStreamReader;
 };
