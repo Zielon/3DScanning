@@ -4,6 +4,8 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
 
+#include "../../Eigen.h"
+
 class VideoStreamReaderBase {
 public:
 
@@ -65,6 +67,8 @@ public:
         return true;
 
     }
+
+	virtual Matrix3f getCameraIntrinsics() = 0; 
 
     int m_height_rgb, m_width_rgb, m_height_depth, m_width_depth;
 

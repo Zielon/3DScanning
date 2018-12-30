@@ -17,11 +17,26 @@ void WindowsTests::dllVidReadTest() {
 
     float pose[16];
 
-    dllMain(pc, img, pose);
 
-    cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
-    cv::imshow("dllTest", dllmat);
-    cv::waitKey(1);
+	for (int i = 0; i < 120; ++i)
+	{
+		dllMain(pc, img, pose);
+
+		cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
+		cv::imshow("dllTest", dllmat);
+		cv::waitKey(1);
+
+		Eigen::Matrix4f matPose = Map<Matrix4f>(pose, 4, 4);
+
+
+		std::cout << "\n ------- pose: " << i << " -------- \n" << matPose
+			<< "\n------------------------ "<< std::endl; 
+
+
+	}
+
+
+
 }
 
 void WindowsTests::vidReadTest() {
