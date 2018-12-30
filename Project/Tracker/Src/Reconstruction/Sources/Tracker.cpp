@@ -1,19 +1,19 @@
-#include "Tracker.h"
+#include "../headers/Tracker.h"
 
-void Tracker::computerCameraPose(byte *image, float *pose, int width, int height) {
-
-    cout << "computerCameraPose" << endl;
-
-    cv::Mat matrix;
-
-    matrix.size();
-
-    for (int i = 0; i < height; i++) {
-        image[i] = (byte) 255;
-    }
+Tracker::Tracker() {
+    m_icp = new ICP();
 }
 
+Tracker::~Tracker() {
+    delete m_icp;
+}
 
-void Tracker::alignToNewFrame(cv::Mat &rgb, cv::Mat &depth, float *outPose) {
-    //todo: icp
+void Tracker::alignToNewFrame(
+        const std::vector<Vector3f> &source,
+        const std::vector<Vector3f> &target, float *outPose) {
+
+    auto pose = m_icp->estimatePose(source, target).data();
+
+    for(int i = 0; i < 16; i++)
+        outPose[i] = pose[i];
 }

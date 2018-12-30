@@ -3,6 +3,7 @@ project(tracker-lib VERSION 1.0.0 DESCRIPTION "A library for tracking")
 
 # Set variables
 set(LIBS "${CMAKE_SOURCE_DIR}/external-libs") #Local Setting
+set(SRC "${CMAKE_SOURCE_DIR}/src") #Local Setting
 
 # Compiler settings
 if(UNIX)
@@ -48,14 +49,14 @@ include_directories(${LIBS}/Flann)
 add_library(
         tracker-lib SHARED
 
-        reconstruction/source/Tracker.cpp
-        reconstruction/source/ICP.cpp
-        reconstruction/source/NearestNeighbor.hpp
-        reconstruction/source/ProcrustesAligner.hpp
-        reconstruction/source/Fusion.cpp
-        data-stream/source/DatasetVideoStreamReader.cpp
-        ExportDLL.cpp
-        Eigen.h
+        ${SRC}/reconstruction/sources/Tracker.cpp
+        ${SRC}/reconstruction/sources/ICP.cpp
+        ${SRC}/reconstruction/sources/NearestNeighbor.hpp
+        ${SRC}/reconstruction/sources/ProcrustesAligner.hpp
+        ${SRC}/reconstruction/sources/Fusion.cpp
+        ${SRC}/data-stream/sources/DatasetVideoStreamReader.cpp
+        ${SRC}/ExportDLL.cpp
+        ${SRC}/Eigen.h
 )
 
 #--------------Compile library (Linux and Apple development)
@@ -85,9 +86,9 @@ endif (WIN32)
 
 add_executable(
         tracker-test
-        main.cpp
-        tests/windows/WindowsTests.cpp
-        tests/general/GeneralTests.cpp
+        ${SRC}/main.cpp
+        ${SRC}/tests/windows/WindowsTests.cpp
+        ${SRC}/tests/general/GeneralTests.cpp
 )
 
 target_link_libraries(tracker-test tracker-lib)

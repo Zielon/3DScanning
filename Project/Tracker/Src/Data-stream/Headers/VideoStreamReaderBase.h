@@ -1,4 +1,12 @@
-#pragma once
+#ifndef VIDEO_STREAM_READER_BASE_H
+
+#define VIDEO_STREAM_READER_BASE_H
+
+#ifdef _WIN32
+
+#define OPENCV_TRAITS_ENABLE_DEPRECATED
+
+#endif
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
@@ -18,6 +26,8 @@ public:
     virtual bool startReading() = 0;
 
     virtual bool stopReading() = 0;
+
+    virtual bool isRunning() = 0;
 
     /**
     * returns the next frame for the programm to process
@@ -91,3 +101,5 @@ private:
     unsigned long newFrameIndex;
 
 };
+
+#endif //VIDEO_STREAM_READER_BASE_H

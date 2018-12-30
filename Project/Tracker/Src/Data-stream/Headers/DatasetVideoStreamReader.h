@@ -23,6 +23,7 @@ public:
 
     bool stopReading() override;
 
+    bool isRunning() override;
 
 protected:
 

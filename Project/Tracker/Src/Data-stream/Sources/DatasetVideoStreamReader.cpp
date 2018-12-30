@@ -1,4 +1,4 @@
-#include "DatasetVideoStreamReader.h"
+#include "../headers/DatasetVideoStreamReader.h"
 
 #include <fstream>
 
@@ -72,6 +72,10 @@ bool DatasetVideoStreamReader::nextFrameAvailable() {
 int DatasetVideoStreamReader::getSequentialFrame(cv::Mat &rgb, cv::Mat &depth) {
 
     return readAnyFrame(getCurrentFrameIndex() + 1, rgb, depth);
+}
+
+bool DatasetVideoStreamReader::isRunning() {
+    return !m_rgb_names.empty();
 }
 
 int DatasetVideoStreamReader::getLatestFrame(cv::Mat &rgb, cv::Mat &depth) {

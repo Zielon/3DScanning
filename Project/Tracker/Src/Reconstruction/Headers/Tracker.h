@@ -4,29 +4,27 @@
 #include <iostream>
 #include <cstddef>
 
-#ifdef linux
-
-#include <opencv2/core/mat.hpp>
-
-#endif
-
-#ifdef _WIN32
-
-#include <opencv2/core.hpp>
-
-#endif
-
+#include "ICP.h"
+#include "../../data-stream/headers/VideoStreamReaderBase.h"
+#include "../../data-stream/headers/DatasetVideoStreamReader.h"
 
 using namespace std;
 
+/**
+ * Tracks frame to frame transition and estimate the pose
+ */
 class Tracker {
 public:
-    void computerCameraPose(byte *image, float *pose, int width, int height);
+    Tracker();
 
-    void alignToNewFrame(cv::Mat &rgb, cv::Mat &depth, float *outPose);
+    ~Tracker();
 
+    void alignToNewFrame(
+            const std::vector<Vector3f> &sourcePoints,
+            const std::vector<Vector3f> &targetPoints, float *outPose);
 
 private:
+    ICP *m_icp = nullptr;
 };
 
 #endif //PROJECT_TRACKER_H
