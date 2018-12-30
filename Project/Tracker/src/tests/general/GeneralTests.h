@@ -1,7 +1,7 @@
 #ifndef TRACKER_GENERALTESTS_H
 #define TRACKER_GENERALTESTS_H
 
-#include "../../reconstruction/source/NearestNeighbor.hpp"
+#include "../../reconstruction/sources/NearestNeighbor.hpp"
 #include "../../reconstruction/headers/ICP.h"
 #include "../../reconstruction/headers/Tracker.h"
 
