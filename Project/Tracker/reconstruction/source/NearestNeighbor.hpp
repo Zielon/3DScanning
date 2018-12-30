@@ -139,7 +139,7 @@ public:
         flann::SearchParams searchParams{16};
         searchParams.cores = 0;
         m_index->knnSearch(query, indices, distances, 1, searchParams);
-
+	
         // Filter the matches.
         const unsigned nMatches = transformedPoints.size();
         std::vector<Match> matches;

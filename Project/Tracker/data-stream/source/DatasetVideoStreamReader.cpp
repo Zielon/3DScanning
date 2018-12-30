@@ -78,6 +78,15 @@ bool DatasetVideoStreamReader::isRunning() {
     return !m_rgb_names.empty();
 }
 
+Matrix3f DatasetVideoStreamReader::getCameraIntrinsics()
+{
+	Matrix3f i; 
+	i << 520.9, 0, 325.1,
+		0, 521.0, 249.7,
+		0, 0, 0; 
+	return i; 
+}
+
 int DatasetVideoStreamReader::getLatestFrame(cv::Mat &rgb, cv::Mat &depth) {
     std::chrono::duration<double> timeDiff = std::chrono::high_resolution_clock::now() - m_startTime;
     double timeDiffSec = std::chrono::duration_cast<std::chrono::milliseconds>(timeDiff).count() / 1000.0;

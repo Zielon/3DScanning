@@ -25,6 +25,9 @@ public:
 
     bool isRunning() override;
 
+	Matrix3f getCameraIntrinsics() override;
+
+
 protected:
 
     bool nextFrameAvailable() override;

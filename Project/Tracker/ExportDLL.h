@@ -1,7 +1,7 @@
 #ifndef EXPORT_DLL_H
 
 #define EXPORT_DLL_H
-
+#include "Cpp14Workaround.h"
 #include "data-stream/headers/Context.h"
 //DLL exports of the tracker
 

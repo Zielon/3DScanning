@@ -34,7 +34,7 @@ void GeneralTests::tracker() {
 
     float pose[16];
 
-    tracker->alignToNewFrame(source, target, pose);
+    tracker->alignNewFrame(source, target, pose);
 
     for(int i = 0; i < 16; i++) {
         if (i != 0 && i % 4 == 0)
