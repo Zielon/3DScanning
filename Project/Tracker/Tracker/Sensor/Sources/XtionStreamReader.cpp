@@ -1,4 +1,4 @@
-#include "XtionStreamReader.h"
+#include <XtionStreamReader.h>
 
 XtionStreamReader::XtionStreamReader(bool realtime) {
 
@@ -65,7 +65,7 @@ int XtionStreamReader::getSequentialFrame(cv::Mat &rgb, cv::Mat &depth) {
 
 int XtionStreamReader::getLatestFrame(cv::Mat &rgb, cv::Mat &depth) {
 
-	return 0;
+	return readFrame(rgb, depth);
 }
 
 bool XtionStreamReader::startReading() {
@@ -140,15 +140,15 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 	memcpy(rgb.data, color_map, colorMD.YRes() * colorMD.XRes() * 3 * sizeof(unsigned char));*/
 
 	//OpenCV depth image from raw depth map
-	depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1, (void*)depth_map, cv::Mat::AUTO_STEP);
+	//depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1, (void*)depth_map, cv::Mat::AUTO_STEP);
 
-	//depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1);
-	//memcpy(depth.data, depth_map, depthMD.YRes() * depthMD.XRes() * sizeof(unsigned short));
+	depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1);
+	memcpy(depth.data, depth_map, depthMD.YRes() * depthMD.XRes() * sizeof(unsigned short));
 
 	//Capture frames
 
-	cv::imwrite("color_map.png", rgb);
-	cv::imwrite("depth_map.png", depth);
+	cv::imwrite("Data/color_map.png", rgb);
+	cv::imwrite("Data/depth_map.png", depth);
 
 	/*xnOSSaveFile("C:\\Users\\Lukas\\Desktop\\data_test\\color_map_test.raw", colorMD.Data(), colorMD.DataSize());
 	xnOSSaveFile("C:\\Users\\Lukas\\Desktop\\data_test\\depth_map_test.raw", depthMD.Data(), depthMD.DataSize());*/

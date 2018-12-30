@@ -6,7 +6,7 @@
 .idea/**/shelf
 
 # Project-specific
-Dependencies/*
+Data/*
  
 # ===================================== #
 # Visual Studio / MonoDevelop generated #
@@ -18,13 +18,13 @@ Dependencies/*
 /*.pidb
 *.pidb.meta
 /*.suo
-/*.sln*
 /*.user
 /*.unityproj
 /*.booproj
 .consulo/
 /*.tmp
 /*.svd
+Debug/*
 
 # ============ #
 # OS generated #

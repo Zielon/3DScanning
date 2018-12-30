@@ -18,21 +18,21 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="XtionStreamReader.cpp">
+    <ClCompile Include="Sources\XtionStreamReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="SamplesConfig.xml">
+    <ClInclude Include="Headers\VideoStreamReaderBase.h">
       <Filter>Header Files</Filter>
-    </Xml>
+    </ClInclude>
+    <ClInclude Include="Headers\XtionStreamReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="XtionStreamReader.h">
+    <Xml Include="OpenNIConfig.xml">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoStreamReaderBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    </Xml>
   </ItemGroup>
 </Project>

@@ -18,7 +18,7 @@
 		return rc;													\
 	}
 
-#define SAMPLE_XML_PATH "SamplesConfig.xml"
+#define SAMPLE_XML_PATH "OpenNIConfig.xml"
 
 #include <XnOpenNI.h>
 #include <XnLog.h>

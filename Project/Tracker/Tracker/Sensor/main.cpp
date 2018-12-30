@@ -1,4 +1,4 @@
-#include "XTionStreamReader.h"
+#include <XtionStreamReader.h>
 
 int main(){
 
