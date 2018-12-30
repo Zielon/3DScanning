@@ -26,7 +26,7 @@
 
 ### RGB-D Sensor
 
-First, the driver of the ASUS Xion Pro sensor must be installed. The driver is found automatically in Windows. As a result, an application XtionCenter is installed. This application provides examples and games using the * ASUS Xion Pro *. Second, OpenNI 2 must be installed. OpenNI 2 website includes a Windows installer. OpenNI 2 also provides some samples. Finally, the file *XnPlatform.h* must be changed in order to use OpenNI 2 library on Visual Studio 2017. The line 58 should be commented out. 
+First, the driver of the ASUS Xion Pro sensor must be installed. The driver is found automatically in Windows. As a result, an application XtionCenter is installed. This application provides examples and games using the ASUS Xion Pro. Second, OpenNI 2 must be installed. OpenNI 2 website includes a Windows installer. OpenNI 2 also provides some samples. Finally, the file *XnPlatform.h* must be changed in order to use OpenNI 2 library on Visual Studio 2017. The line 58 should be commented out. 
 
 #error Xiron Platform Abstraction Layer - Win32 - Microsoft Visual Studio versions above 2010 (10.0) are not supported!
 
