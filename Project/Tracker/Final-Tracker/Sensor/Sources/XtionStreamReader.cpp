@@ -35,6 +35,8 @@ XtionStreamReader::XtionStreamReader(bool realtime) {
 	printf("XN context return value: %d\n", nRetVal);
 
 	m_realtime = realtime;
+	use_capture = true;
+	use_verbose = false;
 }
 
 XtionStreamReader::~XtionStreamReader(){
@@ -79,7 +81,10 @@ bool XtionStreamReader::startReading() {
 	//Setting depth degenerator
 	nRetVal = context.FindExistingNode(XN_NODE_TYPE_DEPTH, depth_generator);
 	CHECK_RC(nRetVal, "Find depth generator");
-
+	
+	xn::ImageMetaData colorMD;
+	xn::DepthMetaData depthMD;
+	
 	color_generator.GetMetaData(colorMD);
 	depth_generator.GetMetaData(depthMD);
 
@@ -124,14 +129,19 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 	xnFPSMarkFrame(&xnFPS);
 
 	//Getting data from generator
+	xn::ImageMetaData colorMD;
+	xn::DepthMetaData depthMD;
+
 	color_generator.GetMetaData(colorMD);
 	depth_generator.GetMetaData(depthMD);
 
 	const unsigned char *color_map = colorMD.Data();
 	const unsigned short *depth_map = depthMD.Data();
 
-	printf("Color frame %d: resolution (%d, %d), bytes %d\n", colorMD.FrameID(), colorMD.XRes(), colorMD.YRes(), colorMD.DataSize());
-	printf("Depth frame %d: resolution (%d, %d), bytes %d\n", depthMD.FrameID(), depthMD.XRes(), depthMD.YRes(), depthMD.DataSize());
+	if (use_verbose) {
+		printf("Color frame %d: resolution (%d, %d), bytes %d\n", colorMD.FrameID(), colorMD.XRes(), colorMD.YRes(), colorMD.DataSize());
+		printf("Depth frame %d: resolution (%d, %d), bytes %d\n", depthMD.FrameID(), depthMD.XRes(), depthMD.YRes(), depthMD.DataSize());
+	}
 
 	//OpenCV color image from raw color map
 
@@ -140,18 +150,44 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 	memcpy(rgb.data, color_map, colorMD.YRes() * colorMD.XRes() * 3 * sizeof(unsigned char));*/
 
 	//OpenCV depth image from raw depth map
-	//depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1, (void*)depth_map, cv::Mat::AUTO_STEP);
+	depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1, (void*)depth_map, cv::Mat::AUTO_STEP);
 
-	depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1);
-	memcpy(depth.data, depth_map, depthMD.YRes() * depthMD.XRes() * sizeof(unsigned short));
+	/*depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1);
+	memcpy(depth.data, depth_map, depthMD.YRes() * depthMD.XRes() * sizeof(unsigned short));*/
 
 	//Capture frames
 
-	cv::imwrite("Data/color_map.png", rgb);
-	cv::imwrite("Data/depth_map.png", depth);
+	if (use_capture) {
 
-	/*xnOSSaveFile("C:\\Users\\Lukas\\Desktop\\data_test\\color_map_test.raw", colorMD.Data(), colorMD.DataSize());
-	xnOSSaveFile("C:\\Users\\Lukas\\Desktop\\data_test\\depth_map_test.raw", depthMD.Data(), depthMD.DataSize());*/
+		//saveRawFrame(colorMD.FrameID(), &colorMD, &depthMD);
+		saveFrame(colorMD.FrameID(), rgb, depth);
+	}
 
 	depth.convertTo(depth, CV_8U, 255);
+}
+
+bool XtionStreamReader::saveRawFrame(int frame, xn::ImageMetaData *colorMD, xn::DepthMetaData *depthMD) {
+
+	char path[100] = "";
+
+	sprintf_s(path, "%s\\color_map_%d.raw", DATA_DIR.c_str(), frame);
+	xnOSSaveFile(path, colorMD->Data(), colorMD->DataSize());
+
+	sprintf_s(path, "%s\\depth_map_%d.raw", DATA_DIR.c_str(), frame);
+	xnOSSaveFile(path, depthMD->Data(), depthMD->DataSize());
+
+	return true;
+}
+
+bool XtionStreamReader::saveFrame(int frame, cv::Mat &rgb, cv::Mat &depth) {
+
+	char path[100] = "";
+
+	sprintf_s(path, "%s/color_map_%d.png", DATA_DIR.c_str(), frame);
+	cv::imwrite(path, rgb);
+
+	sprintf_s(path, "%s/depth_map_%d.png", DATA_DIR.c_str(), frame);
+	cv::imwrite(path, depth);
+
+	return true;
 }

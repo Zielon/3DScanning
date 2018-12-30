@@ -50,17 +50,21 @@ protected:
 
 private:
 
+	const std::string DATA_DIR = "Data";
 	bool m_realtime;
+	bool use_capture;
+	bool use_verbose;
 	xn::Context context;
 	xn::ScriptNode scriptNode;
 	xn::ImageGenerator color_generator;
-	xn::ImageMetaData colorMD;
 	xn::DepthGenerator depth_generator;
-	xn::DepthMetaData depthMD;
 	XnFPSData xnFPS;
 
 	XnBool fileExists(const char *fn);
 	int readFrame(cv::Mat &rgb, cv::Mat &depth);
+	bool saveRawFrame(int frame, xn::ImageMetaData *colorMD, xn::DepthMetaData *depthMD);
+	bool saveFrame(int frame, cv::Mat &rgb, cv::Mat &depth);
+
 
 };
 
