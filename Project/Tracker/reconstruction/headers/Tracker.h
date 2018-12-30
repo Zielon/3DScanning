@@ -33,7 +33,7 @@ public:
 	void backprojectFrame(cv::Mat& depth, std::vector<Vector3f>& outVerts, const size_t pixelSteps = 1); 
 
 
-	std::vector<Vector3f> m_previousFrame; 
+	std::vector<Vector3f> m_previousFrameVerts; 
 
 private:
     ICP *m_icp = nullptr;

@@ -45,7 +45,7 @@ __declspec(dllexport) void dllMain(void *context, byte *image, float *pose)
 
     cv::Mat rgb, depth;
 
-	bool firstFrame = c->tracker->m_previousFrame.size() == 0;
+	bool firstFrame = c->tracker->m_previousFrameVerts.size() == 0;
 
     c->videoStreamReader->getNextFrame(rgb, depth, true);
 
@@ -60,12 +60,12 @@ __declspec(dllexport) void dllMain(void *context, byte *image, float *pose)
 	}
 	else
 	{
-		c->tracker->alignNewFrame(newFrameVerts, c->tracker->m_previousFrame, pose);
+		c->tracker->alignNewFrame(newFrameVerts, c->tracker->m_previousFrameVerts, pose);
 	}
 
-	//TODO: mesh generation here
+	//TODO: real time mesh generation here
 
-	c->tracker->m_previousFrame = newFrameVerts;
+	c->tracker->m_previousFrameVerts = newFrameVerts;
 
     /*DEBUG*
     cv::imshow("dllMain", rgb);
