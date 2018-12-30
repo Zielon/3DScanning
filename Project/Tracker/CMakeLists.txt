@@ -1,24 +1,28 @@
 cmake_minimum_required(VERSION 3.10)
-project(tracker VERSION 1.0.0 DESCRIPTION "A library for tracking")
+project(tracker-lib VERSION 1.0.0 DESCRIPTION "A library for tracking")
 
-# Deployment scenario
-set (DEPLOYMENT TRUE)
+# Set variables
+set(LIBS "${CMAKE_SOURCE_DIR}/external-libs") #Local Setting
 
 # Compiler settings
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3")
+if(UNIX)
+	set(CMAKE_CXX_STANDARD 17)
+endif(UNIX)
+	set(CMAKE_CXX_STANDARD 14)
+if (WIN32)
+
+endif(WIN32)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -O3")
 
 # Build directories
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/tracker-lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/tracker-lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/tracker-test)
 
 # ---------> REQUIRED PACKAGES
 
 if (UNIX)
-    find_package(Eigen3 3.3 REQUIRED)
-    include_directories(${EIGEN3_INCLUDE_DIR})
-
     find_package(OpenCV REQUIRED)
     include_directories(${OPENCV_INCLUDE_DIR})
 
@@ -27,97 +31,64 @@ if (UNIX)
     include_directories(include ${PROJECT_BINARY_DIR})
 endif (UNIX)
 
-set(LIBS "${CMAKE_SOURCE_DIR}/dependencies")
-set(OPEN_NI_DIR "C:/Users/Lukas/Documents/OpenNI")
-
-
 if (WIN32)
 
-	if (DEPLOYMENT)
-		include_directories(${LIBS}/opencv/include)
-		#include_directories(${LIBS}/OpenNI/Include)
-		include_directories(${OPEN_NI_DIR}/Include)
-
-	else ()
-		include_directories(${LIBS}/opencv/include)
-	endif()
+	include_directories(${LIBS}/opencv/include)
 
 endif (WIN32)
 
+# Eigen Library
+include_directories(${LIBS}/Eigen)
+
+# Flann Library
+include_directories(${LIBS}/Flann)
+
+
 # ------------Compile dll library (deploy)
-if (DEPLOYMENT)
+add_library(
+        tracker-lib SHARED
 
-	add_library(
-        tracker SHARED
-        Tracker.cpp
-		XtionStreamReader.cpp
-		ICP.cpp
+        reconstruction/source/Tracker.cpp
+        reconstruction/source/ICP.cpp
+        reconstruction/source/NearestNeighbor.hpp
+        reconstruction/source/ProcrustesAligner.hpp
+        reconstruction/source/Fusion.cpp
+        data-stream/source/DatasetVideoStreamReader.cpp
         ExportDLL.cpp
-	)
-
-else()
-
-	add_library(
-        tracker SHARED
-        Tracker.cpp
-        DatasetVideoStreamReader.cpp
-		ICP.cpp
-        ExportDLL.cpp
-	)
-
-endif()
+        Eigen.h
+)
 
 #--------------Compile library (Linux and Apple development)
 if (UNIX)
     target_link_libraries(
-            tracker
+            tracker-lib
             freeimage
             opencv_core
             opencv_highgui
             opencv_features2d
             opencv_imgcodecs
+            freeimage
             ${CERES_LIBRARIES}
+            ${FLANN_LIBRARIES}
     )
 endif (UNIX)
 
-#--------------Compile library (Windows development)
 if (WIN32)
 
-	if (DEPLOYMENT)
-
-		target_link_libraries(tracker PUBLIC
-			${LIBS}/opencv/libs/opencv.lib
-			${LIBS}/OpenNI/Lib/openNI.lib
-			#${OPEN_NI_DIR}/Lib/openNI.lib
-		)
-
-	else()
-
-		target_link_libraries(
-			tracker
-			${LIBS}/opencv/libs/opencv.lib
-		)
-
-	endif()
+	target_link_libraries(
+        tracker-lib
+		${LIBS}/opencv/libs/opencv.lib
+        ${FLANN_LIBRARIES}
+	)
 
 endif (WIN32)
 
-if (DEPLOYMENT)
-
-	add_executable(
-        tracker-bin
+add_executable(
+        tracker-test
         main.cpp
-	)
+        tests/windows/WindowsTests.cpp
+        tests/general/GeneralTests.cpp
+)
 
-else()
-
-	add_executable(
-        tracker-bin
-        main.cpp
-        Tests/WindowsTests.cpp
-	)
-
-endif()
-
-target_link_libraries(tracker-bin tracker)
-set_target_properties(tracker-bin PROPERTIES OUTPUT_NAME tracker)
+target_link_libraries(tracker-test tracker-lib)
+set_target_properties(tracker-test PROPERTIES OUTPUT_NAME tracker-test)

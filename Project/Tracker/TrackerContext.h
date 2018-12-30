@@ -1,7 +1,9 @@
-#pragma once
+#ifndef TRACKER_CONTEXT_H
 
-#include "Tracker.h"
-#include "VideoStreamReaderBase.h"
+#define TRACKER_CONTEXT_H
+
+#include "reconstruction/headers/Tracker.h"
+#include "data-stream/headers/VideoStreamReaderBase.h"
 
 // Absolute path to the dataset dir, must end with a backslash
 /*i.e.:
@@ -15,3 +17,5 @@ struct TrackerContext {
     Tracker *tracker;
     VideoStreamReaderBase *videoStreamReader;
 };
+
+#endif TRACKER_CONTEXT_H

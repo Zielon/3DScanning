@@ -9,5 +9,5 @@ build/
 libs/*
 dependencies/*
 data/*
-lib/
-bin/
+tracker-lib/
+tracker-test/

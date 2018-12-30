@@ -1,6 +1,8 @@
+#include "tests/general/GeneralTests.h"
+
 #ifdef _WIN32
 
-#include "Tests/WindowsTests.h"
+#include "tests/windows/WindowsTests.h"
 
 #endif
 
@@ -13,6 +15,10 @@ int main(int argc, char **argv) {
     windows->run();
 
 #endif
+
+    auto general = new GeneralTests();
+
+    general->run();
 
     return 0;
 }

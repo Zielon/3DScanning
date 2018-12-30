@@ -1,4 +1,1 @@
-# 3D Scanning and Motion Capture: Final project [Face tracking]
-
-## Installation
-
+# 3D Scanning and Motion Capture: Final project [Tracker]
