@@ -30,6 +30,12 @@ The solution consists of four main components: a RGB-D stream, a camera tracker,
 
 ### RGB-D Stream
 
+This component is responsible to obtain the color map and depth map of each frame, which will be used for the other components. There are two types of RGB-D Stream sources: datasets and sensors.
+
+The * DatasetVideoStreamReader * class implements all the functionalities to import color maps and depth maps of recorded camera data from the * TUM RGB-D SLAM Dataset * [0].
+
+The * XtionStreamReader * class implements all the functionalities to import color maps and depth maps in real time from the ASUS Xion Pro sensor.  
+
 ### Camera Tracker
 
 This component will estimate the pose of the camera using the color map and depth map given by the RGB-D Stream. The output of the component is the pose transformation of each frame.
@@ -53,3 +59,4 @@ The first version will be a basic AR animation where a virtual object is placed 
 
 ## References
 
+[0] RGB-D SLAM Dataset and Benchmark: https://vision.in.tum.de/data/datasets/rgbd-dataset
