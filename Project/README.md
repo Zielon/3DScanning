@@ -71,9 +71,9 @@ Future tasks:
 
 ## References
 
-[0] Xtion PRO: https://www.asus.com/3D-Sensor/Xtion_PRO/.   
-[1] OpenNI 2: https://structure.io/openni.
-[2] RGB-D SLAM Dataset and Benchmark: https://vision.in.tum.de/data/datasets/rgbd-dataset.
-[3] Lecture 5: Rigid Surface Tracking & Reconstruction (3D Scanning and Motion Capture/Justus Thies and Angela Dai Slides).
-[4] RGBD streaming by Structure Sensor: https://github.com/occipital/uplink.
-[5] Structure by Occipital: https://structure.io/developers .
+[0] Xtion PRO: https://www.asus.com/3D-Sensor/Xtion_PRO/.     
+[1] OpenNI 2: https://structure.io/openni.  
+[2] RGB-D SLAM Dataset and Benchmark: https://vision.in.tum.de/data/datasets/rgbd-dataset.  
+[3] Lecture 5: Rigid Surface Tracking & Reconstruction (3D Scanning and Motion Capture/Justus Thies and Angela Dai Slides).  
+[4] RGBD streaming by Structure Sensor: https://github.com/occipital/uplink.  
+[5] Structure by Occipital: https://structure.io/developers .  
