@@ -24,6 +24,13 @@
 * Physics.
 * Audio.
 
+### ASUS Xion Pro
+
+The first step is installing the driver associated with the sensor from the official website [0]. The driver can be found by: Support -> Driver & Tools -> Utilities -> *XtionCenter Package*. There is no support for MacOS systems. The next step is installing the OpenNI 2 SDK from the official website [1]. OpenNI 2 includes some sample codes to test the sensor. The *NiViewer* sample was the guideline to integrate the sensor to our project. Finally, a small change is required in order to use the OpenNI 2 SDK with Visual Studio 2017. The line 58 of the *XnPlatform.h* file must be commented out.
+
+Error Code:  
+> #error Xiron Platform Abstraction Layer - Win32 - Microsoft Visual Studio versions above 2010 (10.0) are not supported!
+
 ## Solution Overview
 
 The solution consists of four main components: a RGB-D stream, a camera tracker, a reconstruction module and an AR animation module.
@@ -32,9 +39,9 @@ The solution consists of four main components: a RGB-D stream, a camera tracker,
 
 This component is responsible to obtain the color map and depth map of each frame, which will be used for the other components. There are two types of RGB-D Stream sources: datasets and sensors.
 
-The * DatasetVideoStreamReader * class implements all the functionalities to import color maps and depth maps of recorded camera data from the * TUM RGB-D SLAM Dataset * [0].
+The *DatasetVideoStreamReader* class implements all the functionalities to import color maps and depth maps of recorded camera data from the *TUM RGB-D SLAM Dataset* [2].
 
-The * XtionStreamReader * class implements all the functionalities to import color maps and depth maps in real time from the ASUS Xion Pro sensor.  
+The *XtionStreamReader* class implements all the functionalities to import color maps and depth maps in real time from the ASUS Xion Pro sensor.  
 
 ### Camera Tracker
 
@@ -59,4 +66,6 @@ The first version will be a basic AR animation where a virtual object is placed 
 
 ## References
 
-[0] RGB-D SLAM Dataset and Benchmark: https://vision.in.tum.de/data/datasets/rgbd-dataset
+[0] Xtion PRO: https://www.asus.com/3D-Sensor/Xtion_PRO/
+[1] OpenNI 2: https://structure.io/openni
+[2] RGB-D SLAM Dataset and Benchmark: https://vision.in.tum.de/data/datasets/rgbd-dataset
