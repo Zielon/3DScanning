@@ -191,3 +191,12 @@ bool XtionStreamReader::saveFrame(int frame, cv::Mat &rgb, cv::Mat &depth) {
 
 	return true;
 }
+
+Matrix3f XtionStreamReader::getCameraIntrinsics()
+{
+	Matrix3f i;
+	i << 520.9, 0, 325.1,
+		0, 521.0, 249.7,
+		0, 0, 0;
+	return i;
+}

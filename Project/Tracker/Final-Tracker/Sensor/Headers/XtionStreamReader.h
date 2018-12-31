@@ -40,6 +40,8 @@ public:
 
 	bool stopReading() override;
 
+	Matrix3f getCameraIntrinsics() override;
+
 protected:
 
 	bool nextFrameAvailable() override;
