@@ -2,7 +2,12 @@
 
 int main(){
 
-	XtionStreamReader *streamReader = new XtionStreamReader(false);
+	XtionStreamReader *streamReader = new XtionStreamReader(true, false, true);
+
+	if (!streamReader->initContext()) {
+		std::cout << "Failed to create input stream context" << std::endl;
+		return -1;
+	}
 
 	std::cout << "Stream created properly" << std::endl;
 

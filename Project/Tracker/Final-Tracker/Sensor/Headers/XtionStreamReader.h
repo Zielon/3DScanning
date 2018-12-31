@@ -31,9 +31,11 @@ using namespace xn;
 class XtionStreamReader : public VideoStreamReaderBase {
 
 public:
-	XtionStreamReader(bool realtime = false);
+	XtionStreamReader(bool realtime = true, bool verbose = false, bool capture = false);
 
 	~XtionStreamReader() override;
+
+	bool initContext();
 
 	// Inherited via VideoStreamReader
 	bool startReading() override;
@@ -52,14 +54,14 @@ protected:
 
 private:
 
-	const std::string DATA_DIR = "Data";
+	const std::string m_DATA_DIR = "Data";
 	bool m_realtime;
-	bool use_capture;
-	bool use_verbose;
-	xn::Context context;
-	xn::ScriptNode scriptNode;
-	xn::ImageGenerator color_generator;
-	xn::DepthGenerator depth_generator;
+	bool m_use_capture;
+	bool m_use_verbose;
+	xn::Context m_context;
+	xn::ScriptNode m_scriptNode;
+	xn::ImageGenerator m_color_generator;
+	xn::DepthGenerator m_depth_generator;
 	XnFPSData xnFPS;
 
 	XnBool fileExists(const char *fn);

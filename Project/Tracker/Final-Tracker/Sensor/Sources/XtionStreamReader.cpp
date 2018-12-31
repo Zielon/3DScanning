@@ -1,6 +1,14 @@
 #include <XtionStreamReader.h>
 
-XtionStreamReader::XtionStreamReader(bool realtime) {
+XtionStreamReader::XtionStreamReader(bool realtime, bool verbose, bool capture) {
+
+	m_realtime = realtime;
+	m_use_capture = capture;
+	m_use_verbose = verbose;
+}
+
+
+bool XtionStreamReader::initContext() {
 
 	XnStatus nRetVal = XN_STATUS_OK;
 
@@ -14,38 +22,42 @@ XtionStreamReader::XtionStreamReader(bool realtime) {
 	else {
 		printf("Could not find '%s' nor '%s'. Aborting.\n", SAMPLE_XML_PATH, SAMPLE_XML_PATH);
 		printf("XN Status Error: %d\n", XN_STATUS_ERROR);
+
+		return false;
 	}
 
 	printf("Reading config from: '%s'\n", fn);
 
 	//Create context from configuration file
-	nRetVal = context.InitFromXmlFile(fn, scriptNode, &errors);
+	nRetVal = m_context.InitFromXmlFile(fn, m_scriptNode, &errors);
 
 	if (nRetVal == XN_STATUS_NO_NODE_PRESENT)
 	{
 		XnChar strError[1024];
 		errors.ToString(strError, 1024);
 		printf("%s\n", strError);
+
+		return false;
 	}
 	else if (nRetVal != XN_STATUS_OK)
 	{
 		printf("Open failed: %s\n", xnGetStatusString(nRetVal));
+
+		return false;
 	}
 
 	printf("XN context return value: %d\n", nRetVal);
 
-	m_realtime = realtime;
-	use_capture = true;
-	use_verbose = false;
+	return true;
 }
 
 XtionStreamReader::~XtionStreamReader(){
 	
 	//Release resources
-	color_generator.Release();
-	depth_generator.Release();
-	scriptNode.Release();
-	context.Release();
+	m_color_generator.Release();
+	m_depth_generator.Release();
+	m_scriptNode.Release();
+	m_context.Release();
 }
 
 XnBool XtionStreamReader::fileExists(const char *fn)
@@ -75,18 +87,18 @@ bool XtionStreamReader::startReading() {
 	XnStatus nRetVal = XN_STATUS_OK;
 
 	// Setting image generator(RGB color)
-	nRetVal = context.FindExistingNode(XN_NODE_TYPE_IMAGE, color_generator);
+	nRetVal = m_context.FindExistingNode(XN_NODE_TYPE_IMAGE, m_color_generator);
 	CHECK_RC(nRetVal, "Find color generator");
 
 	//Setting depth degenerator
-	nRetVal = context.FindExistingNode(XN_NODE_TYPE_DEPTH, depth_generator);
+	nRetVal = m_context.FindExistingNode(XN_NODE_TYPE_DEPTH, m_depth_generator);
 	CHECK_RC(nRetVal, "Find depth generator");
 	
 	xn::ImageMetaData colorMD;
 	xn::DepthMetaData depthMD;
 	
-	color_generator.GetMetaData(colorMD);
-	depth_generator.GetMetaData(depthMD);
+	m_color_generator.GetMetaData(colorMD);
+	m_depth_generator.GetMetaData(depthMD);
 
 	//Color image must be RGBformat.
 	if (colorMD.PixelFormat() != XN_PIXEL_FORMAT_RGB24)
@@ -118,7 +130,7 @@ bool XtionStreamReader::stopReading() {
 int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 
 	//Read a new frame
-	XnStatus nRetVal = context.WaitAnyUpdateAll();
+	XnStatus nRetVal = m_context.WaitAnyUpdateAll();
 
 	if (nRetVal != XN_STATUS_OK)
 	{
@@ -132,13 +144,13 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 	xn::ImageMetaData colorMD;
 	xn::DepthMetaData depthMD;
 
-	color_generator.GetMetaData(colorMD);
-	depth_generator.GetMetaData(depthMD);
+	m_color_generator.GetMetaData(colorMD);
+	m_depth_generator.GetMetaData(depthMD);
 
 	const unsigned char *color_map = colorMD.Data();
 	const unsigned short *depth_map = depthMD.Data();
 
-	if (use_verbose) {
+	if (m_use_verbose) {
 		printf("Color frame %d: resolution (%d, %d), bytes %d\n", colorMD.FrameID(), colorMD.XRes(), colorMD.YRes(), colorMD.DataSize());
 		printf("Depth frame %d: resolution (%d, %d), bytes %d\n", depthMD.FrameID(), depthMD.XRes(), depthMD.YRes(), depthMD.DataSize());
 	}
@@ -157,7 +169,7 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 
 	//Capture frames
 
-	if (use_capture) {
+	if (m_use_capture) {
 
 		//saveRawFrame(colorMD.FrameID(), &colorMD, &depthMD);
 		saveFrame(colorMD.FrameID(), rgb, depth);
@@ -170,10 +182,10 @@ bool XtionStreamReader::saveRawFrame(int frame, xn::ImageMetaData *colorMD, xn::
 
 	char path[100] = "";
 
-	sprintf_s(path, "%s\\color_map_%d.raw", DATA_DIR.c_str(), frame);
+	sprintf_s(path, "%s\\rgb\\color_map_%d.raw", m_DATA_DIR.c_str(), frame);
 	xnOSSaveFile(path, colorMD->Data(), colorMD->DataSize());
 
-	sprintf_s(path, "%s\\depth_map_%d.raw", DATA_DIR.c_str(), frame);
+	sprintf_s(path, "%s\\depth\\depth_map_%d.raw", m_DATA_DIR.c_str(), frame);
 	xnOSSaveFile(path, depthMD->Data(), depthMD->DataSize());
 
 	return true;
@@ -183,10 +195,10 @@ bool XtionStreamReader::saveFrame(int frame, cv::Mat &rgb, cv::Mat &depth) {
 
 	char path[100] = "";
 
-	sprintf_s(path, "%s/color_map_%d.png", DATA_DIR.c_str(), frame);
+	sprintf_s(path, "%s/rgb/color_map_%d.png", m_DATA_DIR.c_str(), frame);
 	cv::imwrite(path, rgb);
 
-	sprintf_s(path, "%s/depth_map_%d.png", DATA_DIR.c_str(), frame);
+	sprintf_s(path, "%s/depth/depth_map_%d.png", m_DATA_DIR.c_str(), frame);
 	cv::imwrite(path, depth);
 
 	return true;
