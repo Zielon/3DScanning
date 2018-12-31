@@ -64,9 +64,16 @@ This component will be implemented in Unity3D.
 
 The first version will be a basic AR animation where a virtual object is placed on top of a planar surface picked by the user, i.e. there is no planar surface detection. The second version will detect the suitable planar surface. The final version will apply complex animations on top of the surface using the mesh representation.
 
+## Future Development
+
+Future tasks:
+* iPad with Structure Sensor Deployment using uplink library [4] or Structure SDK for iOS.
+
 ## References
 
-[0] Xtion PRO: https://www.asus.com/3D-Sensor/Xtion_PRO/   
-[1] OpenNI 2: https://structure.io/openni  
-[2] RGB-D SLAM Dataset and Benchmark: https://vision.in.tum.de/data/datasets/rgbd-dataset
+[0] Xtion PRO: https://www.asus.com/3D-Sensor/Xtion_PRO/.   
+[1] OpenNI 2: https://structure.io/openni.
+[2] RGB-D SLAM Dataset and Benchmark: https://vision.in.tum.de/data/datasets/rgbd-dataset.
 [3] Lecture 5: Rigid Surface Tracking & Reconstruction (3D Scanning and Motion Capture/Justus Thies and Angela Dai Slides).
+[4] RGBD streaming by Structure Sensor: https://github.com/occipital/uplink.
+[5] Structure by Occipital: https://structure.io/developers .
