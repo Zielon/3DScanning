@@ -28,7 +28,7 @@
 
 The first step is installing the driver associated with the sensor from the official website [0]. The driver can be found by: Support -> Driver & Tools -> Utilities -> *XtionCenter Package*. There is no support for MacOS systems. The next step is installing the OpenNI 2 SDK from the official website [1]. OpenNI 2 includes some sample codes to test the sensor. The *NiViewer* sample was the guideline to integrate the sensor to our project. Finally, a small change is required in order to use the OpenNI 2 SDK with Visual Studio 2017. The line 58 of the *XnPlatform.h* file must be commented out.
 
-Error Code:  
+Error line:  
 > #error Xiron Platform Abstraction Layer - Win32 - Microsoft Visual Studio versions above 2010 (10.0) are not supported!
 
 ## Solution Overview
@@ -66,6 +66,7 @@ The first version will be a basic AR animation where a virtual object is placed 
 
 ## References
 
-[0] Xtion PRO: https://www.asus.com/3D-Sensor/Xtion_PRO/
-[1] OpenNI 2: https://structure.io/openni
+[0] Xtion PRO: https://www.asus.com/3D-Sensor/Xtion_PRO/   
+[1] OpenNI 2: https://structure.io/openni  
 [2] RGB-D SLAM Dataset and Benchmark: https://vision.in.tum.de/data/datasets/rgbd-dataset
+[3] Lecture 5: Rigid Surface Tracking & Reconstruction (3D Scanning and Motion Capture/Justus Thies and Angela Dai Slides).
