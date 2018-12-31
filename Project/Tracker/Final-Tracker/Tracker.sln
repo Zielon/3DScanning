@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2048
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tracker", "Tracker\Tracker.vcxproj", "{9ACCAE73-C3EF-47B9-B203-9A653F8E431E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sensor", "Sensor\Sensor.vcxproj", "{208536A2-5920-4436-B739-67CBE25CC796}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9ACCAE73-C3EF-47B9-B203-9A653F8E431E}.Debug|x64.ActiveCfg = Debug|x64
+		{9ACCAE73-C3EF-47B9-B203-9A653F8E431E}.Debug|x64.Build.0 = Debug|x64
+		{9ACCAE73-C3EF-47B9-B203-9A653F8E431E}.Debug|x86.ActiveCfg = Debug|Win32
+		{9ACCAE73-C3EF-47B9-B203-9A653F8E431E}.Debug|x86.Build.0 = Debug|Win32
+		{9ACCAE73-C3EF-47B9-B203-9A653F8E431E}.Release|x64.ActiveCfg = Release|x64
+		{9ACCAE73-C3EF-47B9-B203-9A653F8E431E}.Release|x64.Build.0 = Release|x64
+		{9ACCAE73-C3EF-47B9-B203-9A653F8E431E}.Release|x86.ActiveCfg = Release|Win32
+		{9ACCAE73-C3EF-47B9-B203-9A653F8E431E}.Release|x86.Build.0 = Release|Win32
+		{208536A2-5920-4436-B739-67CBE25CC796}.Debug|x64.ActiveCfg = Debug|x64
+		{208536A2-5920-4436-B739-67CBE25CC796}.Debug|x64.Build.0 = Debug|x64
+		{208536A2-5920-4436-B739-67CBE25CC796}.Debug|x86.ActiveCfg = Debug|Win32
+		{208536A2-5920-4436-B739-67CBE25CC796}.Debug|x86.Build.0 = Debug|Win32
+		{208536A2-5920-4436-B739-67CBE25CC796}.Release|x64.ActiveCfg = Release|x64
+		{208536A2-5920-4436-B739-67CBE25CC796}.Release|x64.Build.0 = Release|x64
+		{208536A2-5920-4436-B739-67CBE25CC796}.Release|x86.ActiveCfg = Release|Win32
+		{208536A2-5920-4436-B739-67CBE25CC796}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DBDC3E55-8133-4367-9C9A-9C3A582F89E3}
+	EndGlobalSection
+EndGlobal

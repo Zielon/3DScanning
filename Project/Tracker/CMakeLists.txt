@@ -3,9 +3,17 @@ project(tracker-lib VERSION 1.0.0 DESCRIPTION "A library for tracking")
 
 # Set variables
 set(LIBS "${CMAKE_SOURCE_DIR}/external-libs") #Local Setting
+set(SRC "${CMAKE_SOURCE_DIR}/src") #Local Setting
 
 # Compiler settings
-set(CMAKE_CXX_STANDARD 17)
+if(UNIX)
+	set(CMAKE_CXX_STANDARD 17)
+endif(UNIX)
+	set(CMAKE_CXX_STANDARD 14)
+if (WIN32)
+
+endif(WIN32)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w -O3")
 
 # Build directories
@@ -24,6 +32,12 @@ if (UNIX)
     include_directories(include ${PROJECT_BINARY_DIR})
 endif (UNIX)
 
+if (WIN32)
+
+	include_directories(${LIBS}/opencv/include)
+
+endif (WIN32)
+
 # Eigen Library
 include_directories(${LIBS}/Eigen)
 
@@ -35,16 +49,14 @@ include_directories(${LIBS}/Flann)
 add_library(
         tracker-lib SHARED
 
-        reconstruction/source/Tracker.cpp
-        reconstruction/source/ICP.cpp
-        reconstruction/source/NearestNeighbor.hpp
-        reconstruction/source/ProcrustesAligner.hpp
-        reconstruction/source/Fusion.cpp
-
-        data-stream/source/DatasetVideoStreamReader.cpp
-
-        ExportDLL.cpp
-        Eigen.h
+        ${SRC}/reconstruction/sources/Tracker.cpp
+        ${SRC}/reconstruction/sources/ICP.cpp
+        ${SRC}/reconstruction/sources/NearestNeighbor.hpp
+        ${SRC}/reconstruction/sources/ProcrustesAligner.hpp
+        ${SRC}/reconstruction/sources/Fusion.cpp
+        ${SRC}/data-stream/sources/DatasetVideoStreamReader.cpp
+        ${SRC}/ExportDLL.cpp
+        ${SRC}/Eigen.h
 )
 
 #--------------Compile library (Linux and Apple development)
@@ -62,16 +74,21 @@ if (UNIX)
     )
 endif (UNIX)
 
-target_link_libraries(
+if (WIN32)
+
+	target_link_libraries(
         tracker-lib
+		${LIBS}/opencv/libs/opencv.lib
         ${FLANN_LIBRARIES}
-)
+	)
+
+endif (WIN32)
 
 add_executable(
         tracker-test
-        main.cpp
-        tests/windows/WindowsTests.cpp
-        tests/general/GeneralTests.cpp
+        ${SRC}/main.cpp
+        ${SRC}/tests/windows/WindowsTests.cpp
+        ${SRC}/tests/general/GeneralTests.cpp
 )
 
 target_link_libraries(tracker-test tracker-lib)

@@ -6,6 +6,7 @@ cmake-build-*/
 build/
 
 # Project-specific
-libs/*
+external-libs/opencv/*
+data/*
 tracker-lib/
 tracker-test/
