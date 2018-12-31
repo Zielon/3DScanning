@@ -18,7 +18,7 @@
 		return rc;													\
 	}
 
-#define SAMPLE_XML_PATH "OpenNIConfig.xml"
+#define OPENNI_XML_PATH "OpenNIConfig.xml"
 
 #include <XnOpenNI.h>
 #include <XnLog.h>
@@ -54,7 +54,7 @@ protected:
 
 private:
 
-	const std::string m_DATA_DIR = "Data";
+	const std::string m_DATA_DIR = "data";
 	bool m_realtime;
 	bool m_use_capture;
 	bool m_use_verbose;

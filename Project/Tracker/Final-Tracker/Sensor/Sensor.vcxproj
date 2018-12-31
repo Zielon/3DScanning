@@ -89,10 +89,10 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\opencv\include;$(SolutionDir)Dependencies\OpenNI\Include;$(SolutionDir)Sensor\Headers;$(SolutionDir)Dependencies\Eigen</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\opencv\include;$(SolutionDir)dependencies\OpenNI\Include;$(SolutionDir)dependencies\Eigen</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\opencv\libs;$(SolutionDir)Dependencies\OpenNI\Lib64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\opencv\libs;$(SolutionDir)dependencies\OpenNI\Lib64</AdditionalLibraryDirectories>
       <AdditionalDependencies>openNI64.lib;opencvd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

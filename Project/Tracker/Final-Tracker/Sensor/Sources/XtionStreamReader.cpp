@@ -1,4 +1,4 @@
-#include <XtionStreamReader.h>
+#include "../Headers/XtionStreamReader.h"
 
 XtionStreamReader::XtionStreamReader(bool realtime, bool verbose, bool capture) {
 
@@ -16,11 +16,11 @@ bool XtionStreamReader::initContext() {
 	const char *fn = NULL;
 
 	//Check if the configuration path exists
-	if (fileExists(SAMPLE_XML_PATH)) {
-		fn = SAMPLE_XML_PATH;
+	if (fileExists(OPENNI_XML_PATH)) {
+		fn = OPENNI_XML_PATH;
 	}
 	else {
-		printf("Could not find '%s' nor '%s'. Aborting.\n", SAMPLE_XML_PATH, SAMPLE_XML_PATH);
+		printf("Could not find '%s'. Aborting.\n", OPENNI_XML_PATH);
 		printf("XN Status Error: %d\n", XN_STATUS_ERROR);
 
 		return false;
