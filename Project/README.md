@@ -67,7 +67,7 @@ The first version will be a basic AR animation where a virtual object is placed 
 ## Future Development
 
 Future tasks:
-* iPad with Structure Sensor Deployment using uplink library [4] or Structure SDK for iOS.
+* iPad with Structure Sensor Deployment using uplink library [4] or Structure SDK for iOS [5].
 
 ## References
 
