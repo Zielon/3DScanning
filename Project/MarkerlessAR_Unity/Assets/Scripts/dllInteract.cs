@@ -30,7 +30,7 @@ public class dllInteract : MonoBehaviour
     byte[] image = null;
     float[] pose = null;
 	Matrix4x4 trans;
-	Vector3 pos = null;
+	Vector3 pos;
 
     System.IntPtr cppContext;
 
