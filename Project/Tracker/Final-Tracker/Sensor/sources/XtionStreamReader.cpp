@@ -115,8 +115,8 @@ bool XtionStreamReader::startReading() {
 	}
 
 	//FPS initialization
-	nRetVal = xnFPSInit(&xnFPS, 180);
-	CHECK_RC(nRetVal, "FPS Init");
+	/*nRetVal = xnFPSInit(&xnFPS, 180);
+	CHECK_RC(nRetVal, "FPS Init");*/
 
 	return true;
 }
@@ -138,7 +138,7 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 		return -1;
 	}
 
-	xnFPSMarkFrame(&xnFPS);
+	//xnFPSMarkFrame(&xnFPS);
 
 	//Getting data from generator
 	xn::ImageMetaData colorMD;
@@ -162,10 +162,10 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 	memcpy(rgb.data, color_map, colorMD.YRes() * colorMD.XRes() * 3 * sizeof(unsigned char));*/
 
 	//OpenCV depth image from raw depth map
-	depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1, (void*)depth_map, cv::Mat::AUTO_STEP);
+	//depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1, (void*)depth_map, cv::Mat::AUTO_STEP);
 
-	/*depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1);
-	memcpy(depth.data, depth_map, depthMD.YRes() * depthMD.XRes() * sizeof(unsigned short));*/
+	depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1);
+	memcpy(depth.data, depth_map, depthMD.YRes() * depthMD.XRes() * sizeof(unsigned short));
 
 	//Capture frames
 
@@ -174,8 +174,6 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 		//saveRawFrame(colorMD.FrameID(), &colorMD, &depthMD);
 		saveFrame(colorMD.FrameID(), rgb, depth);
 	}
-
-	depth.convertTo(depth, CV_8U, 255);
 }
 
 bool XtionStreamReader::saveRawFrame(int frame, xn::ImageMetaData *colorMD, xn::DepthMetaData *depthMD) {
