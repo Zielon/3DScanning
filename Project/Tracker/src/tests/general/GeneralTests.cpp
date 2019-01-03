@@ -12,7 +12,11 @@ void GeneralTests::nearestNeighbor() {
 
     auto nn = new NearestNeighborSearchFlann();
 
-    nn->queryMatches({});
+	std::vector<Vector3f> vec;
+
+	vec.emplace_back(Vector3f(0.3, 0.2, 0.1));
+
+    nn->queryMatches(vec);
 }
 
 void GeneralTests::tracker() {
