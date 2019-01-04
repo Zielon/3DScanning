@@ -1,3 +1,14 @@
+/*
+ * Course: 3D Scanning and Motion Capture.
+ * File: XtionStreamReader.h
+ * Purpose: First exercise of the course.
+ * @author Baris Yazici, Juan Raul Padron Griffe, Patrick Radner, Wojciech Zielonka. 
+ * @version 1.0 4/1/2019
+
+Sensor specifications: https://www.asus.com/3D-Sensor/Xtion_PRO/specifications/
+*/
+
+
 #ifndef XTION_STREAM_READER_H
 
 #define XTION_STREAM_READER_H
@@ -64,12 +75,18 @@ private:
 	xn::DepthGenerator m_depth_generator;
 	XnFPSData xnFPS;
 
+	//Camera specifications
+	const float m_fov_x = 58.0f;//Horizontal field of view (58 degrees)
+	const float m_fov_y = 45.0f;//Vertical field of view (47 degrees)
+	float m_x_res;//Horizontal resolution
+	float m_y_res;//Vertical resolution
+
+
 	XnBool fileExists(const char *fn);
 	int readFrame(cv::Mat &rgb, cv::Mat &depth);
 	bool saveRawFrame(int frame, xn::ImageMetaData *colorMD, xn::DepthMetaData *depthMD);
 	bool saveFrame(int frame, cv::Mat &rgb, cv::Mat &depth);
-
-
+	float computeFocalLength(float fov_angle, float center);
 };
 
 #endif XTION_STREAM_READER_H

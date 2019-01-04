@@ -18,6 +18,10 @@ int main(){
 		return -1;
 	}
 
+	Matrix3f intrinsics = streamReader->getCameraIntrinsics();
+
+	std::cout << "Sensor intrinsics: " << std:: endl << intrinsics  << std::endl;
+
 	std::cout << "The reading process has started" << std::endl;
 
 	int i = 0;

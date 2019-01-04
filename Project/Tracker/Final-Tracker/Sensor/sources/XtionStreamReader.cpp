@@ -114,9 +114,14 @@ bool XtionStreamReader::startReading() {
 		return false;
 	}
 
+	// Setting intrinsics parameters
+
+	m_x_res = colorMD.FullXRes();
+	m_y_res = colorMD.FullYRes();
+
 	//FPS initialization
-	/*nRetVal = xnFPSInit(&xnFPS, 180);
-	CHECK_RC(nRetVal, "FPS Init");*/
+	nRetVal = xnFPSInit(&xnFPS, 180);
+	CHECK_RC(nRetVal, "FPS Init");
 
 	return true;
 }
@@ -138,7 +143,7 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 		return -1;
 	}
 
-	//xnFPSMarkFrame(&xnFPS);
+	xnFPSMarkFrame(&xnFPS);
 
 	//Getting data from generator
 	xn::ImageMetaData colorMD;
@@ -162,10 +167,10 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 	memcpy(rgb.data, color_map, colorMD.YRes() * colorMD.XRes() * 3 * sizeof(unsigned char));*/
 
 	//OpenCV depth image from raw depth map
-	//depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1, (void*)depth_map, cv::Mat::AUTO_STEP);
+	depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1, (void*)depth_map, cv::Mat::AUTO_STEP);
 
-	depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1);
-	memcpy(depth.data, depth_map, depthMD.YRes() * depthMD.XRes() * sizeof(unsigned short));
+	//depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1);
+	//memcpy(depth.data, depth_map, depthMD.YRes() * depthMD.XRes() * sizeof(unsigned short));
 
 	//Capture frames
 
@@ -202,11 +207,30 @@ bool XtionStreamReader::saveFrame(int frame, cv::Mat &rgb, cv::Mat &depth) {
 	return true;
 }
 
+//Function to compute the focal length given the field of view angle and the center.
+float XtionStreamReader::computeFocalLength(float fov_angle, float center) {
+
+	fov_angle *= M_PI / 180; //Angle to radians 
+
+	return center / tanf(fov_angle / 2.0f);
+}
+
 Matrix3f XtionStreamReader::getCameraIntrinsics()
 {
+	float fx, fy, cx, cy;
+
+	//Optical center
+	cx = m_x_res / 2.0f - 0.5f;
+	cy = m_y_res / 2.0f - 0.5f;
+
+	//Focal length
+	fx = computeFocalLength(m_fov_x, cx);
+	fy = computeFocalLength(m_fov_y, cy);
+
 	Matrix3f i;
-	i << 520.9, 0, 325.1,
-		0, 521.0, 249.7,
+	i << fx, 0, cx,
+		0, fy, cy,
 		0, 0, 0;
+
 	return i;
 }
