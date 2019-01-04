@@ -2,7 +2,7 @@
 
 int main(){
 
-	printf("OpenCV: %s", cv::getBuildInformation().c_str());
+	//printf("OpenCV: %s", cv::getBuildInformation().c_str());
 
 	XtionStreamReader *streamReader = new XtionStreamReader(true, false, false);
 
@@ -23,6 +23,8 @@ int main(){
 	std::cout << "Sensor intrinsics: " << std:: endl << intrinsics  << std::endl;
 
 	std::cout << "The reading process has started" << std::endl;
+
+	//cin.get();
 
 	int i = 0;
 

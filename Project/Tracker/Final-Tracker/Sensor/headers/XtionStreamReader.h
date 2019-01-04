@@ -76,8 +76,10 @@ private:
 	XnFPSData xnFPS;
 
 	//Camera specifications
-	const float m_fov_x = 58.0f;//Horizontal field of view (58 degrees)
-	const float m_fov_y = 45.0f;//Vertical field of view (47 degrees)
+	const float m_fov_x_degrees = 58.0f;//Horizontal field of view in degrees (58 degrees)
+	const float m_fov_y_degrees = 45.0f;//Vertical field of view in degrees (47 degrees)
+	float m_fov_x;//Horizontal field of view
+	float m_fov_y;//Horizontal field of view
 	float m_x_res;//Horizontal resolution
 	float m_y_res;//Vertical resolution
 
@@ -87,6 +89,7 @@ private:
 	bool saveRawFrame(int frame, xn::ImageMetaData *colorMD, xn::DepthMetaData *depthMD);
 	bool saveFrame(int frame, cv::Mat &rgb, cv::Mat &depth);
 	float computeFocalLength(float fov_angle, float center);
+	float computeFocalLengthRadians(float fov, float center);
 };
 
 #endif XTION_STREAM_READER_H

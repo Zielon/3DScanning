@@ -24,11 +24,11 @@
     <Node type="Image" stopOnError="false" startGenerating="true">
 
       <Configuration>
-        <!-- Low Resolution 
-        <MapOutputMode xRes="320" yRes="240" FPS="60"/> -->
+        <!-- Low Resolution -->
+      <MapOutputMode xRes="320" yRes="240" FPS="60"/>
 
-        <!-- High Resolution-->
-        <MapOutputMode xRes="640" yRes="480" FPS="30"/> 
+      <!-- High Resolution 
+        <MapOutputMode xRes="640" yRes="480" FPS="30"/> -->
 
         <PixelFormat> RGB24 </PixelFormat>
 
@@ -50,13 +50,13 @@
 				-->
       </Query>
       <Configuration>
-        <!-- Low Resolution 
-        <MapOutputMode xRes="320" yRes="240" FPS="60"/> -->
+        <!-- Low Resolution  -->
+      <MapOutputMode xRes="320" yRes="240" FPS="60"/>
 
-        <!-- High Resolution -->
-        <MapOutputMode xRes="640" yRes="480" FPS="30"/>
+      <!-- High Resolution
+        <MapOutputMode xRes="640" yRes="480" FPS="30"/> -->
 
-      <!-- Uncomment to override global mirror 
+        <!-- Uncomment to override global mirror 
       <Mirror on="true" />  -->
       </Configuration>
     </Node>

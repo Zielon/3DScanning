@@ -115,9 +115,14 @@ bool XtionStreamReader::startReading() {
 	}
 
 	// Setting intrinsics parameters
+	m_x_res = depthMD.FullXRes();
+	m_y_res = depthMD.FullYRes();
 
-	m_x_res = colorMD.FullXRes();
-	m_y_res = colorMD.FullYRes();
+	XnFieldOfView fov;
+	m_depth_generator.GetFieldOfView(fov);//Radians
+
+	m_fov_x = fov.fHFOV;
+	m_fov_y = fov.fVFOV;
 
 	//FPS initialization
 	nRetVal = xnFPSInit(&xnFPS, 180);
@@ -207,10 +212,16 @@ bool XtionStreamReader::saveFrame(int frame, cv::Mat &rgb, cv::Mat &depth) {
 	return true;
 }
 
-//Function to compute the focal length given the field of view angle and the center.
+//Function to compute the focal length given the field of view angle and the optical center.
 float XtionStreamReader::computeFocalLength(float fov_angle, float center) {
 
 	fov_angle *= M_PI / 180; //Angle to radians 
+
+	return center / tanf(fov_angle / 2.0f);
+}
+
+//Function to compute the focal length given the field of view in radians and the optical center.
+float XtionStreamReader::computeFocalLengthRadians(float fov_angle, float center) {
 
 	return center / tanf(fov_angle / 2.0f);
 }
@@ -223,9 +234,13 @@ Matrix3f XtionStreamReader::getCameraIntrinsics()
 	cx = m_x_res / 2.0f - 0.5f;
 	cy = m_y_res / 2.0f - 0.5f;
 
-	//Focal length
-	fx = computeFocalLength(m_fov_x, cx);
-	fy = computeFocalLength(m_fov_y, cy);
+	/*Focal length from degrees
+	fx = computeFocalLength(m_fov_x_degrees, cx);
+	fy = computeFocalLength(m_fov_y_degrees, cy);*/
+
+	//Focal length 
+	fx = computeFocalLengthRadians(m_fov_x, cx);
+	fy = computeFocalLengthRadians(m_fov_y, cy);
 
 	Matrix3f i;
 	i << fx, 0, cx,
