@@ -2,10 +2,10 @@
 
 #ifdef _WIN32
 
-extern "C" __declspec(dllexport) void * createContext() {
+extern "C" __declspec(dllexport) void * createContext(char* dataset_path) {
 
 	TrackerContext* c = new  TrackerContext();
-	c->videoStreamReader = new DatasetVideoStreamReader(DATASET_DIR, true);
+	c->videoStreamReader = new DatasetVideoStreamReader(dataset_path, true);
 	c->videoStreamReader->startReading(); //FIXME: Frame Info only set after first frame is read... FIXME: mb split this into seperate call?
 
 	Matrix3f intrinsics = c->videoStreamReader->getCameraIntrinsics(); 

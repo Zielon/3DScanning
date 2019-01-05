@@ -11,8 +11,8 @@
 class DatasetVideoStreamReader :
         public VideoStreamReaderBase {
 public:
-    explicit DatasetVideoStreamReader(std::string datasetFolderPath, bool realtime = false) :
-            m_datasetFolderPath(std::move(datasetFolderPath)),
+    explicit DatasetVideoStreamReader(char *datasetFolderPath, bool realtime = false) :
+            m_datasetFolderPath(std::string(datasetFolderPath)),
             m_realtime(realtime) {
     }
 

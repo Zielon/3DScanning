@@ -1,87 +1,89 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using System.Runtime.InteropServices;
-using System.Threading;
+using System.Text;
 using UnityEngine;
-
 using UnityEngine.UI;
 
-
-public class dllInteract : MonoBehaviour
+namespace Assets.Scripts
 {
-    //Unity automatically find DLL files located on Assets/Plugins
-    private const string DllFilePath = @"Tracker";
-
-    //[DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern int test();
-
-    [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern System.IntPtr createContext();
-    [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
-    private static extern void trackerCameraPose(System.IntPtr context,
-     byte[] image, float[] pose, int w, int h);
-
-    [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
-    private static extern void dllMain(System.IntPtr context, byte[] image, float[] pose);
-
-
-    [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern int getImageWidth(System.IntPtr context);
-
-    [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern int getImageHeight(System.IntPtr context);
-
-    //shared memory
-    byte[] image = null;
-    float[] pose = null;
-
-    System.IntPtr cppContext;
-
-
-    //general setup
-    int w = -1;
-    int h = -1;
-
-    // Use this for initialization
-    void Start()
+    public class DllInteract : MonoBehaviour
     {
-        Debug.Log("Creating Context");
-        
-        //Debug.Log(test());
+        //Unity automatically find DLL files located on Assets/Plugins
+        private const string DllFilePath = @"Tracker";
 
-        cppContext = createContext();
+        private IntPtr _cppContext;
+        private int _h = -1;
 
-        w = getImageWidth(cppContext);
-        h = getImageHeight(cppContext);
+        //shared memory
+        private byte[] _image;
+        private float[] _pose;
 
-        Debug.Log("Created Contex. Image dimensions: " + w + "x" + h);
+        //general setup
+        private int _w = -1;
 
-        pose = new float[16];
-        image = new byte[w * h * 3];
-    }
+        //[DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern int test();
 
-    // Update is called once per frame
-    void Update()
-    {
-        Debug.Log("Update test");
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr createContext(byte[] path);
 
-        dllMain(cppContext, image, pose);
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void trackerCameraPose(IntPtr context,
+            byte[] image, float[] pose, int w, int h);
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void dllMain(IntPtr context, byte[] image, float[] pose);
 
 
-        if (image != null)
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int getImageWidth(IntPtr context);
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int getImageHeight(IntPtr context);
+
+        // Use this for initialization
+        private void Start()
         {
-            //Create texture from image
-            Texture2D tex = new Texture2D(w, h, TextureFormat.RGB24, false);
+            Debug.Log("Creating Context");
 
-            tex.LoadRawTextureData(image);
-            tex.Apply(); 
+            //Debug.Log(test());
+            var path = Application.dataPath + "/../Datasets/freiburg/";
+            _cppContext = createContext(Encoding.ASCII.GetBytes(path));
 
-            //Debug.Log("Texture created successfuly");
+            _w = getImageWidth(_cppContext);
+            _h = getImageHeight(_cppContext);
 
-            Image videoBg = GetComponent<Image>();
-            videoBg.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+            Debug.Log("Created Contex. Image dimensions: " + _w + "x" + _h);
 
-            //Debug.Log("Sprite created successfuly");
+            _pose = new float[16];
+            _image = new byte[_w * _h * 3];
         }
-        else
+
+        // Update is called once per frame
+        private void Update()
         {
-            Debug.Log("Could not read IMG");
+            Debug.Log("Update test");
+
+            //dllMain(_cppContext, _image, _pose);
+
+            if (_image != null)
+            {
+                //Create texture from image
+                var tex = new Texture2D(_w, _h, TextureFormat.RGB24, false);
+
+                tex.LoadRawTextureData(_image);
+                tex.Apply();
+
+                //Debug.Log("Texture created successfuly");
+
+                var videoBg = GetComponent<Image>();
+                videoBg.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+
+                //Debug.Log("Sprite created successfuly");
+            }
+            else
+            {
+                Debug.Log("Could not read IMG");
+            }
         }
     }
 }
