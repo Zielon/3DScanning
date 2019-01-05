@@ -94,7 +94,8 @@
     <Link>
       <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENNI_DIR)\Lib64</AdditionalLibraryDirectories>
       <AdditionalDependencies>openNI64.lib;opencv_world400d.lib;</AdditionalDependencies>
-      <DelayLoadDLLs>opencv_world400d.lib</DelayLoadDLLs>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -126,19 +127,20 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENNI_DIR)\Lib64</AdditionalLibraryDirectories>
       <AdditionalDependencies>openNI64.lib;opencv_world400.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>opencv_world400.lib</DelayLoadDLLs>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\data-stream\sources\XtionStreamReader.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Sources\XtionStreamReader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="OpenNIConfig.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Headers\VideoStreamReaderBase.h" />
-    <ClInclude Include="Headers\XtionStreamReader.h" />
+    <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h" />
+    <ClInclude Include="..\..\src\data-stream\headers\XtionStreamReader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

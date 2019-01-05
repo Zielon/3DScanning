@@ -69,7 +69,7 @@ XnBool XtionStreamReader::fileExists(const char *fn)
 
 bool XtionStreamReader::nextFrameAvailable() {
 
-	return false;
+	return true;
 }
 
 int XtionStreamReader::getSequentialFrame(cv::Mat &rgb, cv::Mat &depth) {
@@ -133,6 +133,10 @@ bool XtionStreamReader::startReading() {
 
 bool XtionStreamReader::stopReading() {
 
+	return true;
+}
+
+bool XtionStreamReader::isRunning() {
 	return true;
 }
 

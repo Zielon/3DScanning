@@ -12,9 +12,9 @@ Sensor specifications: https://www.asus.com/3D-Sensor/Xtion_PRO/specifications/
 
 #define XTION_STREAM_READER_H
 
+#include "VideoStreamReaderBase.h"
 #include <iostream>
 #include <fstream>
-#include "VideoStreamReaderBase.h"
 
 //OpenNI
 
@@ -51,6 +51,8 @@ public:
 	bool startReading() override;
 
 	bool stopReading() override;
+
+	bool isRunning() override;
 
 	Matrix3f getCameraIntrinsics() override;
 

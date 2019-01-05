@@ -1,4 +1,4 @@
-#include "Headers/XtionStreamReader.h"
+#include "../../src/data-stream/headers/XtionStreamReader.h";
 
 int main() {
 
