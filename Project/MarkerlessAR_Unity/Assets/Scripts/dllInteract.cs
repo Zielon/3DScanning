@@ -33,7 +33,6 @@ namespace Assets.Scripts
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern void dllMain(IntPtr context, byte[] image, float[] pose);
 
-
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern int getImageWidth(IntPtr context);
 
@@ -63,7 +62,7 @@ namespace Assets.Scripts
         {
             Debug.Log("Update test");
 
-            //dllMain(_cppContext, _image, _pose);
+            dllMain(_cppContext, _image, _pose);
 
             if (_image != null)
             {
