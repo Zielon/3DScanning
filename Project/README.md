@@ -5,12 +5,12 @@
 ### Visual Studio
 In the Visual Studio solutions we are using a few environment paths:
 
-Variables:
-
-> EIGEN_DIR       C:\Projects\Eigen\eigen-git-mirror
-> FLANN_DIR       C:\Projects\3DScanning\Project\Tracker\external-libs\Flann
-> OPENCV_DIR      C:\OpenCV\opencv\build\x64\vc15
-> OPENCV_INCLUDE  C:\OpenCV\opencv\build\include
+| NAME          | VALUE  														|
+|---------------|---------------------------------------------------------------|
+|EIGEN_DIR      |`C:\Projects\Eigen\eigen-git-mirror`                           |
+|FLANN_DIR      |`C:\Projects\3DScanning\Project\Tracker\external-libs\Flann`   |
+|OPENCV_DIR     |`C:\OpenCV\opencv\build\x64\vc15`                              |
+|OPENCV_INCLUDE |`C:\OpenCV\opencv\build\include`                               |
 
 Please set them on your Windows machine!
 
@@ -21,7 +21,7 @@ The opencvworld400d.dll is already added to \Assets\Plugins in Unity
 The dataset in Unity has to be also in a certain location.
 An example path where you have to keep your Freiburg dataset.
 
-> C:\Projects\3DScanning\Project\MarkerlessAR_Unity\Datasets\freiburg\
+`C:\Projects\3DScanning\Project\MarkerlessAR_Unity\Datasets\freiburg\`
 
 ### Hardware
 * RGB-D Sensor: ASUS Xion Pro (PrimeSense).
