@@ -128,7 +128,7 @@
       </AddModuleNamesToAssembly>
       <AssemblyLinkResource>
       </AssemblyLinkResource>
-      <DelayLoadDLLs>opencv_world400d.lib</DelayLoadDLLs>
+      <DelayLoadDLLs>opencv_world400d.dll</DelayLoadDLLs>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
