@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
-    public class DllInteract : MonoBehaviour
+    public class Reconstructor : MonoBehaviour
     {
         //Unity automatically find DLL files located on Assets/Plugins
         private const string DllFilePath = @"Tracker";
@@ -51,9 +51,10 @@ namespace Assets.Scripts
                     Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
                 {"..", "Datasets", "freiburg", " "};
 
-            var path = segments.Aggregate((result, item) => result += Path.AltDirectorySeparatorChar + item).Trim();
+            var absolutePath = segments.Aggregate(
+                (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
 
-            _cppContext = createContext(Encoding.ASCII.GetBytes(path));
+            _cppContext = createContext(Encoding.ASCII.GetBytes(absolutePath));
 
             _w = getImageWidth(_cppContext);
             _h = getImageHeight(_cppContext);
@@ -69,7 +70,7 @@ namespace Assets.Scripts
         {
             Debug.Log("Update test");
 
-            // dllMain(_cppContext, _image, _pose);
+            dllMain(_cppContext, _image, _pose);
 
             if (_image != null)
             {
