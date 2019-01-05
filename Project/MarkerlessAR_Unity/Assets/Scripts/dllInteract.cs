@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
@@ -44,8 +47,12 @@ namespace Assets.Scripts
         {
             Debug.Log("Creating Context");
 
-            //Debug.Log(test());
-            var path = Application.dataPath + "/../Datasets/freiburg/";
+            var segments = new List<string>(
+                    Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
+                {"..", "Datasets", "freiburg", " "};
+
+            var path = segments.Aggregate((result, item) => result += Path.AltDirectorySeparatorChar + item).Trim();
+
             _cppContext = createContext(Encoding.ASCII.GetBytes(path));
 
             _w = getImageWidth(_cppContext);
@@ -62,7 +69,7 @@ namespace Assets.Scripts
         {
             Debug.Log("Update test");
 
-            dllMain(_cppContext, _image, _pose);
+            // dllMain(_cppContext, _image, _pose);
 
             if (_image != null)
             {
