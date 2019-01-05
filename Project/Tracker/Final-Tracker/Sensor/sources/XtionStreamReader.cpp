@@ -51,8 +51,8 @@ bool XtionStreamReader::initContext() {
 	return true;
 }
 
-XtionStreamReader::~XtionStreamReader(){
-	
+XtionStreamReader::~XtionStreamReader() {
+
 	//Release resources
 	m_color_generator.Release();
 	m_depth_generator.Release();
@@ -93,10 +93,10 @@ bool XtionStreamReader::startReading() {
 	//Setting depth degenerator
 	nRetVal = m_context.FindExistingNode(XN_NODE_TYPE_DEPTH, m_depth_generator);
 	CHECK_RC(nRetVal, "Find depth generator");
-	
+
 	xn::ImageMetaData colorMD;
 	xn::DepthMetaData depthMD;
-	
+
 	m_color_generator.GetMetaData(colorMD);
 	m_depth_generator.GetMetaData(depthMD);
 
@@ -113,6 +113,16 @@ bool XtionStreamReader::startReading() {
 		printf("The device depth and image resolution must be equal!\n");
 		return false;
 	}
+
+	// Setting intrinsics parameters
+	m_x_res = depthMD.FullXRes();
+	m_y_res = depthMD.FullYRes();
+
+	XnFieldOfView fov;
+	m_depth_generator.GetFieldOfView(fov);//Radians
+
+	m_fov_x = fov.fHFOV;
+	m_fov_y = fov.fVFOV;
 
 	//FPS initialization
 	nRetVal = xnFPSInit(&xnFPS, 180);
@@ -164,8 +174,8 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 	//OpenCV depth image from raw depth map
 	depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1, (void*)depth_map, cv::Mat::AUTO_STEP);
 
-	/*depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1);
-	memcpy(depth.data, depth_map, depthMD.YRes() * depthMD.XRes() * sizeof(unsigned short));*/
+	//depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1);
+	//memcpy(depth.data, depth_map, depthMD.YRes() * depthMD.XRes() * sizeof(unsigned short));
 
 	//Capture frames
 
@@ -174,8 +184,6 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 		//saveRawFrame(colorMD.FrameID(), &colorMD, &depthMD);
 		saveFrame(colorMD.FrameID(), rgb, depth);
 	}
-
-	depth.convertTo(depth, CV_8U, 255);
 }
 
 bool XtionStreamReader::saveRawFrame(int frame, xn::ImageMetaData *colorMD, xn::DepthMetaData *depthMD) {
@@ -204,11 +212,40 @@ bool XtionStreamReader::saveFrame(int frame, cv::Mat &rgb, cv::Mat &depth) {
 	return true;
 }
 
+//Function to compute the focal length given the field of view angle and the optical center.
+float XtionStreamReader::computeFocalLength(float fov_angle, float center) {
+
+	fov_angle *= M_PI / 180; //Angle to radians 
+
+	return center / tanf(fov_angle / 2.0f);
+}
+
+//Function to compute the focal length given the field of view in radians and the optical center.
+float XtionStreamReader::computeFocalLengthRadians(float fov_angle, float center) {
+
+	return center / tanf(fov_angle / 2.0f);
+}
+
 Matrix3f XtionStreamReader::getCameraIntrinsics()
 {
+	float fx, fy, cx, cy;
+
+	//Optical center
+	cx = m_x_res / 2.0f - 0.5f;
+	cy = m_y_res / 2.0f - 0.5f;
+
+	/*Focal length from degrees
+	fx = computeFocalLength(m_fov_x_degrees, cx);
+	fy = computeFocalLength(m_fov_y_degrees, cy);*/
+
+	//Focal length 
+	fx = computeFocalLengthRadians(m_fov_x, cx);
+	fy = computeFocalLengthRadians(m_fov_y, cy);
+
 	Matrix3f i;
-	i << 520.9, 0, 325.1,
-		0, 521.0, 249.7,
+	i << fx, 0, cx,
+		0, fy, cy,
 		0, 0, 0;
+
 	return i;
 }

@@ -92,8 +92,9 @@
       <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(OPENNI_INCLUDE);$(EIGEN_DIR)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(SolutionDir)dependencies\OpenNI\Lib64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>openNI64.lib;opencv_world343.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENNI_DIR)\Lib64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>openNI64.lib;opencv_world400d.lib;</AdditionalDependencies>
+      <DelayLoadDLLs>opencv_world400d.lib</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -125,6 +126,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENNI_DIR)\Lib64</AdditionalLibraryDirectories>
       <AdditionalDependencies>openNI64.lib;opencv_world400.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>opencv_world400.lib</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
