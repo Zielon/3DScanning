@@ -15,6 +15,7 @@ private:
     void dllVidReadTest();
 
     void vidReadTest();
+
 #endif
 };
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -76,7 +76,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\opencv\include;$(SolutionDir)Dependencies\OpenNI\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(OPENNI_INCLUDE);$(EIGEN_DIR)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\opencv\libs;$(SolutionDir)Dependencies\OpenNI\Lib</AdditionalLibraryDirectories>
@@ -89,11 +89,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\opencv\include;$(SolutionDir)dependencies\OpenNI\Include;$(SolutionDir)dependencies\Eigen</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(OPENNI_INCLUDE);$(EIGEN_DIR)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)dependencies\opencv\libs;$(SolutionDir)dependencies\OpenNI\Lib64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>openNI64.lib;opencvd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENNI_DIR)\Lib64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>openNI64.lib;opencv_world400d.lib;</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -118,25 +120,27 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\opencv\include;$(SolutionDir)Dependencies\OpenNI\Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(OPENNI_INCLUDE)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\opencv\libs;$(SolutionDir)Dependencies\OpenNI\Lib64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>openNI64.lib;opencv.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENNI_DIR)\Lib64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>openNI64.lib;opencv_world400.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\data-stream\sources\XtionStreamReader.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Sources\XtionStreamReader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="OpenNIConfig.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Headers\VideoStreamReaderBase.h" />
-    <ClInclude Include="Headers\XtionStreamReader.h" />
+    <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h" />
+    <ClInclude Include="..\..\src\data-stream\headers\XtionStreamReader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

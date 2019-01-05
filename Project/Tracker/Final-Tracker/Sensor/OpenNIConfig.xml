@@ -1,30 +1,47 @@
 <OpenNI>
-	<Licenses>
-		<!-- Add application-specific licenses here 
+  <Licenses>
+    <!-- Add application-specific licenses here 
 		<License vendor="vendor" key="key"/>
 		-->
-	</Licenses>
-	<Log writeToConsole="false" writeToFile="false">
-		<!-- 0 - Verbose, 1 - Info, 2 - Warning, 3 - Error (default) -->
-		<LogLevel value="3"/>
-		<Masks>
-			<Mask name="ALL" on="true"/>
-		</Masks>
-		<Dumps>
-		</Dumps>
-	</Log>
-	<ProductionNodes>
-		<!-- Uncomment following line, in order to run from a recording 
+  </Licenses>
+  <Log writeToConsole="false" writeToFile="false">
+    <!-- 0 - Verbose, 1 - Info, 2 - Warning, 3 - Error (default) -->
+    <LogLevel value="3"/>
+    <Masks>
+      <Mask name="ALL" on="true"/>
+    </Masks>
+    <Dumps>
+    </Dumps>
+  </Log>
+  <ProductionNodes  startGenerating="false">
+    <!-- Uncomment following line, in order to run from a recording 
 		<Recording file="sampleRec.oni" />
 		-->
-	
-		<!-- Set global mirror -->
-		<GlobalMirror on="true"/>
-		
-		<!-- Create a depth node and give it a name alias (useful if referenced ahead in this script) -->
-		<Node type="Depth" name="MyDepth">
-			<Query>
-				<!-- Uncomment to filter by vendor name, product name, etc.
+
+    <!-- Set global mirror -->
+    <GlobalMirror on="true"/>
+
+    <!-- Create an image node. If it fails, continue anyway. -->
+    <Node type="Image" stopOnError="false" startGenerating="true">
+
+      <Configuration>
+        <!-- Low Resolution -->
+        <MapOutputMode xRes="320" yRes="240" FPS="60"/>
+
+        <!-- High Resolution 
+        <MapOutputMode xRes="640" yRes="480" FPS="30"/> -->
+
+        <PixelFormat> RGB24 </PixelFormat>
+
+        <!-- Uncomment to override global mirror
+        <Mirror on="true" />  -->
+      </Configuration>
+    </Node>
+
+    <!-- Create a depth node and give it a name alias (useful if referenced ahead in this script) -->
+    <Node type="Depth" name="MyDepth" startGenerating="true" >
+      <Query>
+        <!-- Uncomment to filter by vendor name, product name, etc.
 				<Vendor>MyVendor inc.</Vendor>
 				<Name>MyProduct</Name>
 				<MinVersion>1.2.3.4</MinVersion>
@@ -32,27 +49,21 @@
 					<Capability>Cropping</Capability>
 				</Capabilities>
 				-->
-			</Query>
-			<Configuration>
-				<!-- Uncomment to set requested mode
-				<MapOutputMode xRes="640" yRes="480" FPS="30"/> 
-				-->
+      </Query>
+      <Configuration>
+        <!-- Low Resolution  -->
+        <MapOutputMode xRes="320" yRes="240" FPS="60"/>
 
-				<!-- Uncomment to override global mirror
-				<Mirror on="false" /> 
-				-->
-			</Configuration>
-		</Node>
-		
-		<!-- Create an image node. If it fails, continue anyway. -->
-		<Node type="Image" stopOnError="false" />
+        <!-- High Resolution
+        <MapOutputMode xRes="640" yRes="480" FPS="30"/> -->
 
-		<!-- Uncomment nodes from here if you need them.
-		<Node type="Audio" />
-		<Node type="User" />
-		<Node type="Hands" />
-		<Node type="Gesture" />
+        <!-- Uncomment to override global mirror 
+      <Mirror on="true" />  -->
+      </Configuration>
+    </Node>
+
+    <!-- Uncomment nodes from here if you need them.
 		<Node type="Scene" />
 		-->
-	</ProductionNodes>
+  </ProductionNodes>
 </OpenNI>

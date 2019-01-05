@@ -15,24 +15,20 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Sources\XtionStreamReader.cpp">
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="..\..\src\data-stream\sources\XtionStreamReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Headers\VideoStreamReaderBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\XtionStreamReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <Xml Include="OpenNIConfig.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="OpenNIConfig.xml">
+    <ClInclude Include="..\..\src\data-stream\headers\XtionStreamReader.h">
       <Filter>Header Files</Filter>
-    </Xml>
+    </ClInclude>
+    <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

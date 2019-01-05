@@ -1,17 +1,87 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <ClInclude Include="..\..\src\Cpp14Workaround.h" />
+    <ClInclude Include="..\..\src\Eigen.h" />
+    <ClInclude Include="..\..\src\ExportDLL.h" />
+    <ClInclude Include="..\..\src\TrackerContext.h" />
+    <ClInclude Include="..\..\src\tests\general\GeneralTests.h">
+      <Filter>tests\general</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\tests\windows\WindowsTests.h">
+      <Filter>tests\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\data-stream\headers\DatasetVideoStreamReader.h">
+      <Filter>data-stream\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h">
+      <Filter>data-stream\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\Fusion.h">
+      <Filter>reconstruction\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\ICP.h">
+      <Filter>reconstruction\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\Tracker.h">
+      <Filter>reconstruction\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\sources\NearestNeighbor.hpp">
+      <Filter>reconstruction\sources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\sources\ProcrustesAligner.hpp">
+      <Filter>reconstruction\sources</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\ExportDLL.cpp" />
+    <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\tests\general\GeneralTests.cpp">
+      <Filter>tests\general</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tests\windows\WindowsTests.cpp">
+      <Filter>tests\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\data-stream\sources\DatasetVideoStreamReader.cpp">
+      <Filter>data-stream\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\reconstruction\sources\Fusion.cpp">
+      <Filter>reconstruction\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\reconstruction\sources\ICP.cpp">
+      <Filter>reconstruction\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\reconstruction\sources\Tracker.cpp">
+      <Filter>reconstruction\sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="data-stream">
+      <UniqueIdentifier>{0a212319-e3ab-4415-a834-e3b0a7a2e37a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="reconstruction">
+      <UniqueIdentifier>{586f151a-5304-4a56-bda5-6fd44e591379}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="tests">
+      <UniqueIdentifier>{812a40be-af38-47d5-8520-34780808476b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data-stream\headers">
+      <UniqueIdentifier>{b6423e85-f0bd-4990-af69-b16922276504}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="data-stream\sources">
+      <UniqueIdentifier>{c5624ec5-becc-421d-b4d4-cd43aea6bd1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tests\windows">
+      <UniqueIdentifier>{558ae7d3-65f1-4695-86f0-4f4651873745}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tests\general">
+      <UniqueIdentifier>{6f75bdd1-b28c-4105-835e-491452063d18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="reconstruction\headers">
+      <UniqueIdentifier>{a665fb45-b2a7-42a4-b8a3-531986ede890}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="reconstruction\sources">
+      <UniqueIdentifier>{d6e155f6-11f8-4f69-aab9-a88b5265309d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

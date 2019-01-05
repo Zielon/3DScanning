@@ -105,7 +105,7 @@ int DatasetVideoStreamReader::getLatestFrame(cv::Mat &rgb, cv::Mat &depth) {
 }
 
 int DatasetVideoStreamReader::readAnyFrame(const unsigned long &index, cv::Mat &rgb, cv::Mat &depth) {
-    assert(index <= m_numFrames);
+    assert(index < m_numFrames);
 
     /*/
 

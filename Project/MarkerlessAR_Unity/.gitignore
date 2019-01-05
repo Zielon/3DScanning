@@ -63,3 +63,4 @@ Corridor/Library/metadata/
 # Specific     #
 # ============ #
 /[Dd]ata/*
+/Datasets/*
