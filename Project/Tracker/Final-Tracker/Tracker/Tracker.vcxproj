@@ -121,9 +121,14 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENCV_DIR)\bin</AdditionalLibraryDirectories>
       <AdditionalDependencies>opencv_world343d.lib</AdditionalDependencies>
       <RegisterOutput>false</RegisterOutput>
+      <AddModuleNamesToAssembly>
+      </AddModuleNamesToAssembly>
+      <AssemblyLinkResource>
+      </AssemblyLinkResource>
+      <DelayLoadDLLs>opencv_world343d.dll</DelayLoadDLLs>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
