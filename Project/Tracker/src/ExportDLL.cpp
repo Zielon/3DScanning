@@ -2,6 +2,8 @@
 
 #ifdef _WIN32
 
+#define PIXEL_STEPS 8
+
 extern "C" __declspec(dllexport) void * createContext(char* dataset_path) {
 
 	TrackerContext* c = new  TrackerContext();
@@ -12,6 +14,8 @@ extern "C" __declspec(dllexport) void * createContext(char* dataset_path) {
 
     c->tracker = new Tracker(intrinsics(0,0), intrinsics(1,1), intrinsics(0,2), intrinsics(1,2),
 		c->videoStreamReader->m_width_depth, c->videoStreamReader->m_height_depth);
+
+	c->fusion = new Fusion(c->videoStreamReader->m_width_depth, c->videoStreamReader->m_height_depth, PIXEL_STEPS);
 
     return c;
 }
@@ -50,7 +54,10 @@ extern "C" __declspec(dllexport) void dllMain(void *context, unsigned char *imag
     //DEBUG
     /*cv::imshow("dllMain", rgb);
     cv::waitKey(1);*/
-	c->tracker->backprojectFrame(depth, newFrameVerts, 8);
+	c->tracker->backprojectFrame(depth, newFrameVerts, PIXEL_STEPS);
+
+	c->fusion->m_currentFrameIndexBuffer.clear(); 
+	c->fusion->generateMeshFromVertices(newFrameVerts, c->fusion->m_currentFrameIndexBuffer);
 
 	if (firstFrame) // first frame
 	{
@@ -75,6 +82,36 @@ extern "C" __declspec(dllexport) void dllMain(void *context, unsigned char *imag
     //no more opencv computations after this point
     cv::cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
     std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
+}
+
+
+
+extern "C" __declspec(dllexport) int getVertexCount(void* context)
+{
+	TrackerContext * c = static_cast<TrackerContext*>(context);
+
+	return c->tracker->m_previousFrameVerts.size(); 
+}
+
+extern "C" __declspec(dllexport) void getVertexBuffer(void* context, float *vertices)
+{
+	TrackerContext * c = static_cast<TrackerContext*>(context);
+
+	memcpy(vertices, c->tracker->m_previousFrameVerts.data(), c->tracker->m_previousFrameVerts.size()* sizeof(Vector3f));
+}
+
+extern "C" __declspec(dllexport) int getIndexCount(void* context)
+{
+	TrackerContext * c = static_cast<TrackerContext*>(context);
+
+	return c->fusion->m_currentFrameIndexBuffer.size(); 
+}
+
+extern "C" __declspec(dllexport) void getIndexBuffer(void* context, int* indices)
+{
+	TrackerContext * c = static_cast<TrackerContext*>(context);
+
+	memcpy(indices, c->fusion->m_currentFrameIndexBuffer.data(), c->fusion->m_currentFrameIndexBuffer.size() * sizeof(int));
 }
 
 #endif

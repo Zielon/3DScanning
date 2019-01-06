@@ -16,6 +16,8 @@ private:
 
     void vidReadTest();
 
+	void meshTest(); 
+
 #endif
 };
 

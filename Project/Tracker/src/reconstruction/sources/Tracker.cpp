@@ -22,12 +22,11 @@ void Tracker::alignNewFrame(
 void Tracker::backprojectFrame(cv::Mat& depth, std::vector<Vector3f>& outVerts,const size_t pixelSteps)
 {
 	Vector3f pixelcoords;
-
 	for (size_t y = 0; y < m_image_height; y+= pixelSteps)
 	{
 		for (size_t x = 0; x < m_image_width; x+= pixelSteps)
 		{
-			float depthVal = depth.at<float>(x,y); 
+			float depthVal = depth.at<float>(x,y)* 5000.0f; 
 			if (depthVal>0.0f)
 			{
 
@@ -38,6 +37,10 @@ void Tracker::backprojectFrame(cv::Mat& depth, std::vector<Vector3f>& outVerts,c
 				//colIdx = idx * 4 * sizeof(BYTE);
 				//vertices[idx].color << colorMap[colIdx], colorMap[colIdx + 1], colorMap[colIdx + 2], colorMap[colIdx + 3];
 
+			}
+			else
+			{
+				outVerts.push_back(Vector3f::Zero());
 			}
 		}
 	}
