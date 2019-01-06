@@ -43,7 +43,7 @@ extern "C" __declspec(dllexport) void dllMain(void *context, unsigned char *imag
 
 	bool firstFrame = c->tracker->m_previousFrameVerts.size() == 0;
 
-    c->videoStreamReader->getNextFrame(rgb, depth, true);
+    c->videoStreamReader->getNextFrame(rgb, depth, false);
 
 	std::vector<Vector3f> newFrameVerts;
 
