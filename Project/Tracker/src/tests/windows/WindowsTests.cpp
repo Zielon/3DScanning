@@ -2,14 +2,11 @@
 #include "../../TrackerContext.h"
 
 #ifdef _WIN32
+#include <direct.h>
 
-// Absolute path to the dataset dir, must end with a backslash
-/*i.e.:
-D:\\user\\desktop\\3dscanning\\3DScanning\\Project\\MarkerlessAR_Unity\\Datasets\\freiburg\\
-C:\\Users\\\Lukas\\Documents\\3DScanning\\datasets\\rgbd_dataset_freiburg1_xyz\\
-C:\\Users\\wojta\\Downloads\\rgbd_dataset_freiburg1_xyz\\rgbd_dataset_freiburg1_xyz\\
-*/
-const std::string DATASET_DIR = "";
+// path to the dataset dir, must end with a backslash
+
+const std::string DATASET_DIR = "\\..\\..\\..\\MarkerlessAR_Unity\\Datasets\\freiburg\\";
 
 void WindowsTests::run(){
     dllVidReadTest();
@@ -20,10 +17,13 @@ void WindowsTests::dllVidReadTest() {
 
     std::cout << "START dllVidReadTest()" << std::endl;
 
-	char * path = new char[DATASET_DIR.length() + 1];
-	strcpy(path, DATASET_DIR.c_str());
+	char cCurrentPath[FILENAME_MAX];
 
-	TrackerContext *pc = static_cast<TrackerContext*>(createContext(path));
+	_getcwd(cCurrentPath, sizeof(cCurrentPath));
+
+	strcpy(cCurrentPath + strlen(cCurrentPath), DATASET_DIR.c_str()); 
+
+	TrackerContext *pc = static_cast<TrackerContext*>(createContext(cCurrentPath));
 
     byte *img = new byte[getImageWidth(pc) * getImageHeight(pc) * 3];
 
