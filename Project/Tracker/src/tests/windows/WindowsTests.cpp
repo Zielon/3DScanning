@@ -5,7 +5,7 @@
 
 // Absolute path to the dataset dir, must end with a backslash
 /*i.e.:
-D:\\user\\desktop\\3dscanning\\assets\\rgbd_dataset_freiburg2_xyz\\
+D:\\user\\desktop\\3dscanning\\3DScanning\\Project\\MarkerlessAR_Unity\\Datasets\\freiburg\\
 C:\\Users\\\Lukas\\Documents\\3DScanning\\datasets\\rgbd_dataset_freiburg1_xyz\\
 C:\\Users\\wojta\\Downloads\\rgbd_dataset_freiburg1_xyz\\rgbd_dataset_freiburg1_xyz\\
 */
@@ -13,7 +13,7 @@ const std::string DATASET_DIR = "";
 
 void WindowsTests::run(){
     dllVidReadTest();
-    vidReadTest();
+ //   vidReadTest();
 }
 
 void WindowsTests::dllVidReadTest() {
@@ -29,7 +29,7 @@ void WindowsTests::dllVidReadTest() {
 
     float pose[16];
 
-	for (int i = 0; i < 120; ++i)
+	for (int i = 0; i < 3000; ++i)
 	{
 		dllMain(pc, img, pose);
 
