@@ -67,7 +67,7 @@ namespace Assets.Scripts
             _cppContext = createContext(Encoding.ASCII.GetBytes(absolutePath));
 
             //Get the trajectory file
-            trajectoryPath = absolutePath + "\\groundtruth.txt";
+            trajectoryPath = System.IO.Path.Combine(absolutePath, "groundtruth.txt");
           
             //Get the position and orientation of the camera
             string[] lines = System.IO.File.ReadAllLines(trajectoryPath);
@@ -97,21 +97,6 @@ namespace Assets.Scripts
             _pose = new float[16];
             _image = new byte[_w * _h * 3];
         }
-
-        public static Quaternion QuaternionFromMatrix(Matrix4x4 m)
-        {
-            // Adapted from: http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm
-            Quaternion q = new Quaternion();
-            q.w = Mathf.Sqrt(Mathf.Max(0, 1 + m[0, 0] + m[1, 1] + m[2, 2])) / 2;
-            q.x = Mathf.Sqrt(Mathf.Max(0, 1 + m[0, 0] - m[1, 1] - m[2, 2])) / 2;
-            q.y = Mathf.Sqrt(Mathf.Max(0, 1 - m[0, 0] + m[1, 1] - m[2, 2])) / 2;
-            q.z = Mathf.Sqrt(Mathf.Max(0, 1 - m[0, 0] - m[1, 1] + m[2, 2])) / 2;
-            q.x *= Mathf.Sign(q.x * (m[2, 1] - m[1, 2]));
-            q.y *= Mathf.Sign(q.y * (m[0, 2] - m[2, 0]));
-            q.z *= Mathf.Sign(q.z * (m[1, 0] - m[0, 1]));
-            return q;
-        }
-
 
         // Update is called once per frame
         private void Update()
@@ -154,7 +139,7 @@ namespace Assets.Scripts
                 initialCamPose = newPos;
                 Debug.Log("new pos and orientation of camera: \n " + newPos.ToString("F5"));
                 Debug.Log("check the translation part: \n" + newPos.GetColumn(3).ToString("F5"));
-                Quaternion newQ = QuaternionFromMatrix(newPos);
+                Quaternion newQ = newPos.rotation;
                 Debug.Log("transformed quaternion: \n" + newQ.ToString("F5"));
             }
             else
