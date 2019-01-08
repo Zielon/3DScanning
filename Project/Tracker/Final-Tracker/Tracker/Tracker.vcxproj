@@ -27,7 +27,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\Cpp14Workaround.h" />
     <ClInclude Include="..\..\src\data-stream\headers\DatasetVideoStreamReader.h" />
     <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h" />
     <ClInclude Include="..\..\src\Eigen.h" />

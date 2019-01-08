@@ -1,7 +1,6 @@
 #ifndef EXPORT_DLL_H
 
 #define EXPORT_DLL_H
-#include "Cpp14Workaround.h"
 #include "TrackerContext.h"
 #include "data-stream/headers/DatasetVideoStreamReader.h"
 #include <opencv2/imgproc/imgproc.hpp>
