@@ -57,7 +57,7 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 
 	tracker_context->videoStreamReader->getNextFrame(rgb, depth, false);
 
-	const PointCloud source = PointCloud(tracker_context->tracker->getCameraParameters(), depth);
+	const PointCloud source = PointCloud(tracker_context->tracker->getCameraParameters(), depth, 32);
 
 	if (is_first_frame) // first frame
 	{

@@ -1,9 +1,9 @@
 #include "../headers/PointCloud.h"
 
-PointCloud::PointCloud(){ }
+PointCloud::PointCloud() = default;
 
-PointCloud::PointCloud(CameraParameters camera_parameters, cv::Mat& depth)
-	: m_camera_parameters(camera_parameters){
+PointCloud::PointCloud(CameraParameters camera_parameters, cv::Mat& depth, int step_size)
+	: m_camera_parameters(camera_parameters), m_step_size(step_size){
 
 	this->transform(depth);
 }
@@ -94,7 +94,7 @@ void PointCloud::transform(cv::Mat& depth){
 		temp_normals[(width - 1) + v * width] = Vector3f(MINF, MINF, MINF);
 	}
 
-	for (int i = 0; i < temp_points.size(); i++)
+	for (int i = 0; i < temp_points.size(); i += m_step_size)
 	{
 		const auto& point = temp_points[i];
 		const auto& normal = temp_normals[i];

@@ -12,7 +12,7 @@ public:
 
 	PointCloud();
 
-	PointCloud(CameraParameters camera_parameters, cv::Mat& depth);
+	PointCloud(CameraParameters camera_parameters, cv::Mat& depth, int step_size);
 
 	std::vector<Vector3f>& getPoints();
 
@@ -26,6 +26,7 @@ private:
 	void transform(cv::Mat& depth);
 
 	CameraParameters m_camera_parameters;
+	int m_step_size = 8;
 	std::vector<Vector3f> m_points;
 	std::vector<Vector3f> m_normals;
 };

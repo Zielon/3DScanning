@@ -33,7 +33,7 @@ private:
 	NearestNeighborSearch* m_nearestNeighbor;
 	ProcrustesAligner* m_procrustesAligner;
 
-	int m_number_iterations = 4;
+	int m_number_iterations = 10;
 
 	std::vector<Vector3f> transformPoints(const std::vector<Vector3f>& sourcePoints, const Matrix4f& pose);
 

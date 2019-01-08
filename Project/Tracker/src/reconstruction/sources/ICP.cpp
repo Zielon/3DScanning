@@ -29,7 +29,7 @@ Matrix4f ICP::estimatePose(const PointCloud& source, const PointCloud& target){
 
 		auto matches = m_nearestNeighbor->queryMatches(transformedPoints);
 
-		//pruneCorrespondences(transformedNormals, target.getNormals(), matches);
+		pruneCorrespondences(transformedNormals, target.getNormals(), matches);
 
 		clock_t end = clock();
 		double elapsedSecs = double(end - begin) / CLOCKS_PER_SEC;
@@ -52,13 +52,13 @@ Matrix4f ICP::estimatePose(const PointCloud& source, const PointCloud& target){
 			// Match exists
 			sourcePoints.emplace_back(transformedPoints[j]);
 			targetPoints.emplace_back(target.getPoints()[idx]);
-			//targetNormals.emplace_back(transformedNormals[idx]);
+			targetNormals.emplace_back(transformedNormals[idx]);
 		}
 
 		if (numberOfMatches == 0) return pose;
 
-		pose = estimatePosePointToPoint(sourcePoints, targetPoints) * pose;
-		//pose = estimatePosePointToPlane(sourcePoints, targetPoints, targetNormals) * pose;
+		//pose = estimatePosePointToPoint(sourcePoints, targetPoints) * pose;
+		pose = estimatePosePointToPlane(sourcePoints, targetPoints, targetNormals) * pose;
 	}
 
 	return pose;
@@ -78,6 +78,15 @@ void ICP::pruneCorrespondences(
 	for (unsigned i = 0; i < sourceNormals.size(); i++)
 	{
 		Match match = matches[i];
+
+		// Source and target vectors can have uneven number of elements
+		// Matches are build from the target vector, therefore we have to check
+		// if the source vector is still in the range
+		if (match.idx >= sourceNormals.size())
+		{
+			matches[i] = Match{-1, 0.f};
+			continue;
+		}
 
 		const auto& sourceNormal = sourceNormals[match.idx];
 		const auto& targetNormal = targetNormals[match.idx];
