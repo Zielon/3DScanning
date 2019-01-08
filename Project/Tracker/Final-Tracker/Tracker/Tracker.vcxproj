@@ -32,8 +32,10 @@
     <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h" />
     <ClInclude Include="..\..\src\Eigen.h" />
     <ClInclude Include="..\..\src\ExportDLL.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\CameraParameters.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Fusion.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\ICP.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\PointCloud.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Tracker.h" />
     <ClInclude Include="..\..\src\reconstruction\sources\NearestNeighbor.hpp" />
     <ClInclude Include="..\..\src\reconstruction\sources\ProcrustesAligner.hpp" />
@@ -47,6 +49,7 @@
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Fusion.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\ICP.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\PointCloud.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Tracker.cpp" />
     <ClCompile Include="..\..\src\tests\general\GeneralTests.cpp" />
     <ClCompile Include="..\..\src\tests\windows\WindowsTests.cpp" />

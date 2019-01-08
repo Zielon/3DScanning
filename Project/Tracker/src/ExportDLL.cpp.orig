@@ -53,7 +53,11 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 
 	cv::Mat rgb, depth;
 
+<<<<<<< Updated upstream
+    c->videoStreamReader->getNextFrame(rgb, depth, true);
+=======
 	bool is_first_frame = tracker_context->tracker->m_previous_point_cloud.getPoints().size() == 0;
+>>>>>>> Stashed changes
 
 	tracker_context->videoStreamReader->getNextFrame(rgb, depth, false);
 

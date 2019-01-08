@@ -4,13 +4,16 @@
 
 bool DatasetVideoStreamReader::startReading() {
     std::string rgbLine, depthLine;
+
     std::ifstream rgbNameFile(m_datasetFolderPath + "rgb.txt");
     std::ifstream depthNameFile(m_datasetFolderPath + "depth.txt");
 
     unsigned long counter = 0;
 
-    if (!(rgbNameFile.is_open() && depthNameFile.is_open()))
-        return false;
+    if (!rgbNameFile || !depthNameFile)
+    {
+		throw std::runtime_error("Could not open files!");
+    }
 
     while (std::getline(rgbNameFile, rgbLine) && std::getline(depthNameFile, depthLine)) {
         if (rgbLine.at(0) == '#') // FIXME: assuming both files have same comment header -> skip more lines in 1 file

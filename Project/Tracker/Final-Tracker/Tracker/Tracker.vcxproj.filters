@@ -32,6 +32,12 @@
     <ClInclude Include="..\..\src\reconstruction\sources\ProcrustesAligner.hpp">
       <Filter>reconstruction\sources</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\PointCloud.h">
+      <Filter>reconstruction\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\CameraParameters.h">
+      <Filter>reconstruction\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -52,6 +58,9 @@
       <Filter>reconstruction\sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\reconstruction\sources\Tracker.cpp">
+      <Filter>reconstruction\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\reconstruction\sources\PointCloud.cpp">
       <Filter>reconstruction\sources</Filter>
     </ClCompile>
   </ItemGroup>
