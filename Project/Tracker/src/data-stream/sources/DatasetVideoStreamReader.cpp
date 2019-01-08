@@ -16,7 +16,7 @@ bool DatasetVideoStreamReader::startReading() {
     }
 
     while (std::getline(rgbNameFile, rgbLine) && std::getline(depthNameFile, depthLine)) {
-        if (rgbLine.at(0) == '#') // FIXME: assuming both files have same comment header -> skip more lines in 1 file
+        if (rgbLine.at(0) == '#') // assuming both files have same comment header
             continue;
         {
             std::stringstream lineSS(rgbLine);
@@ -107,8 +107,8 @@ int DatasetVideoStreamReader::getLatestFrame(cv::Mat &rgb, cv::Mat &depth) {
     return readAnyFrame(getCurrentFrameIndex() + offset, rgb, depth);
 }
 
-int DatasetVideoStreamReader::readAnyFrame(const unsigned long &index, cv::Mat &rgb, cv::Mat &depth) {
-    assert(index < m_numFrames);
+int DatasetVideoStreamReader::readAnyFrame(unsigned long index, cv::Mat &rgb, cv::Mat &depth) {
+	index = std::min(index, m_numFrames - 1); //Just repeat the last frame
 
     /*/
 
@@ -138,7 +138,7 @@ int DatasetVideoStreamReader::readAnyFrame(const unsigned long &index, cv::Mat &
     cv::Mat depthTmp = cv::imread(m_datasetFolderPath + m_depth_names[index].second);
     depthTmp.convertTo(depth, CV_32FC1, 1.0 / 5000.0);
 
-    //FIXME: Just assuming constant w/h
+    //ust assuming constant w/h
     m_width_rgb = rgb.cols;
     m_height_rgb = rgb.rows;
     m_width_depth = depth.cols;
@@ -146,6 +146,6 @@ int DatasetVideoStreamReader::readAnyFrame(const unsigned long &index, cv::Mat &
 
 
 
-    //FIXME: not sure why i planned for all of these functions to return something...
+    //not sure why i planned for all of these functions to return something...
     return 0;
 }

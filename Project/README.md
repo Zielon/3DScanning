@@ -27,15 +27,17 @@ An example path where you have to keep your Freiburg dataset.
 * RGB-D Sensor: ASUS Xion Pro (PrimeSense).
 
 ### Software
-* Operating Systems: Windows, Linux and MacOS.
+* Operating Systems: Windows 10.
 * Programming Languages: C++, C#.
-* Game Engine: Unity.
+* IDE: Visual Studio 2017.
+* Game Engine: Unity Unity 2018.2.19.
 
 ### C++ Dependencies
 * OpenNI: PrimeSense depth compatible sensors library.
 * Eigen: linear algebra library.
 * Ceres: non-linear optimization library.
 * FreeImage: image manipulation library.
+* OpenCV 4.0.0: computer vision library. 
 * FLANN: fast nearest neighbor library.
 
 ### Unity Modules
@@ -89,6 +91,7 @@ The first version will be a basic AR animation where a virtual object is placed 
 
 Future tasks:
 * iPad with Structure Sensor Deployment using uplink library [4] or Structure SDK for iOS [5].
+* Multiplatform support (Linux and MacOS).
 
 ## References
 

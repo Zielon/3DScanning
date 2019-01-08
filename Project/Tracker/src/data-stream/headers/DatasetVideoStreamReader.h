@@ -38,7 +38,7 @@ protected:
 
 private:
 
-    int readAnyFrame(const unsigned long &index, cv::Mat &rgb, cv::Mat &depth);
+    int readAnyFrame(unsigned long index, cv::Mat &rgb, cv::Mat &depth);
 
     std::string m_datasetFolderPath;
     bool m_realtime;
