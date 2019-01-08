@@ -34,9 +34,9 @@ public:
 
 
 	std::vector<Vector3f> m_previousFrameVerts; 
+	ICP *m_icp = nullptr;
 
 private:
-    ICP *m_icp = nullptr;
 
 	float m_fovX = 0, m_fovY = 0, m_cX = 0, m_cY = 0; 
 	int m_image_height = 0, m_image_width = 0;

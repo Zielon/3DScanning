@@ -44,7 +44,7 @@ void WindowsTests::meshTest() {
 		Eigen::Matrix4f matPose = Map<Matrix4f>(pose, 4, 4);
 
 		std::string filename = "meshTest"; 
-		filename += (int) pc->videoStreamReader->getCurrentFrameIndex(); 
+		filename +=std::to_string( pc->videoStreamReader->getCurrentFrameIndex()); 
 		filename += ".off"; 
 		std::ofstream outFile(filename);
 		if (!outFile.is_open()) continue;
@@ -85,7 +85,7 @@ void WindowsTests::meshTest() {
 		getIndexBuffer(pc, indexbuffer);
 		for (size_t i = 0; i < getIndexCount(pc)/3; ++i)
 		{
-
+			
 			//std::cout << vertexBuffer[3 * i + 0] << " "
 			//	<< vertexBuffer[3 * i + 1] << " "
 			//	<< vertexBuffer[3 * i + 2] << std::endl; 

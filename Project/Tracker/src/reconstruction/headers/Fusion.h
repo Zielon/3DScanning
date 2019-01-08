@@ -3,7 +3,7 @@
 
 #include "../../Eigen.h"
 
-#define EDGE_THRESHOLD 0.1f*5000 // 10cm
+#define EDGE_THRESHOLD 0.1f // 10cm
 #define EDGE_THRESHOLD_SQ EDGE_THRESHOLD*EDGE_THRESHOLD
 
 

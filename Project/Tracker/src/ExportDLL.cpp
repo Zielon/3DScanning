@@ -2,7 +2,7 @@
 
 #ifdef _WIN32
 
-#define PIXEL_STEPS 8
+#define PIXEL_STEPS 4
 
 extern "C" __declspec(dllexport) void * createContext(char* dataset_path) {
 
@@ -61,13 +61,16 @@ extern "C" __declspec(dllexport) void dllMain(void *context, unsigned char *imag
 
 	if (firstFrame) // first frame
 	{
-		Matrix4f id = Matrix4f::Identity(); 
+		Matrix4f id = Matrix4f::Identity();
 		memcpy(pose, id.data(), 16 * sizeof(float)); 
 	}
 	else
 	{
 		c->tracker->alignNewFrame(newFrameVerts, c->tracker->m_previousFrameVerts, pose);
 	}
+
+	Matrix4f poseMat = Map<Matrix4f>(pose, 4, 4); 
+	c->tracker->m_icp->transformPoints(newFrameVerts, poseMat); 
 
 	//TODO: real time mesh generation here
 
