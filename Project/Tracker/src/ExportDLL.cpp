@@ -1,7 +1,5 @@
 #include "ExportDLL.h"
 
-#ifdef _WIN32
-
 extern "C" __declspec(dllexport) void* createContext(char* dataset_path){
 
 	TrackerContext* tracker_context = new TrackerContext();
@@ -83,5 +81,3 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
 }
-
-#endif

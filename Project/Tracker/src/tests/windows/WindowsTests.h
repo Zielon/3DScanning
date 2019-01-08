@@ -7,7 +7,6 @@
 #include "../../ExportDLL.h"
 
 class WindowsTests {
-#ifdef _WIN32
 public:
     void run();
 
@@ -15,8 +14,6 @@ private:
     void dllVidReadTest();
 
     void vidReadTest();
-
-#endif
 };
 
 #endif //TRACKER_WINDOWSTESTS_H

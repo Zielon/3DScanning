@@ -1,7 +1,6 @@
 #include "WindowsTests.h"
 #include "../../TrackerContext.h"
 
-#ifdef _WIN32
 #include <direct.h>
 
 // path to the dataset dir, must end with a backslash
@@ -77,5 +76,3 @@ void WindowsTests::vidReadTest() {
 
     }
 }
-
-#endif

@@ -31,7 +31,7 @@ namespace Tests
 
 			TrackerContext *pc = static_cast<TrackerContext*>(createContext(cCurrentPath));
 
-			byte *img = new byte[getImageWidth(pc) * getImageHeight(pc) * 3];
+			unsigned char *img = new unsigned char[getImageWidth(pc) * getImageHeight(pc) * 3];
 
 			float pose[16];
 

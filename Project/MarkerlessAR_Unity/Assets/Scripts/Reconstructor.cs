@@ -12,7 +12,7 @@ namespace Assets.Scripts
     public class Reconstructor : MonoBehaviour
     {
         //Unity automatically find DLL files located on Assets/Plugins
-        private const string DllFilePath = @"Tracker";
+        private const string DllFilePath = @"Tracker_release";
 
         private IntPtr _cppContext;
         private int _h = -1;
