@@ -43,12 +43,11 @@ namespace Assets.Scripts
         private static extern int getImageHeight(IntPtr context);
 
         string trajectoryPath = string.Empty;
-        Matrix4x4 trans = new Matrix4x4();
+        Matrix4x4 poseTrans = new Matrix4x4();
         Vector3 translation ;
         Quaternion q;
         Vector3 scale;
-        Matrix4x4 m ;
-        //float[] camOrientation = new float[8];
+        Matrix4x4 initialCamPose ;
 
 
         // Use this for initialization
@@ -77,21 +76,21 @@ namespace Assets.Scripts
             var map = new Dictionary<string, float>();
             string[] orient = new string[] { "tx", "ty", "tz", "qx", "qy", "qz", "qw" };
 
-            //TODO: Get float from string
-            for (int i = 0; i < words.Length; i++)
+            
+            for (int i = 0; i < words.Length; i++) //Get float from string. Add it to map var.
             {
                 if (i > 0)
                     map.Add(orient[i - 1], float.Parse(words[i], System.Globalization.CultureInfo.InvariantCulture));
          
             }
-            //Debug.Log("translation x: " + map["tx"].ToString());
+            
 
             //test the pose estimation transformation matrix
             translation = new Vector3(map["tx"], map["ty"], map["tz"]); //initial position of camera
             q = new Quaternion();
             q.Set(map["qx"], map["qy"], map["qz"], map["qw"]);         //initial orientation of camera
             scale = new Vector3(1, 1, 1);
-            m = Matrix4x4.TRS(translation, q, scale);           //Generate a 4x4 homogeneous transformation matrix from a 3D point, unit quaternion and scale vecotr.
+            initialCamPose = Matrix4x4.TRS(translation, q, scale);           //Generate a 4x4 homogeneous transformation matrix from a 3D point, unit quaternion and scale vecotr.
 
 
             _w = getImageWidth(_cppContext);
@@ -142,21 +141,20 @@ namespace Assets.Scripts
                 //Debug.Log("Sprite created successfuly");
 
                 // Get the transformation matrix between frames
-                //parse the pose vector to get the columns
-                Vector4 firstCol = new Vector4(_pose[0], _pose[1], _pose[2], _pose[3]);
+                Vector4 firstCol = new Vector4(_pose[0], _pose[1], _pose[2], _pose[3]);      //parse the pose vector to get the columns
                 Vector4 secCol = new Vector4(_pose[4], _pose[5], _pose[6], _pose[7]);
                 Vector4 thirdCol = new Vector4(_pose[8], _pose[9], _pose[10], _pose[11]);
                 Vector4 fourthCol = new Vector4(_pose[12], _pose[13], _pose[14], _pose[15]);
 
                 //Set the columns from pose to transformation matrix
-                trans.SetColumn(0, firstCol);
-                trans.SetColumn(1, secCol);
-                trans.SetColumn(2, thirdCol);
-                trans.SetColumn(3, fourthCol);
+                poseTrans.SetColumn(0, firstCol);
+                poseTrans.SetColumn(1, secCol);
+                poseTrans.SetColumn(2, thirdCol);
+                poseTrans.SetColumn(3, fourthCol);
 
-                Debug.Log("pose estimation transformation matrix: \n" + trans.ToString("F5"));
+                Debug.Log("pose estimation transformation matrix: \n" + poseTrans.ToString("F5"));
                 //Check if the pose estimation transformation matrix is correct
-                Matrix4x4 newPos = m * trans;
+                Matrix4x4 newPos = initialCamPose * poseTrans;
                 Debug.Log("new pos and orientation of camera: \n " + newPos.ToString("F5"));
                 Debug.Log("check the translation part: \n" + newPos.GetColumn(3).ToString("F5"));
                 Quaternion newQ = QuaternionFromMatrix(newPos);
