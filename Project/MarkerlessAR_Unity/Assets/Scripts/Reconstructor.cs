@@ -78,13 +78,10 @@ namespace Assets.Scripts
 
             
             for (int i = 0; i < words.Length; i++) //Get float from string. Add it to map var.
-            {
                 if (i > 0)
                     map.Add(orient[i - 1], float.Parse(words[i], System.Globalization.CultureInfo.InvariantCulture));
-         
-            }
-            
-
+        
+           
             //test the pose estimation transformation matrix
             translation = new Vector3(map["tx"], map["ty"], map["tz"]); //initial position of camera
             q = new Quaternion();
@@ -155,6 +152,7 @@ namespace Assets.Scripts
                 Debug.Log("pose estimation transformation matrix: \n" + poseTrans.ToString("F5"));
                 //Check if the pose estimation transformation matrix is correct
                 Matrix4x4 newPos = initialCamPose * poseTrans;
+                initialCamPose = newPos;
                 Debug.Log("new pos and orientation of camera: \n " + newPos.ToString("F5"));
                 Debug.Log("check the translation part: \n" + newPos.GetColumn(3).ToString("F5"));
                 Quaternion newQ = QuaternionFromMatrix(newPos);
