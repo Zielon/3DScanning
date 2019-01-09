@@ -4,9 +4,13 @@
 
 struct Voxel final
 {
+	Voxel(): m_distance(INFINITY), m_weight(0), m_free_ctr(0), m_color(Vector3f()){ }
+
 	float m_distance;
 	float m_weight;
-	Eigen::Vector3f m_color;
+	int m_free_ctr;
+	Vector3f m_color;
+	Vector3f m_position;
 };
 
 #endif

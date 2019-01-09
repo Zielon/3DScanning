@@ -36,6 +36,7 @@
     <ClInclude Include="..\..\src\reconstruction\headers\ICP.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\PointCloud.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Tracker.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\Voxel.h" />
     <ClInclude Include="..\..\src\reconstruction\sources\NearestNeighbor.hpp" />
     <ClInclude Include="..\..\src\reconstruction\sources\ProcrustesAligner.hpp" />
     <ClInclude Include="..\..\src\tests\general\GeneralTests.h" />

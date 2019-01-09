@@ -37,6 +37,9 @@
     <ClInclude Include="..\..\src\reconstruction\headers\CameraParameters.h">
       <Filter>reconstruction\headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\Voxel.h">
+      <Filter>reconstruction\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
