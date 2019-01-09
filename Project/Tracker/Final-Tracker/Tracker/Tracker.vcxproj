@@ -27,13 +27,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\Cpp14Workaround.h" />
     <ClInclude Include="..\..\src\data-stream\headers\DatasetVideoStreamReader.h" />
     <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h" />
     <ClInclude Include="..\..\src\Eigen.h" />
     <ClInclude Include="..\..\src\ExportDLL.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\CameraParameters.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Fusion.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\ICP.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\PointCloud.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Tracker.h" />
     <ClInclude Include="..\..\src\reconstruction\sources\NearestNeighbor.hpp" />
     <ClInclude Include="..\..\src\reconstruction\sources\ProcrustesAligner.hpp" />
@@ -47,6 +48,7 @@
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Fusion.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\ICP.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\PointCloud.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Tracker.cpp" />
     <ClCompile Include="..\..\src\tests\general\GeneralTests.cpp" />
     <ClCompile Include="..\..\src\tests\windows\WindowsTests.cpp" />
@@ -123,7 +125,15 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetExt>.dll</TargetExt>
+    <TargetExt>.exe</TargetExt>
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetExt>.exe</TargetExt>
+    <TargetName>$(ProjectName)</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">
+    <TargetName>$(ProjectName)_release</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -141,7 +151,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level1</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
@@ -202,7 +212,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -253,7 +263,7 @@
       </Command>
     </PreLinkEvent>
     <PostBuildEvent>
-      <Command>xcopy  /y /d $(OutDir)*.dll $(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\</Command>
+      <Command>echo f | xcopy /y "$(TargetPath)" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\$(TargetFileName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

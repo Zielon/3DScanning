@@ -1,24 +1,13 @@
 #include "tests/general/GeneralTests.h"
-
-#ifdef _WIN32
-
 #include "tests/windows/WindowsTests.h"
 
-#endif
+int main(int argc, char** argv){
 
-int main(int argc, char **argv) {
+	auto windows = new WindowsTests();
+	auto general = new GeneralTests();
 
-#ifdef _WIN32
+	windows->run();
+	general->run();
 
-    auto windows = new WindowsTests();
-
-    windows->run();
-
-#endif
-
-    auto general = new GeneralTests();
-
-    general->run();
-
-    return 0;
+	return 0;
 }

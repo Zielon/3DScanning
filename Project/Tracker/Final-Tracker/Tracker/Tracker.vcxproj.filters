@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="..\..\src\Cpp14Workaround.h" />
     <ClInclude Include="..\..\src\Eigen.h" />
     <ClInclude Include="..\..\src\ExportDLL.h" />
     <ClInclude Include="..\..\src\TrackerContext.h" />
@@ -32,6 +31,12 @@
     <ClInclude Include="..\..\src\reconstruction\sources\ProcrustesAligner.hpp">
       <Filter>reconstruction\sources</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\PointCloud.h">
+      <Filter>reconstruction\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\CameraParameters.h">
+      <Filter>reconstruction\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -52,6 +57,9 @@
       <Filter>reconstruction\sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\reconstruction\sources\Tracker.cpp">
+      <Filter>reconstruction\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\reconstruction\sources\PointCloud.cpp">
       <Filter>reconstruction\sources</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,7 +1,6 @@
 #include "WindowsTests.h"
 #include "../../TrackerContext.h"
 
-#ifdef _WIN32
 #include <direct.h>
 
 // path to the dataset dir, must end with a backslash
@@ -25,7 +24,7 @@ void WindowsTests::dllVidReadTest() {
 
 	TrackerContext *pc = static_cast<TrackerContext*>(createContext(cCurrentPath));
 
-    byte *img = new byte[getImageWidth(pc) * getImageHeight(pc) * 3];
+	unsigned char *img = new unsigned char[getImageWidth(pc) * getImageHeight(pc) * 3];
 
     float pose[16];
 
@@ -77,5 +76,3 @@ void WindowsTests::vidReadTest() {
 
     }
 }
-
-#endif
