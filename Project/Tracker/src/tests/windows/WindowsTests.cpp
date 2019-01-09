@@ -1,6 +1,8 @@
 #include "WindowsTests.h"
 #include "../../TrackerContext.h"
 
+#include <fstream>
+#include <sstream>
 #include <direct.h>
 
 // path to the dataset dir, must end with a backslash
@@ -8,9 +10,100 @@
 const std::string DATASET_DIR = "\\..\\..\\..\\MarkerlessAR_Unity\\Datasets\\freiburg\\";
 
 void WindowsTests::run(){
-    dllVidReadTest();
+//	meshTest(); 
+	  dllVidReadTest();
  //   vidReadTest();
 }
+
+void WindowsTests::meshTest() {
+
+	std::cout << "START dllVidReadTest()" << std::endl;
+
+	char cCurrentPath[FILENAME_MAX];
+
+	_getcwd(cCurrentPath, sizeof(cCurrentPath));
+
+	strcpy(cCurrentPath + strlen(cCurrentPath), DATASET_DIR.c_str());
+
+	TrackerContext *pc = static_cast<TrackerContext*>(createContext(cCurrentPath));
+
+	unsigned char *img = new unsigned char[getImageWidth(pc) * getImageHeight(pc) * 3];
+
+	float pose[16];
+
+	for (int i = 0; i < 3000; ++i)
+	{
+		dllMain(pc, img, pose);
+
+		cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
+		cv::imshow("dllTest", dllmat);
+		cv::waitKey(1);
+
+		Eigen::Matrix4f matPose = Map<Matrix4f>(pose, 4, 4);
+
+		std::string filename = "meshTest"; 
+		filename +=std::to_string( pc->videoStreamReader->getCurrentFrameIndex()); 
+		filename += ".off"; 
+		std::ofstream outFile(filename);
+		if (!outFile.is_open()) continue;
+
+
+
+		// write header
+		outFile << "COFF" << std::endl;
+		outFile << "# numVertices numFaces numEdges" << std::endl;
+		outFile << getVertexCount(pc) << " ";
+		assert(getIndexCount(pc) % 3 == 0); 
+		outFile << getIndexCount(pc)/3 << " 0" << std::endl;
+
+
+		outFile << "# list of vertices\n# X Y Z R G B A" << std::endl;
+
+		float * vertexBuffer = new float[3 * getVertexCount(pc)];
+		getVertexBuffer(pc, vertexBuffer);
+		for (size_t i = 0; i < getVertexCount(pc); ++i)
+		{
+
+			//std::cout << vertexBuffer[3 * i + 0] << " "
+			//	<< vertexBuffer[3 * i + 1] << " "
+			//	<< vertexBuffer[3 * i + 2] << std::endl; 
+
+			outFile << vertexBuffer[3 * i + 0] << " "
+				<< vertexBuffer[3 * i + 1] << " "
+				<< vertexBuffer[3 * i + 2] << " "
+				<< (int)255 << " "
+				<< (int)255 << " "
+				<< (int)255 << " "
+				<< (int)255 << std::endl;
+
+		}
+
+		outFile << "# list of faces\n# nVerticesPerFace idx0 idx1 idx2 ..." << std::endl;
+		int * indexbuffer = new int[ getIndexCount(pc)];
+		getIndexBuffer(pc, indexbuffer);
+		for (size_t i = 0; i < getIndexCount(pc)/3; ++i)
+		{
+			
+			//std::cout << vertexBuffer[3 * i + 0] << " "
+			//	<< vertexBuffer[3 * i + 1] << " "
+			//	<< vertexBuffer[3 * i + 2] << std::endl; 
+
+			outFile << "3 " <<
+				indexbuffer[3 * i + 0] << " "
+				<< indexbuffer[3 * i + 1] << " "
+				<< indexbuffer[3 * i + 2] << std::endl;
+
+		}
+
+
+		outFile.flush(); 
+		outFile.close(); 
+
+		std::cout << "\n ------- pose: " << i << " -------- \n" << matPose
+			<< "\n------------------------ " << std::endl;
+	}
+}
+
 
 void WindowsTests::dllVidReadTest() {
 

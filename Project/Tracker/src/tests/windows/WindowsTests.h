@@ -14,6 +14,9 @@ private:
     void dllVidReadTest();
 
     void vidReadTest();
+
+	void meshTest(); 
+
 };
 
 #endif //TRACKER_WINDOWSTESTS_H
