@@ -67,16 +67,9 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 		tracker_context->tracker->alignNewFrame(source, tracker_context->tracker->m_previous_point_cloud, pose);
 	}
 
-	Matrix4f poseMat = Map<Matrix4f>(pose, 4, 4); 
-
 	//TODO: real time mesh generation here
 
 	tracker_context->tracker->m_previous_point_cloud = source;
-
-	/*DEBUG*
-	cv::imshow("dllMain", rgb);
-	cv::waitKey(1);
-	/**/
 
 	//So turns out opencv actually uses bgr not rgb...
 	//no more opencv computations after this point
