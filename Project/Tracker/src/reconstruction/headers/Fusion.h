@@ -3,8 +3,6 @@
 
 #include "../../Eigen.h"
 
-#define EDGE_THRESHOLD 0.1f // 10cm
-#define EDGE_THRESHOLD_SQ EDGE_THRESHOLD*EDGE_THRESHOLD
 
 
 /**
@@ -19,13 +17,7 @@ public:
 	}
 
     void integrate(const std::vector<Vector3f> &cloud, Matrix4f &pose);
-
-	std::vector<int> m_currentFrameIndexBuffer; 
-
-	void generateMeshFromVertices(const std::vector<Vector3f> &verts, std::vector<int>& outIndices);
-
-	inline unsigned int WriteIfValidTriangle(std::vector<int>& outIndices, const Vector3f& v0, const Vector3f& v1,
-		const Vector3f& v2, const size_t& i0, const size_t& i1, const size_t& i2, const float& edgeThresholdSQ);
+	std::vector<int> m_currentIndexBuffer; 
 
 private:
 	int m_height, m_width, m_pixelSteps; 

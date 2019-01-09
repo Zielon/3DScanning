@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(LIBS "${CMAKE_SOURCE_DIR}/libs") #Local Setting
 
 # Compiler options
-set(CMAKE_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS} -w -O3")
+set(CMAKE_CXX_FLAGS "-std=c++14 ${CMAKE_CXX_FLAGS} -Wa,-mbig-obj")
 add_definitions(-DPROJECT_DIR="${PROJECT_SOURCE_DIR}")
 
 # Eigen Library

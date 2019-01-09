@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tracker", "Tracker\Tracker.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Sensor", "Sensor\Sensor.vcxproj", "{208536A2-5920-4436-B739-67CBE25CC796}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tests", "Tests\Tests.vcxproj", "{358FC3ED-DC88-4AD2-9382-20170953FBD0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -39,6 +41,18 @@ Global
 		{208536A2-5920-4436-B739-67CBE25CC796}.Release|x86.Build.0 = Release|Win32
 		{208536A2-5920-4436-B739-67CBE25CC796}.ReleaseDLL|x64.ActiveCfg = Release|x64
 		{208536A2-5920-4436-B739-67CBE25CC796}.ReleaseDLL|x86.ActiveCfg = Release|Win32
+		{358FC3ED-DC88-4AD2-9382-20170953FBD0}.Debug|x64.ActiveCfg = Debug|x64
+		{358FC3ED-DC88-4AD2-9382-20170953FBD0}.Debug|x64.Build.0 = Debug|x64
+		{358FC3ED-DC88-4AD2-9382-20170953FBD0}.Debug|x86.ActiveCfg = Debug|Win32
+		{358FC3ED-DC88-4AD2-9382-20170953FBD0}.Debug|x86.Build.0 = Debug|Win32
+		{358FC3ED-DC88-4AD2-9382-20170953FBD0}.Release|x64.ActiveCfg = Release|x64
+		{358FC3ED-DC88-4AD2-9382-20170953FBD0}.Release|x64.Build.0 = Release|x64
+		{358FC3ED-DC88-4AD2-9382-20170953FBD0}.Release|x86.ActiveCfg = Release|Win32
+		{358FC3ED-DC88-4AD2-9382-20170953FBD0}.Release|x86.Build.0 = Release|Win32
+		{358FC3ED-DC88-4AD2-9382-20170953FBD0}.ReleaseDLL|x64.ActiveCfg = Release|x64
+		{358FC3ED-DC88-4AD2-9382-20170953FBD0}.ReleaseDLL|x64.Build.0 = Release|x64
+		{358FC3ED-DC88-4AD2-9382-20170953FBD0}.ReleaseDLL|x86.ActiveCfg = Release|Win32
+		{358FC3ED-DC88-4AD2-9382-20170953FBD0}.ReleaseDLL|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

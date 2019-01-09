@@ -7,7 +7,6 @@
 #include "../../ExportDLL.h"
 
 class WindowsTests {
-#ifdef _WIN32
 public:
     void run();
 
@@ -18,7 +17,6 @@ private:
 
 	void meshTest(); 
 
-#endif
 };
 
 #endif //TRACKER_WINDOWSTESTS_H

@@ -5,6 +5,7 @@
 
 #include "../sources/NearestNeighbor.hpp"
 #include "../sources/ProcrustesAligner.hpp"
+#include "../headers/PointCloud.h"
 
 #ifdef linux
 
@@ -19,32 +20,37 @@
 
 #endif
 
-class ICP {
+class ICP
+{
 public:
-    ICP();
+	ICP();
 
-    ~ICP();
+	~ICP();
 
-    Matrix4f estimatePose(const std::vector<Vector3f> &source, const std::vector<Vector3f> &target);
-    std::vector<Vector3f> transformPoints(const std::vector<Vector3f> &sourcePoints, const Matrix4f &pose);
+	Matrix4f estimatePose(const PointCloud& source, const PointCloud& target);
 
-    std::vector<Vector3f> transformNormals(const std::vector<Vector3f> &sourceNormals, const Matrix4f &pose);
 private:
-    NearestNeighborSearch *m_nearestNeighbor;
-    ProcrustesAligner *m_procrustesAligner;
+	NearestNeighborSearch* m_nearestNeighbor;
+	ProcrustesAligner* m_procrustesAligner;
 
-    int m_number_iterations = 25;
+	int m_number_iterations = 10;
 
+	std::vector<Vector3f> transformPoints(const std::vector<Vector3f>& sourcePoints, const Matrix4f& pose);
 
+	std::vector<Vector3f> transformNormals(const std::vector<Vector3f>& sourceNormals, const Matrix4f& pose);
 
-    Matrix4f estimatePosePointToPoint(
-            const std::vector<Vector3f> &sourcePoints,
-            const std::vector<Vector3f> &targetPoints);
+	Matrix4f estimatePosePointToPoint(
+		const std::vector<Vector3f>& sourcePoints,
+		const std::vector<Vector3f>& targetPoints);
 
-    void pruneCorrespondences(
-            const std::vector<Vector3f> &sourceNormals,
-            const std::vector<Vector3f> &targetNormals, std::vector<Match> &matches);
+	Matrix4f estimatePosePointToPlane(
+		const std::vector<Vector3f>& sourcePoints,
+		const std::vector<Vector3f>& targetPoints,
+		const std::vector<Vector3f>& targetNormals);
 
+	void pruneCorrespondences(
+		const std::vector<Vector3f>& sourceNormals,
+		const std::vector<Vector3f>& targetNormals, std::vector<Match>& matches);
 };
 
 #endif //PROJECT_ICP_H

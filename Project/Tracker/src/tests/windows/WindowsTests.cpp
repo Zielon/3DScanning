@@ -3,8 +3,6 @@
 
 #include <fstream>
 #include <sstream>
-
-#ifdef _WIN32
 #include <direct.h>
 
 // path to the dataset dir, must end with a backslash
@@ -12,8 +10,8 @@
 const std::string DATASET_DIR = "\\..\\..\\..\\MarkerlessAR_Unity\\Datasets\\freiburg\\";
 
 void WindowsTests::run(){
-	meshTest(); 
- //   dllVidReadTest();
+//	meshTest(); 
+	  dllVidReadTest();
  //   vidReadTest();
 }
 
@@ -29,7 +27,7 @@ void WindowsTests::meshTest() {
 
 	TrackerContext *pc = static_cast<TrackerContext*>(createContext(cCurrentPath));
 
-	byte *img = new byte[getImageWidth(pc) * getImageHeight(pc) * 3];
+	unsigned char *img = new unsigned char[getImageWidth(pc) * getImageHeight(pc) * 3];
 
 	float pose[16];
 
@@ -119,7 +117,7 @@ void WindowsTests::dllVidReadTest() {
 
 	TrackerContext *pc = static_cast<TrackerContext*>(createContext(cCurrentPath));
 
-    byte *img = new byte[getImageWidth(pc) * getImageHeight(pc) * 3];
+	unsigned char *img = new unsigned char[getImageWidth(pc) * getImageHeight(pc) * 3];
 
     float pose[16];
 
@@ -171,5 +169,3 @@ void WindowsTests::vidReadTest() {
 
     }
 }
-
-#endif

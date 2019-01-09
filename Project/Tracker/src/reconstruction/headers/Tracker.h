@@ -13,33 +13,25 @@ using namespace std;
 /**
  * Tracks frame to frame transition and estimate the pose
  */
-class Tracker {
+class Tracker final
+{
 public:
-    Tracker();
-
-	Tracker(float fovX, float fovY, float cx, float cy, int image_height, int image_width) :
-		m_fovX(fovX), m_fovY(fovY), m_cX(cx), m_cY(cy),
-		m_image_width(image_width), m_image_height(image_height)
-	{
+	Tracker(CameraParameters camera_parameters) : m_camera_parameters(camera_parameters){
 		m_icp = new ICP();
 	}
 
-    ~Tracker();
+	~Tracker();
 
-    void alignNewFrame(
-            const std::vector<Vector3f> &sourcePoints,
-            const std::vector<Vector3f> &targetPoints, float *outPose);
+	void alignNewFrame(const PointCloud& sourcePoints, const PointCloud& targetPoints, float* outPose);
 
-	void backprojectFrame(cv::Mat& depth, std::vector<Vector3f>& outVerts, const size_t pixelSteps = 1); 
+	CameraParameters getCameraParameters() const;
 
-
-	std::vector<Vector3f> m_previousFrameVerts; 
-	ICP *m_icp = nullptr;
+	PointCloud m_previous_point_cloud;
 
 private:
+	ICP* m_icp = nullptr;
 
-	float m_fovX = 0, m_fovY = 0, m_cX = 0, m_cY = 0; 
-	int m_image_height = 0, m_image_width = 0;
+	CameraParameters m_camera_parameters;
 };
 
 #endif //PROJECT_TRACKER_H

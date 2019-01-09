@@ -14,7 +14,7 @@ namespace Assets.Scripts
 
 
         //Unity automatically find DLL files located on Assets/Plugins
-        private const string DllFilePath = @"Tracker";
+        private const string DllFilePath = @"Tracker_release";
 
         //Unity vars
 
@@ -59,6 +59,9 @@ namespace Assets.Scripts
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern void getVertexBuffer(IntPtr context, [In,Out]Vector3[] vertexBuffer);
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void getNormalBuffer(IntPtr context, [In, Out]Vector3[] normalBuffer);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern int getIndexCount(IntPtr context);
@@ -131,8 +134,8 @@ namespace Assets.Scripts
          //   Debug.Log("Pos: " + cameraRig.transform.position);
          //   Debug.Log("Rot: " + cameraRig.transform.rotation.eulerAngles);
 
-
-            spawnFrameMesh(); 
+            //enable this once fusion is ready
+        //    spawnFrameMesh(); 
 
 
         }
