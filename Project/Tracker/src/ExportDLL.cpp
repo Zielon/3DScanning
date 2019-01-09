@@ -1,5 +1,6 @@
 #include "ExportDLL.h"
 
+#define PIXEL_STEPS 4
 extern "C" __declspec(dllexport) void* createContext(char* dataset_path){
 
 	TrackerContext* tracker_context = new TrackerContext();
@@ -14,7 +15,6 @@ extern "C" __declspec(dllexport) void* createContext(char* dataset_path){
 	//FIXME: Frame Info only set after first frame is read... FIXME: mb split this into seperate call?
 
 	Matrix3f intrinsics = tracker_context->videoStreamReader->getCameraIntrinsics();
-
 	const CameraParameters camera_parameters = CameraParameters(
 		intrinsics(0, 0),
 		intrinsics(1, 1),
@@ -71,13 +71,42 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 
 	tracker_context->tracker->m_previous_point_cloud = source;
 
-	/*DEBUG*
-	cv::imshow("dllMain", rgb);
-	cv::waitKey(1);
-	/**/
-
 	//So turns out opencv actually uses bgr not rgb...
 	//no more opencv computations after this point
 	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
+}
+
+
+
+extern "C" __declspec(dllexport) int getVertexCount(void* context)
+{
+	TrackerContext * c = static_cast<TrackerContext*>(context);
+	return c->tracker->m_previous_point_cloud.getPoints().size(); 
+}
+
+extern "C" __declspec(dllexport) void getVertexBuffer(void* context, float *vertices)
+{
+	TrackerContext * c = static_cast<TrackerContext*>(context);
+	memcpy(vertices, c->tracker->m_previous_point_cloud.getPoints().data(), c->tracker->m_previous_point_cloud.getPoints().size()* sizeof(Vector3f));
+}
+
+
+
+extern "C" __declspec(dllexport) int getIndexCount(void* context)
+{
+	TrackerContext * c = static_cast<TrackerContext*>(context);
+	return c->fusion->m_currentIndexBuffer.size(); 
+}
+
+extern "C" __declspec(dllexport) void getIndexBuffer(void* context, int* indices)
+{
+	TrackerContext * c = static_cast<TrackerContext*>(context);
+	memcpy(indices, c->fusion->m_currentIndexBuffer.data(), c->fusion->m_currentIndexBuffer.size() * sizeof(int));
+}
+
+void getNormalBuffer(void * context, float * normals)
+{
+	TrackerContext * c = static_cast<TrackerContext*>(context);
+	memcpy(normals, c->tracker->m_previous_point_cloud.getNormals().data(), c->tracker->m_previous_point_cloud.getNormals().size() * sizeof(Vector3f));
 }
