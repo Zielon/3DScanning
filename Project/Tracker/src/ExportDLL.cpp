@@ -1,6 +1,7 @@
 #include "ExportDLL.h"
 
 #define PIXEL_STEPS 4
+
 extern "C" __declspec(dllexport) void* createContext(char* dataset_path){
 
 	TrackerContext* tracker_context = new TrackerContext();
@@ -29,7 +30,8 @@ extern "C" __declspec(dllexport) void* createContext(char* dataset_path){
 
 	tracker_context->m_tracker = new Tracker(camera_parameters);
 	tracker_context->m_fusion = new Fusion(width, height, 1);
-	tracker_context->m_fusion->startConsuming();
+	// Start consuming the point clouds buffer
+	tracker_context->m_fusion->consume();
 
 	return tracker_context;
 }
@@ -56,7 +58,7 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 
 	cv::Mat rgb, depth;
 
-	bool is_first_frame = tracker_context->m_tracker->m_previous_point_cloud->getPoints().size() == 0;
+	const bool is_first_frame = tracker_context->m_tracker->m_previous_point_cloud->getPoints().empty();
 
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
@@ -72,9 +74,11 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 		tracker_context->m_tracker->alignNewFrame(source, tracker_context->m_tracker->m_previous_point_cloud, pose);
 	}
 
-	tracker_context->m_fusion->addToBuffer(source);
+	// Produce a new point cloud (add to the buffer)
+	tracker_context->m_fusion->produce(source);
 
 	delete tracker_context->m_tracker->m_previous_point_cloud;
+
 	tracker_context->m_tracker->m_previous_point_cloud = source;
 
 	//So turns out opencv actually uses bgr not rgb...
@@ -83,36 +87,29 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
 }
 
-
-
-extern "C" __declspec(dllexport) int getVertexCount(void* context)
-{
-	TrackerContext * c = static_cast<TrackerContext*>(context);
+extern "C" __declspec(dllexport) int getVertexCount(void* context){
+	TrackerContext* c = static_cast<TrackerContext*>(context);
 	return c->m_tracker->m_previous_point_cloud->getPoints().size();
 }
 
-extern "C" __declspec(dllexport) void getVertexBuffer(void* context, float *vertices)
-{
-	TrackerContext * c = static_cast<TrackerContext*>(context);
-	memcpy(vertices, c->m_tracker->m_previous_point_cloud->getPoints().data(), c->m_tracker->m_previous_point_cloud->getPoints().size()* sizeof(Vector3f));
+extern "C" __declspec(dllexport) void getVertexBuffer(void* context, float* vertices){
+	TrackerContext* c = static_cast<TrackerContext*>(context);
+	memcpy(vertices, c->m_tracker->m_previous_point_cloud->getPoints().data(),
+	       c->m_tracker->m_previous_point_cloud->getPoints().size() * sizeof(Vector3f));
 }
 
-
-
-extern "C" __declspec(dllexport) int getIndexCount(void* context)
-{
-	TrackerContext * c = static_cast<TrackerContext*>(context);
-	return c->m_fusion->m_currentIndexBuffer.size(); 
+extern "C" __declspec(dllexport) int getIndexCount(void* context){
+	TrackerContext* c = static_cast<TrackerContext*>(context);
+	return c->m_fusion->m_currentIndexBuffer.size();
 }
 
-extern "C" __declspec(dllexport) void getIndexBuffer(void* context, int* indices)
-{
-	TrackerContext * c = static_cast<TrackerContext*>(context);
+extern "C" __declspec(dllexport) void getIndexBuffer(void* context, int* indices){
+	TrackerContext* c = static_cast<TrackerContext*>(context);
 	memcpy(indices, c->m_fusion->m_currentIndexBuffer.data(), c->m_fusion->m_currentIndexBuffer.size() * sizeof(int));
 }
 
-void getNormalBuffer(void * context, float * normals)
-{
-	TrackerContext * c = static_cast<TrackerContext*>(context);
-	memcpy(normals, c->m_tracker->m_previous_point_cloud->getNormals().data(), c->m_tracker->m_previous_point_cloud->getNormals().size() * sizeof(Vector3f));
+void getNormalBuffer(void* context, float* normals){
+	TrackerContext* c = static_cast<TrackerContext*>(context);
+	memcpy(normals, c->m_tracker->m_previous_point_cloud->getNormals().data(),
+	       c->m_tracker->m_previous_point_cloud->getNormals().size() * sizeof(Vector3f));
 }

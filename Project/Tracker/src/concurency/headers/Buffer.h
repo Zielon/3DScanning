@@ -8,6 +8,7 @@ template <class T>
 class Buffer
 {
 public:
+
 	void add(T element);
 
 	T remove();

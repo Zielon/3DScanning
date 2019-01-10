@@ -29,9 +29,9 @@ public:
 
 	~Fusion();
 
-	void startConsuming();
+	void consume();
 
-	void addToBuffer(PointCloud* cloud) const;
+	void produce(PointCloud* cloud) const;
 
 	void integrate(PointCloud* cloud);
 

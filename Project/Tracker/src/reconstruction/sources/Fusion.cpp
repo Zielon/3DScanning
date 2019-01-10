@@ -6,9 +6,13 @@ Fusion::Fusion(CameraParameters camera_parameters) : m_camera_parameters(camera_
 
 Fusion::~Fusion(){
 	delete m_volume;
+	delete m_buffer;
+	delete m_consumer;
 }
 
-void Fusion::startConsuming(){
+/// Consumes point clouds from a buffer and 
+/// produces a mesh using SFD implicit functions
+void Fusion::consume(){
 	m_consumer_thread = std::thread([this]()
 	{
 		// It will block the thread in the case of an empty buffer
@@ -21,7 +25,7 @@ void Fusion::startConsuming(){
 
 /// Buffer has a certain capacity when it is exceeded 
 /// this method will block the execution
-void Fusion::addToBuffer(PointCloud* cloud) const{
+void Fusion::produce(PointCloud* cloud) const{
 	m_buffer->add(cloud);
 }
 
