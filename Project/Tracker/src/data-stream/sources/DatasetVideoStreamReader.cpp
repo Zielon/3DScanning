@@ -83,10 +83,24 @@ bool DatasetVideoStreamReader::isRunning() {
 
 Matrix3f DatasetVideoStreamReader::getCameraIntrinsics()
 {
-	Matrix3f i; 
-	i << 520.9, 0, 325.1,
+	Matrix3f i;
+	
+	//ROS default
+	/*i << 525.0, 0, 319.5,
+		0, 525.0, 239.5,
+		0, 0, 0;*/
+
+	//Freiburg 1
+	i << 517.3, 0, 318.6,
+		0, 516.5, 255.3,
+		0, 0, 0;
+
+	//Freiburg 2
+	/*i << 520.9, 0, 325.1,
 		0, 521.0, 249.7,
-		0, 0, 0; 
+		0, 0, 0; */
+
+
 	return i; 
 }
 
