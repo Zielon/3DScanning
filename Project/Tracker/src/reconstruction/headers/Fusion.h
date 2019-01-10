@@ -10,7 +10,7 @@
 using namespace std;
 
 /**
- * Volumetric fusion class
+ * Volumetric m_fusion class
  */
 class Fusion final
 {

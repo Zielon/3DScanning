@@ -5,6 +5,8 @@
 .idea/**/dictionaries
 .idea/**/shelf
 
+*.off
+
 # Project-specific
 Dependencies/*
  

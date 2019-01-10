@@ -39,7 +39,6 @@
     <ClInclude Include="..\..\src\reconstruction\headers\Voxel.h" />
     <ClInclude Include="..\..\src\reconstruction\sources\NearestNeighbor.hpp" />
     <ClInclude Include="..\..\src\reconstruction\sources\ProcrustesAligner.hpp" />
-    <ClInclude Include="..\..\src\tests\general\GeneralTests.h" />
     <ClInclude Include="..\..\src\tests\windows\WindowsTests.h" />
     <ClInclude Include="..\..\src\TrackerContext.h" />
   </ItemGroup>
@@ -51,7 +50,6 @@
     <ClCompile Include="..\..\src\reconstruction\sources\ICP.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\PointCloud.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Tracker.cpp" />
-    <ClCompile Include="..\..\src\tests\general\GeneralTests.cpp" />
     <ClCompile Include="..\..\src\tests\windows\WindowsTests.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
