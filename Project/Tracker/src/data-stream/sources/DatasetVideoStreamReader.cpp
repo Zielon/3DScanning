@@ -2,6 +2,11 @@
 
 #include <fstream>
 
+bool DatasetVideoStreamReader::initContext()
+{
+	return true;
+}
+
 bool DatasetVideoStreamReader::startReading() {
     std::string rgbLine, depthLine;
 

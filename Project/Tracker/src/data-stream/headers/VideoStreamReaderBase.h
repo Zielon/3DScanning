@@ -25,6 +25,8 @@ public:
     virtual ~VideoStreamReaderBase() {
     }
 
+	virtual bool initContext() = 0;
+
     virtual bool startReading() = 0;
 
     virtual bool stopReading() = 0;

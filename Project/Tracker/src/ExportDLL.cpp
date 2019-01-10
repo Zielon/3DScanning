@@ -1,6 +1,37 @@
 #include "ExportDLL.h"
 
 #define PIXEL_STEPS 4
+
+extern "C" __declspec(dllexport) void * createSensorContext() {
+
+	TrackerContext* tracker_context = new TrackerContext();
+
+	#if _DEBUG
+		tracker_context->videoStreamReader = new XtionStreamReader(false, true, true);
+	#else
+		tracker_context->videoStreamReader = new XtionStreamReader(true, false, false);
+	#endif
+
+	tracker_context->videoStreamReader->initContext();
+
+	tracker_context->videoStreamReader->startReading();
+	//FIXME: Frame Info only set after first frame is read... FIXME: mb split this into seperate call?
+
+	Matrix3f intrinsics = tracker_context->videoStreamReader->getCameraIntrinsics();
+	const CameraParameters camera_parameters = CameraParameters(
+		intrinsics(0, 0),
+		intrinsics(1, 1),
+		intrinsics(0, 2),
+		intrinsics(1, 2),
+		tracker_context->videoStreamReader->m_height_depth,
+		tracker_context->videoStreamReader->m_width_depth
+	);
+
+	tracker_context->tracker = new Tracker(camera_parameters);
+
+	return tracker_context;
+}
+
 extern "C" __declspec(dllexport) void* createContext(char* dataset_path){
 
 	TrackerContext* tracker_context = new TrackerContext();

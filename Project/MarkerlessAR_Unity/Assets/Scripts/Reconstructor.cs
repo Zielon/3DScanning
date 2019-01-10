@@ -33,10 +33,13 @@ namespace Assets.Scripts
         private int _h = -1;
 
 
-        private LinkedList<Mesh> frameMeshes = new LinkedList<Mesh>(); 
+        private LinkedList<Mesh> frameMeshes = new LinkedList<Mesh>();
 
 
         //[DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern int test();
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr createSensorContext();
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr createContext(byte[] path);
@@ -74,14 +77,16 @@ namespace Assets.Scripts
         {
             Debug.Log("Creating Context");
 
-            var segments = new List<string>(
+            /*var segments = new List<string>(
                     Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
                 {"..", "Datasets", "freiburg", " "};
 
             var absolutePath = segments.Aggregate(
                 (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
 
-            _cppContext = createContext(Encoding.ASCII.GetBytes(absolutePath));
+            _cppContext = createContext(Encoding.ASCII.GetBytes(absolutePath));*/
+
+            _cppContext = createSensorContext();
 
             _w = getImageWidth(_cppContext);
             _h = getImageHeight(_cppContext);
@@ -95,12 +100,16 @@ namespace Assets.Scripts
         // Update is called once per frame
         private void Update()
         {
-         //   Debug.Log("Update test");
 
-            dllMain(_cppContext, _image, _pose);
+    
+            Debug.Log("Update test");
+
+           // dllMain(_cppContext, _image, _pose);
+
+            Debug.Log("Pose test");
 
             //Create texture from image
-            var tex = new Texture2D(_w, _h, TextureFormat.RGB24, false);
+            /*var tex = new Texture2D(_w, _h, TextureFormat.RGB24, false);
 
             tex.LoadRawTextureData(_image);
             tex.Apply();
@@ -135,9 +144,7 @@ namespace Assets.Scripts
          //   Debug.Log("Rot: " + cameraRig.transform.rotation.eulerAngles);
 
             //enable this once fusion is ready
-        //    spawnFrameMesh(); 
-
-
+        //    spawnFrameMesh(); */
         }
 
 

@@ -19,7 +19,9 @@ public:
     ~DatasetVideoStreamReader() override = default;
 
     // Inherited via VideoStreamReader
-    bool startReading() override;
+	bool initContext() override;
+	
+	bool startReading() override;
 
     bool stopReading() override;
 

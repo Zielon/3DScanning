@@ -23,6 +23,8 @@ bool XtionStreamReader::initContext() {
 		printf("Could not find '%s'. Aborting.\n", OPENNI_XML_PATH);
 		printf("XN Status Error: %d\n", XN_STATUS_ERROR);
 
+		m_width_rgb = -1;
+
 		return false;
 	}
 
@@ -113,6 +115,13 @@ bool XtionStreamReader::startReading() {
 		printf("The device depth and image resolution must be equal!\n");
 		return false;
 	}
+
+	// Setting maps parameters
+	m_width_rgb = colorMD.FullXRes();
+	m_height_rgb = colorMD.FullYRes();
+	m_width_depth = depthMD.FullXRes();
+	m_height_depth = depthMD.FullYRes();
+
 
 	// Setting intrinsics parameters
 	m_x_res = depthMD.FullXRes();
