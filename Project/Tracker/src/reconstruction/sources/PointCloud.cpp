@@ -45,6 +45,10 @@ void PointCloud::transform(cv::Mat& depth){
 	auto temp_points = std::vector<Vector3f>(width * height);
 	auto temp_normals = std::vector<Vector3f>(width * height);
 
+	//Depth range check
+	//float depth_min = std::numeric_limits<float>::infinity();
+	//float depth_max = -1;
+
 	#pragma omp parallel for
 	for (auto y = 0; y < height; y++)
 	{
@@ -53,6 +57,10 @@ void PointCloud::transform(cv::Mat& depth){
 			const unsigned int idx = y * width + x;
 
 			auto depth_val = depth.at<float>(y, x);
+
+			//Depth range check
+			//depth_min = std::min(depth_min, depth_val);
+			//depth_max = std::max(depth_max, depth_val);
 
 			if (depth_val > 0.0f)
 			{
