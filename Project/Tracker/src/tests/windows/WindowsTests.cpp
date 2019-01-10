@@ -96,6 +96,9 @@ void WindowsTests::meshTest(){
 		std::cout << "\n ------- pose: " << i << " -------- \n" << matPose
 			<< "\n------------------------ " << std::endl;
 	}
+
+	delete []img;
+	SAFE_DELETE(pc);
 }
 
 void WindowsTests::dllVidReadTest(){
@@ -114,7 +117,7 @@ void WindowsTests::dllVidReadTest(){
 
 	float pose[16];
 
-	for (int i = 0; i < 3000; ++i)
+	for (int i = 0; i < 100; ++i)
 	{
 		dllMain(pc, img, pose);
 
@@ -127,6 +130,9 @@ void WindowsTests::dllVidReadTest(){
 		std::cout << "\n ------- pose: " << i << " -------- \n" << matPose
 			<< "\n------------------------ " << std::endl;
 	}
+
+	delete[]img;
+	SAFE_DELETE(pc);
 }
 
 void WindowsTests::vidReadTest(){
@@ -161,4 +167,6 @@ void WindowsTests::vidReadTest(){
 
 		cv::waitKey(1);
 	}
+
+	SAFE_DELETE(videoInputReader);
 }

@@ -22,11 +22,11 @@ public:
 
 	~Tracker();
 
-	void alignNewFrame(const PointCloud& sourcePoints, const PointCloud& targetPoints, float* outPose);
+	Matrix4f alignNewFrame(const PointCloud* sourcePoints, const PointCloud* targetPoints, float* outPose);
 
 	CameraParameters getCameraParameters() const;
 
-	PointCloud m_previous_point_cloud;
+	PointCloud* m_previous_point_cloud = nullptr;
 
 private:
 	ICP* m_icp = nullptr;
