@@ -1,11 +1,22 @@
 #include "../headers/PointCloud.h"
 
-PointCloud::PointCloud() = default;
-
 PointCloud::PointCloud(CameraParameters camera_parameters, cv::Mat& depth, int step_size)
 	: m_camera_parameters(camera_parameters), m_step_size(step_size){
 
+	m_nearestNeighbor = new NearestNeighborSearchFlann();
 	this->transform(depth);
+}
+
+PointCloud::PointCloud(const PointCloud& point_cloud){
+	m_points = std::vector<Vector3f>(point_cloud.m_points);
+	m_normals = std::vector<Vector3f>(point_cloud.m_normals);
+	m_camera_parameters = point_cloud.m_camera_parameters;
+	m_step_size = point_cloud.m_step_size;
+	m_nearestNeighbor = point_cloud.m_nearestNeighbor;
+}
+
+PointCloud::~PointCloud(){
+	SAFE_DELETE(m_nearestNeighbor);
 }
 
 std::vector<Vector3f>& PointCloud::getPoints(){
@@ -34,6 +45,10 @@ void PointCloud::transform(cv::Mat& depth){
 	auto temp_points = std::vector<Vector3f>(width * height);
 	auto temp_normals = std::vector<Vector3f>(width * height);
 
+	//Depth range check
+	//float depth_min = std::numeric_limits<float>::infinity();
+	//float depth_max = -1;
+
 	#pragma omp parallel for
 	for (auto y = 0; y < height; y++)
 	{
@@ -42,6 +57,10 @@ void PointCloud::transform(cv::Mat& depth){
 			const unsigned int idx = y * width + x;
 
 			auto depth_val = depth.at<float>(y, x);
+
+			//Depth range check
+			//depth_min = std::min(depth_min, depth_val);
+			//depth_max = std::max(depth_max, depth_val);
 
 			if (depth_val > 0.0f)
 			{
@@ -105,4 +124,16 @@ void PointCloud::transform(cv::Mat& depth){
 			m_normals.push_back(normal);
 		}
 	}
+
+	m_nearestNeighbor->buildIndex(m_points);
+}
+
+int PointCloud::getClosestPoint(Vector3f grid_cell) const{
+
+	auto closestPoints = m_nearestNeighbor->queryMatches({grid_cell});
+
+	if (!closestPoints.empty())
+		return closestPoints[0].idx;
+
+	return -1;
 }

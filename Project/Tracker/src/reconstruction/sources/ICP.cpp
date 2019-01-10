@@ -6,15 +6,13 @@ ICP::ICP(){
 }
 
 ICP::~ICP(){
-	delete m_nearestNeighbor;
-	delete m_procrustesAligner;
+	SAFE_DELETE(m_nearestNeighbor);
+	SAFE_DELETE(m_procrustesAligner);
 }
 
-Matrix4f ICP::estimatePose(const PointCloud& source, const PointCloud& target){
+Matrix4f ICP::estimatePose(const PointCloud* source, const PointCloud* target){
 
 	Matrix4f pose = Matrix4f::Identity();
-
-	m_nearestNeighbor->buildIndex(target.getPoints());
 
 	std::vector<Vector3f> sourcePoints;
 	std::vector<Vector3f> targetPoints;
@@ -22,18 +20,12 @@ Matrix4f ICP::estimatePose(const PointCloud& source, const PointCloud& target){
 
 	for (int i = 0; i < m_number_iterations; ++i)
 	{
-		clock_t begin = clock();
+		auto transformedPoints = transformPoints(source->getPoints(), pose);
+		auto transformedNormals = transformNormals(source->getNormals(), pose);
 
-		auto transformedPoints = transformPoints(source.getPoints(), pose);
-		auto transformedNormals = transformNormals(source.getNormals(), pose);
+		auto matches = target->getNearestNeighborSearch()->queryMatches(transformedPoints);
 
-		auto matches = m_nearestNeighbor->queryMatches(transformedPoints);
-
-		pruneCorrespondences(transformedNormals, target.getNormals(), matches);
-
-		clock_t end = clock();
-		double elapsedSecs = double(end - begin) / CLOCKS_PER_SEC;
-		std::cout << "Completed in " << elapsedSecs << " seconds." << std::endl;
+		pruneCorrespondences(transformedNormals, target->getNormals(), matches);
 
 		sourcePoints.clear();
 		targetPoints.clear();
@@ -51,7 +43,7 @@ Matrix4f ICP::estimatePose(const PointCloud& source, const PointCloud& target){
 
 			// Match exists
 			sourcePoints.emplace_back(transformedPoints[j]);
-			targetPoints.emplace_back(target.getPoints()[idx]);
+			targetPoints.emplace_back(target->getPoints()[idx]);
 			targetNormals.emplace_back(transformedNormals[idx]);
 		}
 

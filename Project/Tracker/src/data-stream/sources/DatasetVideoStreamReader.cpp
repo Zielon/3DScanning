@@ -83,10 +83,24 @@ bool DatasetVideoStreamReader::isRunning() {
 
 Matrix3f DatasetVideoStreamReader::getCameraIntrinsics()
 {
-	Matrix3f i; 
-	i << 520.9, 0, 325.1,
+	Matrix3f i;
+	
+	//ROS default
+	/*i << 525.0, 0, 319.5,
+		0, 525.0, 239.5,
+		0, 0, 0;*/
+
+	//Freiburg 1
+	i << 517.3, 0, 318.6,
+		0, 516.5, 255.3,
+		0, 0, 0;
+
+	//Freiburg 2
+	/*i << 520.9, 0, 325.1,
 		0, 521.0, 249.7,
-		0, 0, 0; 
+		0, 0, 0; */
+
+
 	return i; 
 }
 
@@ -131,12 +145,19 @@ int DatasetVideoStreamReader::readAnyFrame(unsigned long index, cv::Mat &rgb, cv
     /**/
 
 
-
     rgb = cv::imread(m_datasetFolderPath + m_rgb_names[index].second);
 
 
-    cv::Mat depthTmp = cv::imread(m_datasetFolderPath + m_depth_names[index].second);
-    depthTmp.convertTo(depth, CV_32FC1, 1.0 / 5000.0);
+    //cv::Mat depthTmp = cv::imread(m_datasetFolderPath + m_depth_names[index].second);
+	cv::Mat depthTmp = cv::imread(m_datasetFolderPath + m_depth_names[index].second, 2);//Right format 
+    
+	//double min, max;
+	//cv::minMaxLoc(depthTmp, &min, &max);//Depth range test
+	
+	// depth images are scaled by 5000 (see https://vision.in.tum.de/data/datasets/rgbd-dataset/file_formats
+	depthTmp.convertTo(depth, CV_32FC1, 1.0 / 5000.0);//Right format is CV_16FC1
+
+	//cv::minMaxLoc(depth, &min, &max);//Depth range test
 
     //ust assuming constant w/h
     m_width_rgb = rgb.cols;
