@@ -17,6 +17,8 @@ private:
 
 	void meshTest(); 
 
+	int sensorTest();
+
 };
 
 #endif //TRACKER_WINDOWSTESTS_H

@@ -68,13 +68,13 @@ extern "C" __declspec(dllexport) int getNextFrame(void *context, unsigned char *
 
 	tracker_context->videoStreamReader->getNextFrame(rgb, depth, false);
 
-	cv::imshow("dllTest", rgb);
-	cv::waitKey(1);
-
 	//So turns out opencv actually uses bgr not rgb...
 	//no more opencv computations after this point
 	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
+
+	cv::imshow("dllTest", rgb);
+	cv::waitKey(1);
 
 	return tracker_context->videoStreamReader->mStatus;
 }
@@ -123,7 +123,10 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 
 	//So turns out opencv actually uses bgr not rgb...
 	//no more opencv computations after this point
-	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
+	if (!tracker_context->videoStreamReader->sensor) {
+		cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
+	}
+	
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
 }
 

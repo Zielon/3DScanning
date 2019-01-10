@@ -87,7 +87,8 @@ public:
     unsigned long getCurrentFrameIndex() { return newFrameIndex; }
 
 	//Test
-	int mStatus = 0;
+	int mStatus = 0;//Status variable to test the Tracker in Unity
+	bool sensor = false;
 
 protected:
 

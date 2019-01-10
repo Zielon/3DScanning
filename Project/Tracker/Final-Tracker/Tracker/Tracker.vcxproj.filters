@@ -98,4 +98,7 @@
       <UniqueIdentifier>{d6e155f6-11f8-4f69-aab9-a88b5265309d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="OpenNIConfig.xml" />
+  </ItemGroup>
 </Project>

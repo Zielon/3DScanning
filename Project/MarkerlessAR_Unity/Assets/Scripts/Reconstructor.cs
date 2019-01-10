@@ -118,9 +118,9 @@ namespace Assets.Scripts
 
             dllMain(_cppContext, _image, _pose);
 
-            //int status = getNextFrame(_cppContext, _image);
+            /*int status = getNextFrame(_cppContext, _image);
 
-            //Debug.Log("Next frame status: "+status);
+            Debug.Log("Next frame status: "+status);*/
 
             //Create texture from image
             var tex = new Texture2D(_w, _h, TextureFormat.RGB24, false);
@@ -149,7 +149,7 @@ namespace Assets.Scripts
             pose.SetColumn(2, thirdCol);
             pose.SetColumn(3, fourthCol);
 
-            //Debug.Log("transformation matrix: \n" + pose);
+            Debug.Log("transformation matrix: \n" + pose);
             //Debug.Log("transformation matrix: \n" + firstCol);
             //Debug.Log("transformation matrix: \n" + secCol);
 

@@ -8,6 +8,7 @@ XtionStreamReader::XtionStreamReader(const char *sensorFolderPath, bool realtime
 	m_use_verbose = verbose;
 
 	mStatus = 0;
+	sensor = true;
 }
 
 
