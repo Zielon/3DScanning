@@ -37,13 +37,19 @@ public:
 
 	std::vector<int> m_currentIndexBuffer;
 
+	Volume* getVolume() const{
+		return m_volume;
+	}
+
+	int m_volume_size = 25;
+
 private:
 	Buffer<PointCloud*>* m_buffer;
 	Consumer<PointCloud*>* m_consumer;
 	std::thread m_consumer_thread;
 	CameraParameters m_camera_parameters;
 	Volume* m_volume;
-	int m_volume_size = 500;
+
 	int m_height, m_width, m_pixelSteps;
 };
 

@@ -4,9 +4,9 @@
 
 struct Voxel final
 {
-	Voxel(): m_distance(INFINITY), m_weight(0), m_free_ctr(0), m_color(Vector3f()){ }
+	Voxel(): m_sdf(INFINITY), m_weight(0), m_free_ctr(0), m_color(Vector3f()){ }
 
-	float m_distance;
+	float m_sdf;
 	float m_weight;
 	int m_free_ctr;
 	Vector3f m_color;

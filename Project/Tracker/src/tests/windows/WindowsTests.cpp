@@ -5,6 +5,8 @@
 #include <sstream>
 #include <direct.h>
 #include <io.h>
+#include "../../reconstruction/headers/Mesh.h"
+#include "../../reconstruction/headers/MarchingCubes.h"
 
 // The path to the DATASET dir, must end with a backslash!
 const std::string DATASET_DIR = "\\..\\..\\..\\MarkerlessAR_Unity\\Datasets\\freiburg\\";
@@ -117,7 +119,7 @@ void WindowsTests::dllVidReadTest(){
 
 	float pose[16];
 
-	for (int i = 0; i < 100; ++i)
+	for (int i = 0; i < 3; ++i)
 	{
 		dllMain(pc, img, pose);
 
@@ -130,6 +132,17 @@ void WindowsTests::dllVidReadTest(){
 		std::cout << "\n ------- pose: " << i << " -------- \n" << matPose
 			<< "\n------------------------ " << std::endl;
 	}
+
+	Mesh mesh;
+
+	#pragma omp parallel
+	for (unsigned int x = 0; x < pc->m_fusion->m_volume_size - 1; x++)
+		for (unsigned int y = 0; y < pc->m_fusion->m_volume_size - 1; y++)
+			for (unsigned int z = 0; z < pc->m_fusion->m_volume_size - 1; z++)
+				ProcessVolumeCell(pc->m_fusion->getVolume(), x, y, z, 0.00f, &mesh);
+			
+
+	mesh.WriteMesh("mesh.off");
 
 	delete[]img;
 	SAFE_DELETE(pc);

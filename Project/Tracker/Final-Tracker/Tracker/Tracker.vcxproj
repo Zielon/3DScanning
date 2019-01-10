@@ -38,6 +38,8 @@
     <ClInclude Include="..\..\src\reconstruction\headers\CameraParameters.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Fusion.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\ICP.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\MarchingCubes.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\Mesh.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\PointCloud.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Tracker.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Volume.h" />
@@ -57,6 +59,7 @@
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Fusion.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\ICP.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\Mesh.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\PointCloud.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Tracker.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Volume.cpp" />

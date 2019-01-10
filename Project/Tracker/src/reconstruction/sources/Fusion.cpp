@@ -38,15 +38,21 @@ void Fusion::integrate(PointCloud* cloud) const{
 		for (unsigned int y = 0; y < m_volume_size; y++)
 			for (unsigned int z = 0; z < m_volume_size; z++)
 			{
-				Vector3f world_position = m_volume->getWorldPosition(x, y, z);
-				int closest_point_index = cloud->getClosestPoint(world_position);
-				Voxel* voxel = m_volume->getVoxel(closest_point_index);
+				Vector3f surface = m_volume->getWorldPosition(x, y, z);
+				Voxel* voxel = m_volume->getVoxel(x, y, z);
+				int index = cloud->getClosestPoint(surface);
 
-				if (!voxel) continue;
+				if (!voxel || index < 0) continue;
 
-				// TODO: SDF
-				voxel->m_distance = 0;
+				Vector3f point = cloud->getPoints()[index];
+				Vector3f normal = cloud->getNormals()[index];
+
+				if (index == cloud->getPoints().size())
+					voxel->m_sdf = 0.0f;
+				
+				voxel->m_sdf = (surface - point).transpose() * normal;
+				voxel->m_free_ctr++;
 			}
 
-	SAFE_DELETE(cloud);
+	//SAFE_DELETE(cloud);
 }

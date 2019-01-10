@@ -4,6 +4,7 @@
 Volume::Volume(Vector3d min, Vector3d max, uint size, uint dim) : m_min(std::move(min)), m_max(std::move(max)){
 	m_diag = m_max - m_min;
 	m_dim = dim;
+	m_size = size;
 	m_length = std::pow(m_size, 3);
 	m_voxels = std::vector<Voxel*>(m_length, nullptr);
 	forAll([this](Voxel* voxel, int index)
