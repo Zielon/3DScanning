@@ -27,6 +27,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\concurency\headers\Buffer.h" />
+    <ClInclude Include="..\..\src\concurency\headers\Consumer.h" />
+    <ClInclude Include="..\..\src\concurency\headers\Producer.h" />
     <ClInclude Include="..\..\src\data-stream\headers\DatasetVideoStreamReader.h" />
     <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h" />
     <ClInclude Include="..\..\src\Eigen.h" />
@@ -36,6 +39,7 @@
     <ClInclude Include="..\..\src\reconstruction\headers\ICP.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\PointCloud.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Tracker.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\Volume.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Voxel.h" />
     <ClInclude Include="..\..\src\reconstruction\sources\NearestNeighbor.hpp" />
     <ClInclude Include="..\..\src\reconstruction\sources\ProcrustesAligner.hpp" />
@@ -43,6 +47,9 @@
     <ClInclude Include="..\..\src\TrackerContext.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\concurency\sources\Buffer.cpp" />
+    <ClCompile Include="..\..\src\concurency\sources\Consumer.cpp" />
+    <ClCompile Include="..\..\src\concurency\sources\Producer.cpp" />
     <ClCompile Include="..\..\src\data-stream\sources\DatasetVideoStreamReader.cpp" />
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
@@ -50,6 +57,7 @@
     <ClCompile Include="..\..\src\reconstruction\sources\ICP.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\PointCloud.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Tracker.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\Volume.cpp" />
     <ClCompile Include="..\..\src\tests\windows\WindowsTests.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

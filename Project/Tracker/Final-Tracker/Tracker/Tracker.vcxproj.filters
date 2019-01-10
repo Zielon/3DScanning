@@ -37,6 +37,18 @@
     <ClInclude Include="..\..\src\reconstruction\headers\Voxel.h">
       <Filter>reconstruction\headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\Volume.h">
+      <Filter>reconstruction\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\concurency\headers\Buffer.h">
+      <Filter>concurency\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\concurency\headers\Consumer.h">
+      <Filter>concurency\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\concurency\headers\Producer.h">
+      <Filter>concurency\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -58,6 +70,18 @@
     </ClCompile>
     <ClCompile Include="..\..\src\reconstruction\sources\PointCloud.cpp">
       <Filter>reconstruction\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\reconstruction\sources\Volume.cpp">
+      <Filter>reconstruction\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\concurency\sources\Buffer.cpp">
+      <Filter>concurency\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\concurency\sources\Consumer.cpp">
+      <Filter>concurency\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\concurency\sources\Producer.cpp">
+      <Filter>concurency\sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +108,15 @@
     </Filter>
     <Filter Include="reconstruction\sources">
       <UniqueIdentifier>{d6e155f6-11f8-4f69-aab9-a88b5265309d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="concurency">
+      <UniqueIdentifier>{d1978c71-a0ad-451d-aaf9-5d3ec58e504d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="concurency\headers">
+      <UniqueIdentifier>{cc1bf3c9-a161-43b4-8758-707df63a96cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="concurency\sources">
+      <UniqueIdentifier>{602dac60-3ab3-4ba1-acf0-42fb5b3fd2e5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

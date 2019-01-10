@@ -37,8 +37,8 @@ public:
     *
     * rgb: stores rgb frame
     * depth: stores depth frame
-    * skip: true -> get the most recent frame
-    *		false-> get the next frame in sequence
+    * skip: true -> getVoxel the most recent frame
+    *		false-> getVoxel the next frame in sequence
     *		if the programm is not realtime capable it might have to skip frames in order to keep up with the users movement
     *		skipping frames, however, will have negative influences in accuracy and skipping a too large window will cause registration to fail
     *
@@ -61,8 +61,8 @@ public:
     *
     * rgb: stores rgb frame
     * depth: stores depth frame
-    * skip: true -> get the most recent frame
-    *		false-> get the next frame in sequence
+    * skip: true -> getVoxel the most recent frame
+    *		false-> getVoxel the next frame in sequence
     *		if the programm is not realtime capable it might have to skip frames in order to keep up with the users movement
     *		skipping frames, however, will have negative influences in accuracy and skipping a too large window will cause registration to fail
     *

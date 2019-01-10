@@ -1,46 +1,40 @@
 #include "../headers/Fusion.h"
 
 Fusion::Fusion(CameraParameters camera_parameters) : m_camera_parameters(camera_parameters){
-	m_voxles_space = vector<vector<vector<Voxel*>>>(
-		m_size, vector<vector<Voxel*>>(m_size, vector<Voxel*>(m_size, new Voxel())));
-
-	forAll([](Voxel* cell, Vector3f position)
-	{
-		cell->m_position = position;
-	});
+	m_volume = new Volume(Vector3d(-0.1, -0.1, -0.1), Vector3d(1.1, 1.1, 1.1), m_volume_size, 1);
 }
 
 Fusion::~Fusion(){
-	forAll([](Voxel* cell, Vector3f _)
+	delete m_volume;
+}
+
+void Fusion::startConsuming(){
+	m_consumer_thread = std::thread([this]()
 	{
-		SAFE_DELETE(cell);
+		// It will block the thread in the case of an empty buffer
+		m_consumer->run([this](PointCloud* cloud)
+		{
+			this->integrate(cloud);
+		});
 	});
-	m_voxles_space.clear();
 }
 
-void Fusion::integrate(const PointCloud& cloud, Matrix4f& pose){
-
-	auto worldToCamera = pose.inverse();
-
+/// Buffer has a certain capacity when it is exceeded 
+/// this method will block the execution
+void Fusion::addToBuffer(PointCloud* cloud) const{
+	m_buffer->add(cloud);
 }
 
-vector<vector<vector<Voxel*>>>& Fusion::getTSDF(){
-	return m_voxles_space;
-}
-
-/// Parallel execution therefore the callback function
-/// has to be thread-safe
-void Fusion::forAll(const function<void(Voxel*, Vector3f)> func){
+void Fusion::integrate(PointCloud* cloud){
 	#pragma omp parallel
-	for (auto x = 0; x < m_size; x++)
-		for (auto y = 0; y < m_size; y++)
-			for (auto z = 0; z < m_size; z++)
-				func(m_voxles_space[x][y][z], Vector3f(x, y, z));
-}
+	for (unsigned int x = 0; x < m_volume_size; x++)
+		for (unsigned int y = 0; y < m_volume_size; y++)
+			for (unsigned int z = 0; z < m_volume_size; z++)
+			{
+				Voxel* voxel = m_volume->getVoxel(x, y, z);
 
-Voxel* Fusion::get(int i, int j, int k){
-	if (i < m_size && j < m_size && k < m_size)
-		return m_voxles_space[i][j][k];
+				if (!voxel) continue;
 
-	throw new exception("Out of range!");
+				voxel->m_distance = 0;
+			}
 }

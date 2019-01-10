@@ -29,6 +29,7 @@ extern "C" __declspec(dllexport) void* createContext(char* dataset_path){
 
 	tracker_context->m_tracker = new Tracker(camera_parameters);
 	tracker_context->m_fusion = new Fusion(width, height, 1);
+	tracker_context->m_fusion->startConsuming();
 
 	return tracker_context;
 }
@@ -55,11 +56,11 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 
 	cv::Mat rgb, depth;
 
-	bool is_first_frame = tracker_context->m_tracker->m_previous_point_cloud.getPoints().size() == 0;
+	bool is_first_frame = tracker_context->m_tracker->m_previous_point_cloud->getPoints().size() == 0;
 
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
-	const PointCloud source = PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, 32);
+	PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, 32);
 
 	if (is_first_frame) // first frame
 	{
@@ -71,8 +72,9 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 		tracker_context->m_tracker->alignNewFrame(source, tracker_context->m_tracker->m_previous_point_cloud, pose);
 	}
 
-	//TODO: real time mesh generation here
+	tracker_context->m_fusion->addToBuffer(source);
 
+	delete tracker_context->m_tracker->m_previous_point_cloud;
 	tracker_context->m_tracker->m_previous_point_cloud = source;
 
 	//So turns out opencv actually uses bgr not rgb...
@@ -86,13 +88,13 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 extern "C" __declspec(dllexport) int getVertexCount(void* context)
 {
 	TrackerContext * c = static_cast<TrackerContext*>(context);
-	return c->m_tracker->m_previous_point_cloud.getPoints().size(); 
+	return c->m_tracker->m_previous_point_cloud->getPoints().size();
 }
 
 extern "C" __declspec(dllexport) void getVertexBuffer(void* context, float *vertices)
 {
 	TrackerContext * c = static_cast<TrackerContext*>(context);
-	memcpy(vertices, c->m_tracker->m_previous_point_cloud.getPoints().data(), c->m_tracker->m_previous_point_cloud.getPoints().size()* sizeof(Vector3f));
+	memcpy(vertices, c->m_tracker->m_previous_point_cloud->getPoints().data(), c->m_tracker->m_previous_point_cloud->getPoints().size()* sizeof(Vector3f));
 }
 
 
@@ -112,5 +114,5 @@ extern "C" __declspec(dllexport) void getIndexBuffer(void* context, int* indices
 void getNormalBuffer(void * context, float * normals)
 {
 	TrackerContext * c = static_cast<TrackerContext*>(context);
-	memcpy(normals, c->m_tracker->m_previous_point_cloud.getNormals().data(), c->m_tracker->m_previous_point_cloud.getNormals().size() * sizeof(Vector3f));
+	memcpy(normals, c->m_tracker->m_previous_point_cloud->getNormals().data(), c->m_tracker->m_previous_point_cloud->getNormals().size() * sizeof(Vector3f));
 }

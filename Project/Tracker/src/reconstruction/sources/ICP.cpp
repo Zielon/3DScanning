@@ -10,11 +10,11 @@ ICP::~ICP(){
 	delete m_procrustesAligner;
 }
 
-Matrix4f ICP::estimatePose(const PointCloud& source, const PointCloud& target){
+Matrix4f ICP::estimatePose(const PointCloud* source, const PointCloud* target){
 
 	Matrix4f pose = Matrix4f::Identity();
 
-	m_nearestNeighbor->buildIndex(target.getPoints());
+	m_nearestNeighbor->buildIndex(target->getPoints());
 
 	std::vector<Vector3f> sourcePoints;
 	std::vector<Vector3f> targetPoints;
@@ -24,12 +24,12 @@ Matrix4f ICP::estimatePose(const PointCloud& source, const PointCloud& target){
 	{
 		clock_t begin = clock();
 
-		auto transformedPoints = transformPoints(source.getPoints(), pose);
-		auto transformedNormals = transformNormals(source.getNormals(), pose);
+		auto transformedPoints = transformPoints(source->getPoints(), pose);
+		auto transformedNormals = transformNormals(source->getNormals(), pose);
 
 		auto matches = m_nearestNeighbor->queryMatches(transformedPoints);
 
-		pruneCorrespondences(transformedNormals, target.getNormals(), matches);
+		pruneCorrespondences(transformedNormals, target->getNormals(), matches);
 
 		clock_t end = clock();
 		double elapsedSecs = double(end - begin) / CLOCKS_PER_SEC;
@@ -51,7 +51,7 @@ Matrix4f ICP::estimatePose(const PointCloud& source, const PointCloud& target){
 
 			// Match exists
 			sourcePoints.emplace_back(transformedPoints[j]);
-			targetPoints.emplace_back(target.getPoints()[idx]);
+			targetPoints.emplace_back(target->getPoints()[idx]);
 			targetNormals.emplace_back(transformedNormals[idx]);
 		}
 

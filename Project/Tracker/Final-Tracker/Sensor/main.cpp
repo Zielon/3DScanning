@@ -22,7 +22,7 @@ int main() {
 
 	std::cout << "The reading process has started" << std::endl;
 
-	//cin.get();
+	//cin.getVoxel();
 
 	int i = 0;
 
