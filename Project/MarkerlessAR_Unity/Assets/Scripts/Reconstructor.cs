@@ -116,11 +116,11 @@ namespace Assets.Scripts
 
            Debug.Log("Update test");
 
-            //dllMain(_cppContext, _image, _pose);
+            dllMain(_cppContext, _image, _pose);
 
-            int status = getNextFrame(_cppContext, _image);
+            //int status = getNextFrame(_cppContext, _image);
 
-            Debug.Log("Next frame status: "+status);
+            //Debug.Log("Next frame status: "+status);
 
             //Create texture from image
             var tex = new Texture2D(_w, _h, TextureFormat.RGB24, false);
@@ -136,7 +136,7 @@ namespace Assets.Scripts
             Debug.Log("Sprite created successfuly");
 
             // Apply camera poses
-            /*Vector4 firstCol = new Vector4(_pose[0], _pose[1], _pose[2], _pose[3]);
+            Vector4 firstCol = new Vector4(_pose[0], _pose[1], _pose[2], _pose[3]);
             Vector4 secCol = new Vector4(_pose[4], _pose[5], _pose[6], _pose[7]);
             Vector4 thirdCol = new Vector4(_pose[8], _pose[9], _pose[10], _pose[11]);
             Vector4 fourthCol = new Vector4(_pose[12], _pose[13], _pose[14], _pose[15]);
@@ -149,7 +149,9 @@ namespace Assets.Scripts
             pose.SetColumn(2, thirdCol);
             pose.SetColumn(3, fourthCol);
 
-          //  Debug.Log("transformation matrix: \n" + pose);
+            //Debug.Log("transformation matrix: \n" + pose);
+            //Debug.Log("transformation matrix: \n" + firstCol);
+            //Debug.Log("transformation matrix: \n" + secCol);
 
             cameraRig.transform.position = fourthCol * 1000;
             cameraRig.transform.rotation = pose.rotation;
@@ -158,7 +160,7 @@ namespace Assets.Scripts
          //   Debug.Log("Rot: " + cameraRig.transform.rotation.eulerAngles);
 
             //enable this once fusion is ready
-        //    spawnFrameMesh(); */
+        //    spawnFrameMesh();
         }
 
 

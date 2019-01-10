@@ -83,7 +83,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -127,7 +127,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetExt>.exe</TargetExt>
+    <TargetExt>.dll</TargetExt>
     <TargetName>$(ProjectName)</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -162,7 +162,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENCV_DIR)\bin; $(OPENNI_DIR)\Lib64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world400d.lib;openNI64.lib%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opencv_world400d.lib;openNI64.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <RegisterOutput>false</RegisterOutput>
       <AddModuleNamesToAssembly>
       </AddModuleNamesToAssembly>

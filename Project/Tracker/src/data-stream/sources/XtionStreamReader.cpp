@@ -186,13 +186,27 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 	}
 
 	//OpenCV color image from raw color map
+	
+	//Copy sensor to buffers
+	int Nbytes = sizeof(unsigned char) * colorMD.XRes() * colorMD.YRes() * 3;
+	
+	unsigned char *color_buffer = (unsigned char*)malloc(Nbytes);
+	memcpy(color_buffer, color_map, Nbytes);
 
-	rgb = cv::Mat(colorMD.YRes(), colorMD.XRes(), CV_8UC3, (void*)color_map, cv::Mat::AUTO_STEP);
+	Nbytes = sizeof(unsigned short) * depthMD.XRes() * depthMD.YRes();
+
+	unsigned short *depth_buffer = (unsigned short*)malloc(Nbytes);
+	memcpy(depth_buffer, depth_map, Nbytes);
+
+	//rgb = cv::Mat(colorMD.YRes(), colorMD.XRes(), CV_8UC3, (void*)color_map, cv::Mat::AUTO_STEP);
+	rgb = cv::Mat(colorMD.YRes(), colorMD.XRes(), CV_8UC3, (void*)color_buffer, cv::Mat::AUTO_STEP);
+	
 	/*rgb = cv::Mat(colorMD.YRes(), colorMD.XRes(), CV_8UC3);
 	memcpy(rgb.data, color_map, colorMD.YRes() * colorMD.XRes() * 3 * sizeof(unsigned char));*/
 
 	//OpenCV depth image from raw depth map
-	depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1, (void*)depth_map, cv::Mat::AUTO_STEP);
+	depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1, (void*)depth_buffer, cv::Mat::AUTO_STEP);
+	//depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1, (void*)depth_map, cv::Mat::AUTO_STEP);
 
 	//depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1);
 	//memcpy(depth.data, depth_map, depthMD.YRes() * depthMD.XRes() * sizeof(unsigned short));
@@ -206,6 +220,9 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 		//saveRawFrame(colorMD.FrameID(), &colorMD, &depthMD);
 		saveFrame(colorMD.FrameID(), rgb, depth);
 	}
+
+	color_map = NULL;
+	depth_map = NULL;
 }
 
 bool XtionStreamReader::saveRawFrame(int frame, xn::ImageMetaData *colorMD, xn::DepthMetaData *depthMD) {

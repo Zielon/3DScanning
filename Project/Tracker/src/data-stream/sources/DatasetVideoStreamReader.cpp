@@ -139,6 +139,7 @@ int DatasetVideoStreamReader::readAnyFrame(unsigned long index, cv::Mat &rgb, cv
 
     rgb = cv::imread(m_datasetFolderPath + m_rgb_names[index].second);
 
+	//std::cout << rgb.type() << std::endl;//Checking image format
 
     cv::Mat depthTmp = cv::imread(m_datasetFolderPath + m_depth_names[index].second);
     depthTmp.convertTo(depth, CV_32FC1, 1.0 / 5000.0);

@@ -15,6 +15,7 @@ Sensor specifications: https://www.asus.com/3D-Sensor/Xtion_PRO/specifications/
 #include "VideoStreamReaderBase.h"
 #include <iostream>
 #include <fstream>
+#include <opencv2/imgproc/imgproc.hpp>
 
 //OpenNI
 

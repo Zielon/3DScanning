@@ -1,4 +1,5 @@
 #include "../../src/data-stream/headers/XtionStreamReader.h";
+#include <opencv2/imgproc/imgproc.hpp>
 
 int main() {
 
@@ -36,6 +37,8 @@ int main() {
 		cv::Mat rgb;
 		cv::Mat depth;
 		streamReader->getNextFrame(rgb, depth, false);
+
+		cv::cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
 
 		//Debug color image
 		cv::imshow("TestRGB", rgb);

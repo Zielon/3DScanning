@@ -76,8 +76,7 @@ extern "C" __declspec(dllexport) int getNextFrame(void *context, unsigned char *
 	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
 
-	//return tracker_context->videoStreamReader->mStatus;
-	return rgb.rows * rgb.cols;
+	return tracker_context->videoStreamReader->mStatus;
 }
 
 extern "C" __declspec(dllexport) void trackerCameraPose(void* context, unsigned char* image, float* pose, int w, int h){
@@ -124,7 +123,7 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 
 	//So turns out opencv actually uses bgr not rgb...
 	//no more opencv computations after this point
-	//cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
+	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
 }
 
