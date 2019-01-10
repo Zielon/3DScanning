@@ -1,16 +1,19 @@
 #include "../headers/Tracker.h"
 
 Tracker::~Tracker(){
-	delete m_icp;
+	SAFE_DELETE(m_icp);
 }
 
-void Tracker::alignNewFrame(const PointCloud& source, const PointCloud& target, float* outPose){
+Matrix4f Tracker::alignNewFrame(const PointCloud* source, const PointCloud* target, float* outPose){
 
-	const auto pose = m_icp->estimatePose(source, target).data();
+	const auto pose = m_icp->estimatePose(source, target);
+
+	const auto data = pose.data();
 
 	for (int i = 0; i < 16; i++)
-		outPose[i] = pose[i];
+		outPose[i] = data[i];
 
+	return pose;
 }
 
 CameraParameters Tracker::getCameraParameters() const{

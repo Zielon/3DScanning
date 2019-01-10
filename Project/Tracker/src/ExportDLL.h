@@ -6,7 +6,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include "reconstruction/headers/Fusion.h"
 
-//DLL exports of the tracker
+//DLL exports of the m_tracker
 
 #define OPENCV_TRAITS_ENABLE_DEPRECATED
 

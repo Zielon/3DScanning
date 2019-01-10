@@ -4,9 +4,6 @@
     <ClInclude Include="..\..\src\Eigen.h" />
     <ClInclude Include="..\..\src\ExportDLL.h" />
     <ClInclude Include="..\..\src\TrackerContext.h" />
-    <ClInclude Include="..\..\src\tests\general\GeneralTests.h">
-      <Filter>tests\general</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\tests\windows\WindowsTests.h">
       <Filter>tests\windows</Filter>
     </ClInclude>
@@ -37,13 +34,28 @@
     <ClInclude Include="..\..\src\reconstruction\headers\CameraParameters.h">
       <Filter>reconstruction\headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\Voxel.h">
+      <Filter>reconstruction\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\Volume.h">
+      <Filter>reconstruction\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\concurency\headers\Buffer.h">
+      <Filter>concurency\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\concurency\headers\Consumer.h">
+      <Filter>concurency\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\concurency\headers\Producer.h">
+      <Filter>concurency\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\debugger\headers\Verbose.h">
+      <Filter>debugger\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
-    <ClCompile Include="..\..\src\tests\general\GeneralTests.cpp">
-      <Filter>tests\general</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\tests\windows\WindowsTests.cpp">
       <Filter>tests\windows</Filter>
     </ClCompile>
@@ -61,6 +73,22 @@
     </ClCompile>
     <ClCompile Include="..\..\src\reconstruction\sources\PointCloud.cpp">
       <Filter>reconstruction\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\reconstruction\sources\Volume.cpp">
+      <Filter>reconstruction\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\concurency\sources\Buffer.cpp">
+      <Filter>concurency\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\concurency\sources\Consumer.cpp">
+      <Filter>concurency\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\concurency\sources\Producer.cpp">
+      <Filter>concurency\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\TrackerContext.cpp" />
+    <ClCompile Include="..\..\src\debugger\sources\Verbose.cpp">
+      <Filter>debugger\sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -82,14 +110,29 @@
     <Filter Include="tests\windows">
       <UniqueIdentifier>{558ae7d3-65f1-4695-86f0-4f4651873745}</UniqueIdentifier>
     </Filter>
-    <Filter Include="tests\general">
-      <UniqueIdentifier>{6f75bdd1-b28c-4105-835e-491452063d18}</UniqueIdentifier>
-    </Filter>
     <Filter Include="reconstruction\headers">
       <UniqueIdentifier>{a665fb45-b2a7-42a4-b8a3-531986ede890}</UniqueIdentifier>
     </Filter>
     <Filter Include="reconstruction\sources">
       <UniqueIdentifier>{d6e155f6-11f8-4f69-aab9-a88b5265309d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="concurency">
+      <UniqueIdentifier>{d1978c71-a0ad-451d-aaf9-5d3ec58e504d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="concurency\headers">
+      <UniqueIdentifier>{cc1bf3c9-a161-43b4-8758-707df63a96cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="concurency\sources">
+      <UniqueIdentifier>{602dac60-3ab3-4ba1-acf0-42fb5b3fd2e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="debugger">
+      <UniqueIdentifier>{0406a341-5e09-4af7-9c90-ead62788db49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="debugger\headers">
+      <UniqueIdentifier>{485cda67-b100-472c-9889-ba762ddaace2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="debugger\sources">
+      <UniqueIdentifier>{d9012683-0f62-4796-9da2-379f8ce4180d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
