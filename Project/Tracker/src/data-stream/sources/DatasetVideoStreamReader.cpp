@@ -136,7 +136,8 @@ int DatasetVideoStreamReader::readAnyFrame(unsigned long index, cv::Mat &rgb, cv
 
 
     cv::Mat depthTmp = cv::imread(m_datasetFolderPath + m_depth_names[index].second);
-    depthTmp.convertTo(depth, CV_32FC1, 1.0 / 5000.0);
+    //depthTmp.convertTo(depth, CV_32FC1, 1.0 / 5000.0);
+	depthTmp.convertTo(depth, CV_32FC1, 1.0);
 
     //ust assuming constant w/h
     m_width_rgb = rgb.cols;

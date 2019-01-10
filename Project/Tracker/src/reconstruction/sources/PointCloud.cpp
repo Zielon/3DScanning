@@ -34,6 +34,9 @@ void PointCloud::transform(cv::Mat& depth){
 	auto temp_points = std::vector<Vector3f>(width * height);
 	auto temp_normals = std::vector<Vector3f>(width * height);
 
+	float depth_min = std::numeric_limits<float>::infinity();
+	float depth_max = -1;
+
 	#pragma omp parallel for
 	for (auto y = 0; y < height; y++)
 	{
@@ -43,8 +46,15 @@ void PointCloud::transform(cv::Mat& depth){
 
 			auto depth_val = depth.at<float>(y, x);
 
+			depth_min = std::min(depth_min, depth_val);
+			depth_max = std::max(depth_max, depth_val);
+
 			if (depth_val > 0.0f)
 			{
+				// depth images are scaled by 5000 (see https://vision.in.tum.de/data/datasets/rgbd-dataset/file_formats)
+
+				//depth_val *= 1.0f / 5000.0f;
+
 				// Back-projection to camera space.
 				pixel_coords << (x - m_camera_parameters.m_cX) / m_camera_parameters.m_fovX *
 					depth_val, (y - m_camera_parameters.m_cY) / m_camera_parameters.m_fovY * depth_val, depth_val;

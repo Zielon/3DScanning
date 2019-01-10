@@ -11,9 +11,16 @@ public:
     void run();
 
 private:
+
+	bool readTrajectoryFile(const std::string& filename, std::vector<Eigen::Matrix4f>& result, std::vector<double>& timestamps);
+
+	void readTrajectories();
+
     void dllVidReadTest();
 
     void vidReadTest();
+
+	void cameraPoseTest();
 
 	void meshTest(); 
 
