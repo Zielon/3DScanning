@@ -5,6 +5,8 @@
 #include <ostream>
 #include <Eigen/StdVector>
 #include <fstream>
+#include <list>
+#include <iostream>
 
 struct Triangle
 {
@@ -27,28 +29,28 @@ public:
 
 	unsigned int AddVertex(Eigen::Vector3f& vertex){
 		unsigned int vId = (unsigned int)m_vertices.size();
-		m_vertices.push_back(vertex);
+		m_vertices.emplace_back(vertex);
 		return vId;
 	}
 
 	unsigned int AddFace(unsigned int idx0, unsigned int idx1, unsigned int idx2){
 		unsigned int fId = (unsigned int)m_triangles.size();
 		Triangle triangle(idx0, idx1, idx2);
-		m_triangles.push_back(triangle);
+		m_triangles.emplace_back(triangle);
 		return fId;
 	}
 
-	std::vector<Eigen::Vector3f>& GetVertices(){
+	std::list<Eigen::Vector3f>& GetVertices(){
 		return m_vertices;
 	}
 
-	std::vector<Triangle>& GetTriangles(){
+	std::list<Triangle>& GetTriangles(){
 		return m_triangles;
 	}
 
 	bool WriteMesh(const std::string& filename){
 		// Write off file
-		std::ofstream out_file(filename);
+		std::ofstream out_file(filename + ".off");
 		if (!out_file.is_open()) return false;
 
 		// write header
@@ -56,16 +58,15 @@ public:
 		out_file << m_vertices.size() << " " << m_triangles.size() << " 0" << std::endl;
 
 		// save vertices
-		for (unsigned int i = 0; i < m_vertices.size(); i++)
+		for (auto vertex : m_vertices)
 		{
-			out_file << m_vertices[i].x() << " " << m_vertices[i].y() << " " << m_vertices[i].z() << std::endl;
+			out_file << vertex.x() << " " << vertex.y() << " " << vertex.z() << std::endl;
 		}
 
 		// save faces
-		for (unsigned int i = 0; i < m_triangles.size(); i++)
+		for (auto triangle : m_triangles)
 		{
-			out_file << "3 " << m_triangles[i].idx0 << " " << m_triangles[i].idx1 << " " << m_triangles[i].idx2 << std::
-				endl;
+			out_file << "3 " << triangle.idx0 << " " << triangle.idx1 << " " << triangle.idx2 << std::endl;
 		}
 
 		// close file
@@ -75,8 +76,8 @@ public:
 	}
 
 private:
-	std::vector<Eigen::Vector3f> m_vertices;
-	std::vector<Triangle> m_triangles;
+	std::list<Eigen::Vector3f> m_vertices;
+	std::list<Triangle> m_triangles;
 };
 
 #endif

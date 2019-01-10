@@ -72,6 +72,8 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 	{
 		Matrix4f id = Matrix4f::Identity();
 		memcpy(pose, id.data(), 16 * sizeof(float));
+		tracker_context->m_tracker->m_previous_point_cloud = source;
+		return;
 	}
 	else
 	{
@@ -79,7 +81,7 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 	}
 
 	// Produce a new point cloud (add to the buffer)
-	tracker_context->m_fusion->produce(source);
+	tracker_context->m_fusion->produce(tracker_context->m_tracker->m_previous_point_cloud);
 
 	// Safe the last frame reference
 	tracker_context->m_tracker->m_previous_point_cloud = source;

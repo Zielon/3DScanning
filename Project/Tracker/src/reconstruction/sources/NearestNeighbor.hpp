@@ -26,7 +26,7 @@ public:
 protected:
 	float m_maxDistance;
 
-	NearestNeighborSearch() : m_maxDistance{0.005f}{}
+	NearestNeighborSearch() : m_maxDistance{0.0025f}{}
 };
 
 /**
@@ -176,5 +176,3 @@ private:
 	flann::Index<flann::L2<float>>* m_index;
 	float* m_flatPoints;
 };
-
-

@@ -20,11 +20,11 @@ public:
 
 	Vector3f getWorldPosition(int i, int j, int k);
 
+	int m_size;
+
 private:
 
 	void compute_ddx_dddx();
-
-	int m_size = 50;
 
 	//! Lower left and Upper right corner.
 	Vector3d m_min, m_max;

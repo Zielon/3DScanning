@@ -462,6 +462,7 @@ bool ProcessVolumeCell(Volume* vol, int x, int y, int z, double iso, Mesh* mesh)
 		Vector3f v2((float)tris[i1].p[2][0], (float)tris[i1].p[2][1], (float)tris[i1].p[2][2]);
 
 		unsigned int vhandle[3];
+
 		vhandle[0] = mesh->AddVertex(v0);
 		vhandle[1] = mesh->AddVertex(v1);
 		vhandle[2] = mesh->AddVertex(v2);

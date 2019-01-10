@@ -31,6 +31,8 @@ public:
 		return m_nearestNeighbor;
 	};
 
+	Matrix4f m_pose_estimation;
+
 private:
 	void transform(cv::Mat& depth);
 
