@@ -1,5 +1,4 @@
 #ifndef TRACKER_CONTEXT_H
-
 #define TRACKER_CONTEXT_H
 
 #include "reconstruction/headers/Tracker.h"

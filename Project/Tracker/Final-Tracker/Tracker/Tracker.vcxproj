@@ -32,6 +32,7 @@
     <ClInclude Include="..\..\src\concurency\headers\Producer.h" />
     <ClInclude Include="..\..\src\data-stream\headers\DatasetVideoStreamReader.h" />
     <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h" />
+    <ClInclude Include="..\..\src\debugger\headers\Verbose.h" />
     <ClInclude Include="..\..\src\Eigen.h" />
     <ClInclude Include="..\..\src\ExportDLL.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\CameraParameters.h" />
@@ -51,6 +52,7 @@
     <ClCompile Include="..\..\src\concurency\sources\Consumer.cpp" />
     <ClCompile Include="..\..\src\concurency\sources\Producer.cpp" />
     <ClCompile Include="..\..\src\data-stream\sources\DatasetVideoStreamReader.cpp" />
+    <ClCompile Include="..\..\src\debugger\sources\Verbose.cpp" />
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Fusion.cpp" />
@@ -246,7 +248,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>

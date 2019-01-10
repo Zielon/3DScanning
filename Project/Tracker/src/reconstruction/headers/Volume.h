@@ -16,7 +16,9 @@ public:
 
 	Voxel* getVoxel(int i, int j, int k) const;
 
-	Vector3d position(int i, int j, int k);
+	Voxel* getVoxel(int idx) const;
+
+	Vector3f getWorldPosition(int i, int j, int k);
 
 private:
 

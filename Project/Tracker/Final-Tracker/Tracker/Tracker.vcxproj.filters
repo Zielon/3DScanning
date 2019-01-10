@@ -49,6 +49,9 @@
     <ClInclude Include="..\..\src\concurency\headers\Producer.h">
       <Filter>concurency\headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\debugger\headers\Verbose.h">
+      <Filter>debugger\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -84,6 +87,9 @@
       <Filter>concurency\sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\TrackerContext.cpp" />
+    <ClCompile Include="..\..\src\debugger\sources\Verbose.cpp">
+      <Filter>debugger\sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="data-stream">
@@ -118,6 +124,15 @@
     </Filter>
     <Filter Include="concurency\sources">
       <UniqueIdentifier>{602dac60-3ab3-4ba1-acf0-42fb5b3fd2e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="debugger">
+      <UniqueIdentifier>{0406a341-5e09-4af7-9c90-ead62788db49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="debugger\headers">
+      <UniqueIdentifier>{485cda67-b100-472c-9889-ba762ddaace2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="debugger\sources">
+      <UniqueIdentifier>{d9012683-0f62-4796-9da2-379f8ce4180d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

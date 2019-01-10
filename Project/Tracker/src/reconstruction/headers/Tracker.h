@@ -18,7 +18,6 @@ class Tracker final
 public:
 	Tracker(CameraParameters camera_parameters) : m_camera_parameters(camera_parameters){
 		m_icp = new ICP();
-		m_previous_point_cloud = new PointCloud();
 	}
 
 	~Tracker();

@@ -14,26 +14,18 @@ Matrix4f ICP::estimatePose(const PointCloud* source, const PointCloud* target){
 
 	Matrix4f pose = Matrix4f::Identity();
 
-	m_nearestNeighbor->buildIndex(target->getPoints());
-
 	std::vector<Vector3f> sourcePoints;
 	std::vector<Vector3f> targetPoints;
 	std::vector<Vector3f> targetNormals;
 
 	for (int i = 0; i < m_number_iterations; ++i)
 	{
-		clock_t begin = clock();
-
 		auto transformedPoints = transformPoints(source->getPoints(), pose);
 		auto transformedNormals = transformNormals(source->getNormals(), pose);
 
-		auto matches = m_nearestNeighbor->queryMatches(transformedPoints);
+		auto matches = target->getNearestNeighborSearch()->queryMatches(transformedPoints);
 
 		pruneCorrespondences(transformedNormals, target->getNormals(), matches);
-
-		clock_t end = clock();
-		double elapsedSecs = double(end - begin) / CLOCKS_PER_SEC;
-		std::cout << "Completed in " << elapsedSecs << " seconds." << std::endl;
 
 		sourcePoints.clear();
 		targetPoints.clear();

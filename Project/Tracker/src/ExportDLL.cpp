@@ -1,4 +1,5 @@
 #include "ExportDLL.h"
+#include "debugger/headers/Verbose.h"
 
 #define PIXEL_STEPS 4
 
@@ -54,11 +55,14 @@ extern "C" __declspec(dllexport) int getImageHeight(void* context){
 }
 
 extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* image, float* pose){
+	
+	Verbose::start();
+
 	TrackerContext* tracker_context = static_cast<TrackerContext*>(context);
 
 	cv::Mat rgb, depth;
 
-	const bool is_first_frame = tracker_context->m_tracker->m_previous_point_cloud->getPoints().empty();
+	const bool is_first_frame = tracker_context->m_tracker->m_previous_point_cloud == nullptr;
 
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
@@ -77,14 +81,15 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 	// Produce a new point cloud (add to the buffer)
 	tracker_context->m_fusion->produce(source);
 
-	SAFE_DELETE(tracker_context->m_tracker->m_previous_point_cloud);
-
+	// Safe the last frame reference
 	tracker_context->m_tracker->m_previous_point_cloud = source;
 
 	//So turns out opencv actually uses bgr not rgb...
 	//no more opencv computations after this point
 	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
+
+	Verbose::stop("Frame reconstruction in ->");
 }
 
 extern "C" __declspec(dllexport) int getVertexCount(void* context){

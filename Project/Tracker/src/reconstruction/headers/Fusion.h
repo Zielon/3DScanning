@@ -33,7 +33,7 @@ public:
 
 	void produce(PointCloud* cloud) const;
 
-	void integrate(PointCloud* cloud);
+	void integrate(PointCloud* cloud) const;
 
 	std::vector<int> m_currentIndexBuffer;
 

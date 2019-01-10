@@ -4,7 +4,7 @@ Fusion::Fusion(CameraParameters camera_parameters) : m_camera_parameters(camera_
 	m_volume = new Volume(Vector3d(-0.1, -0.1, -0.1), Vector3d(1.1, 1.1, 1.1), m_volume_size, 1);
 }
 
-Fusion::~Fusion(){	
+Fusion::~Fusion(){
 	m_consumer->stop();
 	m_consumer_thread.join();
 
@@ -32,16 +32,21 @@ void Fusion::produce(PointCloud* cloud) const{
 	m_buffer->add(cloud);
 }
 
-void Fusion::integrate(PointCloud* cloud){
+void Fusion::integrate(PointCloud* cloud) const{
 	#pragma omp parallel
 	for (unsigned int x = 0; x < m_volume_size; x++)
 		for (unsigned int y = 0; y < m_volume_size; y++)
 			for (unsigned int z = 0; z < m_volume_size; z++)
 			{
-				Voxel* voxel = m_volume->getVoxel(x, y, z);
+				Vector3f world_position = m_volume->getWorldPosition(x, y, z);
+				int closest_point_index = cloud->getClosestPoint(world_position);
+				Voxel* voxel = m_volume->getVoxel(closest_point_index);
 
 				if (!voxel) continue;
 
+				// TODO: SDF
 				voxel->m_distance = 0;
 			}
+
+	SAFE_DELETE(cloud);
 }

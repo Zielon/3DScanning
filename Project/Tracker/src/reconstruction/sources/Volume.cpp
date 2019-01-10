@@ -26,6 +26,12 @@ void Volume::forAll(std::function<void(Voxel*, int)> func) const{
 		func(m_voxels[x], x);
 }
 
+Voxel* Volume::getVoxel(int idx) const{
+	if (idx > 0 && idx < m_length)
+		return m_voxels[idx];
+	return nullptr;
+}
+
 void Volume::compute_ddx_dddx(){
 	m_ddx = 1.0f / (m_size - 1);
 	m_ddy = 1.0f / (m_size - 1);
@@ -46,8 +52,8 @@ Voxel* Volume::getVoxel(int x, int y, int z) const{
 }
 
 /// Returns 3D world position for a given voxel
-Vector3d Volume::position(int i, int j, int k){
-	Vector3d coordinates{};
+Vector3f Volume::getWorldPosition(int i, int j, int k){
+	Vector3f coordinates;
 
 	coordinates[0] = m_min[0] + (m_max[0] - m_min[0]) * (double(i) * m_ddx);
 	coordinates[1] = m_min[1] + (m_max[1] - m_min[1]) * (double(j) * m_ddy);
