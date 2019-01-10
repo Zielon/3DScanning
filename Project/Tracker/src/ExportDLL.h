@@ -15,6 +15,8 @@ extern "C" __declspec(dllexport) void * createSensorContext(char *sensor_path);
 
 extern "C" __declspec(dllexport) void * createContext(char *dataset_path);
 
+extern "C" __declspec(dllexport) int getNextFrame(void *context, unsigned char *image);
+
 extern "C" __declspec(dllexport) void trackerCameraPose(void *context, unsigned char *image, float *pose, int w, int h);
 
 extern "C" __declspec(dllexport) int getImageWidth(void *context);

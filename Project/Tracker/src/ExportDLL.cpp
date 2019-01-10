@@ -60,6 +60,26 @@ extern "C" __declspec(dllexport) void* createContext(char* dataset_path){
 	return tracker_context;
 }
 
+extern "C" __declspec(dllexport) int getNextFrame(void *context, unsigned char *image) {
+
+	TrackerContext* tracker_context = static_cast<TrackerContext*>(context);
+
+	cv::Mat rgb, depth;
+
+	tracker_context->videoStreamReader->getNextFrame(rgb, depth, false);
+
+	cv::imshow("dllTest", rgb);
+	cv::waitKey(1);
+
+	//So turns out opencv actually uses bgr not rgb...
+	//no more opencv computations after this point
+	/*cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
+	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);*/
+
+	//return tracker_context->videoStreamReader->mStatus;
+	return rgb.rows * rgb.cols;
+}
+
 extern "C" __declspec(dllexport) void trackerCameraPose(void* context, unsigned char* image, float* pose, int w, int h){
 
 	Tracker* tracker = static_cast<TrackerContext*>(context)->tracker;

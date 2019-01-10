@@ -46,7 +46,7 @@ public:
     *
     */
     void getNextFrame(cv::Mat &rgb, cv::Mat &depth, bool skip = true) {
-        waitForNextFrame();
+        //waitForNextFrame();
         ++newFrameIndex;
         if (skip) {
             lastFrameReadIndex = newFrameIndex;
@@ -85,6 +85,9 @@ public:
     int m_height_rgb, m_width_rgb, m_height_depth, m_width_depth;
 
     unsigned long getCurrentFrameIndex() { return newFrameIndex; }
+
+	//Test
+	int mStatus = 0;
 
 protected:
 

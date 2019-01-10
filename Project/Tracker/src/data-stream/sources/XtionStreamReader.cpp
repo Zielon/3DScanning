@@ -6,6 +6,8 @@ XtionStreamReader::XtionStreamReader(const char *sensorFolderPath, bool realtime
 	m_realtime = realtime;
 	m_use_capture = capture;
 	m_use_verbose = verbose;
+
+	mStatus = 0;
 }
 
 
@@ -161,6 +163,8 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 	if (nRetVal != XN_STATUS_OK)
 	{
 		printf("ReadData failed: %s\n", xnGetStatusString(nRetVal));
+		mStatus = -1;
+
 		return -1;
 	}
 
@@ -192,6 +196,8 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 
 	//depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1);
 	//memcpy(depth.data, depth_map, depthMD.YRes() * depthMD.XRes() * sizeof(unsigned short));
+
+	mStatus = 2;
 
 	//Capture frames
 
