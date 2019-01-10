@@ -123,17 +123,17 @@ namespace Assets.Scripts
             Debug.Log("Next frame status: "+status);
 
             //Create texture from image
-            /*var tex = new Texture2D(_w, _h, TextureFormat.RGB24, false);
+            var tex = new Texture2D(_w, _h, TextureFormat.RGB24, false);
 
             tex.LoadRawTextureData(_image);
             tex.Apply();
 
-            //Debug.Log("Texture created successfuly");
+            Debug.Log("Texture created successfuly");
 
             var videoBg = GetComponent<Image>();
             videoBg.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
 
-            //Debug.Log("Sprite created successfuly");
+            Debug.Log("Sprite created successfuly");
 
             // Apply camera poses
             /*Vector4 firstCol = new Vector4(_pose[0], _pose[1], _pose[2], _pose[3]);
