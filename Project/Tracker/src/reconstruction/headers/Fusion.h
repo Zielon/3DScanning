@@ -6,7 +6,7 @@
 
 
 /**
- * Volumetric fusion class
+ * Volumetric m_fusion class
  */
 class Fusion {
 public:

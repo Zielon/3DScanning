@@ -9,9 +9,9 @@
 const bool ENFORCE_REALTIME = true;
 
 struct TrackerContext {
-    Tracker *tracker;
-    VideoStreamReaderBase *videoStreamReader;
-	Fusion* fusion; 
+    Tracker *m_tracker;
+    VideoStreamReaderBase *m_videoStreamReader;
+	Fusion* m_fusion; 
 };
 
 #endif TRACKER_CONTEXT_H
