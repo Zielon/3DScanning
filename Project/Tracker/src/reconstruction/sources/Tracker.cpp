@@ -1,7 +1,7 @@
 #include "../headers/Tracker.h"
 
 Tracker::~Tracker(){
-	delete m_icp;
+	SAFE_DELETE(m_icp);
 }
 
 Matrix4f Tracker::alignNewFrame(const PointCloud* source, const PointCloud* target, float* outPose){

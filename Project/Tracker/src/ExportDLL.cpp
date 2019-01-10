@@ -77,7 +77,7 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 	// Produce a new point cloud (add to the buffer)
 	tracker_context->m_fusion->produce(source);
 
-	delete tracker_context->m_tracker->m_previous_point_cloud;
+	SAFE_DELETE(tracker_context->m_tracker->m_previous_point_cloud);
 
 	tracker_context->m_tracker->m_previous_point_cloud = source;
 

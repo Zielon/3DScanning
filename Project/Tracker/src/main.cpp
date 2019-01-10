@@ -6,5 +6,7 @@ int main(int argc, char** argv){
 
 	windows->run();
 
+	SAFE_DELETE(windows);
+
 	return 0;
 }

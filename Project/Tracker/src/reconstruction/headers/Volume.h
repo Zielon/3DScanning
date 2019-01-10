@@ -12,7 +12,7 @@ public:
 
 	~Volume();
 
-	void forAll(std::function<void(Voxel*)> func) const;
+	void forAll(std::function<void(Voxel*, int)> func) const;
 
 	Voxel* getVoxel(int i, int j, int k) const;
 
@@ -34,7 +34,7 @@ private:
 
 	double m_dddx, m_dddy, m_dddz;
 
-	std::vector<Voxel*>* m_voxels;
+	std::vector<Voxel*> m_voxels;
 
 	int m_length = 0;
 

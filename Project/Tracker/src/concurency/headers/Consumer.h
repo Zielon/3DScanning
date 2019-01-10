@@ -10,8 +10,11 @@ public:
 
 	void run(std::function<void(T)> func);
 
+	void stop();
+
 private:
 	Buffer<T>* m_buffer;
+	bool m_running = true;
 };
 
 #endif

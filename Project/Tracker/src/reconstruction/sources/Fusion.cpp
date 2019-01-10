@@ -4,10 +4,13 @@ Fusion::Fusion(CameraParameters camera_parameters) : m_camera_parameters(camera_
 	m_volume = new Volume(Vector3d(-0.1, -0.1, -0.1), Vector3d(1.1, 1.1, 1.1), m_volume_size, 1);
 }
 
-Fusion::~Fusion(){
-	delete m_volume;
-	delete m_buffer;
-	delete m_consumer;
+Fusion::~Fusion(){	
+	m_consumer->stop();
+	m_consumer_thread.join();
+
+	SAFE_DELETE(m_volume);
+	SAFE_DELETE(m_buffer);
+	SAFE_DELETE(m_consumer);
 }
 
 /// Consumes point clouds from a buffer and 

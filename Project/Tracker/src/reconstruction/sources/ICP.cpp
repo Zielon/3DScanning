@@ -6,8 +6,8 @@ ICP::ICP(){
 }
 
 ICP::~ICP(){
-	delete m_nearestNeighbor;
-	delete m_procrustesAligner;
+	SAFE_DELETE(m_nearestNeighbor);
+	SAFE_DELETE(m_procrustesAligner);
 }
 
 Matrix4f ICP::estimatePose(const PointCloud* source, const PointCloud* target){

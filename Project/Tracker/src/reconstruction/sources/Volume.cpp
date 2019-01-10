@@ -1,31 +1,29 @@
 #include <utility>
 #include "../headers/Volume.h"
 
-Volume::Volume(Vector3d min, Vector3d max, uint size, uint dim) : m_min(std::move(min)), m_max(std::move(max)),
-                                                                  m_voxels(nullptr){
+Volume::Volume(Vector3d min, Vector3d max, uint size, uint dim) : m_min(std::move(min)), m_max(std::move(max)){
 	m_diag = m_max - m_min;
 	m_dim = dim;
 	m_length = std::pow(m_size, 3);
-	m_voxels = new std::vector<Voxel*>(m_length, new Voxel());
+	m_voxels = std::vector<Voxel*>(m_length, nullptr);
+	forAll([this](Voxel* voxel, int index)
+	{
+		m_voxels[index] = new Voxel();
+	});
 	compute_ddx_dddx();
 }
 
 Volume::~Volume(){
-	forAll([](Voxel* cell)
+	forAll([this](Voxel* voxel, int index)
 	{
-		SAFE_DELETE(cell);
+		SAFE_DELETE(voxel);
 	});
-
-	m_voxels->clear();
-	delete m_voxels;
+	m_voxels.clear();
 }
 
-/// Parallel execution therefore the callback function
-/// has to be thread-safe
-void Volume::forAll(const std::function<void(Voxel*)> func) const{
-	#pragma omp parallel
+void Volume::forAll(std::function<void(Voxel*, int)> func) const{
 	for (auto x = 0; x < m_length; x++)
-		func(m_voxels->operator[](x));
+		func(m_voxels[x], x);
 }
 
 void Volume::compute_ddx_dddx(){
@@ -42,8 +40,8 @@ void Volume::compute_ddx_dddx(){
 
 Voxel* Volume::getVoxel(int x, int y, int z) const{
 	const int index = x * m_size * m_size + y * m_size + z;
-	if(index < m_length)
-		return m_voxels->operator[](index);
+	if (index < m_length)
+		return m_voxels[index];
 	return nullptr;
 }
 
