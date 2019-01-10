@@ -1,7 +1,8 @@
 #include "../headers/PointCloud.h"
+#include <opencv2/imgproc.hpp>
 
-PointCloud::PointCloud(CameraParameters camera_parameters, cv::Mat& depth, int step_size)
-	: m_camera_parameters(camera_parameters), m_step_size(step_size){
+PointCloud::PointCloud(CameraParameters camera_parameters, cv::Mat& depth)
+	: m_camera_parameters(camera_parameters){
 
 	m_nearestNeighbor = new NearestNeighborSearchFlann();
 	this->transform(depth);
@@ -11,7 +12,6 @@ PointCloud::PointCloud(const PointCloud& point_cloud){
 	m_points = std::vector<Vector3f>(point_cloud.m_points);
 	m_normals = std::vector<Vector3f>(point_cloud.m_normals);
 	m_camera_parameters = point_cloud.m_camera_parameters;
-	m_step_size = point_cloud.m_step_size;
 	m_nearestNeighbor = point_cloud.m_nearestNeighbor;
 }
 
@@ -35,12 +35,18 @@ const std::vector<Vector3f>& PointCloud::getNormals() const{
 	return m_normals;
 }
 
+/// Downsample image 2 times
 void PointCloud::transform(cv::Mat& depth){
+
+	cv::Mat level, image;
+
+	pyrDown(depth, image, cv::Size(depth.cols / 2, depth.rows / 2));
+	// pyrDown(level, image, cv::Size(level.cols / 2, level.rows / 2));
 
 	Vector3f pixel_coords;
 
-	const auto height = m_camera_parameters.m_image_height;
-	const auto width = m_camera_parameters.m_image_width;
+	const auto height = image.rows;
+	const auto width = image.cols;
 
 	auto temp_points = std::vector<Vector3f>(width * height);
 	auto temp_normals = std::vector<Vector3f>(width * height);
@@ -56,7 +62,7 @@ void PointCloud::transform(cv::Mat& depth){
 		{
 			const unsigned int idx = y * width + x;
 
-			auto depth_val = depth.at<float>(y, x);
+			auto depth_val = image.at<float>(y, x);
 
 			//Depth range check
 			//depth_min = std::min(depth_min, depth_val);
@@ -113,7 +119,7 @@ void PointCloud::transform(cv::Mat& depth){
 		temp_normals[(width - 1) + v * width] = Vector3f(MINF, MINF, MINF);
 	}
 
-	for (int i = 0; i < temp_points.size(); i += m_step_size)
+	for (int i = 0; i < temp_points.size(); i++)
 	{
 		const auto& point = temp_points[i];
 		const auto& normal = temp_normals[i];

@@ -11,7 +11,7 @@ class PointCloud
 {
 public:
 
-	PointCloud(CameraParameters camera_parameters, cv::Mat& depth, int step_size);
+	PointCloud(CameraParameters camera_parameters, cv::Mat& depth);
 
 	PointCloud(const PointCloud &point_cloud);
 
@@ -38,7 +38,6 @@ private:
 
 	NearestNeighborSearch* m_nearestNeighbor;
 	CameraParameters m_camera_parameters;
-	int m_step_size = 8;
 	std::vector<Vector3f> m_points;
 	std::vector<Vector3f> m_normals;
 };

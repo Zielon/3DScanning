@@ -5,6 +5,7 @@
 #include <sstream>
 #include <direct.h>
 #include <io.h>
+#include "../../debugger/headers/Verbose.h"
 
 // The path to the DATASET dir, must end with a backslash!
 const std::string DATASET_DIR = "\\..\\..\\..\\MarkerlessAR_Unity\\Datasets\\freiburg\\";
@@ -119,20 +120,12 @@ void WindowsTests::reconstructionTest(){
 
 	float pose[16];
 
-	for (int i = 0; i < 10; ++i)
-	{
+	for (int i = 0; i < 300; ++i) {
+		Verbose::start();
 		dllMain(pc, img, pose);
-
-		cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
-		imshow("dllTest", dllmat);
-		cv::waitKey(1);
-
-		Matrix4f matPose = Map<Matrix4f>(pose, 4, 4);
-
-		std::cout << "\n ------- pose: " << i << " -------- \n" << matPose
-			<< "\n------------------------ " << std::endl;
+		Verbose::stop("Frame reconstruction in " + std::to_string(i));
 	}
-
+	
 	pc->m_fusion->save("mesh");
 
 	delete[]img;

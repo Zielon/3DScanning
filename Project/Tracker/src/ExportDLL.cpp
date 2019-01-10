@@ -1,7 +1,4 @@
 #include "ExportDLL.h"
-#include "debugger/headers/Verbose.h"
-
-#define PIXEL_STEPS 4
 
 extern "C" __declspec(dllexport) void* createContext(char* dataset_path){
 
@@ -56,8 +53,6 @@ extern "C" __declspec(dllexport) int getImageHeight(void* context){
 
 extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* image, float* pose){
 	
-	Verbose::start();
-
 	TrackerContext* tracker_context = static_cast<TrackerContext*>(context);
 
 	cv::Mat rgb, depth;
@@ -66,7 +61,7 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
-	PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, 32);
+	PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth);
 
 	if (is_first_frame) // first frame
 	{
@@ -90,8 +85,6 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 	//no more opencv computations after this point
 	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
-
-	Verbose::stop("Frame reconstruction in ->");
 }
 
 extern "C" __declspec(dllexport) int getVertexCount(void* context){
