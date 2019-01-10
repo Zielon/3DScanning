@@ -20,7 +20,7 @@ private:
 
     void vidReadTest();
 
-	void cameraPoseTest();
+	bool cameraPoseTest();
 
 	void meshTest(); 
 

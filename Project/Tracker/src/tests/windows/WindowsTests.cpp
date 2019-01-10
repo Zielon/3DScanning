@@ -172,7 +172,7 @@ void WindowsTests::vidReadTest() {
     }
 }
 
-void WindowsTests::cameraPoseTest() {
+bool WindowsTests::cameraPoseTest() {
 
 	std::cout << "START cameraPoseTest()" << std::endl;
 
@@ -192,8 +192,9 @@ void WindowsTests::cameraPoseTest() {
 	std::vector<Eigen::Matrix4f> trajectories;
 	std::vector<double> trajectory_timestamps;
 
-	if (!readTrajectoryFile(DATASET_DIR + "groundtruth.txt", trajectories, trajectory_timestamps)) {
+	if (!readTrajectoryFile(string(cCurrentPath) + "groundtruth.txt", trajectories, trajectory_timestamps)) {
 		std::cout << "Groundtruth trajectories are not available" << std::endl;
+		return false;
 	}
 
 	for (int i = 0; i < 3000; ++i)
@@ -229,10 +230,7 @@ void WindowsTests::cameraPoseTest() {
 
 bool WindowsTests::readTrajectoryFile(const std::string& filename, std::vector<Eigen::Matrix4f>& result, std::vector<double>& timestamps) {
 
-	string filename2 = "C:\\Users\\Lukas\\Documents\\3DScanning\\datasets\\rgbd_dataset_freiburg1_xyz\\groundtruth.txt";
-
-	//std::ifstream file(filename, std::ios::in);
-	std::ifstream file(filename2, std::ios::in);
+	std::ifstream file(filename, std::ios::in);
 	
 	if (!file.is_open()) return false;
 	result.clear();
