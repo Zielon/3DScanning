@@ -2,14 +2,14 @@
 
 #define PIXEL_STEPS 4
 
-extern "C" __declspec(dllexport) void * createSensorContext() {
+extern "C" __declspec(dllexport) void * createSensorContext(char* sensor_path) {
 
 	TrackerContext* tracker_context = new TrackerContext();
 
 	#if _DEBUG
-		tracker_context->videoStreamReader = new XtionStreamReader(false, true, true);
+		tracker_context->videoStreamReader = new XtionStreamReader(sensor_path, false, true, true);
 	#else
-		tracker_context->videoStreamReader = new XtionStreamReader(true, false, false);
+		tracker_context->videoStreamReader = new XtionStreamReader(sensor_path, true, false, false);
 	#endif
 
 	tracker_context->videoStreamReader->initContext();

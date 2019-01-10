@@ -2,7 +2,9 @@
 
 int main() {
 
-	XtionStreamReader *streamReader = new XtionStreamReader(true, false, false);
+	string path = "";
+
+	XtionStreamReader *streamReader = new XtionStreamReader(path.c_str(), true, false, false);
 
 	if (!streamReader->initContext()) {
 		std::cout << "Failed to create input stream context" << std::endl;

@@ -39,7 +39,7 @@ namespace Assets.Scripts
         //[DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern int test();
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr createSensorContext();
+        private static extern IntPtr createSensorContext(byte[] path);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr createContext(byte[] path);
@@ -86,65 +86,74 @@ namespace Assets.Scripts
 
             _cppContext = createContext(Encoding.ASCII.GetBytes(absolutePath));*/
 
-            _cppContext = createSensorContext();
+            var segments = new List<string>(
+                   Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
+               {"Scripts", " "};
 
-            _w = getImageWidth(_cppContext);
-            _h = getImageHeight(_cppContext);
+           var absolutePath = segments.Aggregate(
+               (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
 
-            Debug.Log("Created Contex. Image dimensions: " + _w + "x" + _h);
+            Debug.Log(absolutePath);
 
-            _pose = new float[16];
-            _image = new byte[_w * _h * 3];
-        }
+            _cppContext = createSensorContext(Encoding.ASCII.GetBytes(absolutePath));
 
-        // Update is called once per frame
-        private void Update()
-        {
+           _w = getImageWidth(_cppContext);
+           _h = getImageHeight(_cppContext);
 
-    
-            Debug.Log("Update test");
+           Debug.Log("Created Contex. Image dimensions: " + _w + "x" + _h);
 
-           // dllMain(_cppContext, _image, _pose);
+           _pose = new float[16];
+           _image = new byte[_w * _h * 3];
+       }
 
-            Debug.Log("Pose test");
-
-            //Create texture from image
-            /*var tex = new Texture2D(_w, _h, TextureFormat.RGB24, false);
-
-            tex.LoadRawTextureData(_image);
-            tex.Apply();
-
-            //Debug.Log("Texture created successfuly");
-
-            var videoBg = GetComponent<Image>();
-            videoBg.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
-
-            //Debug.Log("Sprite created successfuly");
-
-            // Apply camera poses
-            Vector4 firstCol = new Vector4(_pose[0], _pose[1], _pose[2], _pose[3]);
-            Vector4 secCol = new Vector4(_pose[4], _pose[5], _pose[6], _pose[7]);
-            Vector4 thirdCol = new Vector4(_pose[8], _pose[9], _pose[10], _pose[11]);
-            Vector4 fourthCol = new Vector4(_pose[12], _pose[13], _pose[14], _pose[15]);
-            Matrix4x4 pose = new Matrix4x4();
+       // Update is called once per frame
+       private void Update()
+       {
 
 
-            //Set the columns from pose to transformation matrix
-            pose.SetColumn(0, firstCol);
-            pose.SetColumn(1, secCol);
-            pose.SetColumn(2, thirdCol);
-            pose.SetColumn(3, fourthCol);
+           Debug.Log("Update test");
 
-          //  Debug.Log("transformation matrix: \n" + pose);
+           dllMain(_cppContext, _image, _pose);
 
-            cameraRig.transform.position = fourthCol * 1000;
-            cameraRig.transform.rotation = pose.rotation;
+           Debug.Log("Pose test");
 
-         //   Debug.Log("Pos: " + cameraRig.transform.position);
-         //   Debug.Log("Rot: " + cameraRig.transform.rotation.eulerAngles);
+           //Create texture from image
+           /*var tex = new Texture2D(_w, _h, TextureFormat.RGB24, false);
 
-            //enable this once fusion is ready
-        //    spawnFrameMesh(); */
+           tex.LoadRawTextureData(_image);
+           tex.Apply();
+
+           //Debug.Log("Texture created successfuly");
+
+           var videoBg = GetComponent<Image>();
+           videoBg.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+
+           //Debug.Log("Sprite created successfuly");
+
+           // Apply camera poses
+           Vector4 firstCol = new Vector4(_pose[0], _pose[1], _pose[2], _pose[3]);
+           Vector4 secCol = new Vector4(_pose[4], _pose[5], _pose[6], _pose[7]);
+           Vector4 thirdCol = new Vector4(_pose[8], _pose[9], _pose[10], _pose[11]);
+           Vector4 fourthCol = new Vector4(_pose[12], _pose[13], _pose[14], _pose[15]);
+           Matrix4x4 pose = new Matrix4x4();
+
+
+           //Set the columns from pose to transformation matrix
+           pose.SetColumn(0, firstCol);
+           pose.SetColumn(1, secCol);
+           pose.SetColumn(2, thirdCol);
+           pose.SetColumn(3, fourthCol);
+
+         //  Debug.Log("transformation matrix: \n" + pose);
+
+           cameraRig.transform.position = fourthCol * 1000;
+           cameraRig.transform.rotation = pose.rotation;
+
+        //   Debug.Log("Pos: " + cameraRig.transform.position);
+        //   Debug.Log("Rot: " + cameraRig.transform.rotation.eulerAngles);
+
+           //enable this once fusion is ready
+       //    spawnFrameMesh(); */
         }
 
 

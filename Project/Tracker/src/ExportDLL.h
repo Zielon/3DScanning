@@ -11,7 +11,7 @@
 
 #define OPENCV_TRAITS_ENABLE_DEPRECATED
 
-extern "C" __declspec(dllexport) void * createSensorContext();
+extern "C" __declspec(dllexport) void * createSensorContext(char *sensor_path);
 
 extern "C" __declspec(dllexport) void * createContext(char *dataset_path);
 

@@ -1,7 +1,8 @@
 #include "../Headers/XtionStreamReader.h"
 
-XtionStreamReader::XtionStreamReader(bool realtime, bool verbose, bool capture) {
+XtionStreamReader::XtionStreamReader(const char *sensorFolderPath, bool realtime, bool verbose, bool capture) {
 
+	m_sensorFolderPath = sensorFolderPath;
 	m_realtime = realtime;
 	m_use_capture = capture;
 	m_use_verbose = verbose;
@@ -15,12 +16,14 @@ bool XtionStreamReader::initContext() {
 	EnumerationErrors errors;
 	const char *fn = NULL;
 
+	std::string path = m_sensorFolderPath + string(OPENNI_XML_PATH);
+
 	//Check if the configuration path exists
-	if (fileExists(OPENNI_XML_PATH)) {
-		fn = OPENNI_XML_PATH;
+	if (fileExists( path.c_str() )) {
+		fn = path.c_str();
 	}
 	else {
-		printf("Could not find '%s'. Aborting.\n", OPENNI_XML_PATH);
+		printf("Could not find '%s'. Aborting.\n", path.c_str());
 		printf("XN Status Error: %d\n", XN_STATUS_ERROR);
 
 		m_width_rgb = -1;
