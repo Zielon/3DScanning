@@ -3,7 +3,6 @@
 #include "../headers/MarchingCubes.h"
 
 #include <direct.h>
-#include <io.h>
 #include <math.h>
 
 Fusion::Fusion(CameraParameters camera_parameters) : m_camera_parameters(camera_parameters){
@@ -40,7 +39,7 @@ void Fusion::produce(PointCloud* cloud) const{
 }
 
 inline Vector3i round(const Vector3f& point){
-	return Vector3i(round(point.x()), round(point.y()), round(point.z()));
+	return Vector3i(std::round(point.x()), std::round(point.y()), std::round(point.z()));
 }
 
 inline float getTruncation(float depth){
@@ -58,6 +57,8 @@ void Fusion::integrate(PointCloud* cloud){
 	const auto translation = worldToCamera.block(0, 3, 3, 1);
 	const auto frustum_box = computeFrustumBounds(cameraToWorld);
 
+	if (!frustum_box.m_is_valid) return;
+
 	#pragma omp parallel
 	for (unsigned int z = frustum_box.m_min_z; z < frustum_box.m_max_z; z++)
 		for (unsigned int y = frustum_box.m_min_y; y < frustum_box.m_max_y; y++)
@@ -66,26 +67,26 @@ void Fusion::integrate(PointCloud* cloud){
 				Voxel* voxel = m_volume->getVoxel(x, y, z);
 
 				// Transform from the cell world to the camera world
-				Vector3f p = rotation * m_volume->getWorldPosition(x, y, z) + translation;
+				Vector3f cell = rotation * m_volume->getWorldPosition(Vector3i(x, y, z)) + translation;
 
 				// Project into a depth image
-				p = skeletonToDepth(p);
+				cell = reproject(cell);
 
 				// Pixels space
-				auto pi = round(p);
+				auto pixels = round(cell);
 
-				float d = cloud->depthImage(pi.x(), pi.y());
+				float depth = cloud->depthImage(pixels.x(), pixels.y());
 
 				// Depth was not found
-				if (d == INFINITY) continue;
+				if (depth == INFINITY) continue;
 
-				// Update free space counter if voxel is in front of observation
-				if (p.z() < d)
+				// Update free space counter if voxel is in the front of observation
+				if (cell.z() < depth)
 					voxel->m_free_ctr++;
 
 				// Positive in front of the observation
-				const float sdf = d - p.z();
-				const float truncation = getTruncation(d);
+				const float sdf = depth - cell.z();
+				const float truncation = getTruncation(depth);
 				const float weight = voxel->m_weight;
 
 				if (sdf > -truncation)
@@ -116,18 +117,18 @@ void Fusion::save(string name){
 	for (unsigned int x = 0; x < m_volume->m_size - 1; x++)
 		for (unsigned int y = 0; y < m_volume->m_size - 1; y++)
 			for (unsigned int z = 0; z < m_volume->m_size - 1; z++)
-				ProcessVolumeCell(m_volume, x, y, z, 0.00f, &mesh);
+				ProcessVolumeCell(m_volume, x, y, z, 0.9f, &mesh);
 
 	mesh.WriteMesh(folder + "\\" + name);
 }
 
 void Fusion::initialize(){
-	m_volume = new Volume(Vector3d(-0.5, -0.5, -0.5), Vector3d(1.5, 1.5, 1.5), 150, 1);
+	m_volume = new Volume(Vector3d(-.1, -.1, -.1), Vector3d(1.1, 1.1, 1.1), 200, 1);
 	m_buffer = new Buffer<PointCloud*>();
 	m_consumer = new Consumer<PointCloud*>(m_buffer);
 }
 
-Vector3f Fusion::skeletonToDepth(Vector3f point) const{
+Vector3f Fusion::reproject(Vector3f point) const{
 	float x = m_camera_parameters.m_focal_length_X * point.x() / point.z() + m_camera_parameters.m_cX;
 	float y = m_camera_parameters.m_focal_length_Y * point.y() / point.z() + m_camera_parameters.m_cY;
 	return Vector3f(x, y, 0);
@@ -135,13 +136,26 @@ Vector3f Fusion::skeletonToDepth(Vector3f point) const{
 
 FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld) const{
 
-	const auto rotation = cameraToWorld.block(0, 0, 3, 3);
 	const auto translation = cameraToWorld.block(0, 3, 3, 1);
 
 	// Assuming that a camera is placed in (0,0,0)
-	Vector3f cameraWorld = rotation * Vector3f(0, 0, 0) + translation;
+	Vector3f cameraWorld = Vector3f(0, 0, 0) + translation;
+	Vector3i cameraGrid = m_volume->getGridPosition(cameraWorld);
+	Voxel* cameraVoxel = m_volume->getVoxel(cameraGrid);
 
 	FrustumBox box;
+
+	// Skip if camera is not in our mapping space
+	if(!cameraVoxel)
+	{
+		box.m_is_valid = false;
+		return box;
+	}
+
+	// Camera has a valid position
+	box.m_is_valid = true;
+
+	// TODO Calculate bounds of the viewing frustum
 
 	box.m_min_x = 0;
 	box.m_min_y = 0;

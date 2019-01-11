@@ -417,35 +417,54 @@ int Polygonise(MC_Gridcell grid, double isolevel, MC_Triangle* triangles){
 bool ProcessVolumeCell(Volume* vol, int x, int y, int z, double iso, Mesh* mesh){
 	MC_Gridcell cell;
 
+	Voxel* voxel1 = vol->getVoxel(Vector3i(x + 1, y, z));
+	Voxel* voxel2 = vol->getVoxel(Vector3i(x, y, z));
+	Voxel* voxel3 = vol->getVoxel(Vector3i(x, y + 1, z));
+	Voxel* voxel4 = vol->getVoxel(Vector3i(x + 1, y + 1, z));
+	Voxel* voxel5 = vol->getVoxel(Vector3i(x + 1, y, z + 1));
+	Voxel* voxel6 = vol->getVoxel(Vector3i(x, y, z + 1));
+	Voxel* voxel7 = vol->getVoxel(Vector3i(x, y + 1, z + 1));
+	Voxel* voxel8 = vol->getVoxel(Vector3i(x + 1, y + 1, z + 1));
+
+	if (voxel1->m_free_ctr == 0 ||
+		voxel2->m_free_ctr == 0 ||
+		voxel3->m_free_ctr == 0 ||
+		voxel4->m_free_ctr == 0 ||
+		voxel5->m_free_ctr == 0 ||
+		voxel6->m_free_ctr == 0 ||
+		voxel7->m_free_ctr == 0 ||
+		voxel8->m_free_ctr == 0)
+		return false;
+
 	Vector3f tmp;
 
 	// cell corners
-	tmp = vol->getWorldPosition(x + 1, y, z);
+	tmp = vol->getWorldPosition(Vector3i(x + 1, y, z));
 	cell.p[0] = Vector3d(tmp[0], tmp[1], tmp[2]);
-	tmp = vol->getWorldPosition(x, y, z);
+	tmp = vol->getWorldPosition(Vector3i(x, y, z));
 	cell.p[1] = Vector3d(tmp[0], tmp[1], tmp[2]);
-	tmp = vol->getWorldPosition(x, y + 1, z);
+	tmp = vol->getWorldPosition(Vector3i(x, y + 1, z));
 	cell.p[2] = Vector3d(tmp[0], tmp[1], tmp[2]);
-	tmp = vol->getWorldPosition(x + 1, y + 1, z);
+	tmp = vol->getWorldPosition(Vector3i(x + 1, y + 1, z));
 	cell.p[3] = Vector3d(tmp[0], tmp[1], tmp[2]);
-	tmp = vol->getWorldPosition(x + 1, y, z + 1);
+	tmp = vol->getWorldPosition(Vector3i(x + 1, y, z + 1));
 	cell.p[4] = Vector3d(tmp[0], tmp[1], tmp[2]);
-	tmp = vol->getWorldPosition(x, y, z + 1);
+	tmp = vol->getWorldPosition(Vector3i(x, y, z + 1));
 	cell.p[5] = Vector3d(tmp[0], tmp[1], tmp[2]);
-	tmp = vol->getWorldPosition(x, y + 1, z + 1);
+	tmp = vol->getWorldPosition(Vector3i(x, y + 1, z + 1));
 	cell.p[6] = Vector3d(tmp[0], tmp[1], tmp[2]);
-	tmp = vol->getWorldPosition(x + 1, y + 1, z + 1);
+	tmp = vol->getWorldPosition(Vector3i(x + 1, y + 1, z + 1));
 	cell.p[7] = Vector3d(tmp[0], tmp[1], tmp[2]);
 
 	// cell corner values
-	cell.val[0] = double(vol->getVoxel(x + 1, y, z)->m_sdf);
-	cell.val[1] = double(vol->getVoxel(x, y, z)->m_sdf);
-	cell.val[2] = double(vol->getVoxel(x, y + 1, z)->m_sdf);
-	cell.val[3] = double(vol->getVoxel(x + 1, y + 1, z)->m_sdf);
-	cell.val[4] = double(vol->getVoxel(x + 1, y, z + 1)->m_sdf);
-	cell.val[5] = double(vol->getVoxel(x, y, z + 1)->m_sdf);
-	cell.val[6] = double(vol->getVoxel(x, y + 1, z + 1)->m_sdf);
-	cell.val[7] = double(vol->getVoxel(x + 1, y + 1, z + 1)->m_sdf);
+	cell.val[0] = double(voxel1->m_sdf);
+	cell.val[1] = double(voxel2->m_sdf);
+	cell.val[2] = double(voxel3->m_sdf);
+	cell.val[3] = double(voxel4->m_sdf);
+	cell.val[4] = double(voxel5->m_sdf);
+	cell.val[5] = double(voxel6->m_sdf);
+	cell.val[6] = double(voxel7->m_sdf);
+	cell.val[7] = double(voxel8->m_sdf);
 
 	MC_Triangle tris[6];
 	int num_tris = Polygonise(cell, iso, tris);

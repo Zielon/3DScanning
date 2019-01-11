@@ -15,6 +15,7 @@ using namespace std;
 
 struct FrustumBox
 {
+	bool m_is_valid;
 	int m_min_x, m_max_x;
 	int m_min_y, m_max_y;
 	int m_min_z, m_max_z;
@@ -43,7 +44,7 @@ public:
 private:
 	void initialize();
 
-	Vector3f skeletonToDepth(Vector3f point) const;
+	Vector3f reproject(Vector3f point) const;
 
 	FrustumBox computeFrustumBounds(Matrix4f pose) const;
 	float m_weight_update = 1;

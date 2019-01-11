@@ -11,11 +11,10 @@
 const std::string DATASET_DIR = "\\..\\..\\..\\MarkerlessAR_Unity\\Datasets\\freiburg\\";
 
 void WindowsTests::run(){
-	// meshTest();
 	reconstructionTest();
+	// meshTest();
 	// vidReadTest();
-
-	//cameraPoseTest();
+	// cameraPoseTest();
 }
 
 void WindowsTests::meshTest(){
@@ -120,12 +119,13 @@ void WindowsTests::reconstructionTest(){
 
 	float pose[16];
 
-	for (int i = 0; i < 10; ++i) {
+	for (int i = 0; i < 10; ++i)
+	{
 		Verbose::start();
 		dllMain(pc, img, pose);
-		Verbose::stop("Frame reconstruction " + std::to_string(i));
+		Verbose::stop("Frame reconstruction " + std::to_string(i + 1));
 	}
-	
+
 	pc->m_fusion->save("mesh");
 
 	delete[]img;
