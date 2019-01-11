@@ -34,8 +34,6 @@ private:
 
 	double m_ddx, m_ddy, m_ddz;
 
-	double m_dddx, m_dddy, m_dddz;
-
 	std::vector<Voxel*> m_voxels;
 
 	int m_length = 0;

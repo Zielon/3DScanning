@@ -79,8 +79,8 @@ void PointCloud::transform(cv::Mat& depth){
 			if (depth_val > 0.0f)
 			{
 				// Back-projection to camera space.
-				pixel_coords << (x - m_camera_parameters.m_cX) / m_camera_parameters.m_fovX *
-					depth_val, (y - m_camera_parameters.m_cY) / m_camera_parameters.m_fovY * depth_val, depth_val;
+				pixel_coords << (x - m_camera_parameters.m_cX) / m_camera_parameters.m_focal_length_X *
+					depth_val, (y - m_camera_parameters.m_cY) / m_camera_parameters.m_focal_length_Y * depth_val, depth_val;
 
 				temp_points[idx] = pixel_coords;
 

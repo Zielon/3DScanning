@@ -38,10 +38,6 @@ void Volume::compute_ddx_dddx(){
 	m_ddy = 1.0f / (m_size - 1);
 	m_ddz = 1.0f / (m_size - 1);
 
-	m_dddx = (m_max[0] - m_min[0]) / (m_size - 1);
-	m_dddy = (m_max[1] - m_min[1]) / (m_size - 1);
-	m_dddz = (m_max[2] - m_min[2]) / (m_size - 1);
-
 	m_diag = m_max - m_min;
 }
 

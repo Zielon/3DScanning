@@ -51,18 +51,21 @@ inline float getTruncation(float depth){
 
 void Fusion::integrate(PointCloud* cloud){
 
-	const auto rotation = cloud->m_pose_estimation.block(0, 0, 3, 3);
-	const auto translation = cloud->m_pose_estimation.block(0, 3, 3, 1);
-	const auto frustum_box = computeFrustumBounds(cloud->m_pose_estimation);
+	const auto cameraToWorld = cloud->m_pose_estimation;
+	const auto worldToCamera = cameraToWorld.inverse();
+
+	const auto rotation = worldToCamera.block(0, 0, 3, 3);
+	const auto translation = worldToCamera.block(0, 3, 3, 1);
+	const auto frustum_box = computeFrustumBounds(cameraToWorld);
 
 	#pragma omp parallel
-	for (unsigned int x = frustum_box.m_min_x; x < frustum_box.m_max_x; x++)
+	for (unsigned int z = frustum_box.m_min_z; z < frustum_box.m_max_z; z++)
 		for (unsigned int y = frustum_box.m_min_y; y < frustum_box.m_max_y; y++)
-			for (unsigned int z = frustum_box.m_min_z; z < frustum_box.m_max_z; z++)
+			for (unsigned int x = frustum_box.m_min_x; x < frustum_box.m_max_x; x++)
 			{
 				Voxel* voxel = m_volume->getVoxel(x, y, z);
 
-				// Transform to the current frame
+				// Transform from the cell world to the camera world
 				Vector3f p = rotation * m_volume->getWorldPosition(x, y, z) + translation;
 
 				// Project into a depth image
@@ -125,17 +128,18 @@ void Fusion::initialize(){
 }
 
 Vector3f Fusion::skeletonToDepth(Vector3f point) const{
-	float x = (m_camera_parameters.m_fovX * point.x() / point.z()) + m_camera_parameters.m_cX;
-	float y = (m_camera_parameters.m_fovY * point.y() / point.z()) + m_camera_parameters.m_cY;
+	float x = m_camera_parameters.m_focal_length_X * point.x() / point.z() + m_camera_parameters.m_cX;
+	float y = m_camera_parameters.m_focal_length_Y * point.y() / point.z() + m_camera_parameters.m_cY;
 	return Vector3f(x, y, 0);
 }
 
-FrustumBox Fusion::computeFrustumBounds(Matrix4f pose) const{
+FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld) const{
 
-	const auto rotation = pose.block(0, 0, 3, 3);
-	const auto translation = pose.block(0, 3, 3, 1);
+	const auto rotation = cameraToWorld.block(0, 0, 3, 3);
+	const auto translation = cameraToWorld.block(0, 3, 3, 1);
 
-	// TODO Calculate a frustum box for a give pose and camera intrinsic
+	// Assuming that a camera is placed in (0,0,0)
+	Vector3f cameraWorld = rotation * Vector3f(0, 0, 0) + translation;
 
 	FrustumBox box;
 
