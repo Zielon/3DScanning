@@ -12,7 +12,7 @@ int wasKeyboardHit()
 int main() {
 
 	//Sensor Class using OpenNI 2
-	Xtion2StreamReader *streamReader = new Xtion2StreamReader(true, true, false);
+	Xtion2StreamReader *streamReader = new Xtion2StreamReader(true, true, true);
 
 	if (!streamReader->initContext()) {
 		std::cout << "Failed to create input stream context" << std::endl;
