@@ -11,6 +11,8 @@ Sensor specifications: https://www.asus.com/3D-Sensor/Xtion_PRO/specifications/
 
 #define XTION2_STREAM_READER_H
 
+#define READ_WAIT_TIMEOUT 2000
+
 #include "VideoStreamReaderBase.h"
 #include <iostream>
 
@@ -50,6 +52,10 @@ private:
 	bool m_realtime;
 	bool m_use_capture;
 	bool m_use_verbose;
+	openni::Device m_device;
+	openni::VideoStream m_color_stream;
+	openni::VideoStream m_depth_stream;
+
 	/*xn::Context m_context;
 	xn::ScriptNode m_scriptNode;
 	xn::ImageGenerator m_color_generator;

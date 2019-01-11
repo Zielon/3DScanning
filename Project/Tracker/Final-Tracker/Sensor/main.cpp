@@ -1,6 +1,14 @@
 #include "../../src/data-stream/headers/XtionStreamReader.h";
 #include "../../src/data-stream/headers/Xtion2StreamReader.h";
 
+#include <conio.h>
+#include <opencv2/imgproc/imgproc.hpp>
+
+int wasKeyboardHit()
+{
+	return (int)_kbhit();
+}
+
 int main() {
 
 	//Sensor Class using OpenNI 2
@@ -12,7 +20,40 @@ int main() {
 		return -1;
 	}
 
-	cin.get();
+
+	std::cout << "Stream created properly" << std::endl;
+	//cin.get();
+
+	if (!streamReader->startReading()) {
+		std::cout << "Failed to read input stream" << std::endl;
+		cin.get();
+		return -1;
+	}
+
+	Matrix3f intrinsics = streamReader->getCameraIntrinsics();
+
+	std::cout << "Sensor intrinsics: " << std::endl << intrinsics << std::endl;
+
+	std::cout << "The reading process has started" << std::endl;
+
+	int i = 0;
+
+	while (!wasKeyboardHit())
+	{
+		std::cout << "Frame: " << ++i << std::endl;
+
+		cv::Mat rgb;
+		cv::Mat depth;
+		streamReader->getNextFrame(rgb, depth, false);
+
+		//cin.get();
+
+		//Debug color image
+		cv::cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
+		cv::imshow("TestRGB", rgb);
+
+		cv::waitKey(1);
+	}
 
 	delete streamReader;
 
