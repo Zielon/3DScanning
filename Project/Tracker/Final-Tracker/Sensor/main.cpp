@@ -1,8 +1,25 @@
 #include "../../src/data-stream/headers/XtionStreamReader.h";
+#include "../../src/data-stream/headers/Xtion2StreamReader.h";
 
 int main() {
 
-	XtionStreamReader *streamReader = new XtionStreamReader(true, false, false);
+	//Sensor Class using OpenNI 2
+	Xtion2StreamReader *streamReader = new Xtion2StreamReader(true, false, false);
+
+	if (!streamReader->initContext()) {
+		std::cout << "Failed to create input stream context" << std::endl;
+		cin.get();
+		return -1;
+	}
+
+	cin.get();
+
+	delete streamReader;
+
+	return 0;
+
+	//Sensor Class using OpenNI 1
+	/*XtionStreamReader *streamReader = new XtionStreamReader(true, false, false);
 
 	if (!streamReader->initContext()) {
 		std::cout << "Failed to create input stream context" << std::endl;
@@ -49,12 +66,12 @@ int main() {
 
 		/* Raw depth image
 		depth.convertTo(depth, CV_8U, 255);
-		cv::imshow("TestDepth", depth);*/
+		cv::imshow("TestDepth", depth);
 
 		cv::waitKey(1);
 	}
 
 	delete streamReader;
 
-	return 0;
+	return 0;*/
 }

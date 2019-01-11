@@ -120,18 +120,19 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(OPENNI_INCLUDE)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(OPENNI_INCLUDE);$(OPENNI2_INCLUDE64);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENNI_DIR)\Lib64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>openNI64.lib;opencv_world400.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENNI_DIR)\Lib64; $(OPENNI2_LIB64)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>openNI64.lib;opencv_world400.lib;OpenNI2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\data-stream\sources\Xtion2StreamReader.cpp" />
     <ClCompile Include="..\..\src\data-stream\sources\XtionStreamReader.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -140,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h" />
+    <ClInclude Include="..\..\src\data-stream\headers\Xtion2StreamReader.h" />
     <ClInclude Include="..\..\src\data-stream\headers\XtionStreamReader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
