@@ -161,11 +161,12 @@ int Xtion2StreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 		return -1;
 	}
 
-	/*if (frame.getVideoMode().getPixelFormat() != PIXEL_FORMAT_DEPTH_1_MM && frame.getVideoMode().getPixelFormat() != PIXEL_FORMAT_DEPTH_100_UM)
+	//Validate color format
+	if (colorFrame.getVideoMode().getPixelFormat() != openni::PIXEL_FORMAT_RGB888)
 	{
 		printf("Unexpected frame format\n");
 		return -1;
-	}*/
+	}
 
 	openni::RGB888Pixel* pColor = (openni::RGB888Pixel*)colorFrame.getData();//Getting raw map
 
@@ -177,11 +178,13 @@ int Xtion2StreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 		return -1;
 	}
 
-	/*if (frame.getVideoMode().getPixelFormat() != PIXEL_FORMAT_DEPTH_1_MM && frame.getVideoMode().getPixelFormat() != PIXEL_FORMAT_DEPTH_100_UM)
+	//Valide depth format
+	if (depthFrame.getVideoMode().getPixelFormat() != openni::PIXEL_FORMAT_DEPTH_1_MM && 
+		depthFrame.getVideoMode().getPixelFormat() != openni::PIXEL_FORMAT_DEPTH_100_UM)
 	{
 		printf("Unexpected frame format\n");
-		continue;
-	}*/
+		return -1;
+	}
 
 	openni::DepthPixel* pDepth = (openni::DepthPixel*)depthFrame.getData();
 
