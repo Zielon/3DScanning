@@ -61,8 +61,7 @@ private:
 	float m_fov_y;//Horizontal field of view
 
 	int readFrame(cv::Mat &rgb, cv::Mat &depth);
-	//bool saveRawFrame(int frame, xn::ImageMetaData *colorMD, xn::DepthMetaData *depthMD);
-	//bool saveFrame(int frame, cv::Mat &rgb, cv::Mat &depth);
+	bool saveFrame(int frame, cv::Mat &rgb, cv::Mat &depth);
 	float computeFocalLengthRadians(float fov, float center);
 };
 

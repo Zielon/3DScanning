@@ -232,6 +232,13 @@ int Xtion2StreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 	rgb = cv::Mat(colorFrame.getHeight(), colorFrame.getWidth(), CV_8UC3, (void*)pColor, cv::Mat::AUTO_STEP);
 	depth = cv::Mat(depthFrame.getHeight(), depthFrame.getWidth(), CV_16UC1, (void*)pDepth, cv::Mat::AUTO_STEP);
 
+	//Capture frames
+	if (m_use_capture) {
+
+		//saveRawFrame(colorMD.FrameID(), &colorMD, &depthMD);
+		saveFrame(colorFrame.getFrameIndex(), rgb, depth);
+	}
+
 	return 0;
 }
 
@@ -261,3 +268,15 @@ Matrix3f Xtion2StreamReader::getCameraIntrinsics()
 	return i;
 }
 
+bool Xtion2StreamReader::saveFrame(int frame, cv::Mat &rgb, cv::Mat &depth) {
+
+	char path[100] = "";
+
+	sprintf_s(path, "%s/rgb/color_map_%d.png", m_DATA_DIR.c_str(), frame);
+	cv::imwrite(path, rgb);
+
+	sprintf_s(path, "%s/depth/depth_map_%d.png", m_DATA_DIR.c_str(), frame);
+	cv::imwrite(path, depth);
+
+	return true;
+}
