@@ -53,62 +53,6 @@ bool Xtion2StreamReader::initContext() {
 		return false;
 	}
 
-	//openni::VideoStream m_color_stream;
-
-	/*rc = m_color_stream.create(device, openni::SENSOR_COLOR);
-	if (rc == openni::STATUS_OK)
-	{
-		rc = m_color_stream.start();
-
-		if (rc != openni::STATUS_OK)
-		{
-			printf("Couldn't start color stream:\n%s\n", openni::OpenNI::getExtendedError());
-			m_color_stream.destroy();
-		}
-	}
-	else
-	{
-		printf("Couldn't find color stream:\n%s\n", openni::OpenNI::getExtendedError());
-	}
-
-	if (!m_color_stream.isValid())
-	{
-		printf("No valid streams. Exiting\n");
-		openni::OpenNI::shutdown();
-
-		return false;
-	}
-
-	openni::VideoStream* pStream = &m_color_stream;
-	openni::VideoFrameRef frame;
-	int changedStreamDummy;
-
-	rc = openni::OpenNI::waitForAnyStream(&pStream, 1, &changedStreamDummy, READ_WAIT_TIMEOUT);
-
-	if (rc != openni::STATUS_OK)
-	{
-		printf("Wait failed! (timeout is %d ms)\n%s\n", READ_WAIT_TIMEOUT, openni::OpenNI::getExtendedError());
-		return false;
-	}
-
-	rc = m_color_stream.readFrame(&frame);
-
-	if (rc != openni::STATUS_OK)
-	{
-		printf("Read failed!\n%s\n", openni::OpenNI::getExtendedError());
-		return -1;
-	}
-
-	/*if (frame.getVideoMode().getPixelFormat() != PIXEL_FORMAT_DEPTH_1_MM && frame.getVideoMode().getPixelFormat() != PIXEL_FORMAT_DEPTH_100_UM)
-	{
-		printf("Unexpected frame format\n");
-		return -1;
-	}
-
-	openni::RGB888Pixel* pColor = (openni::RGB888Pixel*)frame.getData();
-
-	printf("Color Image Resolution (%d,%d)\n", frame.getHeight(), frame.getWidth());*/
-
 	return true;
 }
 
@@ -156,12 +100,30 @@ bool Xtion2StreamReader::startReading() {
 		return false;
 	}
 
-	/*if (!depth.isValid() || !color.isValid())
+	//Create Depth Stream
+
+	rc = m_depth_stream.create(m_device, openni::SENSOR_DEPTH);
+	if (rc == openni::STATUS_OK)
 	{
-		printf("SimpleViewer: No valid streams. Exiting\n");
+		rc = m_depth_stream.start();
+		if (rc != openni::STATUS_OK)
+		{
+			printf("Couldn't start depth stream:\n%s\n", openni::OpenNI::getExtendedError());
+			m_depth_stream.destroy();
+		}
+	}
+	else
+	{
+		printf("Couldn't find depth stream:\n%s\n", openni::OpenNI::getExtendedError());
+	}
+
+	//Validate streams
+	if (!m_color_stream.isValid() || !m_depth_stream.isValid())
+	{
+		printf("No valid streams. Exiting\n");
 		openni::OpenNI::shutdown();
 		return 2;
-	}*/
+	}
 
 	return true;
 }
@@ -179,7 +141,7 @@ int Xtion2StreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 
 	openni::Status rc = openni::STATUS_OK;
 	openni::VideoStream* pStream = &m_color_stream;
-	openni::VideoFrameRef frame;
+	openni::VideoFrameRef colorFrame, depthFrame;
 	int changedStreamDummy;
 
 	rc = openni::OpenNI::waitForAnyStream(&pStream, 1, &changedStreamDummy, READ_WAIT_TIMEOUT);
@@ -190,7 +152,8 @@ int Xtion2StreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 		return -1;
 	}
 
-	rc = m_color_stream.readFrame(&frame);
+	//Read color frame
+	rc = m_color_stream.readFrame(&colorFrame);
 	
 	if (rc != openni::STATUS_OK)
 	{
@@ -204,16 +167,32 @@ int Xtion2StreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 		return -1;
 	}*/
 
-	//Getting raw color map
-	openni::RGB888Pixel* pColor = (openni::RGB888Pixel*)frame.getData();
+	openni::RGB888Pixel* pColor = (openni::RGB888Pixel*)colorFrame.getData();//Getting raw map
+
+	rc = m_depth_stream.readFrame(&depthFrame);
+
+	if (rc != openni::STATUS_OK)
+	{
+		printf("Read failed!\n%s\n", openni::OpenNI::getExtendedError());
+		return -1;
+	}
+
+	/*if (frame.getVideoMode().getPixelFormat() != PIXEL_FORMAT_DEPTH_1_MM && frame.getVideoMode().getPixelFormat() != PIXEL_FORMAT_DEPTH_100_UM)
+	{
+		printf("Unexpected frame format\n");
+		continue;
+	}*/
+
+	openni::DepthPixel* pDepth = (openni::DepthPixel*)depthFrame.getData();
 
 	if (m_use_verbose) {
-		printf("Color frame %d: resolution (%d, %d), bytes %d\n", frame.getFrameIndex(), frame.getHeight(), frame.getWidth(), frame.getDataSize());
-
+		printf("Color frame %d: resolution (%d, %d), bytes %d\n", colorFrame.getFrameIndex(), colorFrame.getHeight(), colorFrame.getWidth(), colorFrame.getDataSize());
+		printf("Color frame %d: resolution (%d, %d), bytes %d\n", depthFrame.getFrameIndex(), depthFrame.getHeight(), depthFrame.getWidth(), depthFrame.getDataSize());
 	}
 
 	//OpenCV color image from raw color map
-	rgb = cv::Mat(frame.getHeight(), frame.getWidth(), CV_8UC3, (void*)pColor, cv::Mat::AUTO_STEP);
+	rgb = cv::Mat(colorFrame.getHeight(), colorFrame.getWidth(), CV_8UC3, (void*)pColor, cv::Mat::AUTO_STEP);
+	depth = cv::Mat(depthFrame.getHeight(), depthFrame.getWidth(), CV_16UC1, (void*)pDepth, cv::Mat::AUTO_STEP);
 
 	return 0;
 }

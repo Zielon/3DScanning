@@ -12,7 +12,7 @@ int wasKeyboardHit()
 int main() {
 
 	//Sensor Class using OpenNI 2
-	Xtion2StreamReader *streamReader = new Xtion2StreamReader(true, false, false);
+	Xtion2StreamReader *streamReader = new Xtion2StreamReader(true, true, false);
 
 	if (!streamReader->initContext()) {
 		std::cout << "Failed to create input stream context" << std::endl;
@@ -36,6 +36,8 @@ int main() {
 
 	std::cout << "The reading process has started" << std::endl;
 
+	cin.get();
+
 	int i = 0;
 
 	while (!wasKeyboardHit())
@@ -51,6 +53,14 @@ int main() {
 		//Debug color image
 		cv::cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
 		cv::imshow("TestRGB", rgb);
+
+		//Debug depth image
+		double min;
+		double max;
+		cv::minMaxIdx(depth, &min, &max);
+		cv::Mat adjMap;
+		cv::convertScaleAbs(depth, adjMap, 255 / max);
+		cv::imshow("TestDepth", adjMap);
 
 		cv::waitKey(1);
 	}
