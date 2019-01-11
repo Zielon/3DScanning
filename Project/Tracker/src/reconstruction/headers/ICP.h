@@ -27,13 +27,17 @@ public:
 
 	~ICP();
 
-	Matrix4f estimatePose(const PointCloud* source, const PointCloud* target);
+	Matrix4f estimatePose(PointCloud* source, PointCloud* target);
 
 private:
 	NearestNeighborSearch* m_nearestNeighbor;
 	ProcrustesAligner* m_procrustesAligner;
 
+	#if _DEBUG
 	int m_number_iterations = 1;
+	#else
+	int m_number_iterations = 5;
+	#endif
 
 	std::vector<Vector3f> transformPoints(const std::vector<Vector3f>& sourcePoints, const Matrix4f& pose);
 

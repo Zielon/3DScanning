@@ -11,5 +11,5 @@ void Verbose::start(){
 void Verbose::stop(std::string message = ""){
 	end = clock();
 	const double seconds = double(end - begin) / CLOCKS_PER_SEC;
-	std::cout << message << " [ " << seconds << " ] " << std::endl;
+	std::cout << message << " [ " << seconds << " s ] " << std::endl;
 }

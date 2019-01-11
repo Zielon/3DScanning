@@ -5,16 +5,16 @@
 #include <sstream>
 #include <direct.h>
 #include <io.h>
+#include "../../debugger/headers/Verbose.h"
 
 // The path to the DATASET dir, must end with a backslash!
 const std::string DATASET_DIR = "\\..\\..\\..\\MarkerlessAR_Unity\\Datasets\\freiburg\\";
 
 void WindowsTests::run(){
+	reconstructionTest();
 	// meshTest();
-//	  dllVidReadTest();
 	// vidReadTest();
-
-	cameraPoseTest();
+	// cameraPoseTest();
 }
 
 void WindowsTests::meshTest(){
@@ -103,9 +103,9 @@ void WindowsTests::meshTest(){
 	SAFE_DELETE(pc);
 }
 
-void WindowsTests::dllVidReadTest(){
+void WindowsTests::reconstructionTest(){
 
-	std::cout << "START dllVidReadTest()" << std::endl;
+	std::cout << "START reconstructionTest()" << std::endl;
 
 	char cCurrentPath[FILENAME_MAX];
 
@@ -119,19 +119,14 @@ void WindowsTests::dllVidReadTest(){
 
 	float pose[16];
 
-	for (int i = 0; i < 100; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
+		Verbose::start();
 		dllMain(pc, img, pose);
-
-		cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
-		imshow("dllTest", dllmat);
-		cv::waitKey(1);
-
-		Matrix4f matPose = Map<Matrix4f>(pose, 4, 4);
-
-		std::cout << "\n ------- pose: " << i << " -------- \n" << matPose
-			<< "\n------------------------ " << std::endl;
+		Verbose::stop("Frame reconstruction " + std::to_string(i + 1));
 	}
+
+	pc->m_fusion->save("mesh");
 
 	delete[]img;
 	SAFE_DELETE(pc);
@@ -171,7 +166,7 @@ void WindowsTests::vidReadTest(){
 	}
 }
 
-bool WindowsTests::cameraPoseTest() {
+bool WindowsTests::cameraPoseTest(){
 
 	std::cout << "START cameraPoseTest()" << std::endl;
 
@@ -181,17 +176,18 @@ bool WindowsTests::cameraPoseTest() {
 
 	strcpy(cCurrentPath + strlen(cCurrentPath), DATASET_DIR.c_str());
 
-	TrackerContext *pc = static_cast<TrackerContext*>(createContext(cCurrentPath));
+	TrackerContext* pc = static_cast<TrackerContext*>(createContext(cCurrentPath));
 
-	unsigned char *img = new unsigned char[getImageWidth(pc) * getImageHeight(pc) * 3];
+	unsigned char* img = new unsigned char[getImageWidth(pc) * getImageHeight(pc) * 3];
 
 	float pose[16];
 
 	//Read groundtruth trajectories (camera poses)
-	std::vector<Eigen::Matrix4f> trajectories;
+	std::vector<Matrix4f> trajectories;
 	std::vector<double> trajectory_timestamps;
 
-	if (!readTrajectoryFile(string(cCurrentPath) + "groundtruth.txt", trajectories, trajectory_timestamps)) {
+	if (!readTrajectoryFile(string(cCurrentPath) + "groundtruth.txt", trajectories, trajectory_timestamps))
+	{
 		std::cout << "Groundtruth trajectories are not available" << std::endl;
 		return false;
 	}
@@ -201,10 +197,10 @@ bool WindowsTests::cameraPoseTest() {
 		dllMain(pc, img, pose);
 
 		cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
-		cv::imshow("dllTest", dllmat);
+		imshow("dllTest", dllmat);
 		cv::waitKey(1);
 
-		Eigen::Matrix4f matPose = Map<Matrix4f>(pose, 4, 4);
+		Matrix4f matPose = Map<Matrix4f>(pose, 4, 4);
 
 		//Compute the inverse of the pose
 		//matPose = matPose.inverse().eval();
@@ -218,7 +214,7 @@ bool WindowsTests::cameraPoseTest() {
 		//Error using Frobenius norm
 		//Performance metric should be Absolute Trajectory Error (ATE) https://vision.in.tum.de/data/datasets/rgbd-dataset/tools#evaluation
 
-		Eigen::Matrix4f error = matPose - trajectories[i];
+		Matrix4f error = matPose - trajectories[i];
 
 		std::cout << "\n ------- Error: " << i << " -------- \n" << error.norm()
 			<< "\n------------------------ " << std::endl;
@@ -227,13 +223,14 @@ bool WindowsTests::cameraPoseTest() {
 	}
 }
 
-bool WindowsTests::readTrajectoryFile(const std::string& filename, std::vector<Eigen::Matrix4f>& result, std::vector<double>& timestamps) {
+bool WindowsTests::readTrajectoryFile(const std::string& filename, std::vector<Matrix4f>& result,
+                                      std::vector<double>& timestamps){
 
 	std::ifstream file(filename, std::ios::in);
-	
+
 	if (!file.is_open()) return false;
 	result.clear();
-	
+
 	//Skip not important lines
 	std::string dump;
 	std::getline(file, dump);
@@ -245,13 +242,13 @@ bool WindowsTests::readTrajectoryFile(const std::string& filename, std::vector<E
 		//Read data from file
 		double timestamp;
 		file >> timestamp;
-		Eigen::Vector3f translation;
+		Vector3f translation;
 		file >> translation.x() >> translation.y() >> translation.z();
-		Eigen::Quaternionf rot;
+		Quaternionf rot;
 		file >> rot;
 
 		//Build pose matrix from data
-		Eigen::Matrix4f transf;
+		Matrix4f transf;
 		transf.setIdentity();
 		transf.block<3, 3>(0, 0) = rot.toRotationMatrix();
 		transf.block<3, 1>(0, 3) = translation;
@@ -271,8 +268,8 @@ bool WindowsTests::readTrajectoryFile(const std::string& filename, std::vector<E
 	return true;
 }
 
-void readTrajectories() {
+void readTrajectories(){
 
-	std::vector<Eigen::Matrix4f> m_trajectory;
+	std::vector<Matrix4f> m_trajectory;
 	std::vector<double> m_trajectoryTimeStamps;
 }

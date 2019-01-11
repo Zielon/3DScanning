@@ -1,7 +1,4 @@
 #include "ExportDLL.h"
-#include "debugger/headers/Verbose.h"
-
-#define PIXEL_STEPS 4
 
 extern "C" __declspec(dllexport) void* createContext(char* dataset_path){
 
@@ -30,7 +27,7 @@ extern "C" __declspec(dllexport) void* createContext(char* dataset_path){
 	);
 
 	tracker_context->m_tracker = new Tracker(camera_parameters);
-	tracker_context->m_fusion = new Fusion(width, height, 1);
+	tracker_context->m_fusion = new Fusion(camera_parameters);
 	// Start consuming the point clouds buffer
 	tracker_context->m_fusion->consume();
 
@@ -56,8 +53,6 @@ extern "C" __declspec(dllexport) int getImageHeight(void* context){
 
 extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* image, float* pose){
 	
-	Verbose::start();
-
 	TrackerContext* tracker_context = static_cast<TrackerContext*>(context);
 
 	cv::Mat rgb, depth;
@@ -66,12 +61,14 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
-	PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, 32);
+	PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth);
 
 	if (is_first_frame) // first frame
 	{
 		Matrix4f id = Matrix4f::Identity();
 		memcpy(pose, id.data(), 16 * sizeof(float));
+		tracker_context->m_tracker->m_previous_point_cloud = source;
+		return;
 	}
 	else
 	{
@@ -79,7 +76,7 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 	}
 
 	// Produce a new point cloud (add to the buffer)
-	tracker_context->m_fusion->produce(source);
+	tracker_context->m_fusion->produce(tracker_context->m_tracker->m_previous_point_cloud);
 
 	// Safe the last frame reference
 	tracker_context->m_tracker->m_previous_point_cloud = source;
@@ -88,8 +85,6 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 	//no more opencv computations after this point
 	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
-
-	Verbose::stop("Frame reconstruction in ->");
 }
 
 extern "C" __declspec(dllexport) int getVertexCount(void* context){

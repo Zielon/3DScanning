@@ -11,7 +11,7 @@ class PointCloud
 {
 public:
 
-	PointCloud(CameraParameters camera_parameters, cv::Mat& depth, int step_size);
+	PointCloud(CameraParameters camera_parameters, cv::Mat& depth);
 
 	PointCloud(const PointCloud &point_cloud);
 
@@ -31,12 +31,16 @@ public:
 		return m_nearestNeighbor;
 	};
 
+	Matrix4f m_pose_estimation = Matrix4f::Identity();
+
+	float depthImage(int x, int y);
+
 private:
 	void transform(cv::Mat& depth);
 
+	cv::Mat m_depth;
 	NearestNeighborSearch* m_nearestNeighbor;
 	CameraParameters m_camera_parameters;
-	int m_step_size = 8;
 	std::vector<Vector3f> m_points;
 	std::vector<Vector3f> m_normals;
 };

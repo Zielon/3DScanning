@@ -22,7 +22,7 @@ public:
 
 	~Tracker();
 
-	Matrix4f alignNewFrame(const PointCloud* sourcePoints, const PointCloud* targetPoints, float* outPose);
+	Matrix4f alignNewFrame(PointCloud* sourcePoints, PointCloud* targetPoints, float* outPose) const;
 
 	CameraParameters getCameraParameters() const;
 

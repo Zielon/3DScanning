@@ -16,15 +16,17 @@ public:
 
 	Voxel* getVoxel(int i, int j, int k) const;
 
+	Voxel* getVoxel(Vector3i position) const;
+
 	Voxel* getVoxel(int idx) const;
 
-	Vector3f getWorldPosition(int i, int j, int k);
+	Vector3f getWorldPosition(Vector3i position);
+
+	Vector3i getGridPosition(Vector3f position);
+
+	int m_size;
 
 private:
-
-	void compute_ddx_dddx();
-
-	int m_size = 50;
 
 	//! Lower left and Upper right corner.
 	Vector3d m_min, m_max;
@@ -33,8 +35,6 @@ private:
 	Vector3d m_diag;
 
 	double m_ddx, m_ddy, m_ddz;
-
-	double m_dddx, m_dddy, m_dddz;
 
 	std::vector<Voxel*> m_voxels;
 

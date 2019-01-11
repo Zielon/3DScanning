@@ -13,6 +13,14 @@
 
 using namespace std;
 
+struct FrustumBox
+{
+	bool m_is_valid;
+	int m_min_x, m_max_x;
+	int m_min_y, m_max_y;
+	int m_min_z, m_max_z;
+};
+
 /**
  * Volumetric m_fusion class
  */
@@ -21,30 +29,30 @@ class Fusion final
 public:
 	Fusion(CameraParameters camera_parameters);
 
-	Fusion(int width, int height, int pixelSteps) : m_height(height), m_width(width), m_pixelSteps(pixelSteps){
-		m_volume = new Volume(Vector3d(-0.1, -0.1, -0.1), Vector3d(1.1, 1.1, 1.1), m_volume_size, 1);
-		m_buffer = new Buffer<PointCloud*>();
-		m_consumer = new Consumer<PointCloud*>(m_buffer);
-	}
-
 	~Fusion();
 
 	void consume();
 
 	void produce(PointCloud* cloud) const;
 
-	void integrate(PointCloud* cloud) const;
+	void integrate(PointCloud* cloud);
+
+	void save(string name);
 
 	std::vector<int> m_currentIndexBuffer;
 
 private:
-	Buffer<PointCloud*>* m_buffer;
-	Consumer<PointCloud*>* m_consumer;
+	void initialize();
+
+	Vector3f reproject(Vector3f point) const;
+
+	FrustumBox computeFrustumBounds(Matrix4f pose) const;
+	float m_weight_update = 1;
 	std::thread m_consumer_thread;
+	Consumer<PointCloud*>* m_consumer;
+	Buffer<PointCloud*>* m_buffer;
 	CameraParameters m_camera_parameters;
 	Volume* m_volume;
-	int m_volume_size = 500;
-	int m_height, m_width, m_pixelSteps;
 };
 
 #endif //TRACKER_LIB_FUSION_H

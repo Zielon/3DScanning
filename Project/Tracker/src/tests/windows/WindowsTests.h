@@ -16,7 +16,7 @@ private:
 
 	void readTrajectories();
 
-    void dllVidReadTest();
+    static void reconstructionTest();
 
     void vidReadTest();
 
