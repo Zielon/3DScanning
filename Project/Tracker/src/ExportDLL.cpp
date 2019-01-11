@@ -27,7 +27,7 @@ extern "C" __declspec(dllexport) void* createContext(char* dataset_path){
 	);
 
 	tracker_context->m_tracker = new Tracker(camera_parameters);
-	tracker_context->m_fusion = new Fusion(width, height, 1);
+	tracker_context->m_fusion = new Fusion(camera_parameters);
 	// Start consuming the point clouds buffer
 	tracker_context->m_fusion->consume();
 

@@ -9,10 +9,6 @@ Fusion::Fusion(CameraParameters camera_parameters) : m_camera_parameters(camera_
 	initialize();
 }
 
-Fusion::Fusion(int width, int height, int pixelSteps) : m_height(height), m_width(width), m_pixelSteps(pixelSteps){
-	initialize();
-}
-
 Fusion::~Fusion(){
 	m_consumer->stop();
 	if (m_consumer_thread.joinable())
@@ -42,12 +38,17 @@ void Fusion::produce(PointCloud* cloud) const{
 	m_buffer->add(cloud);
 }
 
-void Fusion::integrate(PointCloud* cloud) {
+void Fusion::integrate(PointCloud* cloud){
 
-	Matrix4f pose = cloud->m_pose_estimation;
+	const auto frustum_box = getFrustum(cloud->m_pose_estimation);
 
-	const auto rotation = pose.block(0, 0, 3, 3);
-	const auto translation = pose.block(0, 3, 3, 1);
+	// TODO Use the frustumBox to get bounding ranges for the SDF grid
+	//for (unsigned int x = frustum_box.m_min_x; x < frustum_box.m_max_x; x++)
+	//	for (unsigned int y = frustum_box.m_min_y; y < frustum_box.m_max_y; y++)
+	//		for (unsigned int z = frustum_box.m_min_z; z < frustum_box.m_max_z; z++)
+	//		{
+	//
+	//		}
 
 	#pragma omp parallel
 	for (unsigned int x = 0; x < m_volume->m_size; x++)
@@ -62,8 +63,6 @@ void Fusion::integrate(PointCloud* cloud) {
 
 				Vector3f point = cloud->getPoints()[index];
 
-				point = rotation * point + translation;
-
 				// Update free space counter if voxel is in front of observation
 				if (cell.z() < point.z())
 					voxel->m_free_ctr++;
@@ -73,7 +72,8 @@ void Fusion::integrate(PointCloud* cloud) {
 				const float weight = voxel->m_weight;
 
 				voxel->m_sdf = (voxel->m_sdf * weight + sdf * m_weight_update) / (weight + m_weight_update);
-				voxel->m_weight = std::min(int(weight) + int(m_weight_update), int(std::numeric_limits<unsigned char>::max()));
+				voxel->m_weight = std::min(int(weight) + int(m_weight_update),
+				                           int(std::numeric_limits<unsigned char>::max()));
 				voxel->m_position = Vector3f(x, y, z);
 
 				m_weight_update += weight;
@@ -105,4 +105,14 @@ void Fusion::initialize(){
 	m_volume = new Volume(Vector3d(-0.5, -0.5, -0.5), Vector3d(1.5, 1.5, 1.5), 150, 1);
 	m_buffer = new Buffer<PointCloud*>();
 	m_consumer = new Consumer<PointCloud*>(m_buffer);
+}
+
+FrustumBox Fusion::getFrustum(Matrix4f pose) const{
+
+	const auto rotation = pose.block(0, 0, 3, 3);
+	const auto translation = pose.block(0, 3, 3, 1);
+
+	// TODO Calculate a frustum box for a give pose and camera intrinsic
+
+	return {};
 }

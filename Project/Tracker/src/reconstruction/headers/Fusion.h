@@ -13,6 +13,13 @@
 
 using namespace std;
 
+struct FrustumBox
+{
+	int m_min_x, m_max_x;
+	int m_min_y, m_max_y;
+	int m_min_z, m_max_z;
+};
+
 /**
  * Volumetric m_fusion class
  */
@@ -20,8 +27,6 @@ class Fusion final
 {
 public:
 	Fusion(CameraParameters camera_parameters);
-
-	Fusion(int width, int height, int pixelSteps);
 
 	~Fusion();
 
@@ -37,13 +42,13 @@ public:
 
 private:
 	void initialize();
+	FrustumBox getFrustum(Matrix4f pose) const;
 	float m_weight_update = 1;
 	std::thread m_consumer_thread;
 	Consumer<PointCloud*>* m_consumer;
 	Buffer<PointCloud*>* m_buffer;
 	CameraParameters m_camera_parameters;
 	Volume* m_volume;
-	int m_height, m_width, m_pixelSteps;
 };
 
 #endif //TRACKER_LIB_FUSION_H
