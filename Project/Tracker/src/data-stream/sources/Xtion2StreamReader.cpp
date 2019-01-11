@@ -125,6 +125,41 @@ bool Xtion2StreamReader::startReading() {
 		return 2;
 	}
 
+	// Obtainining first color frame in order to obtain maps resolution
+	openni::VideoStream* pStream = &m_color_stream;
+	openni::VideoFrameRef colorFrame;
+	int changedStreamDummy;
+
+	rc = openni::OpenNI::waitForAnyStream(&pStream, 1, &changedStreamDummy, READ_WAIT_TIMEOUT);
+
+	if (rc != openni::STATUS_OK)
+	{
+		printf("Wait failed! (timeout is %d ms)\n%s\n", READ_WAIT_TIMEOUT, openni::OpenNI::getExtendedError());
+		return -1;
+	}
+
+	//Read  first color frame to obtain dimensions
+	rc = m_color_stream.readFrame(&colorFrame);
+
+	if (rc != openni::STATUS_OK)
+	{
+		printf("Read failed!\n%s\n", openni::OpenNI::getExtendedError());
+		return -1;
+	}
+
+	//Validate color format
+	if (colorFrame.getVideoMode().getPixelFormat() != openni::PIXEL_FORMAT_RGB888)
+	{
+		printf("Unexpected frame format\n");
+		return -1;
+	}
+
+	//Setting sensor intrinsics
+	m_height_rgb = colorFrame.getHeight();
+	m_width_rgb = colorFrame.getWidth();
+	m_fov_x = m_color_stream.getHorizontalFieldOfView();
+	m_fov_y = m_color_stream.getVerticalFieldOfView();
+
 	return true;
 }
 
@@ -200,13 +235,29 @@ int Xtion2StreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 	return 0;
 }
 
+//Function to compute the focal length given the field of view in radians and the optical center.
+float Xtion2StreamReader::computeFocalLengthRadians(float fov_angle, float center) {
+
+	return center / tanf(fov_angle / 2.0f);
+}
+
 Matrix3f Xtion2StreamReader::getCameraIntrinsics()
 {
+	float fx, fy, cx, cy;
+
+	//Optical center
+	cx = m_width_rgb / 2.0f - 0.5f;
+	cy = m_height_rgb / 2.0f - 0.5f;
+
+	//Focal length 
+	fx = computeFocalLengthRadians(m_fov_x, cx);
+	fy = computeFocalLengthRadians(m_fov_y, cy);
+
 	Matrix3f i;
-	
-	i << 517.3, 0, 318.6,
-		0, 516.5, 255.3,
+	i << fx, 0, cx,
+		0, fy, cy,
 		0, 0, 0;
 
 	return i;
 }
+
