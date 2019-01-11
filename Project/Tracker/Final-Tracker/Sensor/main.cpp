@@ -12,14 +12,17 @@ int wasKeyboardHit()
 int main() {
 
 	//Sensor Class using OpenNI 2
-	Xtion2StreamReader *streamReader = new Xtion2StreamReader(true, true, true);
+	#if _DEBUG
+		Xtion2StreamReader *streamReader = new Xtion2StreamReader(true, true, true);
+	#else
+		Xtion2StreamReader *streamReader = new Xtion2StreamReader(true, false, false);
+	#endif
 
 	if (!streamReader->initContext()) {
 		std::cout << "Failed to create input stream context" << std::endl;
 		cin.get();
 		return -1;
 	}
-
 
 	std::cout << "Stream created properly" << std::endl;
 	//cin.get();
@@ -36,8 +39,6 @@ int main() {
 
 	std::cout << "The reading process has started" << std::endl;
 
-	cin.get();
-
 	int i = 0;
 
 	while (!wasKeyboardHit())
@@ -47,8 +48,6 @@ int main() {
 		cv::Mat rgb;
 		cv::Mat depth;
 		streamReader->getNextFrame(rgb, depth, false);
-
-		//cin.get();
 
 		//Debug color image
 		cv::cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
@@ -70,31 +69,8 @@ int main() {
 	return 0;
 
 	//Sensor Class using OpenNI 1
-	/*XtionStreamReader *streamReader = new XtionStreamReader(true, false, false);
 
-	if (!streamReader->initContext()) {
-		std::cout << "Failed to create input stream context" << std::endl;
-		return -1;
-	}
-
-	std::cout << "Stream created properly" << std::endl;
-
-	if (!streamReader->startReading()) {
-		std::cout << "Failed to read input stream" << std::endl;
-		return -1;
-	}
-
-	Matrix3f intrinsics = streamReader->getCameraIntrinsics();
-
-	std::cout << "Sensor intrinsics: " << std::endl << intrinsics << std::endl;
-
-	std::cout << "The reading process has started" << std::endl;
-
-	//cin.get();
-
-	int i = 0;
-
-	while (!xnOSWasKeyboardHit())
+	/*while (!xnOSWasKeyboardHit())
 	{
 
 		std::cout << "Frame: " << ++i << std::endl;
@@ -114,15 +90,10 @@ int main() {
 		cv::convertScaleAbs(depth, adjMap, 255 / max);
 		cv::imshow("TestDepth", adjMap);
 
-
-		/* Raw depth image
-		depth.convertTo(depth, CV_8U, 255);
-		cv::imshow("TestDepth", depth);
-
 		cv::waitKey(1);
-	}
+	}*/
 
 	delete streamReader;
 
-	return 0;*/
+	return 0;
 }

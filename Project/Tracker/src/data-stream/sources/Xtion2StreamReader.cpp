@@ -19,7 +19,6 @@ bool Xtion2StreamReader::initContext() {
 	//openni::Device device;
 
 	const char* deviceURI = openni::ANY_DEVICE;
-	//const char* deviceURI = "\\?\usb#vid_1d27&pid_0601&mi_00#6&833cf63&0&0000#{c3b5f022-5a42-1980-1909-ea72095601b1}";
 
 	printf("Device URI:\n%s\n", deviceURI);
 
@@ -37,6 +36,7 @@ bool Xtion2StreamReader::initContext() {
 	openni::Array<openni::DeviceInfo> deviceList;
 	openni::OpenNI::enumerateDevices(&deviceList);
 	
+	printf("List of devices\n");
 	for (int i = 0; i < deviceList.getSize(); ++i)
 	{
 		printf("Device \"%s\" already connected\n", deviceList[i].getUri());

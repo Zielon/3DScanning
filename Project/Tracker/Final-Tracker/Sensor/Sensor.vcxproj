@@ -89,11 +89,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(OPENNI_INCLUDE);$(EIGEN_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(OPENNI_INCLUDE);$(EIGEN_DIR);$(OPENNI2_INCLUDE64);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENNI_DIR)\Lib64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>openNI64.lib;opencv_world400d.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENNI_DIR)\Lib64;$(OPENNI2_LIB64)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>openNI64.lib;opencv_world400d.lib;OpenNI2.lib;</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
@@ -120,7 +120,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(OPENNI_INCLUDE);$(OPENNI2_INCLUDE64);</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(OPENNI_INCLUDE);$(OPENNI2_INCLUDE64);$(EIGEN_DIR);</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
