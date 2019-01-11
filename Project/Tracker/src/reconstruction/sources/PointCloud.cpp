@@ -35,8 +35,16 @@ const std::vector<Vector3f>& PointCloud::getNormals() const{
 	return m_normals;
 }
 
+float PointCloud::depthImage(int x, int y){
+	if (x < m_depth.cols && y < m_depth.rows && x >= 0 && y >= 0)
+		return m_depth.at<float>(y, x);
+	return INFINITY;
+}
+
 /// Downsample image 2 times
 void PointCloud::transform(cv::Mat& depth){
+
+	m_depth = cv::Mat(depth);
 
 	cv::Mat level, image;
 

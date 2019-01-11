@@ -42,7 +42,10 @@ public:
 
 private:
 	void initialize();
-	FrustumBox getFrustum(Matrix4f pose) const;
+
+	Vector3f skeletonToDepth(Vector3f point) const;
+
+	FrustumBox computeFrustumBounds(Matrix4f pose) const;
 	float m_weight_update = 1;
 	std::thread m_consumer_thread;
 	Consumer<PointCloud*>* m_consumer;

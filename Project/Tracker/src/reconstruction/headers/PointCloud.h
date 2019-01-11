@@ -31,11 +31,14 @@ public:
 		return m_nearestNeighbor;
 	};
 
-	Matrix4f m_pose_estimation;
+	Matrix4f m_pose_estimation = Matrix4f::Identity();
+
+	float depthImage(int x, int y);
 
 private:
 	void transform(cv::Mat& depth);
 
+	cv::Mat m_depth;
 	NearestNeighborSearch* m_nearestNeighbor;
 	CameraParameters m_camera_parameters;
 	std::vector<Vector3f> m_points;

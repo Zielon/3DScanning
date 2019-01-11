@@ -120,10 +120,10 @@ void WindowsTests::reconstructionTest(){
 
 	float pose[16];
 
-	for (int i = 0; i < 50; ++i) {
+	for (int i = 0; i < 10; ++i) {
 		Verbose::start();
 		dllMain(pc, img, pose);
-		Verbose::stop("Frame reconstruction in " + std::to_string(i));
+		Verbose::stop("Frame reconstruction " + std::to_string(i));
 	}
 	
 	pc->m_fusion->save("mesh");

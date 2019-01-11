@@ -4,6 +4,7 @@
 
 #include <direct.h>
 #include <io.h>
+#include <math.h>
 
 Fusion::Fusion(CameraParameters camera_parameters) : m_camera_parameters(camera_parameters){
 	initialize();
@@ -38,43 +39,59 @@ void Fusion::produce(PointCloud* cloud) const{
 	m_buffer->add(cloud);
 }
 
+inline Vector3i round(const Vector3f& point){
+	return Vector3i(round(point.x()), round(point.y()), round(point.z()));
+}
+
+inline float getTruncation(float depth){
+	if (depth > 1) return 1;
+	if (depth < -1) return -1;
+	return depth;
+}
+
 void Fusion::integrate(PointCloud* cloud){
 
-	const auto frustum_box = getFrustum(cloud->m_pose_estimation);
-
-	// TODO Use the frustumBox to get bounding ranges for the SDF grid
-	//for (unsigned int x = frustum_box.m_min_x; x < frustum_box.m_max_x; x++)
-	//	for (unsigned int y = frustum_box.m_min_y; y < frustum_box.m_max_y; y++)
-	//		for (unsigned int z = frustum_box.m_min_z; z < frustum_box.m_max_z; z++)
-	//		{
-	//
-	//		}
+	const auto rotation = cloud->m_pose_estimation.block(0, 0, 3, 3);
+	const auto translation = cloud->m_pose_estimation.block(0, 3, 3, 1);
+	const auto frustum_box = computeFrustumBounds(cloud->m_pose_estimation);
 
 	#pragma omp parallel
-	for (unsigned int x = 0; x < m_volume->m_size; x++)
-		for (unsigned int y = 0; y < m_volume->m_size; y++)
-			for (unsigned int z = 0; z < m_volume->m_size; z++)
+	for (unsigned int x = frustum_box.m_min_x; x < frustum_box.m_max_x; x++)
+		for (unsigned int y = frustum_box.m_min_y; y < frustum_box.m_max_y; y++)
+			for (unsigned int z = frustum_box.m_min_z; z < frustum_box.m_max_z; z++)
 			{
-				Vector3f cell = m_volume->getWorldPosition(x, y, z);
 				Voxel* voxel = m_volume->getVoxel(x, y, z);
-				int index = cloud->getClosestPoint(cell);
 
-				if (!voxel || index < 0 || index == cloud->getPoints().size()) continue;
+				// Transform to the current frame
+				Vector3f p = rotation * m_volume->getWorldPosition(x, y, z) + translation;
 
-				Vector3f point = cloud->getPoints()[index];
+				// Project into a depth image
+				p = skeletonToDepth(p);
+
+				// Pixels space
+				auto pi = round(p);
+
+				float d = cloud->depthImage(pi.x(), pi.y());
+
+				// Depth was not found
+				if (d == INFINITY) continue;
 
 				// Update free space counter if voxel is in front of observation
-				if (cell.z() < point.z())
+				if (p.z() < d)
 					voxel->m_free_ctr++;
 
 				// Positive in front of the observation
-				const float sdf = point.z() - cell.z();
+				const float sdf = d - p.z();
+				const float truncation = getTruncation(d);
 				const float weight = voxel->m_weight;
 
-				voxel->m_sdf = (voxel->m_sdf * weight + sdf * m_weight_update) / (weight + m_weight_update);
-				voxel->m_weight = std::min(int(weight) + int(m_weight_update),
-				                           int(std::numeric_limits<unsigned char>::max()));
-				voxel->m_position = Vector3f(x, y, z);
+				if (sdf > -truncation)
+				{
+					voxel->m_sdf = (voxel->m_sdf * weight + sdf * m_weight_update) / (weight + m_weight_update);
+					voxel->m_weight = std::min(int(weight) + int(m_weight_update),
+					                           int(std::numeric_limits<unsigned char>::max()));
+					voxel->m_position = Vector3f(x, y, z);
+				}
 
 				m_weight_update += weight;
 			}
@@ -107,12 +124,28 @@ void Fusion::initialize(){
 	m_consumer = new Consumer<PointCloud*>(m_buffer);
 }
 
-FrustumBox Fusion::getFrustum(Matrix4f pose) const{
+Vector3f Fusion::skeletonToDepth(Vector3f point) const{
+	float x = (m_camera_parameters.m_fovX * point.x() / point.z()) + m_camera_parameters.m_cX;
+	float y = (m_camera_parameters.m_fovY * point.y() / point.z()) + m_camera_parameters.m_cY;
+	return Vector3f(x, y, 0);
+}
+
+FrustumBox Fusion::computeFrustumBounds(Matrix4f pose) const{
 
 	const auto rotation = pose.block(0, 0, 3, 3);
 	const auto translation = pose.block(0, 3, 3, 1);
 
 	// TODO Calculate a frustum box for a give pose and camera intrinsic
 
-	return {};
+	FrustumBox box;
+
+	box.m_min_x = 0;
+	box.m_min_y = 0;
+	box.m_min_z = 0;
+
+	box.m_max_x = m_volume->m_size;
+	box.m_max_y = m_volume->m_size;
+	box.m_max_z = m_volume->m_size;
+
+	return box;
 }

@@ -326,7 +326,6 @@ an edge between two vertices, each with their own scalar value
 */
 Vector3d VertexInterp(double isolevel, const Vector3d& p1, const Vector3d& p2, double valp1, double valp2){
 
-	// TODO: implement the linear interpolant
 	// Assume that the function value at 'p1' is 'valp1' and the function value at 'p2' is 'valp2'.
 	// Further assume that the function is linear between 'p1' and 'p2'. Compute and return the
 	// point 'p' on the line from 'p1' to 'p2' where the function takes on the value 'isolevel'
@@ -340,7 +339,6 @@ Vector3d VertexInterp(double isolevel, const Vector3d& p1, const Vector3d& p2, d
 	//  /
 	// x
 	// f(p1) = valp1
-	//return (p1+p2)/2; // replace me
 
 	Vector3d v = (p2 - p1); //p1 ---> p2 direction
 	double L = fabs(valp2 - valp1); //Length of the segment
