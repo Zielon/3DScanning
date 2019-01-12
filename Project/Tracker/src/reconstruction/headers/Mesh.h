@@ -36,7 +36,7 @@ public:
 
 	bool save(const std::string& filename);
 
-	void transform(const Matrix4f& trajectory);
+	void transform(const Matrix4f& matrix);
 
 	std::vector<Vector3f> m_vertices;
 	std::vector<Triangle> m_triangles;
