@@ -61,13 +61,13 @@ void Mesh::merge(const Mesh& mesh){
 	m_vertices.insert(m_vertices.end(), mesh.m_vertices.begin(), mesh.m_vertices.end());
 }
 
-void Mesh::transform(const Matrix4f& matrix){
+void Mesh::transform(const Matrix4f& trajectory){
 	// Camera space to world space
 	for (int i = 0; i < m_vertices.size(); i++)
 	{
 		auto camera = m_vertices[i];
 		if(camera.x() == MINF) continue;
-		auto world = matrix * Vector4f(camera[0], camera[1], camera[2], 1.f);
+		auto world = trajectory.inverse() * Vector4f(camera[0], camera[1], camera[2], 1.f);
 		m_vertices[i] = Vector3f(world[0], world[1], world[2]);
 	}
 }
@@ -103,8 +103,8 @@ bool Mesh::save(const std::string& filename){
 		auto vertex = m_vertices[i];
 		auto color = m_colors[i];
 		vertex = (vertex.x() == MINF) ? Vector3f(0.0, 0.0, 0.0) : vertex;
-		out_file << vertex.x() << " " << vertex.y() << " " << vertex.z() << " " << std::endl;
-		out_file << +color[0] << " " << +color[1] << " " << +color[2] << " " << 1 << std::endl;
+		out_file << vertex.x() << " " << vertex.y() << " " << vertex.z() << " ";
+		out_file << +color[0] << " " << +color[1] << " " << +color[2] << " " << 255 << std::endl;//0-255 format
 	}
 
 	out_file << "# LIST OF FACES" << std::endl;
