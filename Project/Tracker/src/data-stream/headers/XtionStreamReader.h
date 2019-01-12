@@ -45,8 +45,6 @@ public:
 
 	~XtionStreamReader() override;
 
-	bool initContext();
-
 	// Inherited via VideoStreamReader
 	bool startReading() override;
 
@@ -84,13 +82,14 @@ private:
 	float m_x_res;//Horizontal resolution
 	float m_y_res;//Vertical resolution
 
-
+	//Methods
 	XnBool fileExists(const char *fn);
 	int readFrame(cv::Mat &rgb, cv::Mat &depth);
 	bool saveRawFrame(int frame, xn::ImageMetaData *colorMD, xn::DepthMetaData *depthMD);
 	bool saveFrame(int frame, cv::Mat &rgb, cv::Mat &depth);
 	float computeFocalLength(float fov_angle, float center);
 	float computeFocalLengthRadians(float fov, float center);
+	bool initContext();
 };
 
 #endif XTION_STREAM_READER_H
