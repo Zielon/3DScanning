@@ -50,8 +50,8 @@ inline float getTruncation(float depth){
 
 void Fusion::integrate(PointCloud* cloud){
 
-	const auto cameraToWorld = cloud->m_pose_estimation;
-	const auto worldToCamera = cameraToWorld.inverse();
+	const auto worldToCamera = cloud->m_pose_estimation;
+	const auto cameraToWorld = worldToCamera.inverse();
 
 	const auto rotation = worldToCamera.block(0, 0, 3, 3);
 	const auto translation = worldToCamera.block(0, 3, 3, 1);
