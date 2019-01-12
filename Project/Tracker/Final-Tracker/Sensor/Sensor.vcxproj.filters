@@ -19,6 +19,9 @@
     <ClCompile Include="..\..\src\data-stream\sources\XtionStreamReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\data-stream\sources\Xtion2StreamReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="OpenNIConfig.xml" />
@@ -28,6 +31,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\data-stream\headers\Xtion2StreamReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
