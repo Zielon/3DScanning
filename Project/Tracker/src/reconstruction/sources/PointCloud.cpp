@@ -24,12 +24,20 @@ std::vector<Vector3f>& PointCloud::getNormals(){
 	return m_normals;
 }
 
+std::vector<Vector4uc>& PointCloud::getColors(){
+	return m_color_points;
+}
+
 const std::vector<Vector3f>& PointCloud::getPoints() const{
 	return m_points;
 }
 
 const std::vector<Vector3f>& PointCloud::getNormals() const{
 	return m_normals;
+}
+
+const std::vector<Vector4uc>& PointCloud::getColors() const{
+	return m_color_points;
 }
 
 float PointCloud::getDepthImage(int x, int y) const{
@@ -73,12 +81,14 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	m_current_height = image.rows;
 	m_current_width = image.cols;
 
-	m_depth_points = std::vector<float>(m_current_width * m_current_height);
-	m_color_points = std::vector<Vector4uc>(m_current_width * m_current_height);
+	auto size = m_current_width * m_current_height;
+
+	m_depth_points = std::vector<float>(size);
+	m_color_points = std::vector<Vector4uc>(size);
 
 	// Temp vector for filtering
-	auto temp_points = std::vector<Vector3f>(m_current_width * m_current_height);
-	auto temp_normals = std::vector<Vector3f>(m_current_width * m_current_height);
+	auto temp_points = std::vector<Vector3f>(size);
+	auto temp_normals = std::vector<Vector3f>(size);
 
 	//Depth range check
 	//float depth_min = std::numeric_limits<float>::infinity();
@@ -91,10 +101,10 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			const unsigned int idx = y * m_current_width + x;
 
 			auto depth = image.at<float>(y, x);
-			auto color = cv::Vec4b(); // colors.at<cv::Vec4b>(y, x);
+			auto color = colors.at<cv::Vec3b>(y, x);
 
 			m_depth_points[idx] = depth;
-			m_color_points[idx] = Vector4uc(color[0], color[1], color[2], color[3]);
+			m_color_points[idx] = Vector4uc(color[0], color[1], color[2], 0);
 
 			//Depth range check
 			//depth_min = std::min(depth_min, depth_val);
@@ -115,6 +125,10 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			}
 		}
 	}
+
+	#ifdef TESTING
+	m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
+	#endif
 
 	colors.release();
 	image.release();
@@ -156,11 +170,11 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 		const auto& point = temp_points[i];
 		const auto& normal = temp_normals[i];
 
-		//if (point.allFinite() && normal.allFinite())
-		//{
-		m_points.push_back(point);
-		m_normals.push_back(normal);
-		//}
+		if (point.allFinite() && normal.allFinite())
+		{
+			m_points.push_back(point);
+			m_normals.push_back(normal);
+		}
 	}
 
 	m_nearestNeighbor->buildIndex(m_points);

@@ -7,7 +7,8 @@
 #include <fstream>
 #include <list>
 #include <iostream>
-#include "PointCloud.h"
+#include "../../Eigen.h"
+#include <thread>
 
 struct Triangle
 {
@@ -25,7 +26,7 @@ public:
 
 	Mesh();
 
-	Mesh(const PointCloud* cloud);
+	Mesh(std::vector<Vector3f>& vertices, std::vector<Vector4uc>& colors, int width, int height);
 
 	unsigned int addVertex(Vector3f& vertex);
 
@@ -35,24 +36,30 @@ public:
 
 	bool save(const std::string& filename);
 
-	bool isValidTriangle(Vector3f p0, Vector3f p1, Vector3f p2, float edgeThreshold) const;
-
-	std::list<Vector3f>& getVertices(){
+	std::vector<Vector3f>& getVertices(){
 		return m_vertices;
 	}
 
-	std::list<Triangle>& getTriangles(){
+	std::vector<Triangle>& getTriangles(){
 		return m_triangles;
+	}
+
+	std::vector<Vector4uc>& getColors(){
+		return m_colors;
 	}
 
 	void clear(){
 		m_vertices.clear();
 		m_triangles.clear();
+		m_colors.clear();
 	}
 
 private:
-	std::list<Vector3f> m_vertices;
-	std::list<Triangle> m_triangles;
+	bool isValidTriangle(Vector3f p0, Vector3f p1, Vector3f p2, float edgeThreshold) const;
+
+	std::vector<Vector3f> m_vertices;
+	std::vector<Triangle> m_triangles;
+	std::vector<Vector4uc> m_colors;
 };
 
 #endif

@@ -61,6 +61,9 @@
     <ClInclude Include="..\..\src\files-manager\headers\DatasetManager.h">
       <Filter>files-manager\headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\concurency\headers\ThreadManager.h">
+      <Filter>concurency\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -104,6 +107,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\files-manager\sources\DatasetManager.cpp">
       <Filter>files-manager\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\concurency\sources\ThreadManager.cpp">
+      <Filter>concurency\sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

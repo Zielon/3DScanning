@@ -1,34 +1,27 @@
 #include "../headers/Mesh.h"
 #include <direct.h>
+#include "../../debugger/headers/Verbose.h"
 
 Mesh::Mesh() = default;
 
-Mesh::Mesh(const PointCloud* cloud){
+/// Create a mesh using naive approach to generate triangles
+Mesh::Mesh(std::vector<Vector3f>& vertices, std::vector<Vector4uc>& colors, int width, int height){
 
 	const float edge_threshold = 0.01f;
-	auto vertices = cloud->getPoints();
 
 	m_vertices.insert(m_vertices.end(), vertices.begin(), vertices.end());
-
-	auto width = cloud->m_current_width;
-	auto height = cloud->m_current_height;
+	m_colors.insert(m_colors.end(), colors.begin(), colors.end());
 
 	unsigned int idx0, idx1, idx2, idx3;
 	Vector3f p0, p1, p2, p3;
 
-	auto s = vertices.size() - 1;
-
 	for (int y = 0; y < height - 1; y++)
 		for (int x = 0; x < width - 1; x++)
 		{
-			float depth = cloud->getDepthImage(x, y);
-
 			idx0 = y * width + x;
 			idx1 = idx0 + 1;
 			idx2 = idx0 + width;
 			idx3 = idx2 + 1;
-
-			if (idx0 > s || idx1 > s || idx2 > s || idx3 > s) continue;
 
 			//Points
 			p0 = vertices[idx0];
@@ -68,6 +61,12 @@ void Mesh::merge(const Mesh& mesh){
 	m_vertices.insert(m_vertices.end(), mesh.m_vertices.begin(), mesh.m_vertices.end());
 }
 
+bool Mesh::isValidTriangle(Vector3f p0, Vector3f p1, Vector3f p2, float edgeThreshold) const{
+	if (p0.x() == MINF || p1.x() == MINF || p2.x() == MINF) return false;
+	return !((p0 - p1).norm() >= edgeThreshold || (p1 - p2).norm() >= edgeThreshold ||
+		(p2 - p1).norm() >= edgeThreshold);
+}
+
 bool Mesh::save(const std::string& filename){
 	std::string folder = "test_meshes";
 
@@ -76,19 +75,28 @@ bool Mesh::save(const std::string& filename){
 	std::ofstream out_file(folder + "\\" + filename + ".off");
 	if (!out_file.is_open()) return false;
 
-	std::cout << "Generating a mesh with " << m_vertices.size() << " vertices and " << m_triangles.size() <<
-		" triangles" << std::endl;
+	Verbose::message(
+		"Generating a mesh with " + std::to_string(m_vertices.size()) + " vertices and " + std::
+		to_string(m_triangles.size()) + " triangles");
 
 	// write header
 	out_file << "OFF" << std::endl;
 	out_file << m_vertices.size() << " " << m_triangles.size() << " 0" << std::endl;
 
+	out_file << "# LIST OF VERTICES" << std::endl;
+	out_file << "# X Y Z R G B A" << std::endl;
+
 	// save vertices
-	for (auto vertex : m_vertices)
+	for (int i = 0; i < m_vertices.size(); i++)
 	{
-		auto position = (vertex.x() == MINF) ? Vector3f(0.0, 0.0, 0.0) : vertex;
-		out_file << position.x() << " " << position.y() << " " << position.z() << std::endl;
+		auto vertex = m_vertices[i];
+		auto color = m_colors[i];
+		vertex = (vertex.x() == MINF) ? Vector3f(0.0, 0.0, 0.0) : vertex;
+		out_file << vertex.x() << " " << vertex.y() << " " << vertex.z() << " " << std::endl;
+		//out_file << +color[0] << " " << +color[1] << " " << +color[2] << " " << 0 << std::endl;
 	}
+
+	out_file << "# LIST OF FACES" << std::endl;
 
 	// save faces
 	for (auto triangle : m_triangles)
@@ -99,13 +107,7 @@ bool Mesh::save(const std::string& filename){
 	// close file
 	out_file.close();
 
-	std::cout << "Generating the mesh was successful!" << std::endl;
+	Verbose::message("Generating the mesh was successful!");
 
 	return true;
-}
-
-bool Mesh::isValidTriangle(Vector3f p0, Vector3f p1, Vector3f p2, float edgeThreshold) const{
-	if (p0.x() == MINF || p1.x() == MINF || p2.x() == MINF) return false;
-	return !((p0 - p1).norm() >= edgeThreshold || (p1 - p2).norm() >= edgeThreshold ||
-		(p2 - p1).norm() >= edgeThreshold);
 }

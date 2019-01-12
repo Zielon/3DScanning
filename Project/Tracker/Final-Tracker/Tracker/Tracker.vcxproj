@@ -30,6 +30,7 @@
     <ClInclude Include="..\..\src\concurency\headers\Buffer.h" />
     <ClInclude Include="..\..\src\concurency\headers\Consumer.h" />
     <ClInclude Include="..\..\src\concurency\headers\Producer.h" />
+    <ClInclude Include="..\..\src\concurency\headers\ThreadManager.h" />
     <ClInclude Include="..\..\src\data-stream\headers\DatasetVideoStreamReader.h" />
     <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h" />
     <ClInclude Include="..\..\src\debugger\headers\Verbose.h" />
@@ -54,6 +55,7 @@
     <ClCompile Include="..\..\src\concurency\sources\Buffer.cpp" />
     <ClCompile Include="..\..\src\concurency\sources\Consumer.cpp" />
     <ClCompile Include="..\..\src\concurency\sources\Producer.cpp" />
+    <ClCompile Include="..\..\src\concurency\sources\ThreadManager.cpp" />
     <ClCompile Include="..\..\src\data-stream\sources\DatasetVideoStreamReader.cpp" />
     <ClCompile Include="..\..\src\debugger\sources\Verbose.cpp" />
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -171,7 +173,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(FLANN_DIR)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;TESTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENCV_DIR)\bin</AdditionalLibraryDirectories>
@@ -234,8 +236,10 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(FLANN_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;TESTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <OpenMPSupport>true</OpenMPSupport>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

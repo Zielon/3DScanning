@@ -1,5 +1,5 @@
-#ifndef TRACKER_WINDOWSTESTS_H
-#define TRACKER_WINDOWSTESTS_H
+#ifndef TRACKER_WINDOWS_TESTS_H
+#define TRACKER_WINDOWS_TESTS_H
 
 #include "../../TrackerContext.h"
 #include "../../reconstruction/headers/Tracker.h"

@@ -7,6 +7,7 @@
 #include <opencv2/core/mat.hpp>
 #include "../sources/NearestNeighbor.hpp"
 #include "../../files-manager/headers/DatasetManager.h"
+#include "Mesh.h"
 
 class PointCloud
 {
@@ -22,9 +23,13 @@ public:
 
 	std::vector<Vector3f>& getNormals();
 
+	std::vector<Vector4uc>& getColors();
+
 	const std::vector<Vector3f>& getPoints() const;
 
 	const std::vector<Vector3f>& getNormals() const;
+
+	const std::vector<Vector4uc>& getColors() const;
 
 	int getClosestPoint(Vector3f grid_cell) const;
 
@@ -35,6 +40,7 @@ public:
 	Matrix4f m_pose_estimation = Matrix4f::Identity();
 	NearestNeighborSearch* m_nearestNeighbor;
 	CameraParameters m_camera_parameters;
+	Mesh m_mesh;
 	int m_current_width = 0;
 	int m_current_height = 0;
 

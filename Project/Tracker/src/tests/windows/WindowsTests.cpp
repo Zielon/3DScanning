@@ -7,6 +7,7 @@
 #include <io.h>
 #include "../../debugger/headers/Verbose.h"
 #include "../../reconstruction/headers/Mesh.h"
+#include "../../concurency/headers/ThreadManager.h"
 
 void WindowsTests::run(){
 	// reconstructionTest();
@@ -134,11 +135,18 @@ void WindowsTests::streamPointCloudTest() const{
 		context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 		PointCloud* source = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, true);
 		source->transformToWorldSpace(trajectory);
-		Mesh(source).save("point_cloud_" + std::to_string(i + 1));
-		SAFE_DELETE(source);
+		ThreadManager::add([source, i]()
+		{
+			source->m_mesh.save("point_cloud_" + std::to_string(i + 1));
+			delete source;
+		});
 
-		Verbose::stop("Point cloud generated " + std::to_string(i + 1), WARNING);
+		Verbose::stop("Point cloud task added " + std::to_string(i + 1), WARNING);
 	}
+
+	ThreadManager::waitForAll();
+
+	Verbose::message("Meshes were generated!");
 
 	delete[]img;
 	SAFE_DELETE(context);
