@@ -131,11 +131,27 @@ void WindowsTests::streamPointCloudTest() const{
 
 		const auto trajectory = trajectories[idx];
 
+		/*std::cout << trajectory.inverse() << std::endl;
+
+		auto intrinsics = context->m_tracker->getCameraParameters();
+
+		std::cout << 1.0 / intrinsics.m_focal_length_X << std::endl;
+		std::cout << 1.0 / intrinsics.m_focal_length_Y << std::endl;
+		std::cout << -intrinsics.m_cX/ intrinsics.m_focal_length_X << std::endl;
+		std::cout << -intrinsics.m_cY / intrinsics.m_focal_length_Y << std::endl;*/
+
 		//Creating point cloud mesh from frame and trajectory (camera pose)
 		ThreadManager::add([context, index, trajectory]()
 		{
 			cv::Mat rgb, depth;
 			context->m_videoStreamReader->getNextFrame(rgb, depth, false);
+
+			//Check depth range
+			double min, max;
+			cv::minMaxLoc(depth, &min, &max);//Depth range test
+
+
+
 			PointCloud* source = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, false);
 			source->m_mesh.transform(trajectory.inverse());
 			source->m_mesh.save("point_cloud_" + std::to_string(index + 1));
