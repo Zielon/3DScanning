@@ -137,7 +137,7 @@ void WindowsTests::streamPointCloudTest() const{
 			cv::Mat rgb, depth;
 			context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 			PointCloud* source = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, false);
-			source->m_mesh.transform(trajectory);
+			source->m_mesh.transform(trajectory.inverse());
 			source->m_mesh.save("point_cloud_" + std::to_string(index + 1));
 			delete source;
 		});
