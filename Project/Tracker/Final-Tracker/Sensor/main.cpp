@@ -13,19 +13,10 @@ int main() {
 
 	//Sensor Class using OpenNI 2
 	#if _DEBUG
-		Xtion2StreamReader *streamReader = new Xtion2StreamReader(true, true, true);
+		VideoStreamReaderBase *streamReader = new Xtion2StreamReader(true, true, true);
 	#else
-		Xtion2StreamReader *streamReader = new Xtion2StreamReader(true, false, false);
+		VideoStreamReaderBase *streamReader = new Xtion2StreamReader(true, false, false);
 	#endif
-
-	if (!streamReader->initContext()) {
-		std::cout << "Failed to create input stream context" << std::endl;
-		cin.get();
-		return -1;
-	}
-
-	std::cout << "Stream created properly" << std::endl;
-	//cin.get();
 
 	if (!streamReader->startReading()) {
 		std::cout << "Failed to read input stream" << std::endl;

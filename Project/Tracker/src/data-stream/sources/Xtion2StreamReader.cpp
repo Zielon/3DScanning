@@ -53,6 +53,8 @@ bool Xtion2StreamReader::initContext() {
 		return false;
 	}
 
+	//printf("Stream created properly");
+
 	return true;
 }
 
@@ -74,6 +76,11 @@ int Xtion2StreamReader::getLatestFrame(cv::Mat &rgb, cv::Mat &depth) {
 bool Xtion2StreamReader::startReading() {
 
 	openni::Status rc = openni::STATUS_OK;
+
+	if (!this->initContext()) {
+		printf("Failed to create input stream context\n");
+		return false;
+	}
 
 	//Create Color Stream
 	rc = m_color_stream.create(m_device, openni::SENSOR_COLOR);
