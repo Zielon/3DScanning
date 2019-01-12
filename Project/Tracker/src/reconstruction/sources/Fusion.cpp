@@ -75,7 +75,7 @@ void Fusion::integrate(PointCloud* cloud){
 				// Pixels space
 				auto pixels = round(cell);
 
-				float depth = cloud->depthImage(pixels.x(), pixels.y());
+				float depth = cloud->getDepthImage(pixels.x(), pixels.y());
 
 				// Depth was not found
 				if (depth == INFINITY) continue;
@@ -108,10 +108,6 @@ void Fusion::save(string name){
 	if (m_consumer_thread.joinable())
 		m_consumer_thread.join();
 
-	string folder = "test_meshes";
-
-	_mkdir(folder.data());
-
 	Mesh mesh;
 
 	for (unsigned int x = 0; x < m_volume->m_size - 1; x++)
@@ -119,7 +115,7 @@ void Fusion::save(string name){
 			for (unsigned int z = 0; z < m_volume->m_size - 1; z++)
 				ProcessVolumeCell(m_volume, x, y, z, 0.9f, &mesh);
 
-	mesh.WriteMesh(folder + "\\" + name);
+	mesh.save(name);
 }
 
 void Fusion::initialize(){
@@ -146,7 +142,7 @@ FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld) const{
 	FrustumBox box;
 
 	// Skip if camera is not in our mapping space
-	if(!cameraVoxel)
+	if (!cameraVoxel)
 	{
 		box.m_is_valid = false;
 		return box;

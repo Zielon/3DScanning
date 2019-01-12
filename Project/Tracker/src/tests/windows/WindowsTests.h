@@ -5,6 +5,7 @@
 #include "../../reconstruction/headers/Tracker.h"
 #include "../../data-stream/headers/DatasetVideoStreamReader.h"
 #include "../../ExportDLL.h"
+#include "../../files-manager/headers/DatasetManager.h"
 
 class WindowsTests {
 public:
@@ -12,9 +13,7 @@ public:
 
 private:
 
-	bool readTrajectoryFile(const std::string& filename, std::vector<Eigen::Matrix4f>& result, std::vector<double>& timestamps);
-
-	void readTrajectories();
+	void streamPointCloudTest() const;
 
     static void reconstructionTest();
 
@@ -23,6 +22,8 @@ private:
 	bool cameraPoseTest();
 
 	void meshTest(); 
+
+	DatasetManager m_files_manager;
 
 };
 

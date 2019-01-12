@@ -35,6 +35,7 @@
     <ClInclude Include="..\..\src\debugger\headers\Verbose.h" />
     <ClInclude Include="..\..\src\Eigen.h" />
     <ClInclude Include="..\..\src\ExportDLL.h" />
+    <ClInclude Include="..\..\src\files-manager\headers\DatasetManager.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\CameraParameters.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Fusion.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\ICP.h" />
@@ -56,6 +57,7 @@
     <ClCompile Include="..\..\src\data-stream\sources\DatasetVideoStreamReader.cpp" />
     <ClCompile Include="..\..\src\debugger\sources\Verbose.cpp" />
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
+    <ClCompile Include="..\..\src\files-manager\sources\DatasetManager.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Fusion.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\ICP.cpp" />
