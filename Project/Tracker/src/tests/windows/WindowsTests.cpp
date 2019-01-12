@@ -112,8 +112,10 @@ void WindowsTests::streamPointCloudTest() const{
 	m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps);
 	m_files_manager.readDepthTimeStampFile(depth_timestamps);
 
-	for (int index = 0; index < depth_timestamps.size(); index += 100)
+	//for (int index = 0; index < depth_timestamps.size(); index += 100)
+	for (int index = 0; index < 200; index += 100)
 	{
+		//Finding proper trajectory
 		double timestamp = depth_timestamps[index];
 		double min = std::numeric_limits<double>::infinity();
 		int idx = 0;
@@ -129,6 +131,7 @@ void WindowsTests::streamPointCloudTest() const{
 
 		const auto trajectory = trajectories[idx];
 
+		//Creating point cloud mesh from frame and trajectory (camera pose)
 		ThreadManager::add([context, index, trajectory]()
 		{
 			cv::Mat rgb, depth;

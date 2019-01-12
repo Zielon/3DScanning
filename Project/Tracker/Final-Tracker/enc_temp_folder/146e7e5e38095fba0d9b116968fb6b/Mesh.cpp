@@ -104,6 +104,7 @@ bool Mesh::save(const std::string& filename){
 		auto color = m_colors[i];
 		vertex = (vertex.x() == MINF) ? Vector3f(0.0, 0.0, 0.0) : vertex;
 		out_file << vertex.x() << " " << vertex.y() << " " << vertex.z() << " " << std::endl;
+		//out_file << +color[0] << " " << +color[1] << " " << +color[2] << " " << 0 << std::endl;
 		out_file << +color[0] << " " << +color[1] << " " << +color[2] << " " << 1 << std::endl;
 	}
 
