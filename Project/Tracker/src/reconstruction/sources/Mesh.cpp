@@ -61,6 +61,17 @@ void Mesh::merge(const Mesh& mesh){
 	m_vertices.insert(m_vertices.end(), mesh.m_vertices.begin(), mesh.m_vertices.end());
 }
 
+void Mesh::transform(const Matrix4f& trajectory){
+	// Camera space to world space
+	for (int i = 0; i < m_vertices.size(); i++)
+	{
+		auto camera = m_vertices[i];
+		if(camera.x() == MINF) continue;
+		auto world = trajectory.inverse() * Vector4f(camera[0], camera[1], camera[2], 1.f);
+		m_vertices[i] = Vector3f(world[0], world[1], world[2]);
+	}
+}
+
 bool Mesh::isValidTriangle(Vector3f p0, Vector3f p1, Vector3f p2, float edgeThreshold) const{
 	if (p0.x() == MINF || p1.x() == MINF || p2.x() == MINF) return false;
 	return !((p0 - p1).norm() >= edgeThreshold || (p1 - p2).norm() >= edgeThreshold ||

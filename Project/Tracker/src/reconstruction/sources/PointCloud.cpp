@@ -50,22 +50,6 @@ float PointCloud::getDepthImage(int x, int y) const{
 	return INFINITY;
 }
 
-void PointCloud::transformToWorldSpace(const Matrix4f& trajectory){
-	// Camera space to world space
-	for (int i = 0; i < m_points.size(); i++)
-	{
-		auto camera = m_points[i];
-		auto camera_normal = m_normals[i];
-
-		auto world = trajectory.inverse() * Vector4f(camera[0], camera[1], camera[2], 1.f);
-		auto world_normal = trajectory.transpose() * Vector4f(camera_normal[0], camera_normal[1],
-		                                                      camera_normal[2], 1.f);
-
-		m_points[i] = Vector3f(world[0], world[1], world[2]);
-		m_normals[i] = Vector3f(world_normal[0], world_normal[1], world_normal[2]);
-	}
-}
-
 /// Downsample image 1 time
 void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 

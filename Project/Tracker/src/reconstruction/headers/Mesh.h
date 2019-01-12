@@ -36,30 +36,14 @@ public:
 
 	bool save(const std::string& filename);
 
-	std::vector<Vector3f>& getVertices(){
-		return m_vertices;
-	}
-
-	std::vector<Triangle>& getTriangles(){
-		return m_triangles;
-	}
-
-	std::vector<Vector4uc>& getColors(){
-		return m_colors;
-	}
-
-	void clear(){
-		m_vertices.clear();
-		m_triangles.clear();
-		m_colors.clear();
-	}
-
-private:
-	bool isValidTriangle(Vector3f p0, Vector3f p1, Vector3f p2, float edgeThreshold) const;
+	void transform(const Matrix4f& trajectory);
 
 	std::vector<Vector3f> m_vertices;
 	std::vector<Triangle> m_triangles;
 	std::vector<Vector4uc> m_colors;
+
+private:
+	bool isValidTriangle(Vector3f p0, Vector3f p1, Vector3f p2, float edgeThreshold) const;
 };
 
 #endif
