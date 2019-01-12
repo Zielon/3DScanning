@@ -112,7 +112,7 @@ void WindowsTests::streamPointCloudTest() const{
 	m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps);
 	m_files_manager.readDepthTimeStampFile(depth_timestamps);
 
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < depth_timestamps.size(); i += 100)
 	{
 		Verbose::start();
 
