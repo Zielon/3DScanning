@@ -103,20 +103,9 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			if (depth > 0.0f)
 			{
 				// Back-projection to camera space.
-				//pixel_coords << (x - m_camera_parameters.m_cX) / m_camera_parameters.m_focal_length_X *
-				//	depth_val, (y - m_camera_parameters.m_cY) / m_camera_parameters.m_focal_length_Y * depth_val,
-				//	depth_val;
-
-				Matrix4f depthIntrinsicsInv;
-
-				depthIntrinsicsInv << 1.0f / m_camera_parameters.m_focal_length_X, 0.0f, -m_camera_parameters.m_cX / m_camera_parameters.m_focal_length_X, 0.0f,
-					0.0f, 1.0f / m_camera_parameters.m_focal_length_Y, -m_camera_parameters.m_cY / m_camera_parameters.m_focal_length_Y, 0.0f,
-					0.0f, 0.0f, 1.0f, 0.0f,
-					0.0f, 0.0f, 0.0f, 1.0f;
-
-				auto camera = depthIntrinsicsInv * Vector4f(x * depth, y * depth, depth, 1.f);
-
-				pixel_coords = Vector3f(camera[0], camera[1], camera[2]);
+				pixel_coords << (x - m_camera_parameters.m_cX) / m_camera_parameters.m_focal_length_X *
+					depth, (y - m_camera_parameters.m_cY) / m_camera_parameters.m_focal_length_Y * depth,
+					depth;
 
 				temp_points[idx] = pixel_coords;
 			}
@@ -169,9 +158,9 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 		//if (point.allFinite() && normal.allFinite())
 		//{
-			m_points.push_back(point);
-			m_normals.push_back(normal);
-//		}
+		m_points.push_back(point);
+		m_normals.push_back(normal);
+		//}
 	}
 
 	m_nearestNeighbor->buildIndex(m_points);

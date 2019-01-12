@@ -98,7 +98,7 @@ void WindowsTests::meshTest(){
 
 void WindowsTests::streamPointCloudTest() const{
 
-	std::cout << "START streamPointCloudTest()" << std::endl;
+	Verbose::message("START streamPointCloudTest()");
 
 	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
 
@@ -111,12 +111,12 @@ void WindowsTests::streamPointCloudTest() const{
 	m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps);
 	m_files_manager.readDepthTimeStampFile(depth_timestamps);
 
-	for (int i = 1; i < 5; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
 		Verbose::start();
 
 		double timestamp = depth_timestamps[i];
-		double min = std::numeric_limits<double>::max();
+		double min = INFINITY;
 		int idx = 0;
 		for (unsigned int j = 0; j < trajectories.size(); ++j)
 		{
@@ -137,7 +137,7 @@ void WindowsTests::streamPointCloudTest() const{
 		Mesh(source).save("point_cloud_" + std::to_string(i + 1));
 		SAFE_DELETE(source);
 
-		Verbose::stop("Point cloud generated " + std::to_string(i + 1));
+		Verbose::stop("Point cloud generated " + std::to_string(i + 1), WARNING);
 	}
 
 	delete[]img;
@@ -146,7 +146,7 @@ void WindowsTests::streamPointCloudTest() const{
 
 void WindowsTests::reconstructionTest(){
 
-	std::cout << "START reconstructionTest()" << std::endl;
+	Verbose::message("START reconstructionTest()");
 
 	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
 
@@ -158,7 +158,7 @@ void WindowsTests::reconstructionTest(){
 	{
 		Verbose::start();
 		dllMain(context, img, pose);
-		Verbose::stop("Frame reconstruction " + std::to_string(i + 1));
+		Verbose::stop("Frame reconstruction " + std::to_string(i + 1), SUCCESS);
 	}
 
 	context->m_fusion->save("mesh");
