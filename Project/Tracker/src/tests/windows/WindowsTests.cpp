@@ -114,8 +114,6 @@ void WindowsTests::streamPointCloudTest() const{
 
 	for (int index = 0; index < depth_timestamps.size(); index += 100)
 	{
-		
-
 		double timestamp = depth_timestamps[index];
 		double min = std::numeric_limits<double>::infinity();
 		int idx = 0;
@@ -133,16 +131,12 @@ void WindowsTests::streamPointCloudTest() const{
 
 		ThreadManager::add([context, index, trajectory]()
 		{
-			Verbose::start();
-
 			cv::Mat rgb, depth;
 			context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 			PointCloud* source = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, false);
 			source->m_mesh.transform(trajectory);
 			source->m_mesh.save("point_cloud_" + std::to_string(index + 1));
 			delete source;
-
-			Verbose::stop("Point cloud task added " + std::to_string(index + 1), WARNING);
 		});
 	}
 
