@@ -5,12 +5,15 @@
 ### Visual Studio
 In the Visual Studio solutions we are using a few environment paths:
 
-| NAME          | VALUE  														|
-|---------------|---------------------------------------------------------------|
-|EIGEN_DIR      |`C:\Projects\Eigen\eigen-git-mirror`                           |
-|FLANN_DIR      |`C:\Projects\3DScanning\Project\Tracker\external-libs\Flann`   |
-|OPENCV_DIR     |`C:\OpenCV\opencv\build\x64\vc15`                              |
-|OPENCV_INCLUDE |`C:\OpenCV\opencv\build\include`                               |
+| NAME            | VALUE  														  |
+|-----------------|---------------------------------------------------------------|
+|EIGEN_DIR        |`C:\Projects\Eigen\eigen-git-mirror`                           |
+|FLANN_DIR        |`C:\Projects\3DScanning\Project\Tracker\external-libs\Flann`   |
+|OPENCV_DIR       |`C:\OpenCV\opencv\build\x64\vc15`                              |
+|OPENCV_INCLUDE   |`C:\OpenCV\opencv\build\include`                               |
+|OPENNI2_INCLUDE64|`C:\Program Files\OpenNI2\Include\`                            |
+|OPENNI2_LIB64    |`C:\Program Files\OpenNI2\Lib\`                                |
+|OPENNI2_LIB64    |`C:\Program Files\OpenNI2\Redist\`                             |
 
 Please set them on your Windows machine!
 
@@ -49,10 +52,17 @@ An example path where you have to keep your Freiburg dataset.
 
 ### ASUS Xion Pro
 
-The first step is installing the driver associated with the sensor from the official website [0]. The driver can be found by: Support -> Driver & Tools -> Utilities -> *XtionCenter Package*. There is no support for MacOS systems. The next step is installing the OpenNI 2 SDK from the official website [1]. OpenNI 2 includes some sample codes to test the sensor. The *NiViewer* sample was the guideline to integrate the sensor to our project. Finally, a small change is required in order to use the OpenNI 2 SDK with Visual Studio 2017. The line 58 of the *XnPlatform.h* file must be commented out.
+The first step is installing the driver associated with the sensor from the official website [0]. The driver can be found by: Support -> Driver & Tools -> Utilities -> *XtionCenter Package*. There is no support for MacOS systems. The next step is installing the OpenNI 2 SDK from the official website [1]. OpenNI 2 includes some sample codes to test the sensor. The *NiViewer* sample was the guideline to integrate the sensor to our project.     
+All the files from OpenNI 2's redist directory must be copied to the to working directory (where the project file are located: .vcproj, .vcxproj).   
 
-Error line:  
-> #error Xiron Platform Abstraction Layer - Win32 - Microsoft Visual Studio versions above 2010 (10.0) are not supported!
+To change the resolution of the sensor is neccessary to change the values on the file *PS1080.ini*. The following values must be changed:  
+
+* Resolution=1 ([Depth])
+* Resolution=1 ([[Image]])
+* Resolution=1 ([[IR]])
+* UsbInterface=2 ([Device])
+
+Resolution = 1 (VGA -> 640x480), while Resolution = 0 (QVGA -> 320x240).
 
 ## Solution Overview
 
