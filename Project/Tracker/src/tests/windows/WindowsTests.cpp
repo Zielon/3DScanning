@@ -10,8 +10,8 @@
 #include "../../concurency/headers/ThreadManager.h"
 
 void WindowsTests::run(){
-	reconstructionTest();
-	// streamPointCloudTest();
+	// reconstructionTest();
+	streamPointCloudTest();
 	// meshTest();
 	// vidReadTest();
 	// cameraPoseTest();
@@ -117,7 +117,7 @@ void WindowsTests::streamPointCloudTest() const{
 		Verbose::start();
 
 		double timestamp = depth_timestamps[i];
-		double min = INFINITY;
+		double min = std::numeric_limits<double>::infinity();
 		int idx = 0;
 		for (unsigned int j = 0; j < trajectories.size(); ++j)
 		{
@@ -133,7 +133,7 @@ void WindowsTests::streamPointCloudTest() const{
 
 		cv::Mat rgb, depth;
 		context->m_videoStreamReader->getNextFrame(rgb, depth, false);
-		PointCloud* source = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, true);
+		PointCloud* source = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, false);
 		source->transformToWorldSpace(trajectory);
 		ThreadManager::add([source, i]()
 		{
