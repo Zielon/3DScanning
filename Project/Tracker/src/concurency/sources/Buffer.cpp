@@ -4,9 +4,8 @@ template <class T>
 void Buffer<T>::add(T element){
 	while (true)
 	{
-		std::unique_lock<std::mutex> locker(m_mutex);
-		m_cond.wait(locker, [this]()
-		{
+		std::unique_lock<std::mutex> locker(m_mutex_add);
+		m_cond.wait(locker, [this](){
 			return m_buffer.size() < m_size;
 		});
 		m_buffer.push_back(element);
@@ -20,9 +19,8 @@ template <class T>
 T Buffer<T>::remove(){
 	while (true)
 	{
-		std::unique_lock<std::mutex> locker(m_mutex);
-		m_cond.wait(locker, [this]()
-		{
+		std::unique_lock<std::mutex> locker(m_mutex_remove);
+		m_cond.wait(locker, [this](){
 			return !m_buffer.empty();
 		});
 		T element = m_buffer.back();

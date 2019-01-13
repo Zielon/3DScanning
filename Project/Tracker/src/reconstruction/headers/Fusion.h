@@ -50,11 +50,13 @@ private:
 
 	FrustumBox computeFrustumBounds(Matrix4f pose) const;
 	float m_weight_update = 1;
-	std::thread m_consumer_thread;
-	Consumer<PointCloud*>* m_consumer;
+	std::vector<std::thread> m_consumer_threads;
+	std::vector<Consumer<PointCloud*>*> m_consumers;
 	Buffer<PointCloud*>* m_buffer;
 	CameraParameters m_camera_parameters;
 	Volume* m_volume;
+
+	const int NUMBER_OF_CONSUMERS = 5;
 };
 
 #endif //TRACKER_LIB_FUSION_H

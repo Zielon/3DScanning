@@ -5,6 +5,8 @@
 cmake-build-*/
 build/
 
+Final-Tracker/enc_temp_folder/*
+
 # Project-specific
 external-libs/opencv/*
 data/*

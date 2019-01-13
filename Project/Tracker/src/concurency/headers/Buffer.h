@@ -16,10 +16,11 @@ public:
 	bool isEmpty();
 
 private:
-	std::mutex m_mutex;
+	std::mutex m_mutex_add;
+	std::mutex m_mutex_remove;
 	std::condition_variable m_cond;
 	std::deque<T> m_buffer;
-	const unsigned int m_size = 100;
+	const unsigned int m_size = 5000;
 };
 
 #endif

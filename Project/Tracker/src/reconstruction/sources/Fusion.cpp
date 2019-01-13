@@ -3,39 +3,26 @@
 #include "../headers/MarchingCubes.h"
 
 #include <direct.h>
-#include <math.h>
+#include <cmath>
+#include "../../concurency/headers/ThreadManager.h"
 
 Fusion::Fusion(CameraParameters camera_parameters) : m_camera_parameters(camera_parameters){
 	initialize();
 }
 
 Fusion::~Fusion(){
-	m_consumer->stop();
-	if (m_consumer_thread.joinable())
-		m_consumer_thread.join();
+	std::for_each(m_consumers.begin(), m_consumers.end(),
+	              [](auto consumer){
+		              consumer->stop();
+	              });
 
+	ThreadManager::waitForAll(m_consumer_threads);
+
+	std::for_each(m_consumers.begin(), m_consumers.end(), [](auto consumer){
+		SAFE_DELETE(consumer);
+	});
 	SAFE_DELETE(m_volume);
 	SAFE_DELETE(m_buffer);
-	SAFE_DELETE(m_consumer);
-}
-
-/// Consumes point clouds from a buffer and 
-/// produces a mesh using SFD implicit functions
-void Fusion::consume(){
-	m_consumer_thread = std::thread([this]()
-	{
-		// It will block the thread in the case of an empty buffer
-		m_consumer->run([this](PointCloud* cloud)
-		{
-			this->integrate(cloud);
-		});
-	});
-}
-
-/// Buffer has a certain capacity when it is exceeded 
-/// this method will block the execution
-void Fusion::produce(PointCloud* cloud) const{
-	m_buffer->add(cloud);
 }
 
 inline Vector3i round(const Vector3f& point){
@@ -104,9 +91,12 @@ void Fusion::integrate(PointCloud* cloud){
 }
 
 void Fusion::save(string name){
-	m_consumer->stop();
-	if (m_consumer_thread.joinable())
-		m_consumer_thread.join();
+	std::for_each(m_consumers.begin(), m_consumers.end(),
+	              [](auto consumer){
+		              consumer->stop();
+	              });
+
+	ThreadManager::waitForAll(m_consumer_threads);
 
 	Mesh mesh;
 
@@ -122,10 +112,31 @@ bool Fusion::isFinished() const{
 	return m_buffer->isEmpty();
 }
 
+/// Buffer has a certain capacity when it is exceeded 
+/// this method will block the execution
+void Fusion::produce(PointCloud* cloud) const {
+	m_buffer->add(cloud);
+}
+
+/// Consumes point clouds from a buffer and 
+/// produces a mesh using SFD implicit functions
+void Fusion::consume(){
+
+	for (int i = 0; i < NUMBER_OF_CONSUMERS; i++)
+	{
+		auto consumer = new Consumer<PointCloud*>(m_buffer);
+		m_consumers.emplace_back(consumer);
+		m_consumer_threads.emplace_back([this, consumer](){
+			consumer->run([this](PointCloud* cloud){
+				this->integrate(cloud);
+			});
+		});
+	}
+}
+
 void Fusion::initialize(){
 	m_volume = new Volume(Vector3d(-.5, -.5, -.5), Vector3d(2, 2, 2), 200, 1);
 	m_buffer = new Buffer<PointCloud*>();
-	m_consumer = new Consumer<PointCloud*>(m_buffer);
 }
 
 Vector3f Fusion::reproject(Vector3f point) const{
