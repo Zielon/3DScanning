@@ -1,12 +1,13 @@
-#include <utility>
-
 #pragma once
+#include "VideoStreamReaderBase.h"
 
 #include <iostream>
 #include <chrono>
 #include <vector>
+#include <utility>
 
-#include "VideoStreamReaderBase.h"
+#include <opencv2/imgproc/imgproc_c.h>
+#include <opencv2/imgproc/imgproc.hpp>
 
 class DatasetVideoStreamReader :
         public VideoStreamReaderBase {

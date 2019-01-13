@@ -79,12 +79,11 @@ int getNextFrame(void * context, unsigned char * image)
 
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
+	//Copy color frame
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
 
-	//So turns out opencv actually uses bgr not rgb...
-	//no more opencv computations after this point
-	/*cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
-
+	//Test
+	/*cv::cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);//OpenCV uses bgr not rgb format
 	cv::imshow("dllTest", rgb);
 	cv::waitKey(1);*/
 
@@ -118,6 +117,11 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
+	//Test
+	/*cv::cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);//OpenCV uses bgr not rgb format
+	cv::imshow("dllTest", rgb);
+	cv::waitKey(1);*/
+
 	PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth);
 
 	if (is_first_frame) // first frame
@@ -133,14 +137,12 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 	}
 
 	// Produce a new point cloud (add to the buffer)
-	tracker_context->m_fusion->produce(tracker_context->m_tracker->m_previous_point_cloud);
+	//tracker_context->m_fusion->produce(tracker_context->m_tracker->m_previous_point_cloud);//Crash unity
 
 	// Safe the last frame reference
 	tracker_context->m_tracker->m_previous_point_cloud = source;
 
-	//So turns out opencv actually uses bgr not rgb...
-	//no more opencv computations after this point
-	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
+	//Copy color frame
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
 }
 

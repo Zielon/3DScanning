@@ -31,7 +31,9 @@ namespace Assets.Scripts
         //general setup
         private int _w = -1;
         private int _h = -1;
-        bool use_sensor = true;
+        bool _use_sensor = true;
+        bool _use_OpenNI2 = true;
+        bool _use_reconstruction = true;
 
 
         private LinkedList<Mesh> frameMeshes = new LinkedList<Mesh>(); 
@@ -83,7 +85,7 @@ namespace Assets.Scripts
 
             string absolutePath = "";
 
-            if (use_sensor)
+            if (_use_sensor)
             {
                 var segments = new List<string>(
                    Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
@@ -94,7 +96,7 @@ namespace Assets.Scripts
 
                 Debug.Log(absolutePath);
 
-                _cppContext = createSensorContext(Encoding.ASCII.GetBytes(absolutePath), false);
+                _cppContext = createSensorContext(Encoding.ASCII.GetBytes(absolutePath), _use_OpenNI2);
             }
             else
             {
@@ -128,10 +130,15 @@ namespace Assets.Scripts
                 return ;
             }
 
-            //dllMain(_cppContext, _image, _pose);
-
-            int status = getNextFrame(_cppContext, _image);
-            Debug.Log("Next frame status: "+status);
+            if (_use_reconstruction)
+            {
+                dllMain(_cppContext, _image, _pose);
+            }
+            else
+            {
+                int status = getNextFrame(_cppContext, _image);
+                Debug.Log("Next frame status: " + status);
+            }
 
             //Create texture from image
             var tex = new Texture2D(_w, _h, TextureFormat.RGB24, false);
@@ -146,32 +153,33 @@ namespace Assets.Scripts
 
             //Debug.Log("Sprite created successfuly");
 
-            // Apply camera poses
-            /*Vector4 firstCol = new Vector4(_pose[0], _pose[1], _pose[2], _pose[3]);
-            Vector4 secCol = new Vector4(_pose[4], _pose[5], _pose[6], _pose[7]);
-            Vector4 thirdCol = new Vector4(_pose[8], _pose[9], _pose[10], _pose[11]);
-            Vector4 fourthCol = new Vector4(_pose[12], _pose[13], _pose[14], _pose[15]);
-            Matrix4x4 pose = new Matrix4x4();
+            if (_use_reconstruction)
+            {
+                // Apply camera poses
+                Vector4 firstCol = new Vector4(_pose[0], _pose[1], _pose[2], _pose[3]);
+                Vector4 secCol = new Vector4(_pose[4], _pose[5], _pose[6], _pose[7]);
+                Vector4 thirdCol = new Vector4(_pose[8], _pose[9], _pose[10], _pose[11]);
+                Vector4 fourthCol = new Vector4(_pose[12], _pose[13], _pose[14], _pose[15]);
+                Matrix4x4 pose = new Matrix4x4();
 
 
-            //Set the columns from pose to transformation matrix
-            pose.SetColumn(0, firstCol);
-            pose.SetColumn(1, secCol);
-            pose.SetColumn(2, thirdCol);
-            pose.SetColumn(3, fourthCol);
+                //Set the columns from pose to transformation matrix
+                pose.SetColumn(0, firstCol);
+                pose.SetColumn(1, secCol);
+                pose.SetColumn(2, thirdCol);
+                pose.SetColumn(3, fourthCol);
 
-          //  Debug.Log("transformation matrix: \n" + pose);
+                //  Debug.Log("transformation matrix: \n" + pose);
 
-            cameraRig.transform.position = fourthCol * 1000;
-            cameraRig.transform.rotation = pose.rotation;
+                cameraRig.transform.position = fourthCol * 1000;
+                cameraRig.transform.rotation = pose.rotation;
 
-         //   Debug.Log("Pos: " + cameraRig.transform.position);
-         //   Debug.Log("Rot: " + cameraRig.transform.rotation.eulerAngles);
+                //   Debug.Log("Pos: " + cameraRig.transform.position);
+                //   Debug.Log("Rot: " + cameraRig.transform.rotation.eulerAngles);
 
-            //enable this once fusion is ready
-        //    spawnFrameMesh();*/
-
-        
+                //enable this once fusion is ready
+                //    spawnFrameMesh();*/
+            }
         }
 
 

@@ -147,10 +147,12 @@ int DatasetVideoStreamReader::readAnyFrame(unsigned long index, cv::Mat &rgb, cv
 
     rgb = cv::imread(m_datasetFolderPath + m_rgb_names[index].second);
 
+	//OpenCV uses bgr not rgb format
+	cv::cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
 
-    //cv::Mat depthTmp = cv::imread(m_datasetFolderPath + m_depth_names[index].second);
-	cv::Mat depthTmp = cv::imread(m_datasetFolderPath + m_depth_names[index].second, 2);//Right format 
-    
+
+	cv::Mat depthTmp = cv::imread(m_datasetFolderPath + m_depth_names[index].second, 2);//CV_LOAD_IMAGE_ANYDEPTH flag
+
 	//double min, max;
 	//cv::minMaxLoc(depthTmp, &min, &max);//Depth range test
 	
