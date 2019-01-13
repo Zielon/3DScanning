@@ -86,6 +86,11 @@ bool XtionStreamReader::startReading() {
 
 	XnStatus nRetVal = XN_STATUS_OK;
 
+	if (!this->initContext()) {
+		printf("Failed to create input stream context\n");
+		return false;
+	}
+
 	// Setting image generator(RGB color)
 	nRetVal = m_context.FindExistingNode(XN_NODE_TYPE_IMAGE, m_color_generator);
 	CHECK_RC(nRetVal, "Find color generator");
@@ -115,8 +120,8 @@ bool XtionStreamReader::startReading() {
 	}
 
 	// Setting intrinsics parameters
-	m_x_res = depthMD.FullXRes();
-	m_y_res = depthMD.FullYRes();
+	m_width_rgb = colorMD.FullXRes();
+	m_height_rgb = colorMD.FullYRes();
 
 	XnFieldOfView fov;
 	m_depth_generator.GetFieldOfView(fov);//Radians
@@ -169,17 +174,25 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 		printf("Depth frame %d: resolution (%d, %d), bytes %d\n", depthMD.FrameID(), depthMD.XRes(), depthMD.YRes(), depthMD.DataSize());
 	}
 
+	//Copy sensor to buffers
+	int Nbytes = sizeof(unsigned char) * colorMD.XRes() * colorMD.YRes() * 3;
+
+	unsigned char *color_buffer = (unsigned char*)malloc(Nbytes);
+	memcpy(color_buffer, color_map, Nbytes);
+
+	Nbytes = sizeof(unsigned short) * depthMD.XRes() * depthMD.YRes();
+
+	unsigned short *depth_buffer = (unsigned short*)malloc(Nbytes);
+	memcpy(depth_buffer, depth_map, Nbytes);
+
 	//OpenCV color image from raw color map
 
-	rgb = cv::Mat(colorMD.YRes(), colorMD.XRes(), CV_8UC3, (void*)color_map, cv::Mat::AUTO_STEP);
-	/*rgb = cv::Mat(colorMD.YRes(), colorMD.XRes(), CV_8UC3);
-	memcpy(rgb.data, color_map, colorMD.YRes() * colorMD.XRes() * 3 * sizeof(unsigned char));*/
+	//rgb = cv::Mat(colorMD.YRes(), colorMD.XRes(), CV_8UC3, (void*)color_map, cv::Mat::AUTO_STEP);
+	rgb = cv::Mat(colorMD.YRes(), colorMD.XRes(), CV_8UC3, (void*)color_buffer, cv::Mat::AUTO_STEP);
 
 	//OpenCV depth image from raw depth map
-	depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1, (void*)depth_map, cv::Mat::AUTO_STEP);
-
-	//depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1);
-	//memcpy(depth.data, depth_map, depthMD.YRes() * depthMD.XRes() * sizeof(unsigned short));
+	depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1, (void*)depth_buffer, cv::Mat::AUTO_STEP);
+	//depth = cv::Mat(depthMD.YRes(), depthMD.XRes(), CV_16UC1, (void*)depth_map, cv::Mat::AUTO_STEP);
 
 	//Capture frames
 
@@ -235,8 +248,8 @@ Matrix3f XtionStreamReader::getCameraIntrinsics()
 	float fx, fy, cx, cy;
 
 	//Optical center
-	cx = m_x_res / 2.0f - 0.5f;
-	cy = m_y_res / 2.0f - 0.5f;
+	cx = m_width_rgb / 2.0f - 0.5f;
+	cy = m_height_rgb / 2.0f - 0.5f;
 
 	/*Focal length from degrees
 	fx = computeFocalLength(m_fov_x_degrees, cx);

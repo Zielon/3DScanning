@@ -27,8 +27,6 @@ public:
 
 	~Xtion2StreamReader() override;
 
-	bool initContext();
-
 	// Inherited via VideoStreamReader
 	bool startReading() override;
 
@@ -60,9 +58,12 @@ private:
 	float m_fov_x;//Horizontal field of view
 	float m_fov_y;//Horizontal field of view
 
+	//Methods
 	int readFrame(cv::Mat &rgb, cv::Mat &depth);
 	bool saveFrame(int frame, cv::Mat &rgb, cv::Mat &depth);
 	float computeFocalLengthRadians(float fov, float center);
+
+	bool initContext();
 };
 
 #endif XTION2_STREAM_READER_H
