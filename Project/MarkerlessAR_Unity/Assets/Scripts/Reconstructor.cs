@@ -31,6 +31,7 @@ namespace Assets.Scripts
         //general setup
         private int _w = -1;
         private int _h = -1;
+        bool use_sensor = true;
 
 
         private LinkedList<Mesh> frameMeshes = new LinkedList<Mesh>(); 
@@ -40,6 +41,12 @@ namespace Assets.Scripts
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr createContext(byte[] path);
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr createSensorContext(byte[] path, bool useOpenNI2);
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern int getNextFrame(IntPtr context, byte[] image);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern void trackerCameraPose(IntPtr context,
@@ -74,14 +81,32 @@ namespace Assets.Scripts
         {
             Debug.Log("Creating Context");
 
-            var segments = new List<string>(
+            string absolutePath = "";
+
+            if (use_sensor)
+            {
+                var segments = new List<string>(
+                   Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
+               {"Plugins", "OpenNI1" , " "};
+
+                absolutePath = segments.Aggregate(
+                    (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
+
+                Debug.Log(absolutePath);
+
+                _cppContext = createSensorContext(Encoding.ASCII.GetBytes(absolutePath), false);
+            }
+            else
+            {
+                var segments = new List<string>(
                     Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
                 {"..", "Datasets", "freiburg", " "};
 
-            var absolutePath = segments.Aggregate(
-                (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
+                absolutePath = segments.Aggregate(
+                    (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
 
-            _cppContext = createContext(Encoding.ASCII.GetBytes(absolutePath));
+                _cppContext = createContext(Encoding.ASCII.GetBytes(absolutePath));
+            }
 
             _w = getImageWidth(_cppContext);
             _h = getImageHeight(_cppContext);
@@ -97,7 +122,16 @@ namespace Assets.Scripts
         {
          //   Debug.Log("Update test");
 
-            dllMain(_cppContext, _image, _pose);
+            if(_w <= 0 || _h <= 0)
+            {
+                Debug.Log("There is a problem with the stream of the tracker");
+                return ;
+            }
+
+            //dllMain(_cppContext, _image, _pose);
+
+            int status = getNextFrame(_cppContext, _image);
+            Debug.Log("Next frame status: "+status);
 
             //Create texture from image
             var tex = new Texture2D(_w, _h, TextureFormat.RGB24, false);
@@ -113,7 +147,7 @@ namespace Assets.Scripts
             //Debug.Log("Sprite created successfuly");
 
             // Apply camera poses
-            Vector4 firstCol = new Vector4(_pose[0], _pose[1], _pose[2], _pose[3]);
+            /*Vector4 firstCol = new Vector4(_pose[0], _pose[1], _pose[2], _pose[3]);
             Vector4 secCol = new Vector4(_pose[4], _pose[5], _pose[6], _pose[7]);
             Vector4 thirdCol = new Vector4(_pose[8], _pose[9], _pose[10], _pose[11]);
             Vector4 fourthCol = new Vector4(_pose[12], _pose[13], _pose[14], _pose[15]);
@@ -135,9 +169,9 @@ namespace Assets.Scripts
          //   Debug.Log("Rot: " + cameraRig.transform.rotation.eulerAngles);
 
             //enable this once fusion is ready
-        //    spawnFrameMesh(); 
+        //    spawnFrameMesh();*/
 
-
+        
         }
 
 

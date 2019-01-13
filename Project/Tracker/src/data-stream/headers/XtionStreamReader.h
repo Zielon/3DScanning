@@ -41,7 +41,7 @@ using namespace xn;
 class XtionStreamReader : public VideoStreamReaderBase {
 
 public:
-	XtionStreamReader(bool realtime = true, bool verbose = false, bool capture = false);
+	XtionStreamReader(const char *sensorFolderPath, bool realtime = true, bool verbose = false, bool capture = false);
 
 	~XtionStreamReader() override;
 
@@ -65,6 +65,7 @@ protected:
 private:
 
 	const std::string m_DATA_DIR = "data";
+	std::string m_sensorFolderPath;
 	bool m_realtime;
 	bool m_use_capture;
 	bool m_use_verbose;

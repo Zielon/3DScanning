@@ -83,7 +83,7 @@ public:
     int m_height_rgb, m_width_rgb, m_height_depth, m_width_depth;
 
 	//Unity Test
-	int mStatus = 0;//Status variable to test the Tracker in Unity
+	int m_Status = 0;//Status variable to test the Tracker in Unity
 
     unsigned long getCurrentFrameIndex() { return newFrameIndex; }
 

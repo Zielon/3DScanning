@@ -5,6 +5,8 @@ Xtion2StreamReader::Xtion2StreamReader(bool realtime, bool verbose, bool capture
 	m_realtime = realtime;
 	m_use_capture = capture;
 	m_use_verbose = verbose;
+
+	m_Status = 0;//Constructor status
 }
 
 Xtion2StreamReader::~Xtion2StreamReader() {
@@ -54,6 +56,7 @@ bool Xtion2StreamReader::initContext() {
 	}
 
 	//printf("Stream created properly");
+	m_Status = 1;//Context status
 
 	return true;
 }
@@ -167,6 +170,9 @@ bool Xtion2StreamReader::startReading() {
 	m_fov_x = m_color_stream.getHorizontalFieldOfView();
 	m_fov_y = m_color_stream.getVerticalFieldOfView();
 
+
+	m_Status = 2;//Reading ready status
+
 	return true;
 }
 
@@ -230,6 +236,8 @@ int Xtion2StreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 
 	openni::DepthPixel* pDepth = (openni::DepthPixel*)depthFrame.getData();
 
+	m_Status = 3;//Raw map data status
+
 	if (m_use_verbose) {
 		printf("Color frame %d: resolution (%d, %d), bytes %d\n", colorFrame.getFrameIndex(), colorFrame.getHeight(), colorFrame.getWidth(), colorFrame.getDataSize());
 		printf("Color frame %d: resolution (%d, %d), bytes %d\n", depthFrame.getFrameIndex(), depthFrame.getHeight(), depthFrame.getWidth(), depthFrame.getDataSize());
@@ -245,6 +253,8 @@ int Xtion2StreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 		//saveRawFrame(colorMD.FrameID(), &colorMD, &depthMD);
 		saveFrame(colorFrame.getFrameIndex(), rgb, depth);
 	}
+
+	m_Status = 4;//Finish status
 
 	return 0;
 }

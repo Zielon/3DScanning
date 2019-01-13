@@ -34,6 +34,63 @@ extern "C" __declspec(dllexport) void* createContext(char* dataset_path){
 	return tracker_context;
 }
 
+void * createSensorContext(char *sensor_path, bool useOpenni2)
+{
+	TrackerContext* tracker_context = new TrackerContext();
+
+	bool realtime = true, capture = false, verbose = false;
+
+	#if _DEBUG
+		capture = true;
+		verbose = true;
+	#endif
+
+	//Sensor Class using OpenNI 2
+	if (useOpenni2) {
+		tracker_context->m_videoStreamReader = new Xtion2StreamReader(realtime, verbose, capture);
+	}
+	else {
+		tracker_context->m_videoStreamReader = new XtionStreamReader(sensor_path, realtime, verbose, capture);
+	}
+
+	tracker_context->m_videoStreamReader->startReading();
+	//FIXME: Frame Info only set after first frame is read... FIXME: mb split this into seperate call?
+
+	Matrix3f intrinsics = tracker_context->m_videoStreamReader->getCameraIntrinsics();
+	const CameraParameters camera_parameters = CameraParameters(
+		intrinsics(0, 0),
+		intrinsics(1, 1),
+		intrinsics(0, 2),
+		intrinsics(1, 2),
+		tracker_context->m_videoStreamReader->m_height_depth,
+		tracker_context->m_videoStreamReader->m_width_depth
+	);
+
+	tracker_context->m_tracker = new Tracker(camera_parameters);
+
+	return tracker_context;
+}
+
+int getNextFrame(void * context, unsigned char * image)
+{
+	TrackerContext* tracker_context = static_cast<TrackerContext*>(context);
+
+	cv::Mat rgb, depth;
+
+	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
+
+	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
+
+	//So turns out opencv actually uses bgr not rgb...
+	//no more opencv computations after this point
+	/*cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
+
+	cv::imshow("dllTest", rgb);
+	cv::waitKey(1);*/
+
+	return tracker_context->m_videoStreamReader->m_Status;
+}
+
 extern "C" __declspec(dllexport) void trackerCameraPose(void* context, unsigned char* image, float* pose, int w, int h){
 
 	Tracker* tracker = static_cast<TrackerContext*>(context)->m_tracker;

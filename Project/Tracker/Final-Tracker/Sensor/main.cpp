@@ -11,13 +11,15 @@ int wasKeyboardHit()
 
 int main() {
 
+	string path = "";
+
 	//Sensor Class using OpenNI 2
 	#if _DEBUG
-		VideoStreamReaderBase *streamReader = new Xtion2StreamReader(true, true, true);
-		//VideoStreamReaderBase *streamReader = new XtionStreamReader(true, true, true);
+		//VideoStreamReaderBase *streamReader = new Xtion2StreamReader(true, true, true);
+		VideoStreamReaderBase *streamReader = new XtionStreamReader(path.c_str(), true, true, true);
 	#else
-		VideoStreamReaderBase *streamReader = new Xtion2StreamReader(true, false, false);
-		//VideoStreamReaderBase *streamReader = new XtionStreamReader(true, false, false);
+		//VideoStreamReaderBase *streamReader = new Xtion2StreamReader(true, false, false);
+		VideoStreamReaderBase *streamReader = new XtionStreamReader(path.c_str(), true, false, false);
 	#endif
 
 	if (!streamReader->startReading()) {

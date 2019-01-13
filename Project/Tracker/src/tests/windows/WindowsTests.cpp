@@ -114,6 +114,8 @@ int WindowsTests::sensorTest(bool useOpenni2)
 	bool realtime = true, capture = false, verbose = false;
 	VideoStreamReaderBase *streamReader = NULL;
 
+	string path = "";
+
 	#if _DEBUG
 		capture = true;
 		verbose = true;
@@ -124,7 +126,7 @@ int WindowsTests::sensorTest(bool useOpenni2)
 		streamReader = new Xtion2StreamReader(realtime, verbose, capture);
 	}
 	else {
-		streamReader = new XtionStreamReader(realtime, verbose, capture);
+		streamReader = new XtionStreamReader(path.c_str(), realtime, verbose, capture);
 	}
 
 	if (!streamReader->startReading()) {

@@ -1,13 +1,14 @@
 #include "../Headers/XtionStreamReader.h"
 
-XtionStreamReader::XtionStreamReader(bool realtime, bool verbose, bool capture) {
+XtionStreamReader::XtionStreamReader(const char *sensorFolderPath, bool realtime, bool verbose, bool capture) {
 
+	m_sensorFolderPath = sensorFolderPath;
 	m_realtime = realtime;
 	m_use_capture = capture;
 	m_use_verbose = verbose;
 
 
-	mStatus = 0;//Constructor status
+	m_Status = 0;//Constructor status
 }
 
 
@@ -17,14 +18,17 @@ bool XtionStreamReader::initContext() {
 
 	EnumerationErrors errors;
 	const char *fn = NULL;
+	std::string path = m_sensorFolderPath + string(OPENNI_XML_PATH);
 
 	//Check if the configuration path exists
-	if (fileExists(OPENNI_XML_PATH)) {
-		fn = OPENNI_XML_PATH;
+	if (fileExists(path.c_str())) {
+		fn = path.c_str();
 	}
 	else {
-		printf("Could not find '%s'. Aborting.\n", OPENNI_XML_PATH);
+		printf("Could not find '%s'. Aborting.\n", path.c_str());
 		printf("XN Status Error: %d\n", XN_STATUS_ERROR);
+
+		m_Status = -1;
 
 		return false;
 	}
@@ -51,7 +55,7 @@ bool XtionStreamReader::initContext() {
 
 	printf("XN context return value: %d\n", nRetVal);
 
-	mStatus = 1;//Context status
+	m_Status = 1;//Context status
 
 	return true;
 }
@@ -138,7 +142,7 @@ bool XtionStreamReader::startReading() {
 	nRetVal = xnFPSInit(&xnFPS, 180);
 	CHECK_RC(nRetVal, "FPS Init");
 
-	mStatus = 2;//Reading ready status
+	m_Status = 2;//Reading ready status
 
 	return true;
 }
@@ -176,7 +180,7 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 	const unsigned char *color_map = colorMD.Data();
 	const unsigned short *depth_map = depthMD.Data();
 
-	mStatus = 3;//Raw map data status
+	m_Status = 3;//Raw map data status
 
 	if (m_use_verbose) {
 		printf("Color frame %d: resolution (%d, %d), bytes %d\n", colorMD.FrameID(), colorMD.XRes(), colorMD.YRes(), colorMD.DataSize());
@@ -211,7 +215,7 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 		saveFrame(colorMD.FrameID(), rgb, depth);
 	}
 
-	mStatus = 4;//Finish status
+	m_Status = 4;//Finish status
 }
 
 bool XtionStreamReader::saveRawFrame(int frame, xn::ImageMetaData *colorMD, xn::DepthMetaData *depthMD) {
