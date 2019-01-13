@@ -138,7 +138,7 @@ void Fusion::consume(){
 }
 
 void Fusion::initialize(){
-	m_volume = new Volume(Vector3d(-.5, -.5, -.5), Vector3d(2, 2, 2), 200, 1);
+	m_volume = new Volume(Vector3d(-5, -5, -5), Vector3d(5, 5, 5), 200, 1);
 	m_buffer = new Buffer<PointCloud*>();
 }
 

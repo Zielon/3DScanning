@@ -6,15 +6,13 @@ Volume::Volume(Vector3d min, Vector3d max, uint size, uint dim) : m_min(std::mov
 	m_size = size;
 	m_length = std::pow(m_size, 3);
 	m_voxels = std::vector<Voxel*>(m_length, nullptr);
-	forAll([this](Voxel* voxel, int index)
-	{
+	forAll([this](Voxel*, int index){
 		m_voxels[index] = new Voxel();
 	});
 }
 
 Volume::~Volume(){
-	forAll([this](Voxel* voxel, int index)
-	{
+	forAll([this](Voxel* voxel, int index){
 		SAFE_DELETE(voxel);
 	});
 	m_voxels.clear();
@@ -26,7 +24,7 @@ void Volume::forAll(std::function<void(Voxel*, int)> func) const{
 }
 
 Voxel* Volume::getVoxel(int idx) const{
-	if (idx > 0 && idx < m_length)
+	if (idx >= 0 && idx < m_length)
 		return m_voxels[idx];
 	return nullptr;
 }
