@@ -10,8 +10,8 @@
 #include "../../concurency/headers/ThreadManager.h"
 
 void WindowsTests::run(){
-	// reconstructionTest();
-	streamPointCloudTest();
+	reconstructionTest();
+	// streamPointCloudTest();
 	// meshTest();
 	// vidReadTest();
 	// cameraPoseTest();
