@@ -35,10 +35,10 @@ protected:
     int getSequentialFrame(cv::Mat &rgb, cv::Mat &depth) override;
 
     int getLatestFrame(cv::Mat &rgb, cv::Mat &depth) override;
+    int readAnyFrame(unsigned long index, cv::Mat &rgb, cv::Mat &depth);
 
 private:
 
-    int readAnyFrame(unsigned long index, cv::Mat &rgb, cv::Mat &depth);
 
     std::string m_datasetFolderPath;
     bool m_realtime;
