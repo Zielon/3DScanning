@@ -32,6 +32,8 @@
     <ClInclude Include="..\..\src\concurency\headers\Producer.h" />
     <ClInclude Include="..\..\src\data-stream\headers\DatasetVideoStreamReader.h" />
     <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h" />
+    <ClInclude Include="..\..\src\data-stream\headers\Xtion2StreamReader.h" />
+    <ClInclude Include="..\..\src\data-stream\headers\XtionStreamReader.h" />
     <ClInclude Include="..\..\src\debugger\headers\Verbose.h" />
     <ClInclude Include="..\..\src\Eigen.h" />
     <ClInclude Include="..\..\src\ExportDLL.h" />
@@ -54,6 +56,8 @@
     <ClCompile Include="..\..\src\concurency\sources\Consumer.cpp" />
     <ClCompile Include="..\..\src\concurency\sources\Producer.cpp" />
     <ClCompile Include="..\..\src\data-stream\sources\DatasetVideoStreamReader.cpp" />
+    <ClCompile Include="..\..\src\data-stream\sources\Xtion2StreamReader.cpp" />
+    <ClCompile Include="..\..\src\data-stream\sources\XtionStreamReader.cpp" />
     <ClCompile Include="..\..\src\debugger\sources\Verbose.cpp" />
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
@@ -168,12 +172,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(FLANN_DIR)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(FLANN_DIR); $(OPENNI_INCLUDE); $(OPENNI2_INCLUDE64);</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENCV_DIR)\bin</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world400d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENCV_DIR)\bin;$(OPENNI_DIR)\Lib64;$(OPENNI2_LIB64)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world400d.lib;openNI64.lib;OpenNI2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <RegisterOutput>false</RegisterOutput>
       <AddModuleNamesToAssembly>
       </AddModuleNamesToAssembly>

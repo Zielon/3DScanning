@@ -5,6 +5,9 @@ XtionStreamReader::XtionStreamReader(bool realtime, bool verbose, bool capture) 
 	m_realtime = realtime;
 	m_use_capture = capture;
 	m_use_verbose = verbose;
+
+
+	mStatus = 0;//Constructor status
 }
 
 
@@ -47,6 +50,8 @@ bool XtionStreamReader::initContext() {
 	}
 
 	printf("XN context return value: %d\n", nRetVal);
+
+	mStatus = 1;//Context status
 
 	return true;
 }
@@ -133,6 +138,8 @@ bool XtionStreamReader::startReading() {
 	nRetVal = xnFPSInit(&xnFPS, 180);
 	CHECK_RC(nRetVal, "FPS Init");
 
+	mStatus = 2;//Reading ready status
+
 	return true;
 }
 
@@ -169,6 +176,8 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 	const unsigned char *color_map = colorMD.Data();
 	const unsigned short *depth_map = depthMD.Data();
 
+	mStatus = 3;//Raw map data status
+
 	if (m_use_verbose) {
 		printf("Color frame %d: resolution (%d, %d), bytes %d\n", colorMD.FrameID(), colorMD.XRes(), colorMD.YRes(), colorMD.DataSize());
 		printf("Depth frame %d: resolution (%d, %d), bytes %d\n", depthMD.FrameID(), depthMD.XRes(), depthMD.YRes(), depthMD.DataSize());
@@ -201,6 +210,8 @@ int XtionStreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 		//saveRawFrame(colorMD.FrameID(), &colorMD, &depthMD);
 		saveFrame(colorMD.FrameID(), rgb, depth);
 	}
+
+	mStatus = 4;//Finish status
 }
 
 bool XtionStreamReader::saveRawFrame(int frame, xn::ImageMetaData *colorMD, xn::DepthMetaData *depthMD) {

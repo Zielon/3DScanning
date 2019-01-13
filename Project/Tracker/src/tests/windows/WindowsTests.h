@@ -5,6 +5,10 @@
 #include "../../reconstruction/headers/Tracker.h"
 #include "../../data-stream/headers/DatasetVideoStreamReader.h"
 #include "../../ExportDLL.h"
+#include "../../data-stream/headers/XtionStreamReader.h"
+#include "../../data-stream/headers/Xtion2StreamReader.h"
+
+#include <conio.h>
 
 class WindowsTests {
 public:
@@ -24,6 +28,7 @@ private:
 
 	void meshTest(); 
 
+	int sensorTest(bool useOpenni2);
 };
 
 #endif //TRACKER_WINDOWSTESTS_H

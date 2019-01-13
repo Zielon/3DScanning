@@ -85,8 +85,4 @@ int main() {
 
 		cv::waitKey(1);
 	}*/
-
-	delete streamReader;
-
-	return 0;
 }

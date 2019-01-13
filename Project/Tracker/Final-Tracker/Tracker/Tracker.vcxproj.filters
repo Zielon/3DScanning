@@ -58,6 +58,12 @@
     <ClInclude Include="..\..\src\reconstruction\headers\MarchingCubes.h">
       <Filter>reconstruction\headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\data-stream\headers\XtionStreamReader.h">
+      <Filter>data-stream\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\data-stream\headers\Xtion2StreamReader.h">
+      <Filter>data-stream\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -98,6 +104,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src\reconstruction\sources\Mesh.cpp">
       <Filter>reconstruction\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\data-stream\sources\XtionStreamReader.cpp">
+      <Filter>data-stream\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\data-stream\sources\Xtion2StreamReader.cpp">
+      <Filter>data-stream\sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
