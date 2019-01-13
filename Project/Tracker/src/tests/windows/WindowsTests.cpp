@@ -37,7 +37,7 @@ void WindowsTests::meshTest(){
 
 	for (int i = 0; i < 3000; ++i)
 	{
-		dllMain(pc, img, pose);
+		dllMain(pc, img, pose, true);
 
 		cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
 		imshow("dllTest", dllmat);
@@ -122,7 +122,7 @@ void WindowsTests::reconstructionTest(){
 	for (int i = 0; i < 10; ++i)
 	{
 		Verbose::start();
-		dllMain(pc, img, pose);
+		dllMain(pc, img, pose, true);
 		Verbose::stop("Frame reconstruction " + std::to_string(i + 1));
 	}
 
@@ -194,7 +194,7 @@ bool WindowsTests::cameraPoseTest(){
 
 	for (int i = 0; i < 3000; ++i)
 	{
-		dllMain(pc, img, pose);
+		dllMain(pc, img, pose, false);
 
 		cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
 		imshow("dllTest", dllmat);

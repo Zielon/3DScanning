@@ -24,7 +24,7 @@ extern "C" __declspec(dllexport) int getImageWidth(void* context);
 
 extern "C" __declspec(dllexport) int getImageHeight(void* context);
 
-extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* image, float* pose);
+extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* image, float* pose, bool use_fusion);
 
 extern "C" __declspec(dllexport) int getVertexCount(void* context);
 

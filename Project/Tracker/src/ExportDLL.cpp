@@ -107,7 +107,7 @@ extern "C" __declspec(dllexport) int getImageHeight(void* context){
 	return c->m_videoStreamReader->m_height_rgb;
 }
 
-extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* image, float* pose){
+extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* image, float* pose, bool use_fusion){
 	
 	TrackerContext* tracker_context = static_cast<TrackerContext*>(context);
 
@@ -137,7 +137,10 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 	}
 
 	// Produce a new point cloud (add to the buffer)
-	//tracker_context->m_fusion->produce(tracker_context->m_tracker->m_previous_point_cloud);//Crash unity
+	
+	if (use_fusion) {
+		tracker_context->m_fusion->produce(tracker_context->m_tracker->m_previous_point_cloud);//Crash unity
+	}
 
 	// Safe the last frame reference
 	tracker_context->m_tracker->m_previous_point_cloud = source;

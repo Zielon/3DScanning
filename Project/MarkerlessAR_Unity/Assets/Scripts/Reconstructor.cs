@@ -31,9 +31,10 @@ namespace Assets.Scripts
         //general setup
         private int _w = -1;
         private int _h = -1;
-        bool _use_sensor = true;
+        bool _use_sensor = false;
         bool _use_OpenNI2 = true;
         bool _use_reconstruction = true;
+        bool _use_fusion = true;
 
 
         private LinkedList<Mesh> frameMeshes = new LinkedList<Mesh>(); 
@@ -55,7 +56,7 @@ namespace Assets.Scripts
             byte[] image, float[] pose, int w, int h);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void dllMain(IntPtr context, byte[] image, float[] pose);
+        private static extern void dllMain(IntPtr context, byte[] image, float[] pose, bool use_fusion);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern int getImageWidth(IntPtr context);
@@ -132,7 +133,7 @@ namespace Assets.Scripts
 
             if (_use_reconstruction)
             {
-                dllMain(_cppContext, _image, _pose);
+                dllMain(_cppContext, _image, _pose, _use_fusion);
             }
             else
             {
