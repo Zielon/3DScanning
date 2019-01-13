@@ -27,6 +27,7 @@ public:
 
 	Matrix3f getCameraIntrinsics() override;
 
+	int readAnyFrame(unsigned long index, cv::Mat &rgb, cv::Mat &depth);
 
 protected:
 
@@ -35,7 +36,6 @@ protected:
     int getSequentialFrame(cv::Mat &rgb, cv::Mat &depth) override;
 
     int getLatestFrame(cv::Mat &rgb, cv::Mat &depth) override;
-    int readAnyFrame(unsigned long index, cv::Mat &rgb, cv::Mat &depth);
 
 private:
 

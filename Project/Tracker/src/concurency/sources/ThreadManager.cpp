@@ -1,15 +1,21 @@
 #include "../headers/ThreadManager.h"
 
-std::vector<std::thread> ThreadManager::threads;
+std::vector<std::thread> ThreadManager::m_threads;
 
-void ThreadManager::add(std::function<void()> func) {
-	threads.emplace_back([func]()
-	{
+/// The thread list is static. You are adding to the global pool!
+void ThreadManager::add(std::function<void()> func){
+	m_threads.emplace_back([func](){
 		func();
 	});
 }
 
-void ThreadManager::waitForAll() {
+/// You are waiting for the all threads from the global pool!
+void ThreadManager::waitForAll(){
+	std::for_each(m_threads.begin(), m_threads.end(), std::mem_fn(&std::thread::join));
+	m_threads.clear();
+}
+
+void ThreadManager::waitForAll(std::vector<std::thread>& threads){
 	std::for_each(threads.begin(), threads.end(), std::mem_fn(&std::thread::join));
 	threads.clear();
 }

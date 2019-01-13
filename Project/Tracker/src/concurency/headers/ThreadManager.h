@@ -9,9 +9,12 @@ class ThreadManager
 {
 public:
 	static void add(std::function<void()> func);
+
 	static void waitForAll();
-private:
-	static std::vector<std::thread> threads;
+
+	static void waitForAll(std::vector<std::thread>& threads);
+
+	static std::vector<std::thread> m_threads;
 };
 
 #endif

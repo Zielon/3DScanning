@@ -61,14 +61,14 @@ void Mesh::merge(const Mesh& mesh){
 	m_vertices.insert(m_vertices.end(), mesh.m_vertices.begin(), mesh.m_vertices.end());
 }
 
-void Mesh::transform(const Matrix4f& trajectory){
+void Mesh::transform(const Matrix4f& matrix){
 	// Camera space to world space
 	for (int i = 0; i < m_vertices.size(); i++)
 	{
 		auto camera = m_vertices[i];
-		if(camera.x() == MINF) continue;
-		auto world = trajectory.inverse() * Vector4f(camera[0], camera[1], camera[2], 1.f);
-		m_vertices[i] = Vector3f(world[0], world[1], world[2]);
+		if (camera.x() == MINF) continue;
+		auto transform = matrix * Vector4f(camera[0], camera[1], camera[2], 1.f);
+		m_vertices[i] = Vector3f(transform[0], transform[1], transform[2]);
 	}
 }
 

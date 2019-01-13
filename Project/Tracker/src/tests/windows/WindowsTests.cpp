@@ -10,7 +10,7 @@
 #include "../../concurency/headers/ThreadManager.h"
 
 void WindowsTests::run(){
-	//reconstructionTest();
+	// reconstructionTest();
 	streamPointCloudTest();
 	// meshTest();
 	// vidReadTest();
@@ -112,7 +112,7 @@ void WindowsTests::streamPointCloudTest() const{
 	m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps);
 	m_files_manager.readDepthTimeStampFile(depth_timestamps);
 
-	for (int index = 0; index < 10; index++)
+	for (int index = 0; index < 500; index += 100)
 	{
 		//Finding proper trajectory
 		double timestamp = depth_timestamps[index];
@@ -131,11 +131,10 @@ void WindowsTests::streamPointCloudTest() const{
 		const auto trajectory = trajectories[idx];
 		cv::Mat rgb, depth;
 
-		context->m_videoStreamReader->getNextFrame(rgb, depth, false);
+		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
 		PointCloud* cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, false);
 
-		ThreadManager::add([cloud, index, trajectory]()
-		{
+		ThreadManager::add([cloud, index, trajectory](){
 			cloud->m_mesh.transform(trajectory);
 			cloud->m_mesh.save("point_cloud_" + std::to_string(index));
 			delete cloud;
@@ -144,7 +143,7 @@ void WindowsTests::streamPointCloudTest() const{
 
 	ThreadManager::waitForAll();
 
-	Verbose::message("Meshes were generated!");
+	Verbose::message("DONE streamPointCloudTest()", SUCCESS);
 
 	delete[]img;
 	SAFE_DELETE(context);
@@ -165,7 +164,7 @@ void WindowsTests::reconstructionTest() const{
 	m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps);
 	m_files_manager.readDepthTimeStampFile(depth_timestamps);
 
-	for (int index = 0; index < 10; index++)
+	for (int index = 0; index < 600; index += 50)
 	{
 		double timestamp = depth_timestamps[index];
 		double min = std::numeric_limits<double>::infinity();
@@ -183,7 +182,7 @@ void WindowsTests::reconstructionTest() const{
 		const auto trajectory = trajectories[idx];
 		cv::Mat rgb, depth;
 
-		context->m_videoStreamReader->getNextFrame(rgb, depth, false);
+		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
 		PointCloud* cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, true);
 		cloud->m_pose_estimation = trajectory;
 
@@ -195,7 +194,7 @@ void WindowsTests::reconstructionTest() const{
 
 	context->m_fusion->save("mesh");
 
-	Verbose::message("Fusion TEST done!", SUCCESS);
+	Verbose::message("DONE reconstructionTest()", SUCCESS);
 
 	delete[]img;
 	SAFE_DELETE(context);
