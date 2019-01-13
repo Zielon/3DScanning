@@ -15,7 +15,7 @@ void WindowsTests::run(){
 	// meshTest();
 	// vidReadTest();
 	// cameraPoseTest();
-	sensorTest(false);
+	sensorTest(true);
 }
 
 void WindowsTests::meshTest(){
