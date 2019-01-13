@@ -112,7 +112,7 @@ void WindowsTests::streamPointCloudTest() const{
 	m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps);
 	m_files_manager.readDepthTimeStampFile(depth_timestamps);
 
-	for (int index = 0; index < depth_timestamps.size(); index += 100)
+	for (int index = 0; index < 10; index++)
 	{
 		double timestamp = depth_timestamps[index];
 		double min = std::numeric_limits<double>::infinity();
@@ -128,14 +128,15 @@ void WindowsTests::streamPointCloudTest() const{
 		}
 
 		const auto trajectory = trajectories[idx];
+		cv::Mat rgb, depth;
 
-		ThreadManager::add([context, index, trajectory]()
+		context->m_videoStreamReader->getNextFrame(rgb, depth, false);
+		PointCloud* source = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, false);
+
+		ThreadManager::add([source, index, trajectory]()
 		{
-			cv::Mat rgb, depth;
-			context->m_videoStreamReader->getNextFrame(rgb, depth, false);
-			PointCloud* source = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, false);
-			source->m_mesh.transform(trajectory.inverse());
-			source->m_mesh.save("point_cloud_" + std::to_string(index + 1));
+			source->m_mesh.transform(trajectory);
+			source->m_mesh.save("point_cloud_" + std::to_string(index));
 			delete source;
 		});
 	}
