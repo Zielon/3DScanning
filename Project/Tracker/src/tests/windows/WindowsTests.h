@@ -27,8 +27,6 @@ private:
 	bool cameraPoseTest();
 
 	void meshTest(); 
-
-	int sensorTest(bool useOpenni2);
 };
 
 #endif //TRACKER_WINDOWSTESTS_H

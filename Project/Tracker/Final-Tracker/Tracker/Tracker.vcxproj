@@ -48,6 +48,7 @@
     <ClInclude Include="..\..\src\reconstruction\headers\Voxel.h" />
     <ClInclude Include="..\..\src\reconstruction\sources\NearestNeighbor.hpp" />
     <ClInclude Include="..\..\src\reconstruction\sources\ProcrustesAligner.hpp" />
+    <ClInclude Include="..\..\src\tests\windows\VideoStreamTests.h" />
     <ClInclude Include="..\..\src\tests\windows\WindowsTests.h" />
     <ClInclude Include="..\..\src\TrackerContext.h" />
   </ItemGroup>
@@ -67,6 +68,7 @@
     <ClCompile Include="..\..\src\reconstruction\sources\PointCloud.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Tracker.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Volume.cpp" />
+    <ClCompile Include="..\..\src\tests\windows\VideoStreamTests.cpp" />
     <ClCompile Include="..\..\src\tests\windows\WindowsTests.cpp" />
     <ClCompile Include="..\..\src\TrackerContext.cpp" />
   </ItemGroup>

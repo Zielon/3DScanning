@@ -64,6 +64,9 @@
     <ClInclude Include="..\..\src\data-stream\headers\Xtion2StreamReader.h">
       <Filter>data-stream\headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\tests\windows\VideoStreamTests.h">
+      <Filter>tests\windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -110,6 +113,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\data-stream\sources\Xtion2StreamReader.cpp">
       <Filter>data-stream\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tests\windows\VideoStreamTests.cpp">
+      <Filter>tests\windows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
