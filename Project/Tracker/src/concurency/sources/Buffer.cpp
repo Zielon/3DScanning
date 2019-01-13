@@ -32,3 +32,8 @@ T Buffer<T>::remove(){
 		return element;
 	}
 }
+
+template <class T>
+bool Buffer<T>::isEmpty(){
+	return m_buffer.size() > 0;
+}

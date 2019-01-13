@@ -50,8 +50,8 @@ inline float getTruncation(float depth){
 
 void Fusion::integrate(PointCloud* cloud){
 
-	const auto worldToCamera = cloud->m_pose_estimation;
-	const auto cameraToWorld = worldToCamera.inverse();
+	const auto cameraToWorld = cloud->m_pose_estimation;
+	const auto worldToCamera = cameraToWorld.inverse();
 
 	const auto rotation = worldToCamera.block(0, 0, 3, 3);
 	const auto translation = worldToCamera.block(0, 3, 3, 1);
@@ -118,8 +118,12 @@ void Fusion::save(string name){
 	mesh.save(name);
 }
 
+bool Fusion::isFinished() const{
+	return m_buffer->isEmpty();
+}
+
 void Fusion::initialize(){
-	m_volume = new Volume(Vector3d(-.1, -.1, -.1), Vector3d(1.1, 1.1, 1.1), 200, 1);
+	m_volume = new Volume(Vector3d(-.5, -.5, -.5), Vector3d(2, 2, 2), 200, 1);
 	m_buffer = new Buffer<PointCloud*>();
 	m_consumer = new Consumer<PointCloud*>(m_buffer);
 }

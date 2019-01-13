@@ -35,7 +35,7 @@ bool DatasetManager::readTrajectoryFile(std::vector<Matrix4f>& result, std::vect
 		if (rot.norm() == 0) break;
 
 		//Compute the inverse of the pose
-		trajectory = trajectory.inverse().eval();
+		trajectory = trajectory.eval();
 
 		//Save results
 		timestamps.push_back(timestamp);

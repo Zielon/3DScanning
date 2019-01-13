@@ -53,7 +53,7 @@ float PointCloud::getDepthImage(int x, int y) const{
 /// Downsample image 1 time
 void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
-	cv::Mat level, image, colors;
+	cv::Mat image, colors;
 
 	if (m_downsampling)
 	{
@@ -90,7 +90,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 		{
 			const unsigned int idx = y * m_current_width + x;
 
-			auto depth = image.at<float>(y, x);
+			float depth = image.at<float>(y, x);
 			auto color = colors.at<cv::Vec3b>(y, x);
 
 			m_depth_points[idx] = depth;
@@ -115,13 +115,6 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			}
 		}
 	}
-
-	#ifdef TESTING
-	m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
-	#endif
-
-	colors.release();
-	image.release();
 
 	for (auto y = 1; y < m_current_height - 1; y++)
 	{
@@ -166,6 +159,11 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			m_normals.push_back(normal);
 		}
 	}
+
+	#ifdef TESTING
+	// To build this mesh we need all points from the image
+	m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
+	#endif
 
 	m_nearestNeighbor->buildIndex(m_points);
 }

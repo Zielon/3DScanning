@@ -426,16 +426,6 @@ bool ProcessVolumeCell(Volume* vol, int x, int y, int z, double iso, Mesh* mesh)
 	Voxel* voxel7 = vol->getVoxel(Vector3i(x, y + 1, z + 1));
 	Voxel* voxel8 = vol->getVoxel(Vector3i(x + 1, y + 1, z + 1));
 
-	if (voxel1->m_free_ctr == 0 ||
-		voxel2->m_free_ctr == 0 ||
-		voxel3->m_free_ctr == 0 ||
-		voxel4->m_free_ctr == 0 ||
-		voxel5->m_free_ctr == 0 ||
-		voxel6->m_free_ctr == 0 ||
-		voxel7->m_free_ctr == 0 ||
-		voxel8->m_free_ctr == 0)
-		return false;
-
 	Vector3f tmp;
 
 	// cell corners

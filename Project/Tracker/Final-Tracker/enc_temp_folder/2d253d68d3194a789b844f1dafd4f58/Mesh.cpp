@@ -105,14 +105,7 @@ bool Mesh::save(const std::string& filename){
 
 		vertex = (vertex.x() == MINF) ? Vector3f(0.0, 0.0, 0.0) : vertex;
 		out_file << vertex.x() << " " << vertex.y() << " " << vertex.z() << " ";
-
-		if (!m_colors.empty())
-		{
-			auto color = m_colors[i];
-			out_file << +color[0] << " " << +color[1] << " " << +color[2] << " " << 255 << std::endl;
-		}
-		else
-			out_file << std::endl;
+		out_file << +color[0] << " " << +color[1] << " " << +color[2] << " " << 255 << std::endl;//0-255 format
 	}
 
 	out_file << "# LIST OF FACES" << std::endl;
