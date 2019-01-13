@@ -74,7 +74,7 @@ bool DatasetVideoStreamReader::nextFrameAvailable() {
 
 int DatasetVideoStreamReader::getSequentialFrame(cv::Mat &rgb, cv::Mat &depth) {
 
-    return readAnyFrame(getCurrentFrameIndex() + 1, rgb, depth);
+    return readAnyFrame(getCurrentFrameIndex(), rgb, depth);
 }
 
 bool DatasetVideoStreamReader::isRunning() {
