@@ -1,6 +1,6 @@
 #include "ExportDLL.h"
 
-extern "C" __declspec(dllexport) void* createContext(char* dataset_path){
+extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 
 	TrackerContext* tracker_context = new TrackerContext();
 
@@ -23,7 +23,8 @@ extern "C" __declspec(dllexport) void* createContext(char* dataset_path){
 		intrinsics(0, 2),
 		intrinsics(1, 2),
 		height,
-		width
+		width,
+		intrinsics
 	);
 
 	tracker_context->m_tracker = new Tracker(camera_parameters);
@@ -61,7 +62,7 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
-	PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth);
+	PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb);
 
 	if (is_first_frame) // first frame
 	{

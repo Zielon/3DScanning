@@ -6,12 +6,12 @@
 #include <direct.h>
 #include <io.h>
 #include "../../debugger/headers/Verbose.h"
-
-// The path to the DATASET dir, must end with a backslash!
-const std::string DATASET_DIR = "\\..\\..\\..\\MarkerlessAR_Unity\\Datasets\\freiburg\\";
+#include "../../reconstruction/headers/Mesh.h"
+#include "../../concurency/headers/ThreadManager.h"
 
 void WindowsTests::run(){
-	reconstructionTest();
+	//reconstructionTest();
+	streamPointCloudTest();
 	// meshTest();
 	// vidReadTest();
 	// cameraPoseTest();
@@ -21,13 +21,7 @@ void WindowsTests::meshTest(){
 
 	std::cout << "START meshTest()" << std::endl;
 
-	char cCurrentPath[FILENAME_MAX];
-
-	_getcwd(cCurrentPath, sizeof(cCurrentPath));
-
-	strcpy(cCurrentPath + strlen(cCurrentPath), DATASET_DIR.c_str());
-
-	TrackerContext* pc = static_cast<TrackerContext*>(createContext(cCurrentPath));
+	TrackerContext* pc = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
 
 	unsigned char* img = new unsigned char[getImageWidth(pc) * getImageHeight(pc) * 3];
 
@@ -103,43 +97,116 @@ void WindowsTests::meshTest(){
 	SAFE_DELETE(pc);
 }
 
-void WindowsTests::reconstructionTest(){
+void WindowsTests::streamPointCloudTest() const{
 
-	std::cout << "START reconstructionTest()" << std::endl;
+	Verbose::message("START streamPointCloudTest()");
 
-	char cCurrentPath[FILENAME_MAX];
+	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
 
-	_getcwd(cCurrentPath, sizeof(cCurrentPath));
+	unsigned char* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
-	strcpy(cCurrentPath + strlen(cCurrentPath), DATASET_DIR.c_str());
+	std::vector<Matrix4f> trajectories;
+	std::vector<double> trajectory_timestamps;
+	std::vector<double> depth_timestamps;
 
-	TrackerContext* pc = static_cast<TrackerContext*>(createContext(cCurrentPath));
+	m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps);
+	m_files_manager.readDepthTimeStampFile(depth_timestamps);
 
-	unsigned char* img = new unsigned char[getImageWidth(pc) * getImageHeight(pc) * 3];
-
-	float pose[16];
-
-	for (int i = 0; i < 10; ++i)
+	for (int index = 0; index < 10; index++)
 	{
-		Verbose::start();
-		dllMain(pc, img, pose);
-		Verbose::stop("Frame reconstruction " + std::to_string(i + 1));
+		//Finding proper trajectory
+		double timestamp = depth_timestamps[index];
+		double min = std::numeric_limits<double>::infinity();
+		int idx = 0;
+		for (unsigned int j = 0; j < trajectories.size(); ++j)
+		{
+			double d = abs(trajectory_timestamps[j] - timestamp);
+			if (min > d)
+			{
+				min = d;
+				idx = j;
+			}
+		}
+
+		const auto trajectory = trajectories[idx];
+		cv::Mat rgb, depth;
+
+		context->m_videoStreamReader->getNextFrame(rgb, depth, false);
+		PointCloud* cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, false);
+
+		ThreadManager::add([cloud, index, trajectory]()
+		{
+			cloud->m_mesh.transform(trajectory);
+			cloud->m_mesh.save("point_cloud_" + std::to_string(index));
+			delete cloud;
+		});
 	}
 
-	pc->m_fusion->save("mesh");
+	ThreadManager::waitForAll();
+
+	Verbose::message("Meshes were generated!");
 
 	delete[]img;
-	SAFE_DELETE(pc);
+	SAFE_DELETE(context);
+}
+
+void WindowsTests::reconstructionTest() const{
+
+	Verbose::message("START reconstructionTest()");
+
+	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+
+	unsigned char* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
+
+	std::vector<Matrix4f> trajectories;
+	std::vector<double> trajectory_timestamps;
+	std::vector<double> depth_timestamps;
+
+	m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps);
+	m_files_manager.readDepthTimeStampFile(depth_timestamps);
+
+	for (int index = 0; index < 10; index++)
+	{
+		double timestamp = depth_timestamps[index];
+		double min = std::numeric_limits<double>::infinity();
+		int idx = 0;
+		for (unsigned int j = 0; j < trajectories.size(); ++j)
+		{
+			double d = abs(trajectory_timestamps[j] - timestamp);
+			if (min > d)
+			{
+				min = d;
+				idx = j;
+			}
+		}
+
+		const auto trajectory = trajectories[idx];
+		cv::Mat rgb, depth;
+
+		context->m_videoStreamReader->getNextFrame(rgb, depth, false);
+		PointCloud* cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, true);
+		cloud->m_pose_estimation = trajectory;
+
+		context->m_fusion->produce(cloud);
+	}
+
+	while (!context->m_fusion->isFinished())
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+
+	context->m_fusion->save("mesh");
+
+	Verbose::message("Fusion TEST done!", SUCCESS);
+
+	delete[]img;
+	SAFE_DELETE(context);
 }
 
 void WindowsTests::vidReadTest(){
 
 	std::cout << "START vidReadTest()" << std::endl;
 
-	char* path = new char[DATASET_DIR.length() + 1];
-	strcpy(path, DATASET_DIR.c_str());
-
-	VideoStreamReaderBase* videoInputReader = new DatasetVideoStreamReader(path, false);
+	VideoStreamReaderBase* videoInputReader = new DatasetVideoStreamReader(
+		DatasetManager::getCurrentPath().data(), false);
 
 	if (!videoInputReader->startReading())
 	{
@@ -170,13 +237,7 @@ bool WindowsTests::cameraPoseTest(){
 
 	std::cout << "START cameraPoseTest()" << std::endl;
 
-	char cCurrentPath[FILENAME_MAX];
-
-	_getcwd(cCurrentPath, sizeof(cCurrentPath));
-
-	strcpy(cCurrentPath + strlen(cCurrentPath), DATASET_DIR.c_str());
-
-	TrackerContext* pc = static_cast<TrackerContext*>(createContext(cCurrentPath));
+	TrackerContext* pc = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
 
 	unsigned char* img = new unsigned char[getImageWidth(pc) * getImageHeight(pc) * 3];
 
@@ -186,7 +247,7 @@ bool WindowsTests::cameraPoseTest(){
 	std::vector<Matrix4f> trajectories;
 	std::vector<double> trajectory_timestamps;
 
-	if (!readTrajectoryFile(string(cCurrentPath) + "groundtruth.txt", trajectories, trajectory_timestamps))
+	if (!m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps))
 	{
 		std::cout << "Groundtruth trajectories are not available" << std::endl;
 		return false;
@@ -221,55 +282,4 @@ bool WindowsTests::cameraPoseTest(){
 
 		std::cin.get();
 	}
-}
-
-bool WindowsTests::readTrajectoryFile(const std::string& filename, std::vector<Matrix4f>& result,
-                                      std::vector<double>& timestamps){
-
-	std::ifstream file(filename, std::ios::in);
-
-	if (!file.is_open()) return false;
-	result.clear();
-
-	//Skip not important lines
-	std::string dump;
-	std::getline(file, dump);
-	std::getline(file, dump);
-	std::getline(file, dump);
-
-	while (file.good())
-	{
-		//Read data from file
-		double timestamp;
-		file >> timestamp;
-		Vector3f translation;
-		file >> translation.x() >> translation.y() >> translation.z();
-		Quaternionf rot;
-		file >> rot;
-
-		//Build pose matrix from data
-		Matrix4f transf;
-		transf.setIdentity();
-		transf.block<3, 3>(0, 0) = rot.toRotationMatrix();
-		transf.block<3, 1>(0, 3) = translation;
-
-		if (rot.norm() == 0) break;
-
-		//Compute the inverse of the pose
-		transf = transf.inverse().eval();
-
-		//Save results
-		timestamps.push_back(timestamp);
-		result.push_back(transf);
-	}
-
-	file.close();
-
-	return true;
-}
-
-void readTrajectories(){
-
-	std::vector<Matrix4f> m_trajectory;
-	std::vector<double> m_trajectoryTimeStamps;
 }

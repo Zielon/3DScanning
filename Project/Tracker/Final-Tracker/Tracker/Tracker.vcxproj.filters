@@ -58,6 +58,12 @@
     <ClInclude Include="..\..\src\reconstruction\headers\MarchingCubes.h">
       <Filter>reconstruction\headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\files-manager\headers\DatasetManager.h">
+      <Filter>files-manager\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\concurency\headers\ThreadManager.h">
+      <Filter>concurency\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -98,6 +104,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src\reconstruction\sources\Mesh.cpp">
       <Filter>reconstruction\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\files-manager\sources\DatasetManager.cpp">
+      <Filter>files-manager\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\concurency\sources\ThreadManager.cpp">
+      <Filter>concurency\sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +154,15 @@
     </Filter>
     <Filter Include="debugger\sources">
       <UniqueIdentifier>{d9012683-0f62-4796-9da2-379f8ce4180d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files-manager">
+      <UniqueIdentifier>{cea74d82-2595-4e9c-bfb2-2329bdb40e56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files-manager\headers">
+      <UniqueIdentifier>{834b2bd2-f7ec-4c5d-884f-0c7508447a85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="files-manager\sources">
+      <UniqueIdentifier>{aa9165ad-15d1-4ebb-8a2d-c8e03174aa8a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

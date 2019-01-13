@@ -39,6 +39,8 @@ public:
 
 	void save(string name);
 
+	bool isFinished() const;
+
 	std::vector<int> m_currentIndexBuffer;
 
 private:

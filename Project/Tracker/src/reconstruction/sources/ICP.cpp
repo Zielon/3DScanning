@@ -23,7 +23,7 @@ Matrix4f ICP::estimatePose(PointCloud* source, PointCloud* target){
 		auto transformedPoints = transformPoints(source->getPoints(), pose);
 		auto transformedNormals = transformNormals(source->getNormals(), pose);
 
-		auto matches = target->getNearestNeighborSearch()->queryMatches(transformedPoints);
+		auto matches = target->m_nearestNeighbor->queryMatches(transformedPoints);
 
 		pruneCorrespondences(transformedNormals, target->getNormals(), matches);
 

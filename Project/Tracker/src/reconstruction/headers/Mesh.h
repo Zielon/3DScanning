@@ -7,6 +7,8 @@
 #include <fstream>
 #include <list>
 #include <iostream>
+#include "../../Eigen.h"
+#include <thread>
 
 struct Triangle
 {
@@ -22,62 +24,26 @@ class Mesh
 {
 public:
 
-	void Clear(){
-		m_vertices.clear();
-		m_triangles.clear();
-	}
+	Mesh();
 
-	unsigned int AddVertex(Eigen::Vector3f& vertex){
-		unsigned int vId = (unsigned int)m_vertices.size();
-		m_vertices.emplace_back(vertex);
-		return vId;
-	}
+	Mesh(std::vector<Vector3f>& vertices, std::vector<Vector4uc>& colors, int width, int height);
 
-	unsigned int AddFace(unsigned int idx0, unsigned int idx1, unsigned int idx2){
-		unsigned int fId = (unsigned int)m_triangles.size();
-		Triangle triangle(idx0, idx1, idx2);
-		m_triangles.emplace_back(triangle);
-		return fId;
-	}
+	unsigned int addVertex(Vector3f& vertex);
 
-	std::list<Eigen::Vector3f>& GetVertices(){
-		return m_vertices;
-	}
+	unsigned int addFace(unsigned int idx0, unsigned int idx1, unsigned int idx2);
 
-	std::list<Triangle>& GetTriangles(){
-		return m_triangles;
-	}
+	void merge(const Mesh& mesh);
 
-	bool WriteMesh(const std::string& filename){
-		// Write off file
-		std::ofstream out_file(filename + ".off");
-		if (!out_file.is_open()) return false;
+	bool save(const std::string& filename);
 
-		// write header
-		out_file << "OFF" << std::endl;
-		out_file << m_vertices.size() << " " << m_triangles.size() << " 0" << std::endl;
+	void transform(const Matrix4f& matrix);
 
-		// save vertices
-		for (auto vertex : m_vertices)
-		{
-			out_file << vertex.x() << " " << vertex.y() << " " << vertex.z() << std::endl;
-		}
-
-		// save faces
-		for (auto triangle : m_triangles)
-		{
-			out_file << "3 " << triangle.idx0 << " " << triangle.idx1 << " " << triangle.idx2 << std::endl;
-		}
-
-		// close file
-		out_file.close();
-
-		return true;
-	}
+	std::vector<Vector3f> m_vertices;
+	std::vector<Triangle> m_triangles;
+	std::vector<Vector4uc> m_colors;
 
 private:
-	std::list<Eigen::Vector3f> m_vertices;
-	std::list<Triangle> m_triangles;
+	bool isValidTriangle(Vector3f p0, Vector3f p1, Vector3f p2, float edgeThreshold) const;
 };
 
 #endif
