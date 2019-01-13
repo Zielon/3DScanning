@@ -46,13 +46,10 @@ void Fusion::integrate(PointCloud* cloud){
 
 	if (!frustum_box.m_is_valid) return;
 
-	#pragma omp parallel
 	for (unsigned int z = frustum_box.m_min_z; z < frustum_box.m_max_z; z++)
 		for (unsigned int y = frustum_box.m_min_y; y < frustum_box.m_max_y; y++)
 			for (unsigned int x = frustum_box.m_min_x; x < frustum_box.m_max_x; x++)
 			{
-				Voxel* voxel = m_volume->getVoxel(x, y, z);
-
 				// Transform from the cell world to the camera world
 				Vector3f cell = rotation * m_volume->getWorldPosition(Vector3i(x, y, z)) + translation;
 
@@ -66,6 +63,10 @@ void Fusion::integrate(PointCloud* cloud){
 
 				// Depth was not found
 				if (depth == INFINITY) continue;
+
+				m_mutex.lock();
+
+				Voxel* voxel = m_volume->getVoxel(x, y, z);
 
 				// Update free space counter if voxel is in the front of observation
 				if (cell.z() < depth)
@@ -85,6 +86,8 @@ void Fusion::integrate(PointCloud* cloud){
 				}
 
 				m_weight_update += weight;
+
+				m_mutex.unlock();
 			}
 
 	SAFE_DELETE(cloud);
@@ -114,7 +117,7 @@ bool Fusion::isFinished() const{
 
 /// Buffer has a certain capacity when it is exceeded 
 /// this method will block the execution
-void Fusion::produce(PointCloud* cloud) const {
+void Fusion::produce(PointCloud* cloud) const{
 	m_buffer->add(cloud);
 }
 
