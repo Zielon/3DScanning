@@ -11,7 +11,7 @@
 
 void WindowsTests::run(){
 	reconstructionTest();
-	streamPointCloudTest();
+	//streamPointCloudTest();
 	// meshTest();
 	// vidReadTest();
 	// cameraPoseTest();
@@ -131,13 +131,13 @@ void WindowsTests::streamPointCloudTest() const{
 		cv::Mat rgb, depth;
 
 		context->m_videoStreamReader->getNextFrame(rgb, depth, false);
-		PointCloud* source = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, false);
+		PointCloud* cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, false);
 
-		ThreadManager::add([source, index, trajectory]()
+		ThreadManager::add([cloud, index, trajectory]()
 		{
-			source->m_mesh.transform(trajectory);
-			source->m_mesh.save("point_cloud_" + std::to_string(index));
-			delete source;
+			cloud->m_mesh.transform(trajectory);
+			cloud->m_mesh.save("point_cloud_" + std::to_string(index));
+			delete cloud;
 		});
 	}
 
@@ -149,7 +149,7 @@ void WindowsTests::streamPointCloudTest() const{
 	SAFE_DELETE(context);
 }
 
-void WindowsTests::reconstructionTest(){
+void WindowsTests::reconstructionTest() const{
 
 	Verbose::message("START reconstructionTest()");
 
@@ -157,16 +157,44 @@ void WindowsTests::reconstructionTest(){
 
 	unsigned char* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
-	float pose[16];
+	std::vector<Matrix4f> trajectories;
+	std::vector<double> trajectory_timestamps;
+	std::vector<double> depth_timestamps;
 
-	for (int i = 0; i < 10; ++i)
+	m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps);
+	m_files_manager.readDepthTimeStampFile(depth_timestamps);
+
+	for (int index = 0; index < 10; index++)
 	{
-		Verbose::start();
-		dllMain(context, img, pose);
-		Verbose::stop("Frame reconstruction " + std::to_string(i + 1), SUCCESS);
+		double timestamp = depth_timestamps[index];
+		double min = std::numeric_limits<double>::infinity();
+		int idx = 0;
+		for (unsigned int j = 0; j < trajectories.size(); ++j)
+		{
+			double d = abs(trajectory_timestamps[j] - timestamp);
+			if (min > d)
+			{
+				min = d;
+				idx = j;
+			}
+		}
+
+		const auto trajectory = trajectories[idx];
+		cv::Mat rgb, depth;
+
+		context->m_videoStreamReader->getNextFrame(rgb, depth, false);
+		PointCloud* cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, true);
+		cloud->m_pose_estimation = trajectory;
+
+		context->m_fusion->produce(cloud);
 	}
 
+	while (!context->m_fusion->isFinished())
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+
 	context->m_fusion->save("mesh");
+
+	Verbose::message("Fusion TEST done!", SUCCESS);
 
 	delete[]img;
 	SAFE_DELETE(context);

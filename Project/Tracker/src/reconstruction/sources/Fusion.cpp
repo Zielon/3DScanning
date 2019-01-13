@@ -118,8 +118,12 @@ void Fusion::save(string name){
 	mesh.save(name);
 }
 
+bool Fusion::isFinished() const{
+	return m_buffer->isEmpty();
+}
+
 void Fusion::initialize(){
-	m_volume = new Volume(Vector3d(-.1, -.1, -.1), Vector3d(1.1, 1.1, 1.1), 200, 1);
+	m_volume = new Volume(Vector3d(-.5, -.5, -.5), Vector3d(2, 2, 2), 200, 1);
 	m_buffer = new Buffer<PointCloud*>();
 	m_consumer = new Consumer<PointCloud*>(m_buffer);
 }

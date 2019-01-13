@@ -13,6 +13,8 @@ public:
 
 	T remove();
 
+	bool isEmpty();
+
 private:
 	std::mutex m_mutex;
 	std::condition_variable m_cond;

@@ -15,7 +15,7 @@ private:
 
 	void streamPointCloudTest() const;
 
-    static void reconstructionTest();
+    void reconstructionTest() const;
 
     void vidReadTest();
 
