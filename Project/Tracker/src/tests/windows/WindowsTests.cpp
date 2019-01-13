@@ -11,7 +11,7 @@
 
 void WindowsTests::run(){
 	reconstructionTest();
-	// streamPointCloudTest();
+	streamPointCloudTest();
 	// meshTest();
 	// vidReadTest();
 	// cameraPoseTest();

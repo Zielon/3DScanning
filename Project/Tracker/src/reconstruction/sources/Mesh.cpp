@@ -91,7 +91,7 @@ bool Mesh::save(const std::string& filename){
 		to_string(m_triangles.size()) + " triangles");
 
 	// write header
-	out_file << "OFF" << std::endl;
+	out_file << "COFF" << std::endl;
 	out_file << m_vertices.size() << " " << m_triangles.size() << " 0" << std::endl;
 
 	out_file << "# LIST OF VERTICES" << std::endl;
@@ -101,10 +101,16 @@ bool Mesh::save(const std::string& filename){
 	for (int i = 0; i < m_vertices.size(); i++)
 	{
 		auto vertex = m_vertices[i];
-		auto color = m_colors[i];
+		
 		vertex = (vertex.x() == MINF) ? Vector3f(0.0, 0.0, 0.0) : vertex;
-		out_file << vertex.x() << " " << vertex.y() << " " << vertex.z() << " " << std::endl;
-		//out_file << +color[0] << " " << +color[1] << " " << +color[2] << " " << 0 << std::endl;
+		out_file << vertex.x() << " " << vertex.y() << " " << vertex.z() << " ";
+		if(!m_colors.empty())
+		{
+			auto color = m_colors[i];
+			out_file << +color[0] << " " << +color[1] << " " << +color[2] << " " << 255 << std::endl;
+		}else
+			out_file << std::endl;
+		
 	}
 
 	out_file << "# LIST OF FACES" << std::endl;
@@ -118,7 +124,7 @@ bool Mesh::save(const std::string& filename){
 	// close file
 	out_file.close();
 
-	Verbose::message("Generating the mesh was successful!");
+	Verbose::message("Generating the mesh was successful!", SUCCESS);
 
 	return true;
 }
