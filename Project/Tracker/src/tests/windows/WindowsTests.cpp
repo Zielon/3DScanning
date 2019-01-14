@@ -164,7 +164,7 @@ void WindowsTests::reconstructionTest() const{
 	m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps);
 	m_files_manager.readDepthTimeStampFile(depth_timestamps);
 
-	for (int index = 0; index < 600; index += 50)
+	for (int index = 0; index < 600; index += 1)
 	{
 		double timestamp = depth_timestamps[index];
 		double min = std::numeric_limits<double>::infinity();
@@ -183,9 +183,8 @@ void WindowsTests::reconstructionTest() const{
 		cv::Mat rgb, depth;
 
 		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
-		PointCloud* cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, true);
+		PointCloud* cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, false);
 		cloud->m_pose_estimation = trajectory;
-
 		context->m_fusion->produce(cloud);
 	}
 

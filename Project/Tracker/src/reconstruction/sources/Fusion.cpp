@@ -11,18 +11,12 @@ Fusion::Fusion(CameraParameters camera_parameters) : m_camera_parameters(camera_
 }
 
 Fusion::~Fusion(){
-	std::for_each(m_consumers.begin(), m_consumers.end(),
-	              [](auto consumer){
-		              consumer->stop();
-	              });
-
-	ThreadManager::waitForAll(m_consumer_threads);
-
+	stopConsumers();
+	SAFE_DELETE(m_volume);
+	SAFE_DELETE(m_buffer);
 	std::for_each(m_consumers.begin(), m_consumers.end(), [](auto consumer){
 		SAFE_DELETE(consumer);
 	});
-	SAFE_DELETE(m_volume);
-	SAFE_DELETE(m_buffer);
 }
 
 inline Vector3i round(const Vector3f& point){
@@ -64,7 +58,7 @@ void Fusion::integrate(PointCloud* cloud){
 				// Depth was not found
 				if (depth == INFINITY) continue;
 
-				m_mutex.lock();
+				std::unique_lock<std::mutex> locker(m_mutex);
 
 				Voxel* voxel = m_volume->getVoxel(x, y, z);
 
@@ -87,19 +81,15 @@ void Fusion::integrate(PointCloud* cloud){
 
 				m_weight_update += weight;
 
-				m_mutex.unlock();
+				locker.unlock();
 			}
 
 	SAFE_DELETE(cloud);
 }
 
 void Fusion::save(string name){
-	std::for_each(m_consumers.begin(), m_consumers.end(),
-	              [](auto consumer){
-		              consumer->stop();
-	              });
 
-	ThreadManager::waitForAll(m_consumer_threads);
+	stopConsumers();
 
 	Mesh mesh;
 
@@ -142,6 +132,27 @@ void Fusion::initialize(){
 	m_buffer = new Buffer<PointCloud*>();
 }
 
+int Fusion::clamp(float value) const{
+	const auto max = float(m_volume->m_size);
+	return int(std::max(0.f, std::min(max, value)));
+}
+
+void Fusion::stopConsumers(){
+	for (auto& consumer : m_consumers)
+		consumer->stop();
+
+	ThreadManager::detachAll(m_consumer_threads);
+}
+
+/// Back-project to camera space
+Vector3f Fusion::backproject(float x, float y, float z) const{
+	Vector3f point;
+	point << (x - m_camera_parameters.m_cX) / m_camera_parameters.m_focal_length_X *
+		z, (y - m_camera_parameters.m_cY) / m_camera_parameters.m_focal_length_Y * z,
+		z;
+	return point;
+}
+
 Vector3f Fusion::reproject(Vector3f point) const{
 	float x = m_camera_parameters.m_focal_length_X * point.x() / point.z() + m_camera_parameters.m_cX;
 	float y = m_camera_parameters.m_focal_length_Y * point.y() / point.z() + m_camera_parameters.m_cY;
@@ -150,12 +161,23 @@ Vector3f Fusion::reproject(Vector3f point) const{
 
 FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld) const{
 
+	const auto rotation = cameraToWorld.block(0, 0, 3, 3);
 	const auto translation = cameraToWorld.block(0, 3, 3, 1);
 
 	// Assuming that a camera is placed in (0,0,0)
-	Vector3f cameraWorld = Vector3f(0, 0, 0) + translation;
-	Vector3i cameraGrid = m_volume->getGridPosition(cameraWorld);
-	Voxel* cameraVoxel = m_volume->getVoxel(cameraGrid);
+	Vector3f cameraWorld = rotation * backproject(0, 0, 0) + translation;
+	Vector3i cameraCenter = m_volume->getGridPosition(cameraWorld);
+
+	// Image -> Camera -> World -> Grid
+	Vector3i min = m_volume->getGridPosition(
+		rotation * backproject(-m_camera_parameters.m_image_width / 2, -m_camera_parameters.m_image_height / 2, 0) +
+		translation);
+
+	Vector3i max = m_volume->getGridPosition(
+		rotation * backproject(m_camera_parameters.m_image_width / 2, m_camera_parameters.m_image_height / 2, 0) +
+		translation);
+
+	Voxel* cameraVoxel = m_volume->getVoxel(cameraCenter);
 
 	FrustumBox box;
 
@@ -169,14 +191,13 @@ FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld) const{
 	// Camera has a valid position
 	box.m_is_valid = true;
 
-	// TODO Calculate bounds of the viewing frustum
+	box.m_min_x = clamp(min.x());
+	box.m_max_x = clamp(max.x());
 
-	box.m_min_x = 0;
-	box.m_min_y = 0;
+	box.m_min_y = clamp(min.y());
+	box.m_max_y = clamp(max.y());
+
 	box.m_min_z = 0;
-
-	box.m_max_x = m_volume->m_size;
-	box.m_max_y = m_volume->m_size;
 	box.m_max_z = m_volume->m_size;
 
 	return box;

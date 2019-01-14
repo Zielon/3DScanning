@@ -50,6 +50,12 @@ private:
 
 	FrustumBox computeFrustumBounds(Matrix4f pose) const;
 
+	int clamp(float value) const;
+
+	void stopConsumers();
+
+	Vector3f backproject(float x, float y, float z) const;
+
 	float m_weight_update = 1;
 	std::vector<std::thread> m_consumer_threads;
 	std::vector<Consumer<PointCloud*>*> m_consumers;
@@ -57,7 +63,7 @@ private:
 	CameraParameters m_camera_parameters;
 	Volume* m_volume;
 	std::mutex m_mutex;
-	const int NUMBER_OF_CONSUMERS = 5;
+	const int NUMBER_OF_CONSUMERS = 2;
 };
 
 #endif //TRACKER_LIB_FUSION_H

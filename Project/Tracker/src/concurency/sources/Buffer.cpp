@@ -33,5 +33,5 @@ T Buffer<T>::remove(){
 
 template <class T>
 bool Buffer<T>::isEmpty(){
-	return m_buffer.size() > 0;
+	return m_buffer.empty();
 }
