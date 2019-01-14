@@ -55,6 +55,9 @@ namespace Assets.Scripts
         private static extern int getImageHeight(IntPtr context);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void getCameraIntrinsics(IntPtr context, float[] intrinsics);
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern int getVertexCount(IntPtr context);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
@@ -85,8 +88,34 @@ namespace Assets.Scripts
 
             _w = getImageWidth(_cppContext);
             _h = getImageHeight(_cppContext);
-
             Debug.Log("Created Contex. Image dimensions: " + _w + "x" + _h);
+
+            float[] intrinsics = new float[9];
+            getCameraIntrinsics(_cppContext, intrinsics);
+
+            Camera cam = cameraRig.GetComponentInChildren<Camera>(); 
+            if(cam == null)
+            {
+                Debug.LogError("Could not find camera attached to camRig!"); 
+            }
+            else
+            {
+                Vector4 firstCol = new Vector4(intrinsics[0], intrinsics[1], intrinsics[2], 0);
+                Vector4 secCol = new Vector4(intrinsics[3], intrinsics[4], intrinsics[5], 0);
+                Vector4 thirdCol = new Vector4(intrinsics[6], intrinsics[7], intrinsics[8], 0);
+                Vector4 fourthCol = new Vector4(0, 0, 0, 1);
+                Matrix4x4 projectionMat = new Matrix4x4();
+                projectionMat.SetColumn(0, firstCol);
+                projectionMat.SetColumn(1, secCol);
+                projectionMat.SetColumn(2, thirdCol);
+                projectionMat.SetColumn(3, fourthCol);
+
+                cam.projectionMatrix = projectionMat;
+
+                Debug.Log("Camera intrinsics:\n" + projectionMat); 
+                   
+            }
+
 
             _pose = new float[16];
             _image = new byte[_w * _h * 3];

@@ -1253,6 +1253,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: demoscene
       objectReference: {fileID: 0}
+    - target: {fileID: 100012, guid: 806061d3c8a5f024d940f8cc9e032b49, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 100000, guid: 806061d3c8a5f024d940f8cc9e032b49, type: 3}
       propertyPath: m_TagString
       value: FrameMesh
@@ -2234,7 +2238,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1555687158}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 31c7d86c210395044bcaf2f7797dcf1a, type: 3}
   m_Name: 
