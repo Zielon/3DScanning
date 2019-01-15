@@ -163,6 +163,9 @@ extern "C" __declspec(dllexport) void* WOzCreateContext(const char* dataset_path
 	tracker_context->meshPath = "C:\\Users\\Patrick\\Desktop\\3dscan\\3DScanning\\Project\\Tracker\\Final-Tracker\\Tracker\\test_meshes\\";
 	tracker_context->m_datasetManager->readDepthTimeStampFile(tracker_context->depth_timestamps);
 
+
+	tracker_context->invInitPose = tracker_context->trajectories[0].inverse(); 
+
 	return tracker_context;
 }
 
@@ -193,13 +196,13 @@ extern "C" __declspec(dllexport) void WOzDllMain(void* context, unsigned char* i
 		}
 	}
 
-	Matrix4f poseMat = tracker_context->trajectories[idx];
+	Matrix4f poseMat = tracker_context->trajectories[idx] * tracker_context->invInitPose;
 	memcpy(pose, poseMat.data(), 16 * sizeof(float));
 
 	SAFE_DELETE(tracker_context->m_tracker->m_previous_point_cloud); 
 	tracker_context->m_tracker->m_previous_point_cloud = new PointCloud();
 	tracker_context->m_tracker->m_previous_point_cloud->m_mesh.load(tracker_context->meshPath + "mesh_" + std::to_string(index) + ".off");
-
+	tracker_context->m_tracker->m_previous_point_cloud->m_mesh.transform(tracker_context->invInitPose);
 	//So turns out opencv actually uses bgr not rgb...
 	//no more opencv computations after this point
 	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);

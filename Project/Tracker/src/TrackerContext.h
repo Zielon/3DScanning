@@ -35,6 +35,7 @@ struct WOzTrackerContext
 
 	DatasetManager* m_datasetManager; 
 	Mesh* currentMesh = nullptr; 
+	Matrix4f invInitPose; 
 	std::vector<Matrix4f> trajectories;
 	std::vector<double> trajectory_timestamps;
 	std::vector<double> depth_timestamps; 

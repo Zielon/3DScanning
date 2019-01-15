@@ -201,7 +201,7 @@ namespace Assets.Scripts
             frameMeshes.AddLast(mesh);
 
 
-            Debug.Log("Loaded mesh with " + vertexCount + " verts and " + indexCount + " indices."); 
+         //   Debug.Log("Loaded mesh with " + vertexCount + " verts and " + indexCount + " indices."); 
 
         }
 
