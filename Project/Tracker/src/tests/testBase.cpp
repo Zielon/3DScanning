@@ -21,8 +21,8 @@ void testBase::run() {
 	//auto reconstruction = new reconstructionTest();
 	//auto pointCloud = new pointCloudTest();
 	//auto mesh = new meshTest();
-	auto vidRead = new vidReadTest();
-	//auto camPoseTest = new cameraPoseTest();
+	//auto vidRead = new vidReadTest();
+	auto camPoseTest = new cameraPoseTest();
 }
 
 const Eigen::Matrix4f testBase::getTrajectory(int index) { //get trajectory

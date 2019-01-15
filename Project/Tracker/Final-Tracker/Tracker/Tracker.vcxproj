@@ -54,7 +54,6 @@
     <ClInclude Include="..\..\src\tests\reconstructionTest.h" />
     <ClInclude Include="..\..\src\tests\testBase.h" />
     <ClInclude Include="..\..\src\tests\vidReadTest.h" />
-    <ClInclude Include="..\..\src\tests\windows\WindowsTests.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\concurency\sources\Buffer.cpp" />
@@ -78,7 +77,6 @@
     <ClCompile Include="..\..\src\tests\reconstructionTest.cpp" />
     <ClCompile Include="..\..\src\tests\testBase.cpp" />
     <ClCompile Include="..\..\src\tests\vidReadTest.cpp" />
-    <ClCompile Include="..\..\src\tests\windows\WindowsTests.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

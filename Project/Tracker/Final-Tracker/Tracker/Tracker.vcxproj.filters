@@ -3,9 +3,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\Eigen.h" />
     <ClInclude Include="..\..\src\ExportDLL.h" />
-    <ClInclude Include="..\..\src\tests\windows\WindowsTests.h">
-      <Filter>tests\windows</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\data-stream\headers\DatasetVideoStreamReader.h">
       <Filter>data-stream\headers</Filter>
     </ClInclude>
@@ -85,9 +82,6 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
-    <ClCompile Include="..\..\src\tests\windows\WindowsTests.cpp">
-      <Filter>tests\windows</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\data-stream\sources\DatasetVideoStreamReader.cpp">
       <Filter>data-stream\sources</Filter>
     </ClCompile>
@@ -161,9 +155,6 @@
     </Filter>
     <Filter Include="data-stream\sources">
       <UniqueIdentifier>{c5624ec5-becc-421d-b4d4-cd43aea6bd1b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="tests\windows">
-      <UniqueIdentifier>{558ae7d3-65f1-4695-86f0-4f4651873745}</UniqueIdentifier>
     </Filter>
     <Filter Include="reconstruction\headers">
       <UniqueIdentifier>{a665fb45-b2a7-42a4-b8a3-531986ede890}</UniqueIdentifier>
