@@ -1,6 +1,4 @@
-#include "vidReadTest.h"
-
-
+#include "../headers/vidReadTest.h"
 
 vidReadTest::vidReadTest()
 {

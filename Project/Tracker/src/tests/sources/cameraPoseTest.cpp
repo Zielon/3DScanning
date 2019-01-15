@@ -1,6 +1,4 @@
-#include "cameraPoseTest.h"
-
-
+#include "../headers/cameraPoseTest.h"
 
 cameraPoseTest::cameraPoseTest()
 {

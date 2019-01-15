@@ -1,6 +1,4 @@
-#include "reconstructionTest.h"
-
-
+#include "../headers/reconstructionTest.h"
 
 reconstructionTest::reconstructionTest()
 {

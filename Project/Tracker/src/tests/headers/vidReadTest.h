@@ -1,5 +1,5 @@
-
 #include "testBase.h"
+
 class vidReadTest :
 	public testBase
 {

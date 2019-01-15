@@ -1,6 +1,4 @@
-#include "meshTest.h"
-
-
+#include "../headers/meshTest.h"
 
 meshTest::meshTest()
 {

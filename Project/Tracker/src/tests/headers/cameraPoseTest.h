@@ -1,5 +1,6 @@
 #pragma once
 #include "testBase.h"
+
 class cameraPoseTest :
 	public testBase
 {

@@ -1,21 +1,10 @@
-#include "testBase.h"
+#include "../headers/testBase.h"
 
-#include "pointCloudTest.h"
-#include "reconstructionTest.h"
-#include "vidReadTest.h"
-#include "cameraPoseTest.h"
-#include "meshTest.h"
-
-
-
-testBase::testBase()
-{
-}
-
-
-testBase::~testBase()
-{
-}
+#include "../headers/pointCloudTest.h"
+#include "../headers/reconstructionTest.h"
+#include "../headers/vidReadTest.h"
+#include "../headers/cameraPoseTest.h"
+#include "../headers/meshTest.h"
 
 void testBase::run() {
 	//auto reconstruction = new reconstructionTest();

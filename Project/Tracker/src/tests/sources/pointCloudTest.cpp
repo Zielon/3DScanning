@@ -1,6 +1,4 @@
-#include "pointCloudTest.h"
-
-
+#include "../headers/pointCloudTest.h"
 
 pointCloudTest::pointCloudTest()
 {

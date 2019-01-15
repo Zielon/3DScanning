@@ -60,23 +60,23 @@
     <ClInclude Include="..\..\src\concurency\headers\ThreadManager.h">
       <Filter>concurency\headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\tests\pointCloudTest.h">
-      <Filter>tests</Filter>
+    <ClInclude Include="..\..\src\tests\headers\vidReadTest.h">
+      <Filter>tests\headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\tests\testBase.h">
-      <Filter>tests</Filter>
+    <ClInclude Include="..\..\src\tests\headers\cameraPoseTest.h">
+      <Filter>tests\headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\tests\cameraPoseTest.h">
-      <Filter>tests</Filter>
+    <ClInclude Include="..\..\src\tests\headers\meshTest.h">
+      <Filter>tests\headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\tests\meshTest.h">
-      <Filter>tests</Filter>
+    <ClInclude Include="..\..\src\tests\headers\pointCloudTest.h">
+      <Filter>tests\headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\tests\reconstructionTest.h">
-      <Filter>tests</Filter>
+    <ClInclude Include="..\..\src\tests\headers\reconstructionTest.h">
+      <Filter>tests\headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\tests\vidReadTest.h">
-      <Filter>tests</Filter>
+    <ClInclude Include="..\..\src\tests\headers\testBase.h">
+      <Filter>tests\headers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -121,23 +121,23 @@
     <ClCompile Include="..\..\src\concurency\sources\ThreadManager.cpp">
       <Filter>concurency\sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\tests\pointCloudTest.cpp">
-      <Filter>tests</Filter>
+    <ClCompile Include="..\..\src\tests\sources\vidReadTest.cpp">
+      <Filter>tests\sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\tests\testBase.cpp">
-      <Filter>tests</Filter>
+    <ClCompile Include="..\..\src\tests\sources\cameraPoseTest.cpp">
+      <Filter>tests\sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\tests\cameraPoseTest.cpp">
-      <Filter>tests</Filter>
+    <ClCompile Include="..\..\src\tests\sources\meshTest.cpp">
+      <Filter>tests\sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\tests\meshTest.cpp">
-      <Filter>tests</Filter>
+    <ClCompile Include="..\..\src\tests\sources\pointCloudTest.cpp">
+      <Filter>tests\sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\tests\reconstructionTest.cpp">
-      <Filter>tests</Filter>
+    <ClCompile Include="..\..\src\tests\sources\reconstructionTest.cpp">
+      <Filter>tests\sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\tests\vidReadTest.cpp">
-      <Filter>tests</Filter>
+    <ClCompile Include="..\..\src\tests\sources\testBase.cpp">
+      <Filter>tests\sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -188,6 +188,12 @@
     </Filter>
     <Filter Include="files-manager\sources">
       <UniqueIdentifier>{aa9165ad-15d1-4ebb-8a2d-c8e03174aa8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tests\headers">
+      <UniqueIdentifier>{bff91b28-2435-45df-a62c-b990d9ee016b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tests\sources">
+      <UniqueIdentifier>{39250202-c9e6-47f9-9caa-f16e7129efd6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
