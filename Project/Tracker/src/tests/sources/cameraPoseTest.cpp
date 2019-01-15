@@ -14,7 +14,7 @@ cameraPoseTest::cameraPoseTest()
 	{
 		const auto trajectory = getTrajectory(i);
 
-		dllMain(pc, img, pose);
+		trackerCameraPose(pc, img, pose);
 
 		cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
 		imshow("dllTest", dllmat);
