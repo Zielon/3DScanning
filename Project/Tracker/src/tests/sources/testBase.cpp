@@ -1,11 +1,15 @@
 #include "../headers/TestBase.h"
+#include "../headers/DataStreamTest.h"
+#include "../headers/ReconstructionTest.h"
+#include "../headers/TrackerTest.h"
 
 TestBase::TestBase() {
 	//Read groundtruth trajectories (camera poses)
 	std::vector<Matrix4f> trajectories;
 	std::vector<double> trajectory_timestamps;
 	std::vector<double> depth_timestamps;
-
+	if (!m_trajectories.empty())
+		return;
 	m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps);
 	m_files_manager.readDepthTimeStampFile(depth_timestamps);
 	for (int i = 0; i < 600; i++) {
@@ -26,4 +30,4 @@ TestBase::TestBase() {
 	}
 
 };
-
+std::vector<Eigen::Matrix4f> TestBase::m_trajectories;

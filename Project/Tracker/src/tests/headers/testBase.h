@@ -19,9 +19,11 @@ class TestBase
 {
 public:
 	TestBase();
-	//void run();
+	virtual void run() = 0;
+
+
 protected:
 	DatasetManager m_files_manager;
-	std::vector<Eigen::Matrix4f> m_trajectories;
+	static std::vector<Eigen::Matrix4f> m_trajectories;
 };
 
