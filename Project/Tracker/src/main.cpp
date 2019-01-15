@@ -4,9 +4,9 @@
 
 int main(int argc, char** argv){
 
-	auto track_test = new trackerTest();
-	auto reconstruction_test = new reconstructionTest();
-	auto data_stream_test = new dataStreamTest();
+	auto track_test = new TrackerTest();
+	auto reconstruction_test = new ReconstructionTest();
+	auto data_stream_test = new DataStreamTest();
 	track_test->cameraPoseTest();
 	//reconstruction_test->pointCloudTest();
 	//reconstruction_test->meshTest();

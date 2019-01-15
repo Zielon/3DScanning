@@ -1,6 +1,6 @@
-#include "../headers/reconstructionTest.h"
+#include "../headers/ReconstructionTest.h"
 
-void reconstructionTest::meshTest()
+void ReconstructionTest::meshTest()
 {
 	std::cout << "START meshTest()" << std::endl;
 
@@ -80,7 +80,7 @@ void reconstructionTest::meshTest()
 	SAFE_DELETE(pc);
 }
 
-void reconstructionTest::pointCloudTest()
+void ReconstructionTest::pointCloudTest()
 {
 	Verbose::message("START streamPointCloudTest()");
 
@@ -113,7 +113,7 @@ void reconstructionTest::pointCloudTest()
 }
 
 
-void reconstructionTest::reconstructTest()
+void ReconstructionTest::reconstructTest()
 {
 	Verbose::message("START reconstructionTest()");
 

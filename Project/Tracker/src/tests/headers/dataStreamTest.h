@@ -1,8 +1,8 @@
 #pragma once
-#include "testBase.h"
+#include "TestBase.h"
 
-class dataStreamTest :
-	public testBase
+class DataStreamTest :
+	public TestBase
 {
 public:
 	void vidReadTest();

@@ -1,6 +1,6 @@
-#include "../headers/testBase.h"
+#include "../headers/TestBase.h"
 
-const Eigen::Matrix4f testBase::getTrajectory(int index) { //get trajectory
+const Eigen::Matrix4f TestBase::getTrajectory(int index) { //get trajectory
 	//Read groundtruth trajectories (camera poses)
 	std::vector<Matrix4f> trajectories;
 	std::vector<double> trajectory_timestamps;

@@ -1,7 +1,7 @@
-#include "testBase.h"
+#include "TestBase.h"
 
-class reconstructionTest :
-	public testBase
+class ReconstructionTest :
+	public TestBase
 {
 public:
 	void meshTest();

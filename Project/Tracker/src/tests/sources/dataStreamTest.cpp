@@ -1,8 +1,6 @@
-#include "../headers/dataStreamTest.h"
+#include "../headers/DataStreamTest.h"
 
-
-
-void dataStreamTest::vidReadTest()
+void DataStreamTest::vidReadTest()
 {
 	std::cout << "START vidReadTest()" << std::endl;
 

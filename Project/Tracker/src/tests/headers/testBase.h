@@ -15,7 +15,7 @@
 #include "../../concurency/headers/ThreadManager.h"
 
 
-class testBase
+class TestBase
 {
 public:
 

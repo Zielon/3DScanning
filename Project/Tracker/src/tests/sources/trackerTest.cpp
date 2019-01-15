@@ -1,8 +1,8 @@
-#include "../headers/trackerTest.h"
+#include "../headers/TrackerTest.h"
 
 
 
-void trackerTest::cameraPoseTest(){
+void TrackerTest::cameraPoseTest(){
 	std::cout << "START cameraPoseTest()" << std::endl;
 
 	TrackerContext* pc = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));

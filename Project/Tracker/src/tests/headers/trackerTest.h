@@ -1,7 +1,7 @@
-#include "testBase.h"
+#include "TestBase.h"
 
-class trackerTest :
-	public testBase
+class TrackerTest :
+	public TestBase
 {
 public:
 	void cameraPoseTest();
