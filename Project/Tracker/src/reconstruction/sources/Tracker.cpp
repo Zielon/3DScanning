@@ -4,16 +4,16 @@ Tracker::~Tracker(){
 	SAFE_DELETE(m_icp);
 }
 
-Matrix4f Tracker::alignNewFrame(PointCloud* source, PointCloud* target, Matrix4f inPose, float* outPose) const{
+Matrix4f Tracker::alignNewFrame(PointCloud* source, PointCloud* target) const{
 
 	std::cout << "Align New frame" << std::endl;
 
-	const auto pose = m_icp->estimatePose(source, target, inPose);
+	const auto pose = m_icp->estimatePose(source, target);
 
-	const auto data = pose.data();
+	/*const auto data = pose.data();
 
 	for (int i = 0; i < 16; i++)
-		outPose[i] = data[i];
+		outPose[i] = data[i];*/
 
 	return pose;
 }

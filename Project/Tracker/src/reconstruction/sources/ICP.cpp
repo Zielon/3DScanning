@@ -10,12 +10,12 @@ ICP::~ICP(){
 	SAFE_DELETE(m_procrustesAligner);
 }
 
-Matrix4f ICP::estimatePose(PointCloud* source, PointCloud* target, Matrix4f initialPose = Matrix4f::Identity()){
+Matrix4f ICP::estimatePose(PointCloud* source, PointCloud* target){
 
-	Matrix4f pose = initialPose;
+	Matrix4f pose = Matrix4f::Identity();
 
-	std::cout << "Initial pose: " << std::endl;
-	std::cout << pose << std::endl;
+	//std::cout << "Initial pose: " << std::endl;
+	//std::cout << pose << std::endl;
 
 	std::vector<Vector3f> sourcePoints;
 	std::vector<Vector3f> targetPoints;
@@ -47,8 +47,8 @@ Matrix4f ICP::estimatePose(PointCloud* source, PointCloud* target, Matrix4f init
 			// Match exists
 			sourcePoints.emplace_back(transformedPoints[j]);
 			targetPoints.emplace_back(target->getPoints()[idx]);
-			//targetNormals.emplace_back(transformedNormals[idx]);/
-			targetNormals.emplace_back(target->getNormals()[idx]);
+			targetNormals.emplace_back(transformedNormals[idx]);
+			//targetNormals.emplace_back(target->getNormals()[idx]);
 		}
 
 		if (numberOfMatches == 0)
