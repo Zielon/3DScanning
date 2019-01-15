@@ -27,12 +27,11 @@ public:
 
 	~ICP();
 
-	Matrix4f estimatePose(PointCloud* source, PointCloud* target, float* initPose);
+	Matrix4f estimatePose(PointCloud* source, PointCloud* target);
 
 private:
 	NearestNeighborSearch* m_nearestNeighbor;
 	ProcrustesAligner* m_procrustesAligner;
-	Matrix4f m_posePrev = Matrix4f::Zero();
 
 	#if _DEBUG
 	int m_number_iterations = 1;

@@ -1,6 +1,5 @@
 #include "ExportDLL.h"
 
-
 extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 
 	TrackerContext* tracker_context = new TrackerContext();
@@ -64,15 +63,10 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
 	PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb);
-	//Read groundtruth trajectories (camera poses)
 
 	if (is_first_frame) // first frame
 	{
-		std::vector<Matrix4f> trajectories;
-		std::vector<double> trajectory_timestamps;
-
-		//Matrix4f id = Matrix4f::Identity();
-		Matrix4f id = Map<Matrix4f>(pose, 4, 4);
+		Matrix4f id = Matrix4f::Identity();
 		memcpy(pose, id.data(), 16 * sizeof(float));
 		tracker_context->m_tracker->m_previous_point_cloud = source;
 		return;
