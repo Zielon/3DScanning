@@ -27,7 +27,7 @@ public:
 
 	~ICP();
 
-	Matrix4f estimatePose(PointCloud* source, PointCloud* target, Matrix4f initialPose);
+	Matrix4f estimatePose(PointCloud* source, PointCloud* target);
 
 private:
 	NearestNeighborSearch* m_nearestNeighbor;

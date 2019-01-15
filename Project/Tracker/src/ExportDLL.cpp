@@ -47,6 +47,8 @@ extern "C" __declspec(dllexport) void trackerCameraPose(void* context, unsigned 
 
 	PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb);
 
+	//source->transform(tracker_context->m_tracker->m_previous_pose);
+
 	if (is_first_frame) // first frame
 	{
 		tracker_context->m_tracker->m_previous_pose = Matrix4f::Identity();
@@ -58,10 +60,20 @@ extern "C" __declspec(dllexport) void trackerCameraPose(void* context, unsigned 
 	}
 	else
 	{
-		std::cout << "Test Tracker Camera Pose" << std::endl;
+		//std::cout << "Test Tracker Camera Pose" << std::endl;
 
-		tracker_context->m_tracker->m_previous_pose = tracker_context->m_tracker->alignNewFrame(source, tracker_context->m_tracker->m_previous_point_cloud,
-			tracker_context->m_tracker->m_previous_pose, pose);
+		std::cout << "Previous Pose" << std::endl;
+		std::cout << tracker_context->m_tracker->m_previous_pose << std::endl;
+
+		Matrix4f deltaPose  = tracker_context->m_tracker->alignNewFrame(source, tracker_context->m_tracker->m_previous_point_cloud);
+
+		//tracker_context->m_tracker->m_previous_pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
+		tracker_context->m_tracker->m_previous_pose =  tracker_context->m_tracker->m_previous_pose * deltaPose;
+
+		std::cout << "Delta Pose" << std::endl;
+		std::cout << deltaPose << std::endl;
+
+		memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));
 	}
 
 	// Safe the last frame reference
@@ -106,8 +118,9 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 	}
 	else
 	{
-		tracker_context->m_tracker->m_previous_pose = tracker_context->m_tracker->alignNewFrame(source, tracker_context->m_tracker->m_previous_point_cloud,
-			tracker_context->m_tracker->m_previous_pose, pose);
+		Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(source, tracker_context->m_tracker->m_previous_point_cloud);
+
+		tracker_context->m_tracker->m_previous_pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
 	}
 
 	// Produce a new point cloud (add to the buffer)

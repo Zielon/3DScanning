@@ -35,6 +35,9 @@ public:
 
 	float getDepthImage(int x, int y) const;
 
+	//Juan Test
+	void transform(Matrix4f transformation);
+
 	Matrix4f m_pose_estimation = Matrix4f::Identity();
 	NearestNeighborSearch* m_nearestNeighbor;
 	CameraParameters m_camera_parameters;

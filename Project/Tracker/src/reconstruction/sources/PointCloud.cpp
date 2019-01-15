@@ -50,6 +50,18 @@ float PointCloud::getDepthImage(int x, int y) const{
 	return INFINITY;
 }
 
+void PointCloud::transform(Matrix4f transformation)
+{
+	// Camera space to world space
+	for (int i = 0; i < m_points.size(); i++)
+	{
+		auto camera = m_points[i];
+		if (camera.x() == MINF) continue;
+		auto transform = transformation * Vector4f(camera[0], camera[1], camera[2], 1.f);
+		m_points[i] = Vector3f(transform[0], transform[1], transform[2]);
+	}
+}
+
 /// Downsample image 1 time
 void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
@@ -81,8 +93,8 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	auto temp_normals = std::vector<Vector3f>(size);
 
 	//Depth range check
-	//float depth_min = std::numeric_limits<float>::infinity();
-	//float depth_max = -1;
+	float depth_min = std::numeric_limits<float>::infinity();
+	float depth_max = -1;
 
 	for (auto y = 0; y < m_current_height; y++)
 	{
@@ -97,8 +109,8 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			m_color_points[idx] = Vector4uc(color[0], color[1], color[2], 0);
 
 			//Depth range check
-			//depth_min = std::min(depth_min, depth_val);
-			//depth_max = std::max(depth_max, depth_val);
+			//depth_min = std::min(depth_min, depth);
+			//depth_max = std::max(depth_max, depth);
 
 			if (depth > 0.0f)
 			{
@@ -106,6 +118,10 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 				pixel_coords << (x - m_camera_parameters.m_cX) / m_camera_parameters.m_focal_length_X *
 					depth, (y - m_camera_parameters.m_cY) / m_camera_parameters.m_focal_length_Y * depth,
 					depth;
+
+
+				depth_min = std::min(depth_min, pixel_coords.z());
+				depth_max = std::max(depth_max, pixel_coords.z());
 
 				temp_points[idx] = pixel_coords;
 			}
@@ -115,6 +131,9 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			}
 		}
 	}
+
+	std::cout << depth_min << std::endl;
+	std::cout << depth_max << std::endl;
 
 	for (auto y = 1; y < m_current_height - 1; y++)
 	{
