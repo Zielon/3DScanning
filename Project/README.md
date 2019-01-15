@@ -3,7 +3,7 @@
 ## Installation
 
 ### Visual Studio
-In the Visual Studio solutions we are using a few environment paths:
+In the Visual Studio solutions we are using a few environment paths (here some examples):
 
 | NAME            | VALUE  														  |
 |-----------------|---------------------------------------------------------------|
