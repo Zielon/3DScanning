@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
-    public class Reconstructor : MonoBehaviour
+    public class WOzReconstructor : MonoBehaviour
     {
 
 
@@ -43,6 +43,17 @@ namespace Assets.Scripts
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern void dllMain(IntPtr context, byte[] image, float[] pose);
+
+        //-------------------------WOz -----------------
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr WOzCreateContext(byte[] path);
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void WOzDllMain(IntPtr context, byte[] image, float[] pose);
+
+        //--------------------------------------------------------------
+
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern int getImageWidth(IntPtr context);
@@ -80,7 +91,7 @@ namespace Assets.Scripts
             var absolutePath = segments.Aggregate(
                 (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
 
-            _cppContext = createContext(Encoding.ASCII.GetBytes(absolutePath));
+            _cppContext = WOzCreateContext(Encoding.ASCII.GetBytes(absolutePath));
 
             _w = getImageWidth(_cppContext);
             _h = getImageHeight(_cppContext);
@@ -106,7 +117,7 @@ namespace Assets.Scripts
                 projectionMat.SetColumn(2, thirdCol);
                 projectionMat.SetColumn(3, fourthCol);
 
-                cam.projectionMatrix = projectionMat;
+             //  cam.projectionMatrix = projectionMat;
 
                 Debug.Log("Camera intrinsics:\n" + projectionMat); 
                    
@@ -122,7 +133,7 @@ namespace Assets.Scripts
         {
          //   Debug.Log("Update test");
 
-            dllMain(_cppContext, _image, _pose);
+            WOzDllMain(_cppContext, _image, _pose);
 
             //Create texture from image
             var tex = new Texture2D(_w, _h, TextureFormat.RGB24, false);
@@ -160,7 +171,7 @@ namespace Assets.Scripts
          //   Debug.Log("Rot: " + cameraRig.transform.rotation.eulerAngles);
 
             //enable this once fusion is ready
-        //    spawnFrameMesh(); 
+            spawnFrameMesh(); 
 
 
         }
@@ -190,7 +201,7 @@ namespace Assets.Scripts
             frameMeshes.AddLast(mesh);
 
 
-            Debug.Log("Loaded mesh with " + mesh.vertexCount + " verts and " + mesh.triangles.Length + " indices."); 
+            Debug.Log("Loaded mesh with " + vertexCount + " verts and " + indexCount + " indices."); 
 
         }
 

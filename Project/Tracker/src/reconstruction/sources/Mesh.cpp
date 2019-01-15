@@ -152,7 +152,7 @@ bool Mesh::load(const std::string& filename, bool clear) {
 
 	std::string line; 
 	std::getline(in_file, line); //COFF
-
+	std::getline(in_file, line);
 	std::getline(in_file, line); //sizes 
 
 	int verts, tris; 
@@ -173,20 +173,18 @@ bool Mesh::load(const std::string& filename, bool clear) {
 		std::istringstream iss(line);
 		iss >> x >> y >> z; 
 		m_vertices.push_back(Vector3f(x, y, z)); 
-
-
 	}
 
 	std::getline(in_file, line); //# LIST OF Faces  
-
+	std::getline(in_file, line);
 	//load tris
 	for (int i = 0; i < verts; i++)
 	{
-		int x, y, z;
+		int dump,  x, y, z;
 
 		std::getline(in_file, line); //# X Y Z R G B A 
 		std::istringstream iss(line);
-		iss >> x >> y >> z;
+		iss >>dump >> x >> y >> z;
 		m_triangles.push_back(Triangle(x, y, z)); 
 
 	}

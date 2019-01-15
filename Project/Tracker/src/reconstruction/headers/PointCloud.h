@@ -13,6 +13,7 @@ class PointCloud
 {
 public:
 
+	PointCloud() {}
 	PointCloud(CameraParameters camera_parameters, cv::Mat& depth, cv::Mat& rgb, bool downsampling = true);
 
 	~PointCloud();

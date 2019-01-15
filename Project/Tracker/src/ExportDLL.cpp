@@ -155,13 +155,14 @@ extern "C" __declspec(dllexport) void* WOzCreateContext(const char* dataset_path
 	);
 
 	tracker_context->m_tracker = new Tracker(camera_parameters);
-	tracker_context->m_fusion = new Fusion(camera_parameters);
+	//tracker_context->m_fusion = new Fusion(camera_parameters);
 	// Start consuming the point clouds buffer
-	std::string path = std::string(dataset_path); 
+	std::string path = std::string("C:\\Users\\Patrick\\Desktop\\3dscan\\3DScanning\\Project\\MarkerlessAR_Unity\\Datasets\\freiburg");
 	tracker_context->m_datasetManager = new DatasetManager(path);
-	std::vector<double> tmp; 
-	tracker_context->m_datasetManager->readTrajectoryFile(tracker_context->trajectories, tmp);
-	tracker_context->meshPath = path + "../../../Tracker/Final-Tracker/Tracker/test_meshes/";
+	tracker_context->m_datasetManager->readTrajectoryFile(tracker_context->trajectories, tracker_context->trajectory_timestamps);
+	tracker_context->meshPath = "C:\\Users\\Patrick\\Desktop\\3dscan\\3DScanning\\Project\\Tracker\\Final-Tracker\\Tracker\\test_meshes\\";
+	tracker_context->m_datasetManager->readDepthTimeStampFile(tracker_context->depth_timestamps);
+
 	return tracker_context;
 }
 
@@ -179,12 +180,25 @@ extern "C" __declspec(dllexport) void WOzDllMain(void* context, unsigned char* i
 
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
-	Matrix4f poseMat = tracker_context->trajectories[index];
+	double timestamp = tracker_context->depth_timestamps[index];
+	double min = std::numeric_limits<double>::infinity();
+	int idx = 0;
+	for (unsigned int j = 0; j < tracker_context->trajectories.size(); ++j)
+	{
+		double d = abs(tracker_context->trajectory_timestamps[j] - timestamp);
+		if (min > d)
+		{
+			min = d;
+			idx = j;
+		}
+	}
+
+	Matrix4f poseMat = tracker_context->trajectories[idx];
 	memcpy(pose, poseMat.data(), 16 * sizeof(float));
 
-	SAFE_DELETE(tracker_context->currentMesh); 
-	tracker_context->currentMesh = new Mesh(); 
-	tracker_context->m_tracker->m_previous_point_cloud->m_mesh.load(tracker_context->meshPath + "mesh" + std::to_string(index) + ".off");
+	SAFE_DELETE(tracker_context->m_tracker->m_previous_point_cloud); 
+	tracker_context->m_tracker->m_previous_point_cloud = new PointCloud();
+	tracker_context->m_tracker->m_previous_point_cloud->m_mesh.load(tracker_context->meshPath + "mesh_" + std::to_string(index) + ".off");
 
 	//So turns out opencv actually uses bgr not rgb...
 	//no more opencv computations after this point

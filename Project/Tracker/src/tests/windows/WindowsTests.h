@@ -28,6 +28,7 @@ private:
 
 	void precomputeMeshes();
 
+	void WOzTest();
 
 	DatasetManager m_files_manager;
 

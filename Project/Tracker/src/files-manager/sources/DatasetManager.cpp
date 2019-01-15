@@ -72,7 +72,7 @@ std::string DatasetManager::getCurrentPath(){
 	char current[FILENAME_MAX];
 	_getcwd(current, sizeof(current));
 	strcpy(current + strlen(current), DATASET_DIR.c_str());
-	return std::string(current);
+	return std::string(DATASET_DIR);
 }
 
 std::string DatasetManager::getCurrentPath(std::string filename){
