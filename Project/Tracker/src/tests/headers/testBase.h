@@ -18,9 +18,10 @@
 class TestBase
 {
 public:
-
+	TestBase();
+	//void run();
 protected:
-	const Eigen::Matrix4f getTrajectory(int);
 	DatasetManager m_files_manager;
+	std::vector<Eigen::Matrix4f> m_trajectories;
 };
 

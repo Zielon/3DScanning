@@ -13,7 +13,7 @@ void TrackerTest::cameraPoseTest(){
 
 	for (int i = 0; i < nIters; i++)
 	{
-		const auto trajectory = getTrajectory(i); //get camera trajectory of index from testBase class
+		const auto trajectory = m_trajectories[i]; //get camera trajectory of index from testBase class
 
 		cv::Mat rgb, depth;
 

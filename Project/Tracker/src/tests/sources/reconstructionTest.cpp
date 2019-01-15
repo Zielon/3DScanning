@@ -90,7 +90,7 @@ void ReconstructionTest::pointCloudTest()
 
 	for (int index = 0; index < 500; index += 100)
 	{
-		const auto trajectory = getTrajectory(index); //get camera trajectory of index from testBase class
+		const auto trajectory = m_trajectories[index]; //get camera trajectory of index from testBase class
 		cv::Mat rgb, depth;
 
 		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
@@ -123,7 +123,7 @@ void ReconstructionTest::reconstructTest()
 
 	for (int index = 0; index < 600; index += 50)
 	{
-		const auto trajectory = getTrajectory(index); //get camera trajectory of index from testBase class
+		const auto trajectory = m_trajectories[index]; //get camera trajectory of index from testBase class
 		cv::Mat rgb, depth;
 
 		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
