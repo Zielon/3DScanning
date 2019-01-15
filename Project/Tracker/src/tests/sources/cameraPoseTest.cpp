@@ -14,7 +14,7 @@ cameraPoseTest::cameraPoseTest()
 
 	for (int i = 0; i < 3000; ++i)
 	{
-		const auto trajetory = getTrajectory(i);
+		const auto trajectory = getTrajectory(i);
 		dllMain(pc, img, pose);
 
 		cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
@@ -25,13 +25,13 @@ cameraPoseTest::cameraPoseTest()
 
 		//Compute the inverse of the pose
 		//matPose = matPose.inverse().eval();
-
+		
 		std::cout << "\n ------- pose: " << i << " -------- \n" << matPose
 			<< "\n------------------------ " << std::endl;
 
 		std::cout << "\n ------- trajectory: " << i << " -------- \n" << trajectory
 			<< "\n------------------------ " << std::endl;
-
+			
 		//Error using Frobenius norm
 		//Performance metric should be Absolute Trajectory Error (ATE) https://vision.in.tum.de/data/datasets/rgbd-dataset/tools#evaluation
 

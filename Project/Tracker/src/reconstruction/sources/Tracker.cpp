@@ -6,7 +6,7 @@ Tracker::~Tracker(){
 
 Matrix4f Tracker::alignNewFrame(PointCloud* source, PointCloud* target, float* outPose) const{
 
-	const auto pose = m_icp->estimatePose(source, target);
+	const auto pose = m_icp->estimatePose(source, target, outPose);
 
 	const auto data = pose.data();
 
