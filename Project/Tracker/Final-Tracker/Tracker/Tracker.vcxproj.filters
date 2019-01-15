@@ -60,16 +60,16 @@
     <ClInclude Include="..\..\src\concurency\headers\ThreadManager.h">
       <Filter>concurency\headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\tests\headers\testBase.h">
+    <ClInclude Include="..\..\src\tests\headers\DataStreamTest.h">
       <Filter>tests\headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\tests\headers\dataStreamTest.h">
+    <ClInclude Include="..\..\src\tests\headers\ReconstructionTest.h">
       <Filter>tests\headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\tests\headers\reconstructionTest.h">
+    <ClInclude Include="..\..\src\tests\headers\TestBase.h">
       <Filter>tests\headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\tests\headers\trackerTest.h">
+    <ClInclude Include="..\..\src\tests\headers\TrackerTest.h">
       <Filter>tests\headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -115,16 +115,16 @@
     <ClCompile Include="..\..\src\concurency\sources\ThreadManager.cpp">
       <Filter>concurency\sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\tests\sources\testBase.cpp">
+    <ClCompile Include="..\..\src\tests\sources\DataStreamTest.cpp">
       <Filter>tests\sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\tests\sources\dataStreamTest.cpp">
+    <ClCompile Include="..\..\src\tests\sources\ReconstructionTest.cpp">
       <Filter>tests\sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\tests\sources\reconstructionTest.cpp">
+    <ClCompile Include="..\..\src\tests\sources\TestBase.cpp">
       <Filter>tests\sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\tests\sources\trackerTest.cpp">
+    <ClCompile Include="..\..\src\tests\sources\TrackerTest.cpp">
       <Filter>tests\sources</Filter>
     </ClCompile>
   </ItemGroup>

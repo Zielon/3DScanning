@@ -1,6 +1,6 @@
-#include "tests/headers/dataStreamTest.h"
-#include "tests/headers/reconstructionTest.h"
-#include "tests/headers/trackerTest.h"
+#include "tests/headers/DataStreamTest.h"
+#include "tests/headers/ReconstructionTest.h"
+#include "tests/headers/TrackerTest.h"
 
 int main(int argc, char** argv){
 
