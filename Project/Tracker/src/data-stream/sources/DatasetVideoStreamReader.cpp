@@ -93,12 +93,12 @@ Matrix3f DatasetVideoStreamReader::getCameraIntrinsics()
 	//Freiburg 1
 	/*i << 517.3, 0, 318.6,
 		0, 516.5, 255.3,
-		0, 0, 0;*/
+		0, 0, 1.0;*/
 
 	//Freiburg 2
 	/*i << 520.9, 0, 325.1,
 		0, 521.0, 249.7,
-		0, 0, 0; */
+		0, 0, 1.0; */
 
 
 	return i; 

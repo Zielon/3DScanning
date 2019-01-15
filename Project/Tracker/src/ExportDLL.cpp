@@ -52,6 +52,13 @@ extern "C" __declspec(dllexport) int getImageHeight(void* context){
 	return c->m_videoStreamReader->m_height_rgb;
 }
 
+extern "C" __declspec(dllexport) void getCameraIntrinsics(void* context, float* intrinsics)
+{
+	TrackerContext* c = static_cast<TrackerContext*>(context);
+	memcpy(intrinsics, c->m_videoStreamReader->getCameraIntrinsics().data(), 3*3*sizeof(float)); 
+}
+
+
 extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* image, float* pose){
 	
 	TrackerContext* tracker_context = static_cast<TrackerContext*>(context);
@@ -109,8 +116,77 @@ extern "C" __declspec(dllexport) void getIndexBuffer(void* context, int* indices
 	memcpy(indices, c->m_fusion->m_currentIndexBuffer.data(), c->m_fusion->m_currentIndexBuffer.size() * sizeof(int));
 }
 
-void getNormalBuffer(void* context, float* normals){
+extern "C" __declspec(dllexport) void getNormalBuffer(void* context, float* normals){
 	TrackerContext* c = static_cast<TrackerContext*>(context);
 	memcpy(normals, c->m_tracker->m_previous_point_cloud->getNormals().data(),
 	       c->m_tracker->m_previous_point_cloud->getNormals().size() * sizeof(Vector3f));
+}
+
+
+/**
+******************** WOz Implementations ***********************
+*/
+
+extern "C" __declspec(dllexport) void* WOzCreateContext(const char* dataset_path) {
+
+	WOzTrackerContext* tracker_context = new WOzTrackerContext();
+
+#if _DEBUG
+	tracker_context->m_videoStreamReader = new DatasetVideoStreamReader(dataset_path, false);
+#else
+	tracker_context->m_videoStreamReader = new DatasetVideoStreamReader(dataset_path, true);
+#endif
+
+	tracker_context->m_videoStreamReader->startReading();
+	//FIXME: Frame Info only set after first frame is read... FIXME: mb split this into seperate call?
+
+	const auto height = tracker_context->m_videoStreamReader->m_height_depth;
+	const auto width = tracker_context->m_videoStreamReader->m_width_depth;
+
+	Matrix3f intrinsics = tracker_context->m_videoStreamReader->getCameraIntrinsics();
+	const CameraParameters camera_parameters = CameraParameters(
+		intrinsics(0, 0),
+		intrinsics(1, 1),
+		intrinsics(0, 2),
+		intrinsics(1, 2),
+		height,
+		width,
+		intrinsics
+	);
+
+	tracker_context->m_tracker = new Tracker(camera_parameters);
+	tracker_context->m_fusion = new Fusion(camera_parameters);
+	// Start consuming the point clouds buffer
+
+	tracker_context->m_datasetManager = new DatasetManager(std::string(dataset_path));
+	std::vector<double> tmp; 
+	tracker_context->m_datasetManager->readTrajectoryFile(tracker_context->trajectories, tmp);
+
+	return tracker_context;
+}
+
+
+extern "C" __declspec(dllexport) void WOzDllMain(void* context, unsigned char* image, float* pose)
+{
+
+	WOzTrackerContext* tracker_context = static_cast<WOzTrackerContext*>(context);
+
+	int index = tracker_context->m_videoStreamReader->getCurrentFrameIndex(); 
+
+	cv::Mat rgb, depth;
+
+	const bool is_first_frame = tracker_context->m_tracker->m_previous_point_cloud == nullptr;
+
+	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
+
+	Matrix4f poseMat = tracker_context->trajectories[index];
+	memcpy(pose, poseMat.data(), 16 * sizeof(float));
+
+
+
+
+	//So turns out opencv actually uses bgr not rgb...
+	//no more opencv computations after this point
+	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
+	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
 }

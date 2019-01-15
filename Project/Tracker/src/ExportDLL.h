@@ -5,6 +5,7 @@
 #include "data-stream/headers/DatasetVideoStreamReader.h"
 #include <opencv2/imgproc/imgproc.hpp>
 #include "reconstruction/headers/Fusion.h"
+#include "files-manager/headers/DatasetManager.h"
 
 //DLL exports of the m_tracker
 
@@ -18,6 +19,8 @@ extern "C" __declspec(dllexport) int getImageWidth(void* context);
 
 extern "C" __declspec(dllexport) int getImageHeight(void* context);
 
+extern "C" __declspec(dllexport) void getCameraIntrinsics(void* context, float* intrinsics);
+
 extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* image, float* pose);
 
 extern "C" __declspec(dllexport) int getVertexCount(void* context);
@@ -29,5 +32,9 @@ extern "C" __declspec(dllexport) void getNormalBuffer(void* context, float* norm
 extern "C" __declspec(dllexport) int getIndexCount(void* context);
 
 extern "C" __declspec(dllexport) void getIndexBuffer(void* context, int* indices);
+
+extern "C" __declspec(dllexport) void* WOzCreateContext(const char* dataset_path);
+
+extern "C" __declspec(dllexport) void WOzDllMain(void* context, unsigned char* image, float* pose);
 
 #endif //EXPORT_DLL_H

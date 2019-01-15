@@ -1,6 +1,5 @@
 #include "../headers/DatasetManager.h"
 
-const std::string DATASET_DIR = "\\..\\..\\..\\MarkerlessAR_Unity\\Datasets\\freiburg\\";
 
 bool DatasetManager::readTrajectoryFile(std::vector<Matrix4f>& result, std::vector<double>& timestamps) const{
 

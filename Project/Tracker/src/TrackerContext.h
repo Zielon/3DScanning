@@ -20,4 +20,23 @@ struct TrackerContext
 	Fusion* m_fusion;
 };
 
+struct WOzTrackerContext
+{
+	~WOzTrackerContext() {
+		SAFE_DELETE(m_tracker);
+		SAFE_DELETE(m_videoStreamReader);
+		SAFE_DELETE(m_fusion);
+	}
+
+	Tracker* m_tracker;
+	VideoStreamReaderBase* m_videoStreamReader;
+	Fusion* m_fusion;
+
+	DatasetManager* m_datasetManager; 
+	std::vector<Matrix4f> trajectories;
+
+
+};
+
+
 #endif TRACKER_CONTEXT_H
