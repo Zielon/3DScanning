@@ -55,7 +55,7 @@ void Fusion::integrate(PointCloud* cloud){
 				// Depth was not found
 				if (depth == INFINITY) continue;
 
-				std::unique_lock<std::mutex> locker(m_mutex);
+				m_mutex.lock();
 
 				Voxel* voxel = m_volume->getVoxel(x, y, z);
 
@@ -81,7 +81,7 @@ void Fusion::integrate(PointCloud* cloud){
 
 				m_weight_update += weight;
 
-				locker.unlock();
+				m_mutex.unlock();
 			}
 
 	SAFE_DELETE(cloud);

@@ -35,8 +35,3 @@ template <class T>
 bool Buffer<T>::isEmpty(){
 	return m_buffer.empty();
 }
-
-template <class T>
-int Buffer<T>::size(){
-	return m_buffer.size();
-}

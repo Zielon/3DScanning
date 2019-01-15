@@ -165,7 +165,7 @@ void WindowsTests::reconstructionTest() const{
 	m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps);
 	m_files_manager.readDepthTimeStampFile(depth_timestamps);
 
-	for (int index = 0; index < 10; index += 1)
+	for (int index = 0; index < 100; index += 1)
 	{
 		double timestamp = depth_timestamps[index];
 		double min = std::numeric_limits<double>::infinity();

@@ -470,14 +470,14 @@ bool ProcessVolumeCell(Volume* vol, int x, int y, int z, double iso, Mesh* mesh)
 
 		unsigned int vhandle[3];
 
-		//if (v0.allFinite() && v1.allFinite() && v2.allFinite())
-		//{
+		if (v0.allFinite() && v1.allFinite() && v2.allFinite())
+		{
 			vhandle[0] = mesh->addVertex(v0);
 			vhandle[1] = mesh->addVertex(v1);
 			vhandle[2] = mesh->addVertex(v2);
 
 			mesh->addFace(vhandle[0], vhandle[1], vhandle[2]);
-		//}
+		}
 	}
 
 	return true;
