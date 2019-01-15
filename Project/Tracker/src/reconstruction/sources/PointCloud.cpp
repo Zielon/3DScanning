@@ -1,5 +1,6 @@
 #include "../headers/PointCloud.h"
 #include <opencv2/imgproc.hpp>
+#include "../../helpers/Transformations.h"
 
 PointCloud::PointCloud(CameraParameters camera_parameters, cv::Mat& depth, cv::Mat& rgb, bool downsampling)
 	: m_camera_parameters(camera_parameters){
@@ -67,8 +68,6 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	colors = cv::Mat(rgb_mat);
 	//}
 
-	Vector3f pixel_coords;
-
 	m_current_height = image.rows;
 	m_current_width = image.cols;
 
@@ -104,11 +103,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			if (depth > 0.0f)
 			{
 				// Back-projection to camera space.
-				pixel_coords << (x - m_camera_parameters.m_cX) / m_camera_parameters.m_focal_length_X *
-					depth, (y - m_camera_parameters.m_cY) / m_camera_parameters.m_focal_length_Y * depth,
-					depth;
-
-				temp_points[idx] = pixel_coords;
+				temp_points[idx] = Transformations::backproject(x, y, depth, m_camera_parameters);
 			}
 			else
 			{

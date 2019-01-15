@@ -38,6 +38,7 @@
     <ClInclude Include="..\..\src\Eigen.h" />
     <ClInclude Include="..\..\src\ExportDLL.h" />
     <ClInclude Include="..\..\src\files-manager\headers\DatasetManager.h" />
+    <ClInclude Include="..\..\src\helpers\Transformations.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\CameraParameters.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Fusion.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\ICP.h" />

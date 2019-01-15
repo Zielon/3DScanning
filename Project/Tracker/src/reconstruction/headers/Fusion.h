@@ -44,8 +44,6 @@ public:
 private:
 	void initialize();
 
-	Vector3f reproject(Vector3f point) const;
-
 	FrustumBox computeFrustumBounds(Matrix4f pose, CameraParameters camera_parameters) const;
 
 	int clamp(float value) const;
@@ -53,8 +51,6 @@ private:
 	Vector3i clamp(Vector3i value) const;
 
 	void stopConsumers();
-
-	Vector3f backproject(float x, float y, float depth) const;
 
 	float m_weight_update = 1;
 	std::vector<std::thread> m_consumer_threads;

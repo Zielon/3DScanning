@@ -67,6 +67,9 @@
     <ClInclude Include="..\..\src\debugger\headers\ProgressBar.hpp">
       <Filter>debugger\headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\helpers\Transformations.h">
+      <Filter>helpers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -166,6 +169,9 @@
     </Filter>
     <Filter Include="files-manager\sources">
       <UniqueIdentifier>{aa9165ad-15d1-4ebb-8a2d-c8e03174aa8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helpers">
+      <UniqueIdentifier>{009208ea-b514-4802-ba70-5a5351dbbe13}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

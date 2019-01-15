@@ -5,10 +5,12 @@
 #include <direct.h>
 #include <cmath>
 #include <algorithm>
+#include <utility>
 #include "../../concurency/headers/ThreadManager.h"
 #include "../../debugger/headers/ProgressBar.hpp"
+#include "../../helpers/Transformations.h"
 
-Fusion::Fusion(CameraParameters camera_parameters) : m_camera_parameters(camera_parameters){
+Fusion::Fusion(CameraParameters camera_parameters) : m_camera_parameters(std::move(camera_parameters)){
 	initialize();
 }
 
@@ -104,21 +106,6 @@ void Fusion::stopConsumers(){
 		consumer->stop();
 }
 
-/// Back-project to camera space
-Vector3f Fusion::backproject(float x, float y, float depth) const{
-	Vector3f point;
-	point[0] = (x - m_camera_parameters.m_cX) / m_camera_parameters.m_focal_length_X * depth;
-	point[0] = (y - m_camera_parameters.m_cY) / m_camera_parameters.m_focal_length_Y * depth;
-	point[0] = depth;
-	return point;
-}
-
-Vector3f Fusion::reproject(Vector3f point) const{
-	float x = m_camera_parameters.m_focal_length_X * point.x() / point.z() + m_camera_parameters.m_cX;
-	float y = m_camera_parameters.m_focal_length_Y * point.y() / point.z() + m_camera_parameters.m_cY;
-	return Vector3f(x, y, point.z());
-}
-
 void Fusion::integrate(PointCloud* cloud){
 	const auto cameraToWorld = cloud->m_pose_estimation;
 	const auto worldToCamera = cameraToWorld.inverse();
@@ -135,7 +122,7 @@ void Fusion::integrate(PointCloud* cloud){
 				Vector3f cell = rotation * m_volume->getWorldPosition(Vector3i(x, y, z)) + translation;
 
 				// Project into a depth image
-				cell = reproject(cell);
+				cell = Transformations::reproject(cell, cloud->m_camera_parameters);
 
 				// Pixels space
 				auto pixels = round(cell);
@@ -191,10 +178,10 @@ FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld, CameraParameters
 	// Image -> Camera -> World -> Grid
 	for (auto depth : std::vector<float>{min_depth, max_depth})
 	{
-		corners.push_back(backproject(0, 0, depth));
-		corners.push_back(backproject(width - 1, 0, depth));
-		corners.push_back(backproject(width - 1, height - 1, depth));
-		corners.push_back(backproject(0, height - 1, depth));
+		corners.push_back(Transformations::backproject(0, 0, depth, camera_parameters));
+		corners.push_back(Transformations::backproject(width - 1, 0, depth, camera_parameters));
+		corners.push_back(Transformations::backproject(width - 1, height - 1, depth, camera_parameters));
+		corners.push_back(Transformations::backproject(0, height - 1, depth, camera_parameters));
 	}
 
 	Vector3i min;
