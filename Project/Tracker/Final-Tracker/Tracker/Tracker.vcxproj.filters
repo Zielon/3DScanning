@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\Eigen.h" />
     <ClInclude Include="..\..\src\ExportDLL.h" />
-    <ClInclude Include="..\..\src\TrackerContext.h" />
     <ClInclude Include="..\..\src\tests\windows\WindowsTests.h">
       <Filter>tests\windows</Filter>
     </ClInclude>
@@ -64,6 +63,24 @@
     <ClInclude Include="..\..\src\concurency\headers\ThreadManager.h">
       <Filter>concurency\headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\tests\pointCloudTest.h">
+      <Filter>tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\tests\testBase.h">
+      <Filter>tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\tests\cameraPoseTest.h">
+      <Filter>tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\tests\meshTest.h">
+      <Filter>tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\tests\reconstructionTest.h">
+      <Filter>tests</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\tests\vidReadTest.h">
+      <Filter>tests</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -98,7 +115,6 @@
     <ClCompile Include="..\..\src\concurency\sources\Producer.cpp">
       <Filter>concurency\sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\TrackerContext.cpp" />
     <ClCompile Include="..\..\src\debugger\sources\Verbose.cpp">
       <Filter>debugger\sources</Filter>
     </ClCompile>
@@ -110,6 +126,24 @@
     </ClCompile>
     <ClCompile Include="..\..\src\concurency\sources\ThreadManager.cpp">
       <Filter>concurency\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tests\pointCloudTest.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tests\testBase.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tests\cameraPoseTest.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tests\meshTest.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tests\reconstructionTest.cpp">
+      <Filter>tests</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tests\vidReadTest.cpp">
+      <Filter>tests</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -18,7 +18,7 @@ Matrix4f ICP::estimatePose(PointCloud* source, PointCloud* target, float* initPo
 		pose = Map<Matrix4f>(initPose, 4, 4);
 	//	 pose = m_posePrev;
 	//Matrix4f pose = Matrix4f::Identity();
-	std::cout << "Pose matrix " << pose;
+	//std::cout << "Pose matrix " << pose;
 	std::vector<Vector3f> sourcePoints;
 	std::vector<Vector3f> targetPoints;
 	std::vector<Vector3f> targetNormals;

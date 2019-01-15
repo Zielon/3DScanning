@@ -35,7 +35,7 @@ private:
 	Matrix4f m_posePrev = Matrix4f::Zero();
 
 	#if _DEBUG
-	int m_number_iterations = 2;
+	int m_number_iterations = 1;
 	#else
 	int m_number_iterations = 5;
 	#endif

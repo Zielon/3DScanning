@@ -10,7 +10,6 @@
 #include "../../concurency/headers/ThreadManager.h"
 
 void WindowsTests::run(){
-
 	//reconstructionTest();
 	//streamPointCloudTest();
 	// meshTest();
