@@ -66,7 +66,7 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 
 	if (is_first_frame) // first frame
 	{
-		Matrix4f id = Matrix4f::Identity();
+		Matrix4f id = Map<Matrix4f>(pose, 4, 4);
 		memcpy(pose, id.data(), 16 * sizeof(float));
 		tracker_context->m_tracker->m_previous_point_cloud = source;
 		return;

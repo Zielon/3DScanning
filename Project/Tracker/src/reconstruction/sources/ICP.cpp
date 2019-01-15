@@ -10,9 +10,11 @@ ICP::~ICP(){
 	SAFE_DELETE(m_procrustesAligner);
 }
 
-Matrix4f ICP::estimatePose(PointCloud* source, PointCloud* target){
 
-	Matrix4f pose = Matrix4f::Identity();
+Matrix4f ICP::estimatePose(PointCloud* source, PointCloud* target, float* initPose){
+	
+	Matrix4f pose = Map<Matrix4f>(initPose, 4, 4);
+	std::cout << "Pose matrix \n" << pose;
 
 	std::vector<Vector3f> sourcePoints;
 	std::vector<Vector3f> targetPoints;

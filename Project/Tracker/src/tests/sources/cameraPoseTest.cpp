@@ -9,11 +9,12 @@ cameraPoseTest::cameraPoseTest()
 	unsigned char* img = new unsigned char[getImageWidth(pc) * getImageHeight(pc) * 3];
 
 	float pose[16];
+	const auto initCamPose = getTrajectory(0);
+	memcpy(pose, initCamPose.data(), 16 * sizeof(float));
 
 	for (int i = 0; i < 3000; ++i)
 	{
-		const auto trajectory = getTrajectory(i);
-
+		const auto trajetory = getTrajectory(i);
 		dllMain(pc, img, pose);
 
 		cv::Mat dllmat = cv::Mat(getImageHeight(pc), getImageWidth(pc), CV_8UC3, img);
