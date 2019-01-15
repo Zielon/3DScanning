@@ -1,13 +1,20 @@
 #include "../headers/Buffer.h"
 
 template <class T>
+Buffer<T>::~Buffer(){
+	m_stop = true;
+	m_cond.notify_all();
+}
+
+template <class T>
 void Buffer<T>::add(T element){
 	while (true)
 	{
 		std::unique_lock<std::mutex> locker(m_mutex_add);
 		m_cond.wait(locker, [this](){
-			return m_buffer.size() < m_size;
+			return m_buffer.size() < m_size || m_stop;
 		});
+		if (m_stop) return;
 		m_buffer.push_back(element);
 		locker.unlock();
 		m_cond.notify_all();
@@ -21,8 +28,9 @@ T Buffer<T>::remove(){
 	{
 		std::unique_lock<std::mutex> locker(m_mutex_remove);
 		m_cond.wait(locker, [this](){
-			return !m_buffer.empty();
+			return !m_buffer.empty() || m_stop;
 		});
+		if (m_stop) return nullptr;
 		T element = m_buffer.back();
 		m_buffer.pop_back();
 		locker.unlock();
@@ -34,4 +42,9 @@ T Buffer<T>::remove(){
 template <class T>
 bool Buffer<T>::isEmpty(){
 	return m_buffer.empty();
+}
+
+template <class T>
+int Buffer<T>::size(){
+	return m_buffer.size();
 }

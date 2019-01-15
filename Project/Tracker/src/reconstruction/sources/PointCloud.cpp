@@ -55,16 +55,17 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	cv::Mat image, colors;
 
-	if (m_downsampling)
-	{
-		pyrDown(depth_mat, image, cv::Size(depth_mat.cols / 2, depth_mat.rows / 2));
-		pyrDown(rgb_mat, colors, cv::Size(depth_mat.cols / 2, depth_mat.rows / 2));
-	}
-	else
-	{
+	// TODO Think about it!
+	//if (m_downsampling)
+	//{
+	//	pyrDown(depth_mat, image, cv::Size(depth_mat.cols / 2, depth_mat.rows / 2));
+	//	pyrDown(rgb_mat, colors, cv::Size(depth_mat.cols / 2, depth_mat.rows / 2));
+	//}
+	//else
+	//{
 		image = cv::Mat(depth_mat);
 		colors = cv::Mat(rgb_mat);
-	}
+	//}
 
 	Vector3f pixel_coords;
 
@@ -165,7 +166,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	#ifdef TESTING
 	// To build this mesh we need all points from the image
-	m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
+	// m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
 	#endif
 
 	//m_nearestNeighbor->buildIndex(m_points);

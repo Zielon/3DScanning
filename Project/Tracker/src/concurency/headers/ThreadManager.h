@@ -12,8 +12,11 @@ public:
 
 	static void waitForAll();
 
-	static void detachAll(std::vector<std::thread>& threads);
+	static void waitForAll(std::vector<std::thread>& threads);
 
+	static std::string getId();
+
+private:
 	static std::vector<std::thread> m_threads;
 };
 

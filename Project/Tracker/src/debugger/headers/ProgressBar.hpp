@@ -25,8 +25,8 @@ public:
 		return ++m_ticks;
 	}
 
-	void increment(int tick){
-		m_ticks += tick;
+	void set(int tick){
+		m_ticks = tick;
 	}
 
 	void display() const{

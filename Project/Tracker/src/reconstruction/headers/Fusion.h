@@ -37,7 +37,7 @@ public:
 
 	void save(string name) const;
 
-	bool isFinished() const;
+	void wait() const;
 
 	std::vector<int> m_currentIndexBuffer;
 

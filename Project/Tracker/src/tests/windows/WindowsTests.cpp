@@ -165,7 +165,7 @@ void WindowsTests::reconstructionTest() const{
 	m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps);
 	m_files_manager.readDepthTimeStampFile(depth_timestamps);
 
-	for (int index = 0; index < 100; index += 1)
+	for (int index = 0; index < depth_timestamps.size(); index += 1)
 	{
 		double timestamp = depth_timestamps[index];
 		double min = std::numeric_limits<double>::infinity();
@@ -187,10 +187,10 @@ void WindowsTests::reconstructionTest() const{
 		PointCloud* cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, false);
 		cloud->m_pose_estimation = trajectory;
 		context->m_fusion->produce(cloud);
-	}
 
-	while (!context->m_fusion->isFinished())
-		std::this_thread::sleep_for(std::chrono::seconds(1));
+		// Simulate a small delay
+		std::this_thread::sleep_for(std::chrono::milliseconds(5));
+	}
 
 	context->m_fusion->save("mesh");
 

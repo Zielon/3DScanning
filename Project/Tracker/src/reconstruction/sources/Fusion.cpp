@@ -4,7 +4,9 @@
 
 #include <direct.h>
 #include <cmath>
+#include <algorithm>
 #include "../../concurency/headers/ThreadManager.h"
+#include "../../debugger/headers/ProgressBar.hpp"
 
 Fusion::Fusion(CameraParameters camera_parameters) : m_camera_parameters(camera_parameters){
 	initialize();
@@ -12,11 +14,12 @@ Fusion::Fusion(CameraParameters camera_parameters) : m_camera_parameters(camera_
 
 Fusion::~Fusion(){
 	stopConsumers();
-	SAFE_DELETE(m_volume);
 	SAFE_DELETE(m_buffer);
+	ThreadManager::waitForAll(m_consumer_threads);
 	std::for_each(m_consumers.begin(), m_consumers.end(), [](auto consumer){
 		SAFE_DELETE(consumer);
 	});
+	SAFE_DELETE(m_volume);
 }
 
 inline Vector3i round(const Vector3f& point){
@@ -27,6 +30,93 @@ inline float getTruncation(float depth){
 	if (depth > 1) return 1;
 	if (depth < -1) return -1;
 	return depth;
+}
+
+void Fusion::save(string name) const{
+
+	wait();
+
+	Mesh mesh;
+
+	for (int z = 0; z < m_volume->m_size - 1; z++)
+		for (int y = 0; y < m_volume->m_size - 1; y++)
+			for (int x = 0; x < m_volume->m_size - 1; x++)
+				ProcessVolumeCell(m_volume, x, y, z, -0.15f, &mesh);
+
+	mesh.save(name);
+}
+
+void Fusion::initialize(){
+	m_volume = new Volume(Vector3d(-2, -2, -2), Vector3d(2, 2, 2), 200, 1);
+	m_buffer = new Buffer<PointCloud*>();
+}
+
+void Fusion::wait() const{
+	const int size = m_buffer->size();
+	if (size == 0) return;
+	Verbose::message("Waiting for consumers... [ " + std::to_string(size) + " frames ]");
+	ProgressBar bar(size, 60);
+
+	while (!m_buffer->isEmpty())
+	{
+		bar.set(size - m_buffer->size());
+		bar.display();
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
+
+	bar.set(size - m_buffer->size());
+	bar.done();
+}
+
+/// Buffer has a certain capacity when it is exceeded 
+/// this method will block the execution
+void Fusion::produce(PointCloud* cloud) const{
+	m_buffer->add(cloud);
+}
+
+/// Consumes point clouds from a buffer and 
+/// produces a mesh using SFD implicit functions
+void Fusion::consume(){
+
+	for (int i = 0; i < NUMBER_OF_CONSUMERS; i++)
+	{
+		auto consumer = new Consumer<PointCloud*>(m_buffer);
+		m_consumers.emplace_back(consumer);
+		m_consumer_threads.emplace_back([this, consumer](){
+			consumer->run([this](PointCloud* cloud){
+				this->integrate(cloud);
+			});
+		});
+	}
+}
+
+int Fusion::clamp(float value) const{
+	const auto max = float(m_volume->m_size);
+	return int(max(0.f, min(max, value)));
+}
+
+Vector3i Fusion::clamp(Vector3i value) const{
+	return Vector3i(clamp(value.x()), clamp(value.y()), clamp(value.z()));
+}
+
+void Fusion::stopConsumers(){
+	for (auto& consumer : m_consumers)
+		consumer->stop();
+}
+
+/// Back-project to camera space
+Vector3f Fusion::backproject(float x, float y, float depth) const{
+	Vector3f point;
+	point[0] = (x - m_camera_parameters.m_cX) / m_camera_parameters.m_focal_length_X * depth;
+	point[0] = (y - m_camera_parameters.m_cY) / m_camera_parameters.m_focal_length_Y * depth;
+	point[0] = depth;
+	return point;
+}
+
+Vector3f Fusion::reproject(Vector3f point) const{
+	float x = m_camera_parameters.m_focal_length_X * point.x() / point.z() + m_camera_parameters.m_cX;
+	float y = m_camera_parameters.m_focal_length_Y * point.y() / point.z() + m_camera_parameters.m_cY;
+	return Vector3f(x, y, point.z());
 }
 
 void Fusion::integrate(PointCloud* cloud){
@@ -59,6 +149,8 @@ void Fusion::integrate(PointCloud* cloud){
 
 				Voxel* voxel = m_volume->getVoxel(x, y, z);
 
+				if (!voxel) continue;
+
 				// Update free space counter if voxel is in the front of observation
 				if (cell.z() < depth)
 					voxel->m_free_ctr++;
@@ -70,13 +162,11 @@ void Fusion::integrate(PointCloud* cloud){
 
 				if (sdf > -truncation)
 				{
-					voxel->m_sdf = sdf;
-					voxel->m_weight = 1;
-
-					//voxel->m_sdf = (voxel->m_sdf * weight + sdf * m_weight_update) / (weight + m_weight_update);
-					//voxel->m_weight = std::min(int(weight) + int(m_weight_update),
-					//                           int(std::numeric_limits<unsigned char>::max()));
-					//voxel->m_position = Vector3f(x, y, z);
+					voxel->m_sdf = (voxel->m_sdf * weight + sdf * m_weight_update) / (weight + m_weight_update);
+					voxel->m_weight =						min(int(weight) + int(m_weight_update), int(std::numeric_limits<unsigned char
+>::
+infinity()));
+					voxel->m_position = Vector3f(x, y, z);
 				}
 
 				m_weight_update += weight;
@@ -85,80 +175,6 @@ void Fusion::integrate(PointCloud* cloud){
 			}
 
 	SAFE_DELETE(cloud);
-}
-
-void Fusion::save(string name) const{
-
-	Mesh mesh;
-
-	for (unsigned int x = 0; x < m_volume->m_size - 1; x++)
-		for (unsigned int y = 0; y < m_volume->m_size - 1; y++)
-			for (unsigned int z = 0; z < m_volume->m_size - 1; z++)
-				ProcessVolumeCell(m_volume, x, y, z, 0.3f, &mesh);
-
-	mesh.save(name);
-}
-
-bool Fusion::isFinished() const{
-	return m_buffer->isEmpty();
-}
-
-/// Buffer has a certain capacity when it is exceeded 
-/// this method will block the execution
-void Fusion::produce(PointCloud* cloud) const{
-	m_buffer->add(cloud);
-}
-
-/// Consumes point clouds from a buffer and 
-/// produces a mesh using SFD implicit functions
-void Fusion::consume(){
-
-	for (int i = 0; i < NUMBER_OF_CONSUMERS; i++)
-	{
-		auto consumer = new Consumer<PointCloud*>(m_buffer);
-		m_consumers.emplace_back(consumer);
-		m_consumer_threads.emplace_back([this, consumer](){
-			consumer->run([this](PointCloud* cloud){
-				this->integrate(cloud);
-			});
-		});
-	}
-}
-
-void Fusion::initialize(){
-	m_volume = new Volume(Vector3d(-0.1, -0.1, -0.1), Vector3d(1.1, 1.1, 1.1), 300, 1);
-	m_buffer = new Buffer<PointCloud*>();
-}
-
-int Fusion::clamp(float value) const{
-	const auto max = float(m_volume->m_size);
-	return int(std::max(0.f, std::min(max, value)));
-}
-
-Vector3i Fusion::clamp(Vector3i value) const{
-	return Vector3i(clamp(value.x()), clamp(value.y()), clamp(value.z()));
-}
-
-void Fusion::stopConsumers(){
-	for (auto& consumer : m_consumers)
-		consumer->stop();
-
-	ThreadManager::detachAll(m_consumer_threads);
-}
-
-/// Back-project to camera space
-Vector3f Fusion::backproject(float x, float y, float depth) const{
-	Vector3f point;
-	point[0] = (x - m_camera_parameters.m_cX) / m_camera_parameters.m_focal_length_X * depth;
-	point[0] = (y - m_camera_parameters.m_cY) / m_camera_parameters.m_focal_length_Y * depth;
-	point[0] = depth;
-	return point;
-}
-
-Vector3f Fusion::reproject(Vector3f point) const{
-	float x = m_camera_parameters.m_focal_length_X * point.x() / point.z() + m_camera_parameters.m_cX;
-	float y = m_camera_parameters.m_focal_length_Y * point.y() / point.z() + m_camera_parameters.m_cY;
-	return Vector3f(x, y, point.z());
 }
 
 FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld, CameraParameters camera_parameters) const{
