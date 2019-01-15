@@ -18,7 +18,6 @@
 class testBase
 {
 public:
-	void run();
 
 protected:
 	const Eigen::Matrix4f getTrajectory(int);

@@ -48,12 +48,10 @@
     <ClInclude Include="..\..\src\reconstruction\headers\Voxel.h" />
     <ClInclude Include="..\..\src\reconstruction\sources\NearestNeighbor.hpp" />
     <ClInclude Include="..\..\src\reconstruction\sources\ProcrustesAligner.hpp" />
-    <ClInclude Include="..\..\src\tests\headers\cameraPoseTest.h" />
-    <ClInclude Include="..\..\src\tests\headers\meshTest.h" />
-    <ClInclude Include="..\..\src\tests\headers\pointCloudTest.h" />
+    <ClInclude Include="..\..\src\tests\headers\dataStreamTest.h" />
     <ClInclude Include="..\..\src\tests\headers\reconstructionTest.h" />
     <ClInclude Include="..\..\src\tests\headers\testBase.h" />
-    <ClInclude Include="..\..\src\tests\headers\vidReadTest.h" />
+    <ClInclude Include="..\..\src\tests\headers\trackerTest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\concurency\sources\Buffer.cpp" />
@@ -71,12 +69,10 @@
     <ClCompile Include="..\..\src\reconstruction\sources\PointCloud.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Tracker.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Volume.cpp" />
-    <ClCompile Include="..\..\src\tests\sources\cameraPoseTest.cpp" />
-    <ClCompile Include="..\..\src\tests\sources\meshTest.cpp" />
-    <ClCompile Include="..\..\src\tests\sources\pointCloudTest.cpp" />
+    <ClCompile Include="..\..\src\tests\sources\dataStreamTest.cpp" />
     <ClCompile Include="..\..\src\tests\sources\reconstructionTest.cpp" />
     <ClCompile Include="..\..\src\tests\sources\testBase.cpp" />
-    <ClCompile Include="..\..\src\tests\sources\vidReadTest.cpp" />
+    <ClCompile Include="..\..\src\tests\sources\trackerTest.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

@@ -60,22 +60,16 @@
     <ClInclude Include="..\..\src\concurency\headers\ThreadManager.h">
       <Filter>concurency\headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\tests\headers\vidReadTest.h">
+    <ClInclude Include="..\..\src\tests\headers\testBase.h">
       <Filter>tests\headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\tests\headers\cameraPoseTest.h">
-      <Filter>tests\headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tests\headers\meshTest.h">
-      <Filter>tests\headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\tests\headers\pointCloudTest.h">
+    <ClInclude Include="..\..\src\tests\headers\dataStreamTest.h">
       <Filter>tests\headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\tests\headers\reconstructionTest.h">
       <Filter>tests\headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\tests\headers\testBase.h">
+    <ClInclude Include="..\..\src\tests\headers\trackerTest.h">
       <Filter>tests\headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -121,22 +115,16 @@
     <ClCompile Include="..\..\src\concurency\sources\ThreadManager.cpp">
       <Filter>concurency\sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\tests\sources\vidReadTest.cpp">
+    <ClCompile Include="..\..\src\tests\sources\testBase.cpp">
       <Filter>tests\sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\tests\sources\cameraPoseTest.cpp">
-      <Filter>tests\sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tests\sources\meshTest.cpp">
-      <Filter>tests\sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\tests\sources\pointCloudTest.cpp">
+    <ClCompile Include="..\..\src\tests\sources\dataStreamTest.cpp">
       <Filter>tests\sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\tests\sources\reconstructionTest.cpp">
       <Filter>tests\sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\tests\sources\testBase.cpp">
+    <ClCompile Include="..\..\src\tests\sources\trackerTest.cpp">
       <Filter>tests\sources</Filter>
     </ClCompile>
   </ItemGroup>

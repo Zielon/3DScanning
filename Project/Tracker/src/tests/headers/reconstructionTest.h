@@ -4,6 +4,7 @@ class reconstructionTest :
 	public testBase
 {
 public:
-	reconstructionTest();
-	~reconstructionTest();
+	void meshTest();
+	void reconstructTest();
+	void pointCloudTest();
 };

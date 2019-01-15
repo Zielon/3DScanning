@@ -1,9 +1,9 @@
-
 #include "testBase.h"
-class meshTest :
+
+class trackerTest :
 	public testBase
 {
 public:
-	meshTest();
-	~meshTest();
+	void cameraPoseTest();
 };
+

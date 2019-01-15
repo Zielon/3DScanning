@@ -1,19 +1,5 @@
 #include "../headers/testBase.h"
 
-#include "../headers/pointCloudTest.h"
-#include "../headers/reconstructionTest.h"
-#include "../headers/vidReadTest.h"
-#include "../headers/cameraPoseTest.h"
-#include "../headers/meshTest.h"
-
-void testBase::run() {
-	//auto reconstruction = new reconstructionTest();
-	//auto pointCloud = new pointCloudTest();
-	//auto mesh = new meshTest();
-	//auto vidRead = new vidReadTest();
-	auto camPoseTest = new cameraPoseTest();
-}
-
 const Eigen::Matrix4f testBase::getTrajectory(int index) { //get trajectory
 	//Read groundtruth trajectories (camera poses)
 	std::vector<Matrix4f> trajectories;

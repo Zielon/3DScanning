@@ -1,10 +1,10 @@
 #pragma once
 #include "testBase.h"
 
-class meshTest :
+class dataStreamTest :
 	public testBase
 {
 public:
-	meshTest();
-	~meshTest();
+	void vidReadTest();
 };
+
