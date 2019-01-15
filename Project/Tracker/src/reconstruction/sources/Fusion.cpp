@@ -38,16 +38,16 @@ void Fusion::save(string name) const{
 
 	Mesh mesh;
 
-	for (int z = 0; z < m_volume->m_size - 1; z++)
+	for (int x = 0; x < m_volume->m_size - 1; x++)
 		for (int y = 0; y < m_volume->m_size - 1; y++)
-			for (int x = 0; x < m_volume->m_size - 1; x++)
+			for (int z = 0; z < m_volume->m_size - 1; z++)
 				ProcessVolumeCell(m_volume, x, y, z, -0.15f, &mesh);
 
 	mesh.save(name);
 }
 
 void Fusion::initialize(){
-	m_volume = new Volume(Vector3d(-2, -2, -2), Vector3d(2, 2, 2), 200, 1);
+	m_volume = new Volume(Vector3d(-3, -2, -2), Vector3d(3, 2, 2), 200, 1);
 	m_buffer = new Buffer<PointCloud*>();
 }
 
@@ -163,9 +163,8 @@ void Fusion::integrate(PointCloud* cloud){
 				if (sdf > -truncation)
 				{
 					voxel->m_sdf = (voxel->m_sdf * weight + sdf * m_weight_update) / (weight + m_weight_update);
-					voxel->m_weight =						min(int(weight) + int(m_weight_update), int(std::numeric_limits<unsigned char
->::
-infinity()));
+					voxel->m_weight =
+						min(int(weight) + int(m_weight_update), int(std::numeric_limits<unsigned char>::infinity()));
 					voxel->m_position = Vector3f(x, y, z);
 				}
 

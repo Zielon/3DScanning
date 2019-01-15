@@ -165,7 +165,11 @@ void WindowsTests::reconstructionTest() const{
 	m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps);
 	m_files_manager.readDepthTimeStampFile(depth_timestamps);
 
-	for (int index = 0; index < depth_timestamps.size(); index += 1)
+	auto size = depth_timestamps.size();
+
+	ProgressBar bar(size, 60, "Frames loaded");
+
+	for (int index = 0; index < size; index += 1)
 	{
 		double timestamp = depth_timestamps[index];
 		double min = std::numeric_limits<double>::infinity();
@@ -190,7 +194,11 @@ void WindowsTests::reconstructionTest() const{
 
 		// Simulate a small delay
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
+		++bar;
+		bar.display();
 	}
+
+	bar.done();
 
 	context->m_fusion->save("mesh");
 

@@ -8,7 +8,7 @@ class ProgressBar
 {
 private:
 	unsigned int m_ticks = 0;
-
+	std::string m_message = "";
 	const unsigned int m_total_ticks;
 	const unsigned int m_bar_width;
 	const char m_complete_char = '=';
@@ -20,6 +20,9 @@ public:
 		m_total_ticks{total}, m_bar_width{width}, m_complete_char{complete}, m_incomplete_char{incomplete}{}
 
 	ProgressBar(unsigned int total, unsigned int width) : m_total_ticks{total}, m_bar_width{width}{}
+
+	ProgressBar(unsigned int total, unsigned int width, std::string message) : m_message(message), m_total_ticks{total},
+	                                                                           m_bar_width{width}{}
 
 	unsigned int operator++(){
 		return ++m_ticks;
@@ -36,7 +39,10 @@ public:
 		std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 		auto time_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - m_start_time).count();
 
-		std::cout << "[";
+		if(!m_message.empty())
+			std::cout << m_message << " [";
+		else
+			std::cout << "[";
 
 		for (int i = 0; i < m_bar_width; ++i)
 		{
@@ -46,6 +52,10 @@ public:
 		}
 		std::cout << "] " << int(progress * 100.0) << "% "
 			<< float(time_elapsed) / 1000.0 << "s\r";
+		std::cout.flush();
+	}
+
+	void flush() const{
 		std::cout.flush();
 	}
 

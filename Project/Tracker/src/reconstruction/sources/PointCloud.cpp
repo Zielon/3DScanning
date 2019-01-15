@@ -63,8 +63,8 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	//}
 	//else
 	//{
-		image = cv::Mat(depth_mat);
-		colors = cv::Mat(rgb_mat);
+	image = cv::Mat(depth_mat);
+	colors = cv::Mat(rgb_mat);
 	//}
 
 	Vector3f pixel_coords;
