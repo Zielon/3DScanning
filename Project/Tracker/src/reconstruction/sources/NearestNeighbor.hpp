@@ -27,6 +27,7 @@ protected:
 	float m_maxDistance;
 
 	NearestNeighborSearch() : m_maxDistance{0.0025f}{}
+	//NearestNeighborSearch() : m_maxDistance{100.0f}{}
 };
 
 /**

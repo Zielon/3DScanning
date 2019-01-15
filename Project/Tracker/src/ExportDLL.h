@@ -12,7 +12,7 @@
 
 extern "C" __declspec(dllexport) void* createContext(const char* dataset_path);
 
-extern "C" __declspec(dllexport) void trackerCameraPose(void* context, unsigned char* image, float* pose, int w, int h);
+extern "C" __declspec(dllexport) void trackerCameraPose(void* context, unsigned char* image, float* pose);
 
 extern "C" __declspec(dllexport) int getImageWidth(void* context);
 
