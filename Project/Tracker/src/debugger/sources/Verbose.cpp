@@ -21,7 +21,9 @@ void Verbose::stop(std::string message = "", Type type){
 
 void Verbose::message(std::string message, Type type){
 	changeConsole(type);
+	#ifdef TESTING
 	std::cout << message << std::endl;
+	#endif
 }
 
 void Verbose::changeConsole(Type type){

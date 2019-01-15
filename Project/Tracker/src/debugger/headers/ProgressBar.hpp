@@ -39,7 +39,8 @@ public:
 		std::chrono::steady_clock::time_point now = std::chrono::steady_clock::now();
 		auto time_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - m_start_time).count();
 
-		if(!m_message.empty())
+		#ifdef TESTING
+		if (!m_message.empty())
 			std::cout << m_message << " [";
 		else
 			std::cout << "[";
@@ -53,6 +54,7 @@ public:
 		std::cout << "] " << int(progress * 100.0) << "% "
 			<< float(time_elapsed) / 1000.0 << "s\r";
 		std::cout.flush();
+		#endif
 	}
 
 	void flush() const{
