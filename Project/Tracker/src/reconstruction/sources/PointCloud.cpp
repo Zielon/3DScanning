@@ -81,8 +81,8 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	auto temp_normals = std::vector<Vector3f>(size);
 
 	//Depth range check
-	//float depth_min = std::numeric_limits<float>::infinity();
-	//float depth_max = -1;
+	float depth_min = std::numeric_limits<float>::infinity();
+	float depth_max = -std::numeric_limits<float>::infinity();
 
 	for (auto y = 0; y < m_current_height; y++)
 	{
@@ -97,8 +97,8 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			m_color_points[idx] = Vector4uc(color[0], color[1], color[2], 0);
 
 			//Depth range check
-			//depth_min = std::min(depth_min, depth_val);
-			//depth_max = std::max(depth_max, depth_val);
+			depth_min = std::min(depth_min, depth);
+			depth_max = std::max(depth_max, depth);
 
 			if (depth > 0.0f)
 			{
@@ -115,6 +115,9 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			}
 		}
 	}
+
+	m_camera_parameters.m_depth_max = depth_max;
+	m_camera_parameters.m_depth_min = depth_min;
 
 	for (auto y = 1; y < m_current_height - 1; y++)
 	{
@@ -165,7 +168,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
 	#endif
 
-	m_nearestNeighbor->buildIndex(m_points);
+	//m_nearestNeighbor->buildIndex(m_points);
 }
 
 int PointCloud::getClosestPoint(Vector3f grid_cell) const{

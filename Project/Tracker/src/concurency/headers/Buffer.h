@@ -15,6 +15,8 @@ public:
 
 	bool isEmpty();
 
+	int size();
+
 private:
 	std::mutex m_mutex_add;
 	std::mutex m_mutex_remove;

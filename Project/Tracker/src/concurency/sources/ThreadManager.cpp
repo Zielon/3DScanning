@@ -16,6 +16,6 @@ void ThreadManager::waitForAll(){
 }
 
 void ThreadManager::detachAll(std::vector<std::thread>& threads){
-	std::for_each(threads.begin(), threads.end(), std::mem_fn(&std::thread::detach));
+	std::for_each(threads.begin(), threads.end(), std::mem_fn(&std::thread::join));
 	threads.clear();
 }

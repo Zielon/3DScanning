@@ -64,6 +64,9 @@
     <ClInclude Include="..\..\src\concurency\headers\ThreadManager.h">
       <Filter>concurency\headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\debugger\headers\ProgressBar.hpp">
+      <Filter>debugger\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />

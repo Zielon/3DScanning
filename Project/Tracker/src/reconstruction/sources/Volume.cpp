@@ -31,9 +31,7 @@ Voxel* Volume::getVoxel(int idx) const{
 
 Voxel* Volume::getVoxel(int x, int y, int z) const{
 	const int index = x * m_size * m_size + y * m_size + z;
-	if (index < m_length)
-		return m_voxels[index];
-	return nullptr;
+	return m_voxels[index];
 }
 
 Voxel* Volume::getVoxel(Vector3i position) const{

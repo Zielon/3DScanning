@@ -30,19 +30,16 @@ inline float getTruncation(float depth){
 }
 
 void Fusion::integrate(PointCloud* cloud){
-
 	const auto cameraToWorld = cloud->m_pose_estimation;
 	const auto worldToCamera = cameraToWorld.inverse();
 
 	const auto rotation = worldToCamera.block(0, 0, 3, 3);
 	const auto translation = worldToCamera.block(0, 3, 3, 1);
-	const auto frustum_box = computeFrustumBounds(cameraToWorld);
+	const auto frustum_box = computeFrustumBounds(cameraToWorld, cloud->m_camera_parameters);
 
-	if (!frustum_box.m_is_valid) return;
-
-	for (unsigned int z = frustum_box.m_min_z; z < frustum_box.m_max_z; z++)
-		for (unsigned int y = frustum_box.m_min_y; y < frustum_box.m_max_y; y++)
-			for (unsigned int x = frustum_box.m_min_x; x < frustum_box.m_max_x; x++)
+	for (unsigned int z = frustum_box.m_min.z(); z < frustum_box.m_max.z(); z++)
+		for (unsigned int y = frustum_box.m_min.y(); y < frustum_box.m_max.y(); y++)
+			for (unsigned int x = frustum_box.m_min.x(); x < frustum_box.m_max.x(); x++)
 			{
 				// Transform from the cell world to the camera world
 				Vector3f cell = rotation * m_volume->getWorldPosition(Vector3i(x, y, z)) + translation;
@@ -73,10 +70,13 @@ void Fusion::integrate(PointCloud* cloud){
 
 				if (sdf > -truncation)
 				{
-					voxel->m_sdf = (voxel->m_sdf * weight + sdf * m_weight_update) / (weight + m_weight_update);
-					voxel->m_weight = std::min(int(weight) + int(m_weight_update),
-					                           int(std::numeric_limits<unsigned char>::max()));
-					voxel->m_position = Vector3f(x, y, z);
+					voxel->m_sdf = sdf;
+					voxel->m_weight = 1;
+
+					//voxel->m_sdf = (voxel->m_sdf * weight + sdf * m_weight_update) / (weight + m_weight_update);
+					//voxel->m_weight = std::min(int(weight) + int(m_weight_update),
+					//                           int(std::numeric_limits<unsigned char>::max()));
+					//voxel->m_position = Vector3f(x, y, z);
 				}
 
 				m_weight_update += weight;
@@ -87,16 +87,14 @@ void Fusion::integrate(PointCloud* cloud){
 	SAFE_DELETE(cloud);
 }
 
-void Fusion::save(string name){
-
-	stopConsumers();
+void Fusion::save(string name) const{
 
 	Mesh mesh;
 
 	for (unsigned int x = 0; x < m_volume->m_size - 1; x++)
 		for (unsigned int y = 0; y < m_volume->m_size - 1; y++)
 			for (unsigned int z = 0; z < m_volume->m_size - 1; z++)
-				ProcessVolumeCell(m_volume, x, y, z, 0.9f, &mesh);
+				ProcessVolumeCell(m_volume, x, y, z, 0.3f, &mesh);
 
 	mesh.save(name);
 }
@@ -128,13 +126,17 @@ void Fusion::consume(){
 }
 
 void Fusion::initialize(){
-	m_volume = new Volume(Vector3d(-5, -5, -5), Vector3d(5, 5, 5), 200, 1);
+	m_volume = new Volume(Vector3d(-0.1, -0.1, -0.1), Vector3d(1.1, 1.1, 1.1), 300, 1);
 	m_buffer = new Buffer<PointCloud*>();
 }
 
 int Fusion::clamp(float value) const{
 	const auto max = float(m_volume->m_size);
 	return int(std::max(0.f, std::min(max, value)));
+}
+
+Vector3i Fusion::clamp(Vector3i value) const{
+	return Vector3i(clamp(value.x()), clamp(value.y()), clamp(value.z()));
 }
 
 void Fusion::stopConsumers(){
@@ -145,60 +147,61 @@ void Fusion::stopConsumers(){
 }
 
 /// Back-project to camera space
-Vector3f Fusion::backproject(float x, float y, float z) const{
+Vector3f Fusion::backproject(float x, float y, float depth) const{
 	Vector3f point;
-	point << (x - m_camera_parameters.m_cX) / m_camera_parameters.m_focal_length_X *
-		z, (y - m_camera_parameters.m_cY) / m_camera_parameters.m_focal_length_Y * z,
-		z;
+	point[0] = (x - m_camera_parameters.m_cX) / m_camera_parameters.m_focal_length_X * depth;
+	point[0] = (y - m_camera_parameters.m_cY) / m_camera_parameters.m_focal_length_Y * depth;
+	point[0] = depth;
 	return point;
 }
 
 Vector3f Fusion::reproject(Vector3f point) const{
 	float x = m_camera_parameters.m_focal_length_X * point.x() / point.z() + m_camera_parameters.m_cX;
 	float y = m_camera_parameters.m_focal_length_Y * point.y() / point.z() + m_camera_parameters.m_cY;
-	return Vector3f(x, y, 0);
+	return Vector3f(x, y, point.z());
 }
 
-FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld) const{
+FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld, CameraParameters camera_parameters) const{
 
 	const auto rotation = cameraToWorld.block(0, 0, 3, 3);
 	const auto translation = cameraToWorld.block(0, 3, 3, 1);
 
-	// Assuming that a camera is placed in (0,0,0)
-	Vector3f cameraWorld = rotation * backproject(0, 0, 0) + translation;
-	Vector3i cameraCenter = m_volume->getGridPosition(cameraWorld);
+	auto width = camera_parameters.m_image_width;
+	auto height = camera_parameters.m_image_height;
+	auto min_depth = camera_parameters.m_depth_min;
+	auto max_depth = camera_parameters.m_depth_max;
+
+	std::vector<Vector3f> corners;
 
 	// Image -> Camera -> World -> Grid
-	Vector3i min = m_volume->getGridPosition(
-		rotation * backproject(-m_camera_parameters.m_image_width / 2, -m_camera_parameters.m_image_height / 2, 0) +
-		translation);
+	for (auto depth : std::vector<float>{min_depth, max_depth})
+	{
+		corners.push_back(backproject(0, 0, depth));
+		corners.push_back(backproject(width - 1, 0, depth));
+		corners.push_back(backproject(width - 1, height - 1, depth));
+		corners.push_back(backproject(0, height - 1, depth));
+	}
 
-	Vector3i max = m_volume->getGridPosition(
-		rotation * backproject(m_camera_parameters.m_image_width / 2, m_camera_parameters.m_image_height / 2, 0) +
-		translation);
+	Vector3i min;
+	Vector3i max;
 
-	Voxel* cameraVoxel = m_volume->getVoxel(cameraCenter);
+	for (int i = 0; i < 8; i++)
+	{
+		auto grid = m_volume->getGridPosition(rotation * corners[i] + translation);
+
+		if (grid.x() > max.x()) max[0] = grid[0];
+		if (grid.y() > max.y()) max[1] = grid[1];
+		if (grid.z() > max.z()) max[2] = grid[2];
+
+		if (grid.x() < min.x()) min[0] = grid[0];
+		if (grid.y() < min.y()) min[1] = grid[1];
+		if (grid.z() < max.z()) min[2] = grid[2];
+	}
 
 	FrustumBox box;
 
-	// Skip if camera is not in our mapping space
-	if (!cameraVoxel)
-	{
-		box.m_is_valid = false;
-		return box;
-	}
-
-	// Camera has a valid position
-	box.m_is_valid = true;
-
-	box.m_min_x = clamp(min.x());
-	box.m_max_x = clamp(max.x());
-
-	box.m_min_y = clamp(min.y());
-	box.m_max_y = clamp(max.y());
-
-	box.m_min_z = 0;
-	box.m_max_z = m_volume->m_size;
+	box.m_min = clamp(min);
+	box.m_max = clamp(max);
 
 	return box;
 }

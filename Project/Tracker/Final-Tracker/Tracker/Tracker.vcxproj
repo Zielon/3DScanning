@@ -33,6 +33,7 @@
     <ClInclude Include="..\..\src\concurency\headers\ThreadManager.h" />
     <ClInclude Include="..\..\src\data-stream\headers\DatasetVideoStreamReader.h" />
     <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h" />
+    <ClInclude Include="..\..\src\debugger\headers\ProgressBar.hpp" />
     <ClInclude Include="..\..\src\debugger\headers\Verbose.h" />
     <ClInclude Include="..\..\src\Eigen.h" />
     <ClInclude Include="..\..\src\ExportDLL.h" />
