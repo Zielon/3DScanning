@@ -35,6 +35,8 @@ public:
 	void merge(const Mesh& mesh);
 
 	bool save(const std::string& filename);
+	bool load(const std::string& filename, bool clear = true);
+
 
 	void transform(const Matrix4f& matrix);
 

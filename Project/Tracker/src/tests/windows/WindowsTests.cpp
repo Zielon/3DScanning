@@ -10,7 +10,8 @@
 #include "../../concurency/headers/ThreadManager.h"
 
 void WindowsTests::run(){
-	reconstructionTest();
+	precomputeMeshes();
+	//reconstructionTest();
 	// streamPointCloudTest();
 	// meshTest();
 	// vidReadTest();
@@ -21,7 +22,7 @@ void WindowsTests::meshTest(){
 
 	std::cout << "START meshTest()" << std::endl;
 
-	TrackerContext* pc = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+	TrackerContext* pc = static_cast<TrackerContext*>(createContext(m_files_manager.getCurrentPath().data()));
 
 	unsigned char* img = new unsigned char[getImageWidth(pc) * getImageHeight(pc) * 3];
 
@@ -97,11 +98,11 @@ void WindowsTests::meshTest(){
 	SAFE_DELETE(pc);
 }
 
-void WindowsTests::streamPointCloudTest() const{
+void WindowsTests::streamPointCloudTest() {
 
 	Verbose::message("START streamPointCloudTest()");
 
-	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+	TrackerContext* context = static_cast<TrackerContext*>(createContext(m_files_manager.getCurrentPath().data()));
 
 	unsigned char* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
@@ -149,11 +150,11 @@ void WindowsTests::streamPointCloudTest() const{
 	SAFE_DELETE(context);
 }
 
-void WindowsTests::reconstructionTest() const{
+void WindowsTests::reconstructionTest() {
 
 	Verbose::message("START reconstructionTest()");
 
-	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+	TrackerContext* context = static_cast<TrackerContext*>(createContext(m_files_manager.getCurrentPath().data()));
 
 	unsigned char* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
@@ -205,7 +206,7 @@ void WindowsTests::vidReadTest(){
 	std::cout << "START vidReadTest()" << std::endl;
 
 	VideoStreamReaderBase* videoInputReader = new DatasetVideoStreamReader(
-		DatasetManager::getCurrentPath().data(), false);
+		m_files_manager.getCurrentPath().data(), false);
 
 	if (!videoInputReader->startReading())
 	{
@@ -236,7 +237,7 @@ bool WindowsTests::cameraPoseTest(){
 
 	std::cout << "START cameraPoseTest()" << std::endl;
 
-	TrackerContext* pc = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+	TrackerContext* pc = static_cast<TrackerContext*>(createContext(m_files_manager.getCurrentPath().data()));
 
 	unsigned char* img = new unsigned char[getImageWidth(pc) * getImageHeight(pc) * 3];
 
@@ -281,4 +282,58 @@ bool WindowsTests::cameraPoseTest(){
 
 		std::cin.get();
 	}
+}
+
+
+void WindowsTests::precomputeMeshes() {
+
+	Verbose::message("START precomputeMeshes()");
+
+	TrackerContext* context = static_cast<TrackerContext*>(createContext(m_files_manager.getCurrentPath().data()));
+
+	unsigned char* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
+
+	std::vector<Matrix4f> trajectories;
+	std::vector<double> trajectory_timestamps;
+	std::vector<double> depth_timestamps;
+
+	m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps);
+	m_files_manager.readDepthTimeStampFile(depth_timestamps);
+
+	for (int index = 0; index < 600; index += 50)
+	{
+		double timestamp = depth_timestamps[index];
+		double min = std::numeric_limits<double>::infinity();
+		int idx = 0;
+		for (unsigned int j = 0; j < trajectories.size(); ++j)
+		{
+			double d = abs(trajectory_timestamps[j] - timestamp);
+			if (min > d)
+			{
+				min = d;
+				idx = j;
+			}
+		}
+
+		const auto trajectory = trajectories[idx];
+		cv::Mat rgb, depth;
+
+		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
+		PointCloud* cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, true);
+		cloud->m_pose_estimation = trajectory;
+
+		context->m_fusion->produce(cloud);
+		context->m_fusion->save("mesh"+std::to_string(index));
+
+	}
+
+	while (!context->m_fusion->isFinished())
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+
+	context->m_fusion->save("mesh");
+
+	Verbose::message("DONE precomputeMeshes()", SUCCESS);
+
+	delete[]img;
+	SAFE_DELETE(context);
 }

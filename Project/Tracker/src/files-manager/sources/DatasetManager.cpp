@@ -1,7 +1,7 @@
 #include "../headers/DatasetManager.h"
 
 
-bool DatasetManager::readTrajectoryFile(std::vector<Matrix4f>& result, std::vector<double>& timestamps) const{
+bool DatasetManager::readTrajectoryFile(std::vector<Matrix4f>& result, std::vector<double>& timestamps){
 
 	std::ifstream file(getCurrentPath("groundtruth.txt"), std::ios::in);
 
@@ -45,10 +45,9 @@ bool DatasetManager::readTrajectoryFile(std::vector<Matrix4f>& result, std::vect
 	return true;
 }
 
-bool DatasetManager::readDepthTimeStampFile(std::vector<double>& timestamps) const{
+bool DatasetManager::readDepthTimeStampFile(std::vector<double>& timestamps){
 
 	std::ifstream fileDepthList(getCurrentPath("depth.txt"), std::ios::in);
-
 	if (!fileDepthList.is_open()) return false;
 	timestamps.clear();
 
@@ -76,6 +75,6 @@ std::string DatasetManager::getCurrentPath(){
 	return std::string(current);
 }
 
-std::string DatasetManager::getCurrentPath(std::string filename) const{
+std::string DatasetManager::getCurrentPath(std::string filename){
 	return getCurrentPath() + "\\" + filename;
 }

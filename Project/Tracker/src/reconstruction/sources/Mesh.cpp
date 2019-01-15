@@ -1,6 +1,8 @@
 #include "../headers/Mesh.h"
 #include <direct.h>
+#include <sstream>
 #include "../../debugger/headers/Verbose.h"
+
 
 Mesh::Mesh() = default;
 
@@ -127,6 +129,72 @@ bool Mesh::save(const std::string& filename){
 	out_file.close();
 
 	Verbose::message("Generating the mesh was successful!", SUCCESS);
+
+	return true;
+}
+
+bool Mesh::load(const std::string& filename, bool clear) {
+
+	std::ifstream in_file(filename);
+	if (!in_file.is_open()) return false;
+
+	if (clear)
+	{
+		m_colors.clear(); 
+		m_vertices.clear(); 
+		m_triangles.clear(); 
+	}
+
+
+	Verbose::message(
+		"Generating a mesh with " + std::to_string(m_vertices.size()) + " vertices and " + std::
+		to_string(m_triangles.size()) + " triangles");
+
+	std::string line; 
+	std::getline(in_file, line); //COFF
+
+	std::getline(in_file, line); //sizes 
+
+	int verts, tris; 
+	{
+		std::istringstream iss(line);
+		iss >> verts >> tris;
+	}
+
+	std::getline(in_file, line); //# LIST OF VERTICES 
+	std::getline(in_file, line); //# X Y Z R G B A 
+
+	// load vertices
+	for (int i = 0; i < verts; i++)
+	{
+		float x, y, z; 
+
+		std::getline(in_file, line); //# X Y Z R G B A 
+		std::istringstream iss(line);
+		iss >> x >> y >> z; 
+		m_vertices.push_back(Vector3f(x, y, z)); 
+
+
+	}
+
+	std::getline(in_file, line); //# LIST OF Faces  
+
+	//load tris
+	for (int i = 0; i < verts; i++)
+	{
+		int x, y, z;
+
+		std::getline(in_file, line); //# X Y Z R G B A 
+		std::istringstream iss(line);
+		iss >> x >> y >> z;
+		m_triangles.push_back(Triangle(x, y, z)); 
+
+	}
+
+	// close file
+	in_file.close();
+
+	Verbose::message("Mesh read", SUCCESS);
 
 	return true;
 }

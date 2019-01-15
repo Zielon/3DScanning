@@ -7,21 +7,27 @@
 #include "../../ExportDLL.h"
 #include "../../files-manager/headers/DatasetManager.h"
 
+
+const std::string CPP_DATASET_PATH ="\\..\\..\\..\\MarkerlessAR_Unity\\Datasets\\freiburg\\";
+
 class WindowsTests {
 public:
     void run();
 
 private:
 
-	void streamPointCloudTest() const;
+	void streamPointCloudTest();
 
-    void reconstructionTest() const;
+    void reconstructionTest();
 
     void vidReadTest();
 
 	bool cameraPoseTest();
 
 	void meshTest(); 
+
+	void precomputeMeshes();
+
 
 	DatasetManager m_files_manager;
 

@@ -97,23 +97,23 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 
 extern "C" __declspec(dllexport) int getVertexCount(void* context){
 	TrackerContext* c = static_cast<TrackerContext*>(context);
-	return c->m_tracker->m_previous_point_cloud->getPoints().size();
+	return c->m_tracker->m_previous_point_cloud->m_mesh.m_vertices.size();
 }
 
 extern "C" __declspec(dllexport) void getVertexBuffer(void* context, float* vertices){
 	TrackerContext* c = static_cast<TrackerContext*>(context);
-	memcpy(vertices, c->m_tracker->m_previous_point_cloud->getPoints().data(),
-	       c->m_tracker->m_previous_point_cloud->getPoints().size() * sizeof(Vector3f));
+	memcpy(vertices, c->m_tracker->m_previous_point_cloud->m_mesh.m_vertices.data(),
+		c->m_tracker->m_previous_point_cloud->m_mesh.m_vertices.size() * sizeof(Vector3f));
 }
 
 extern "C" __declspec(dllexport) int getIndexCount(void* context){
 	TrackerContext* c = static_cast<TrackerContext*>(context);
-	return c->m_fusion->m_currentIndexBuffer.size();
+	return c->m_tracker->m_previous_point_cloud->m_mesh.m_triangles.size() * 3;
 }
 
 extern "C" __declspec(dllexport) void getIndexBuffer(void* context, int* indices){
 	TrackerContext* c = static_cast<TrackerContext*>(context);
-	memcpy(indices, c->m_fusion->m_currentIndexBuffer.data(), c->m_fusion->m_currentIndexBuffer.size() * sizeof(int));
+	memcpy(indices, c->m_tracker->m_previous_point_cloud->m_mesh.m_triangles.data(), c->m_tracker->m_previous_point_cloud->m_mesh.m_triangles.size() * sizeof(Triangle));
 }
 
 extern "C" __declspec(dllexport) void getNormalBuffer(void* context, float* normals){
@@ -157,11 +157,11 @@ extern "C" __declspec(dllexport) void* WOzCreateContext(const char* dataset_path
 	tracker_context->m_tracker = new Tracker(camera_parameters);
 	tracker_context->m_fusion = new Fusion(camera_parameters);
 	// Start consuming the point clouds buffer
-
-	tracker_context->m_datasetManager = new DatasetManager(std::string(dataset_path));
+	std::string path = std::string(dataset_path); 
+	tracker_context->m_datasetManager = new DatasetManager(path);
 	std::vector<double> tmp; 
 	tracker_context->m_datasetManager->readTrajectoryFile(tracker_context->trajectories, tmp);
-
+	tracker_context->meshPath = path + "../../../Tracker/Final-Tracker/Tracker/test_meshes/";
 	return tracker_context;
 }
 
@@ -182,8 +182,9 @@ extern "C" __declspec(dllexport) void WOzDllMain(void* context, unsigned char* i
 	Matrix4f poseMat = tracker_context->trajectories[index];
 	memcpy(pose, poseMat.data(), 16 * sizeof(float));
 
-
-
+	SAFE_DELETE(tracker_context->currentMesh); 
+	tracker_context->currentMesh = new Mesh(); 
+	tracker_context->m_tracker->m_previous_point_cloud->m_mesh.load(tracker_context->meshPath + "mesh" + std::to_string(index) + ".off");
 
 	//So turns out opencv actually uses bgr not rgb...
 	//no more opencv computations after this point

@@ -26,16 +26,17 @@ struct WOzTrackerContext
 		SAFE_DELETE(m_tracker);
 		SAFE_DELETE(m_videoStreamReader);
 		SAFE_DELETE(m_fusion);
+		SAFE_DELETE(m_datasetManager); 
+		SAFE_DELETE(currentMesh);
 	}
-
 	Tracker* m_tracker;
 	VideoStreamReaderBase* m_videoStreamReader;
 	Fusion* m_fusion;
 
 	DatasetManager* m_datasetManager; 
+	Mesh* currentMesh = nullptr; 
 	std::vector<Matrix4f> trajectories;
-
-
+	std::string meshPath; 
 };
 
 
