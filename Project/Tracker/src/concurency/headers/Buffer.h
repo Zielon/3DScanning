@@ -9,13 +9,18 @@ class Buffer
 {
 public:
 
+	~Buffer();
+
 	void add(T element);
 
 	T remove();
 
 	bool isEmpty();
 
+	int size();
+
 private:
+	bool m_stop = false;
 	std::mutex m_mutex_add;
 	std::mutex m_mutex_remove;
 	std::condition_variable m_cond;

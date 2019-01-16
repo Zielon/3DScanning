@@ -1,19 +1,18 @@
 #include "../headers/TrackerTest.h"
 
-
-
 void TrackerTest::cameraPoseTest(){
 	std::cout << "START cameraPoseTest()" << std::endl;
 
-	TrackerContext* tracker_context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+	TrackerContext* tracker_context = static_cast<TrackerContext*>(createContext(
+		DatasetManager::getCurrentPath().data()));
 
 	Matrix4f prev_trajectory;
 
-	int nIters = 50;//3000
+	int nIters = 50; //3000
 
 	for (int i = 0; i < nIters; i++)
 	{
-		const auto trajectory = m_trajectories[i]; //get camera trajectory of index from testBase class
+		const auto trajectory = getTrajectory(i); //get camera trajectory of index from testBase class
 
 		cv::Mat rgb, depth;
 
@@ -29,14 +28,14 @@ void TrackerTest::cameraPoseTest(){
 			continue;
 		}
 
-
 		source->transform(tracker_context->m_tracker->m_previous_pose);
 		//tracker_context->m_tracker->m_previous_point_cloud->transform(tracker_context->m_tracker->m_previous_pose);
 
 		std::cout << "Previous Pose" << std::endl;
 		std::cout << tracker_context->m_tracker->m_previous_pose << std::endl;
 
-		Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(source, tracker_context->m_tracker->m_previous_point_cloud);
+		Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(
+			source, tracker_context->m_tracker->m_previous_point_cloud);
 		//Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(tracker_context->m_tracker->m_previous_point_cloud, source);
 
 		Matrix4f pose = deltaPose * tracker_context->m_tracker->m_previous_pose;

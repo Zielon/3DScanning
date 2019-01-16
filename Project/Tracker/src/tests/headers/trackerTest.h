@@ -1,12 +1,14 @@
+#pragma once
 #include "TestBase.h"
 
 class TrackerTest :
 	public TestBase
 {
 public:
-	void run() {
+	void run() override{
 		this->cameraPoseTest();
 	};
+private:
+
 	void cameraPoseTest();
 };
-

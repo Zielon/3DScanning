@@ -15,10 +15,8 @@ using namespace std;
 
 struct FrustumBox
 {
-	bool m_is_valid;
-	int m_min_x, m_max_x;
-	int m_min_y, m_max_y;
-	int m_min_z, m_max_z;
+	Vector3i m_max;
+	Vector3i m_min;
 };
 
 /**
@@ -37,27 +35,31 @@ public:
 
 	void integrate(PointCloud* cloud);
 
-	void save(string name);
+	void save(string name) const;
 
-	bool isFinished() const;
+	void wait() const;
 
 	std::vector<int> m_currentIndexBuffer;
 
 private:
 	void initialize();
 
-	Vector3f reproject(Vector3f point) const;
+	FrustumBox computeFrustumBounds(Matrix4f pose, CameraParameters camera_parameters) const;
 
-	FrustumBox computeFrustumBounds(Matrix4f pose) const;
+	int clamp(float value) const;
+
+	Vector3i clamp(Vector3i value) const;
+
+	void stopConsumers();
 
 	float m_weight_update = 1;
 	std::vector<std::thread> m_consumer_threads;
 	std::vector<Consumer<PointCloud*>*> m_consumers;
 	Buffer<PointCloud*>* m_buffer;
-	CameraParameters m_camera_parameters;
 	Volume* m_volume;
 	std::mutex m_mutex;
-	const int NUMBER_OF_CONSUMERS = 5;
+	CameraParameters m_camera_parameters;
+	const int NUMBER_OF_CONSUMERS = 1;
 };
 
 #endif //TRACKER_LIB_FUSION_H
