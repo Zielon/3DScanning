@@ -91,7 +91,10 @@ bool Mesh::save(const std::string& filename){
 		to_string(m_triangles.size()) + " triangles");
 
 	// write header
-	out_file << "COFF" << std::endl;
+
+	if (!m_colors.empty()) out_file << "COFF" << std::endl;
+	else out_file << "OFF" << std::endl;
+
 	out_file << m_vertices.size() << " " << m_triangles.size() << " 0" << std::endl;
 
 	out_file << "# LIST OF VERTICES" << std::endl;

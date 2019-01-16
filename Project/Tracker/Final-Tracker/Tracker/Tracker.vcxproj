@@ -33,10 +33,12 @@
     <ClInclude Include="..\..\src\concurency\headers\ThreadManager.h" />
     <ClInclude Include="..\..\src\data-stream\headers\DatasetVideoStreamReader.h" />
     <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h" />
+    <ClInclude Include="..\..\src\debugger\headers\ProgressBar.hpp" />
     <ClInclude Include="..\..\src\debugger\headers\Verbose.h" />
     <ClInclude Include="..\..\src\Eigen.h" />
     <ClInclude Include="..\..\src\ExportDLL.h" />
     <ClInclude Include="..\..\src\files-manager\headers\DatasetManager.h" />
+    <ClInclude Include="..\..\src\helpers\Transformations.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\CameraParameters.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Fusion.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\ICP.h" />

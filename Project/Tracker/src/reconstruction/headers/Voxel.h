@@ -4,7 +4,7 @@
 
 struct Voxel final
 {
-	Voxel(): m_sdf(1), m_weight(0), m_free_ctr(0){ }
+	Voxel(): m_sdf(0), m_weight(0), m_free_ctr(0){ }
 
 	float m_sdf;
 	unsigned char m_weight;

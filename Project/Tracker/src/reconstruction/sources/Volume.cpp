@@ -31,9 +31,7 @@ Voxel* Volume::getVoxel(int idx) const{
 
 Voxel* Volume::getVoxel(int x, int y, int z) const{
 	const int index = x * m_size * m_size + y * m_size + z;
-	if (index < m_length)
-		return m_voxels[index];
-	return nullptr;
+	return m_voxels[index];
 }
 
 Voxel* Volume::getVoxel(Vector3i position) const{
@@ -41,24 +39,20 @@ Voxel* Volume::getVoxel(Vector3i position) const{
 }
 
 /// Returns 3D world position for a given voxel
-Vector3f Volume::getWorldPosition(Vector3i position){
+Vector3f Volume::getWorldPosition(Vector3i position) {
 	Vector3f world;
 
-	const auto scaling = 1.0f / (m_size - 1);
-
-	for (int i = 0; i < 3; i++)
-		world[i] = m_min[i] + (m_max[i] - m_min[i]) * (double(position[i]) * scaling);
+	const auto invScaling = (m_size - 1.0);
+	world = (m_min + (m_max - m_min).cwiseProduct(position.cast<double>() / invScaling)).cast<float>();
 
 	return world;
 }
 
-Vector3i Volume::getGridPosition(Vector3f position){
+Vector3i Volume::getGridPosition(Vector3f position) {
 	Vector3i grid;
 
-	const auto scaling = 1.0f / (m_size - 1);
-
-	for (int i = 0; i < 3; i++)
-		grid[i] = std::round((position[i] - m_min[i]) / (m_max[i] - m_min[i]) / scaling);
+	const auto invScaling = (m_size - 1.0);
+	grid = (invScaling * (position.cast<double>() - m_min).cwiseQuotient(m_max - m_min)).array().round().matrix().cast<int>();
 
 	return grid;
 }

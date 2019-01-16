@@ -60,16 +60,22 @@
     <ClInclude Include="..\..\src\concurency\headers\ThreadManager.h">
       <Filter>concurency\headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\tests\headers\DataStreamTest.h">
-      <Filter>tests\headers</Filter>
+    <ClInclude Include="..\..\src\debugger\headers\ProgressBar.hpp">
+      <Filter>debugger\headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\tests\headers\ReconstructionTest.h">
-      <Filter>tests\headers</Filter>
+    <ClInclude Include="..\..\src\helpers\Transformations.h">
+      <Filter>helpers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\tests\headers\TestBase.h">
       <Filter>tests\headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\tests\headers\TrackerTest.h">
+      <Filter>tests\headers</Filter>
+    </ClInclude>
+	    <ClInclude Include="..\..\src\tests\headers\ReconstructionTest.h">
+      <Filter>tests\headers</Filter>
+    </ClInclude>
+	    <ClInclude Include="..\..\src\tests\headers\DataStreamTest.h">
       <Filter>tests\headers</Filter>
     </ClInclude>
   </ItemGroup>
@@ -176,6 +182,9 @@
     </Filter>
     <Filter Include="files-manager\sources">
       <UniqueIdentifier>{aa9165ad-15d1-4ebb-8a2d-c8e03174aa8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="helpers">
+      <UniqueIdentifier>{009208ea-b514-4802-ba70-5a5351dbbe13}</UniqueIdentifier>
     </Filter>
     <Filter Include="tests\headers">
       <UniqueIdentifier>{bff91b28-2435-45df-a62c-b990d9ee016b}</UniqueIdentifier>
