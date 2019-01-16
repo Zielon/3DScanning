@@ -3,10 +3,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\Eigen.h" />
     <ClInclude Include="..\..\src\ExportDLL.h" />
-    <ClInclude Include="..\..\src\TrackerContext.h" />
-    <ClInclude Include="..\..\src\tests\windows\WindowsTests.h">
-      <Filter>tests\windows</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\data-stream\headers\DatasetVideoStreamReader.h">
       <Filter>data-stream\headers</Filter>
     </ClInclude>
@@ -70,13 +66,16 @@
     <ClInclude Include="..\..\src\helpers\Transformations.h">
       <Filter>helpers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\tests\headers\TestBase.h">
+      <Filter>tests\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\tests\headers\TrackerTest.h">
+      <Filter>tests\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
-    <ClCompile Include="..\..\src\tests\windows\WindowsTests.cpp">
-      <Filter>tests\windows</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\data-stream\sources\DatasetVideoStreamReader.cpp">
       <Filter>data-stream\sources</Filter>
     </ClCompile>
@@ -104,7 +103,6 @@
     <ClCompile Include="..\..\src\concurency\sources\Producer.cpp">
       <Filter>concurency\sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\TrackerContext.cpp" />
     <ClCompile Include="..\..\src\debugger\sources\Verbose.cpp">
       <Filter>debugger\sources</Filter>
     </ClCompile>
@@ -116,6 +114,18 @@
     </ClCompile>
     <ClCompile Include="..\..\src\concurency\sources\ThreadManager.cpp">
       <Filter>concurency\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tests\sources\DataStreamTest.cpp">
+      <Filter>tests\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tests\sources\ReconstructionTest.cpp">
+      <Filter>tests\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tests\sources\TestBase.cpp">
+      <Filter>tests\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\tests\sources\TrackerTest.cpp">
+      <Filter>tests\sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -133,9 +143,6 @@
     </Filter>
     <Filter Include="data-stream\sources">
       <UniqueIdentifier>{c5624ec5-becc-421d-b4d4-cd43aea6bd1b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="tests\windows">
-      <UniqueIdentifier>{558ae7d3-65f1-4695-86f0-4f4651873745}</UniqueIdentifier>
     </Filter>
     <Filter Include="reconstruction\headers">
       <UniqueIdentifier>{a665fb45-b2a7-42a4-b8a3-531986ede890}</UniqueIdentifier>
@@ -172,6 +179,11 @@
     </Filter>
     <Filter Include="helpers">
       <UniqueIdentifier>{009208ea-b514-4802-ba70-5a5351dbbe13}</UniqueIdentifier>
+    <Filter Include="tests\headers">
+      <UniqueIdentifier>{bff91b28-2435-45df-a62c-b990d9ee016b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tests\sources">
+      <UniqueIdentifier>{39250202-c9e6-47f9-9caa-f16e7129efd6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

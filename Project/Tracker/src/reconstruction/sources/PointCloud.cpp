@@ -51,6 +51,18 @@ float PointCloud::getDepthImage(int x, int y) const{
 	return INFINITY;
 }
 
+void PointCloud::transform(Matrix4f transformation)
+{
+	// Camera space to world space
+	for (int i = 0; i < m_points.size(); i++)
+	{
+		auto camera = m_points[i];
+		if (camera.x() == MINF) continue;
+		auto transform = transformation * Vector4f(camera[0], camera[1], camera[2], 1.f);
+		m_points[i] = Vector3f(transform[0], transform[1], transform[2]);
+	}
+}
+
 /// Downsample image 1 time
 void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 

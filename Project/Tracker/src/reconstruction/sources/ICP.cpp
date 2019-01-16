@@ -14,6 +14,9 @@ Matrix4f ICP::estimatePose(PointCloud* source, PointCloud* target){
 
 	Matrix4f pose = Matrix4f::Identity();
 
+	//std::cout << "Initial pose: " << std::endl;
+	//std::cout << pose << std::endl;
+
 	std::vector<Vector3f> sourcePoints;
 	std::vector<Vector3f> targetPoints;
 	std::vector<Vector3f> targetNormals;
@@ -45,16 +48,19 @@ Matrix4f ICP::estimatePose(PointCloud* source, PointCloud* target){
 			sourcePoints.emplace_back(transformedPoints[j]);
 			targetPoints.emplace_back(target->getPoints()[idx]);
 			targetNormals.emplace_back(transformedNormals[idx]);
+			//targetNormals.emplace_back(target->getNormals()[idx]);
 		}
 
-		if (numberOfMatches == 0) return pose;
+		if (numberOfMatches == 0)
+		{
+			return pose;
+		}
 
 		//pose = estimatePosePointToPoint(sourcePoints, targetPoints) * pose;
 		pose = estimatePosePointToPlane(sourcePoints, targetPoints, targetNormals) * pose;
 	}
 
 	source->m_pose_estimation = pose;
-
 	return pose;
 }
 
