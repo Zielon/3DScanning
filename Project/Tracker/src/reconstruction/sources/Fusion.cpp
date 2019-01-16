@@ -190,14 +190,8 @@ FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld, CameraParameters
 	for (int i = 0; i < 8; i++)
 	{
 		auto grid = m_volume->getGridPosition(rotation * corners[i] + translation);
-
-		if (grid.x() > max.x()) max[0] = grid[0];
-		if (grid.y() > max.y()) max[1] = grid[1];
-		if (grid.z() > max.z()) max[2] = grid[2];
-
-		if (grid.x() < min.x()) min[0] = grid[0];
-		if (grid.y() < min.y()) min[1] = grid[1];
-		if (grid.z() < max.z()) min[2] = grid[2];
+		min = min.cwiseMin(grid).eval();
+		max = max.cwiseMin(grid).eval();
 	}
 
 	FrustumBox box;
