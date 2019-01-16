@@ -38,8 +38,8 @@ int main() {
 	{
 		std::cout << "Frame: " << ++i << std::endl;
 
-		cv::Mat rgb;
-		cv::Mat depth;
+		cv::Mat rgb, depth, filteredDepth;
+
 		streamReader->getNextFrame(rgb, depth, false);
 
 		//Debug color image
@@ -50,9 +50,20 @@ int main() {
 		double min;
 		double max;
 		cv::minMaxIdx(depth, &min, &max);
-		cv::Mat adjMap;
-		cv::convertScaleAbs(depth, adjMap, 255 / max);
-		cv::imshow("TestDepth", adjMap);
+		cv::Mat scaledMap;
+		cv::convertScaleAbs(depth, scaledMap, 255 / max);
+		cv::imshow("TestDepth", scaledMap);
+
+		//Bilateral Filter
+		//cv::bilateralFilter (scaledMap, filteredDepth, 9, 32, 32);
+		cv::medianBlur(scaledMap, filteredDepth, 9);
+		//cv::adaptiveBilateralFilter(scaledMap, filteredDepth, 9, 64, 64);
+		cv::imshow("TestFilteredDepth", filteredDepth);
+
+		/*cv::minMaxIdx(filteredDepth, &min, &max);
+		cv::convertScaleAbs(filteredDepth, adjMap, 255 / max);
+		cv::imshow("TestFilteredDepth", adjMap);*/
+
 
 		cv::waitKey(1);
 	}
