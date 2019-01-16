@@ -5,10 +5,19 @@
 #include "Voxel.h"
 #include <opencv2/core/neon_utils.hpp>
 
+struct Size
+{
+	Size(float height, float width, float depth) : m_width(width), m_height(height), m_depth(depth){ }
+
+	float m_width;
+	float m_height;
+	float m_depth;
+};
+
 class Volume
 {
 public:
-	Volume(Vector3d min, Vector3d max, uint size, uint dim = 1);
+	Volume(Size min, Size max, uint size, uint dim = 1);
 
 	~Volume();
 
@@ -23,6 +32,8 @@ public:
 	Vector3f getWorldPosition(Vector3i position);
 
 	Vector3i getGridPosition(Vector3f position);
+
+	float m_voxel_size;
 
 	int m_size;
 

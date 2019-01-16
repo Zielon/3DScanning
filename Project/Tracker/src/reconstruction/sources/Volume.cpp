@@ -1,11 +1,21 @@
 #include <utility>
 #include "../headers/Volume.h"
 
-Volume::Volume(Vector3d min, Vector3d max, uint size, uint dim) : m_min(std::move(min)), m_max(std::move(max)){
+/// Size vector elements:
+/// y -> width
+/// x -> height
+///
+Volume::Volume(Size min, Size max, uint size, uint dim){
 	m_dim = dim;
 	m_size = size;
 	m_length = std::pow(m_size, 3);
+
+	// depth, width, height
+	m_min = Vector3d(min.m_depth, min.m_width, min.m_height);
+	m_max = Vector3d(max.m_depth, max.m_width, max.m_height);
+
 	m_voxels = std::vector<Voxel*>(m_length, nullptr);
+
 	forAll([this](Voxel*, int index){
 		m_voxels[index] = new Voxel();
 	});
@@ -19,6 +29,7 @@ Volume::~Volume(){
 }
 
 void Volume::forAll(std::function<void(Voxel*, int)> func) const{
+	#pragma omp parallel for
 	for (auto x = 0; x < m_length; x++)
 		func(m_voxels[x], x);
 }
@@ -39,20 +50,19 @@ Voxel* Volume::getVoxel(Vector3i position) const{
 }
 
 /// Returns 3D world position for a given voxel
-Vector3f Volume::getWorldPosition(Vector3i position) {
-	Vector3f world;
+Vector3f Volume::getWorldPosition(Vector3i position){
 
 	const auto invScaling = (m_size - 1.0);
-	world = (m_min + (m_max - m_min).cwiseProduct(position.cast<double>() / invScaling)).cast<float>();
+	Vector3f world = (m_min + (m_max - m_min).cwiseProduct(position.cast<double>() / invScaling)).cast<float>();
 
 	return world;
 }
 
-Vector3i Volume::getGridPosition(Vector3f position) {
-	Vector3i grid;
+Vector3i Volume::getGridPosition(Vector3f position){
 
 	const auto invScaling = (m_size - 1.0);
-	grid = (invScaling * (position.cast<double>() - m_min).cwiseQuotient(m_max - m_min)).array().round().matrix().cast<int>();
+	Vector3i grid = (invScaling * (position.cast<double>() - m_min).cwiseQuotient(m_max - m_min))
+	                .array().round().matrix().cast<int>();
 
 	return grid;
 }

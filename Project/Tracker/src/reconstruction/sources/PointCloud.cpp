@@ -43,9 +43,12 @@ const std::vector<Vector4uc>& PointCloud::getColors() const{
 
 float PointCloud::getDepthImage(int x, int y) const{
 
+	if (x < 0 || y < 0 || x > m_current_width || y > m_current_height)
+		return INFINITY;
+
 	int idx = y * m_current_width + x;
 
-	if (idx < m_depth_points.size())
+	if (idx >= 0 && idx < m_depth_points.size())
 		return m_depth_points[idx];
 
 	return INFINITY;
@@ -67,17 +70,16 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	cv::Mat image, colors;
 
-	// TODO Think about it!
-	//if (m_downsampling)
-	//{
-	//	pyrDown(depth_mat, image, cv::Size(depth_mat.cols / 2, depth_mat.rows / 2));
-	//	pyrDown(rgb_mat, colors, cv::Size(depth_mat.cols / 2, depth_mat.rows / 2));
-	//}
-	//else
-	//{
-	image = cv::Mat(depth_mat);
-	colors = cv::Mat(rgb_mat);
-	//}
+	if (m_downsampling)
+	{
+		pyrDown(depth_mat, image, cv::Size(depth_mat.cols / 2, depth_mat.rows / 2));
+		pyrDown(rgb_mat, colors, cv::Size(depth_mat.cols / 2, depth_mat.rows / 2));
+	}
+	else
+	{
+		image = cv::Mat(depth_mat);
+		colors = cv::Mat(rgb_mat);
+	}
 
 	m_current_height = image.rows;
 	m_current_width = image.cols;
@@ -95,6 +97,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	float depth_min = std::numeric_limits<float>::infinity();
 	float depth_max = -std::numeric_limits<float>::infinity();
 
+	#pragma omp parallel for
 	for (auto y = 0; y < m_current_height; y++)
 	{
 		for (auto x = 0; x < m_current_width; x++)
@@ -126,6 +129,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	m_camera_parameters.m_depth_max = depth_max;
 	m_camera_parameters.m_depth_min = depth_min;
 
+	#pragma omp parallel for
 	for (auto y = 1; y < m_current_height - 1; y++)
 	{
 		for (auto x = 1; x < m_current_width - 1; x++)
@@ -172,7 +176,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	#ifdef TESTING
 	// To build this mesh we need all points from the image
-	m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
+	// m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
 	#endif
 
 	//m_nearestNeighbor->buildIndex(m_points);

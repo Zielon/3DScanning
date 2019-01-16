@@ -113,7 +113,7 @@ void ReconstructionTest::pointCloudTest() const{
 
 }
 
-void ReconstructionTest::reconstructionTest() {
+void ReconstructionTest::reconstructionTest(){
 
 	Verbose::message("START reconstructionTest()");
 
@@ -121,11 +121,11 @@ void ReconstructionTest::reconstructionTest() {
 
 	unsigned char* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
-	auto size = 100; // getIterations();
+	auto size = getIterations();
 
 	ProgressBar bar(size, 60, "Frames loaded");
 
-	for (int index = 0; index < size; index += 1)
+	for (int index = 0; index < size; index += 2)
 	{
 		const auto trajectory = getTrajectory(index);
 		cv::Mat rgb, depth;
@@ -135,7 +135,7 @@ void ReconstructionTest::reconstructionTest() {
 		cloud->m_pose_estimation = trajectory;
 		context->m_fusion->produce(cloud);
 
-		++bar;
+		bar.set(index);
 		bar.display();
 	}
 

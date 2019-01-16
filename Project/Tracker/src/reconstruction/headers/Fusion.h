@@ -52,14 +52,18 @@ private:
 
 	void stopConsumers();
 
-	float m_weight_update = 1;
+	float getTruncation(float depth) const;
+
+	float getWeight(float depth) const;
+
+	float m_trunaction = 0;
 	std::vector<std::thread> m_consumer_threads;
 	std::vector<Consumer<PointCloud*>*> m_consumers;
 	Buffer<PointCloud*>* m_buffer;
 	Volume* m_volume;
 	std::mutex m_mutex;
 	CameraParameters m_camera_parameters;
-	const int NUMBER_OF_CONSUMERS = 1;
+	const int NUMBER_OF_CONSUMERS = 3;
 };
 
 #endif //TRACKER_LIB_FUSION_H

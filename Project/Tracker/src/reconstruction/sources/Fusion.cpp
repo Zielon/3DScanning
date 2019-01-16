@@ -28,10 +28,13 @@ inline Vector3i round(const Vector3f& point){
 	return Vector3i(std::round(point.x()), std::round(point.y()), std::round(point.z()));
 }
 
-inline float getTruncation(float depth){
-	if (depth > 1) return 1;
-	if (depth < -1) return -1;
-	return depth;
+float Fusion::getTruncation(float depth) const{
+	return m_trunaction + depth;
+}
+
+float Fusion::getWeight(float depth) const{
+	if (depth <= 0.01f) return 1.f;
+	return 1.f / depth;
 }
 
 void Fusion::save(string name) const{
@@ -40,17 +43,22 @@ void Fusion::save(string name) const{
 
 	Mesh mesh;
 
+	m_volume->forAll([](Voxel* v, int i){
+		if (v->m_ctr == 0) v->m_sdf = -MINF;
+	});
+
 	for (int x = 0; x < m_volume->m_size - 1; x++)
 		for (int y = 0; y < m_volume->m_size - 1; y++)
 			for (int z = 0; z < m_volume->m_size - 1; z++)
-				ProcessVolumeCell(m_volume, x, y, z, -0.15f, &mesh);
+				ProcessVolumeCell(m_volume, x, y, z, 0.f, &mesh);
 
 	mesh.save(name);
 }
 
 void Fusion::initialize(){
-	m_volume = new Volume(Vector3d(-3, -2, -2), Vector3d(3, 2, 2), 200, 1);
+	m_volume = new Volume(Size(-1, -4, -2), Size(2, 4, 4), 300, 1);
 	m_buffer = new Buffer<PointCloud*>();
+	m_trunaction = m_volume->m_voxel_size * 2.f; // 2 voxels truncations
 }
 
 void Fusion::wait() const{
@@ -139,24 +147,21 @@ void Fusion::integrate(PointCloud* cloud){
 
 				if (!voxel) continue;
 
-				// Update free space counter if voxel is in the front of observation
-				if (cell.z() < depth)
-					voxel->m_free_ctr++;
-
 				// Positive in front of the observation
 				const float sdf = depth - cell.z();
 				const float truncation = getTruncation(depth);
-				const float weight = voxel->m_weight;
+				const float weight_update = getWeight(depth);
 
 				if (sdf > -truncation)
 				{
-					voxel->m_sdf = (voxel->m_sdf * weight + sdf * m_weight_update) / (weight + m_weight_update);
-					voxel->m_weight =
-						min(int(weight) + int(m_weight_update), int(std::numeric_limits<unsigned char>::infinity()));
-					voxel->m_position = Vector3f(x, y, z);
-				}
+					voxel->m_ctr++;
 
-				m_weight_update += weight;
+					voxel->m_sdf =
+						(voxel->m_sdf * voxel->m_weight + sdf * weight_update) / (voxel->m_weight + weight_update);
+
+					voxel->m_weight =
+						min(voxel->m_weight + weight_update, std::numeric_limits<unsigned char>::infinity());
+				}
 
 				//m_mutex.unlock();
 			}
