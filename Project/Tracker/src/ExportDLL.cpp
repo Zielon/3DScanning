@@ -35,11 +35,54 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 	return tracker_context;
 }
 
-extern "C" __declspec(dllexport) void trackerCameraPose(void* context, unsigned char* image, float* pose, int w, int h){
+extern "C" __declspec(dllexport) void trackerCameraPose(void* context, unsigned char* image, float* pose){
 
-	Tracker* tracker = static_cast<TrackerContext*>(context)->m_tracker;
+	TrackerContext* tracker_context = static_cast<TrackerContext*>(context);
 
-	//m_tracker->computerCameraPose(image, pose, w, h);
+	cv::Mat rgb, depth;
+
+	const bool is_first_frame = tracker_context->m_tracker->m_previous_point_cloud == nullptr;
+
+	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
+
+	PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb);
+
+	//source->transform(tracker_context->m_tracker->m_previous_pose);
+
+	if (is_first_frame) // first frame
+	{
+		tracker_context->m_tracker->m_previous_pose = Matrix4f::Identity();
+		tracker_context->m_tracker->m_previous_point_cloud = source;
+
+		memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));
+
+		return;
+	}
+	else
+	{
+		//std::cout << "Test Tracker Camera Pose" << std::endl;
+
+		std::cout << "Previous Pose" << std::endl;
+		std::cout << tracker_context->m_tracker->m_previous_pose << std::endl;
+
+		Matrix4f deltaPose  = tracker_context->m_tracker->alignNewFrame(source, tracker_context->m_tracker->m_previous_point_cloud);
+
+		//tracker_context->m_tracker->m_previous_pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
+		tracker_context->m_tracker->m_previous_pose =  tracker_context->m_tracker->m_previous_pose * deltaPose;
+
+		std::cout << "Delta Pose" << std::endl;
+		std::cout << deltaPose << std::endl;
+
+		memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));
+	}
+
+	// Safe the last frame reference
+	tracker_context->m_tracker->m_previous_point_cloud = source;
+
+	//So turns out opencv actually uses bgr not rgb...
+	//no more opencv computations after this point
+	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
+	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
 }
 
 extern "C" __declspec(dllexport) int getImageWidth(void* context){
@@ -66,14 +109,18 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 
 	if (is_first_frame) // first frame
 	{
-		Matrix4f id = Matrix4f::Identity();
-		memcpy(pose, id.data(), 16 * sizeof(float));
+		tracker_context->m_tracker->m_previous_pose = Matrix4f::Identity();
 		tracker_context->m_tracker->m_previous_point_cloud = source;
+
+		memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));
+		
 		return;
 	}
 	else
 	{
-		tracker_context->m_tracker->alignNewFrame(source, tracker_context->m_tracker->m_previous_point_cloud, pose);
+		Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(source, tracker_context->m_tracker->m_previous_point_cloud);
+
+		tracker_context->m_tracker->m_previous_pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
 	}
 
 	// Produce a new point cloud (add to the buffer)
