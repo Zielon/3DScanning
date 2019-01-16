@@ -104,7 +104,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 		double min, max;
 		cv::Mat scaled_depth, scale_depth2;
 		int diameter = 9;
-		float sigma = 32.0f;
+		float sigma = 150.0f;
 
 		cv::bilateralFilter(depth_mat, filtered_depth, diameter, sigma, sigma);
 
