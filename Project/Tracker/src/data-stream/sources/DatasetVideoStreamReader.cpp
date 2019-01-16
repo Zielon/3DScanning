@@ -154,7 +154,7 @@ int DatasetVideoStreamReader::readAnyFrame(unsigned long index, cv::Mat &rgb, cv
 	//double min, max;
 	//cv::minMaxLoc(depthTmp, &min, &max);//Depth range test
 	
-	// depth images are scaled by 5000 (see https://vision.in.tum.de/data/datasets/rgbd-dataset/file_formats
+	// depth images are scaled by 5000 (see https://vision.in.tum.de/data/datasets/rgbd-dataset/file_formats )
 	depthTmp.convertTo(depth, CV_32FC1, 1.0 / 5000.0);//Right format is CV_16FC1
 
 	//cv::minMaxLoc(depth, &min, &max);//Depth range test
