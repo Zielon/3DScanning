@@ -192,8 +192,10 @@ void WindowsTests::reconstructionTest() const{
 		cloud->m_pose_estimation = trajectory;
 		context->m_fusion->produce(cloud);
 
-		// Simulate a small delay
-		std::this_thread::sleep_for(std::chrono::milliseconds(5));
+		// Simulate a small delay 30 fps
+		if(index % 30 == 0)
+			std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+		
 		++bar;
 		bar.display();
 	}
