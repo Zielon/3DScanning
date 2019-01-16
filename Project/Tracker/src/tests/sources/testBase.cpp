@@ -3,31 +3,35 @@
 #include "../headers/ReconstructionTest.h"
 #include "../headers/TrackerTest.h"
 
-TestBase::TestBase() {
-	//Read groundtruth trajectories (camera poses)
-	std::vector<Matrix4f> trajectories;
-	std::vector<double> trajectory_timestamps;
-	std::vector<double> depth_timestamps;
+std::vector<Matrix4f> TestBase::m_trajectories;
+std::vector<double> TestBase::m_trajectory_timestamps;
+std::vector<double> TestBase::m_depth_timestamps;
+
+TestBase::TestBase(){
 	if (!m_trajectories.empty())
 		return;
-	m_files_manager.readTrajectoryFile(trajectories, trajectory_timestamps);
-	m_files_manager.readDepthTimeStampFile(depth_timestamps);
-	for (int i = 0; i < 600; i++) {
-		//Finding proper trajectory
-		double timestamp = depth_timestamps[i];
-		double min = std::numeric_limits<double>::infinity();
-		int idx = 0;
-		for (unsigned int j = 0; j < trajectories.size(); ++j)
+
+	m_files_manager.readTrajectoryFile(m_trajectories, m_trajectory_timestamps);
+	m_files_manager.readDepthTimeStampFile(m_depth_timestamps);
+}
+
+Matrix4f TestBase::getTrajectory(int index) const{
+	const double timestamp = m_depth_timestamps[index];
+	double min = std::numeric_limits<double>::infinity();
+	int idx = 0;
+	for (unsigned int j = 0; j < m_trajectories.size(); ++j)
+	{
+		double d = abs(m_trajectory_timestamps[j] - timestamp);
+		if (min > d)
 		{
-			double d = abs(trajectory_timestamps[j] - timestamp);
-			if (min > d)
-			{
-				min = d;
-				idx = j;
-			}
+			min = d;
+			idx = j;
 		}
-		m_trajectories.push_back(trajectories[idx]);
 	}
 
+	return m_trajectories[idx];
+}
+
+int TestBase::getIterations(){
+	return m_depth_timestamps.size();
 };
-std::vector<Eigen::Matrix4f> TestBase::m_trajectories;

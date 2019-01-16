@@ -72,6 +72,12 @@
     <ClInclude Include="..\..\src\tests\headers\TrackerTest.h">
       <Filter>tests\headers</Filter>
     </ClInclude>
+	    <ClInclude Include="..\..\src\tests\headers\ReconstructionTest.h">
+      <Filter>tests\headers</Filter>
+    </ClInclude>
+	    <ClInclude Include="..\..\src\tests\headers\DataStreamTest.h">
+      <Filter>tests\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -179,6 +185,7 @@
     </Filter>
     <Filter Include="helpers">
       <UniqueIdentifier>{009208ea-b514-4802-ba70-5a5351dbbe13}</UniqueIdentifier>
+    </Filter>
     <Filter Include="tests\headers">
       <UniqueIdentifier>{bff91b28-2435-45df-a62c-b990d9ee016b}</UniqueIdentifier>
     </Filter>

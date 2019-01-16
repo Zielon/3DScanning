@@ -1,15 +1,20 @@
+#pragma once
 #include "TestBase.h"
 
 class ReconstructionTest :
 	public TestBase
 {
 public:
-	void run() {
-		this->meshTest();
-		this->reconstructTest();
-		this->pointCloudTest();
+	void run() override{
+		//this->meshTest();
+		this->reconstructionTest();
+		//this->pointCloudTest();
 	};
-	void meshTest();
-	void reconstructTest();
-	void pointCloudTest();
+
+private:
+	void meshTest() const;
+
+	void reconstructionTest();
+
+	void pointCloudTest() const;
 };

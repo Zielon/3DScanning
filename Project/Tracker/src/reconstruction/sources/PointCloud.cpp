@@ -51,8 +51,7 @@ float PointCloud::getDepthImage(int x, int y) const{
 	return INFINITY;
 }
 
-void PointCloud::transform(Matrix4f transformation)
-{
+void PointCloud::transform(Matrix4f transformation){
 	// Camera space to world space
 	for (int i = 0; i < m_points.size(); i++)
 	{
@@ -173,7 +172,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	#ifdef TESTING
 	// To build this mesh we need all points from the image
-	// m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
+	m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
 	#endif
 
 	//m_nearestNeighbor->buildIndex(m_points);

@@ -114,9 +114,10 @@ void Fusion::integrate(PointCloud* cloud){
 	const auto translation = worldToCamera.block(0, 3, 3, 1);
 	const auto frustum_box = computeFrustumBounds(cameraToWorld, cloud->m_camera_parameters);
 
-	for (unsigned int z = frustum_box.m_min.z(); z < frustum_box.m_max.z(); z++)
-		for (unsigned int y = frustum_box.m_min.y(); y < frustum_box.m_max.y(); y++)
-			for (unsigned int x = frustum_box.m_min.x(); x < frustum_box.m_max.x(); x++)
+	#pragma omp parallel for
+	for (int z = frustum_box.m_min.z(); z < frustum_box.m_max.z(); z++)
+		for (int y = frustum_box.m_min.y(); y < frustum_box.m_max.y(); y++)
+			for (int x = frustum_box.m_min.x(); x < frustum_box.m_max.x(); x++)
 			{
 				// Transform from the cell world to the camera world
 				Vector3f cell = rotation * m_volume->getWorldPosition(Vector3i(x, y, z)) + translation;
@@ -132,7 +133,7 @@ void Fusion::integrate(PointCloud* cloud){
 				// Depth was not found
 				if (depth == INFINITY) continue;
 
-				m_mutex.lock();
+				//m_mutex.lock();
 
 				Voxel* voxel = m_volume->getVoxel(x, y, z);
 
@@ -157,7 +158,7 @@ void Fusion::integrate(PointCloud* cloud){
 
 				m_weight_update += weight;
 
-				m_mutex.unlock();
+				//m_mutex.unlock();
 			}
 
 	SAFE_DELETE(cloud);
@@ -191,7 +192,7 @@ FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld, CameraParameters
 	{
 		auto grid = m_volume->getGridPosition(rotation * corners[i] + translation);
 		min = min.cwiseMin(grid).eval();
-		max = max.cwiseMin(grid).eval();
+		max = max.cwiseMax(grid).eval();
 	}
 
 	FrustumBox box;
