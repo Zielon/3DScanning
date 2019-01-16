@@ -96,6 +96,34 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	float depth_min = std::numeric_limits<float>::infinity();
 	float depth_max = -1;
 
+	//Bilateral filtering to remove noise
+	cv::Mat filtered_depth;
+
+	if (m_filtering) {
+
+		double min, max;
+		cv::Mat scaled_depth, scale_depth2;
+		int diameter = 9;
+		float sigma = 32.0f;
+
+		cv::bilateralFilter(depth_mat, filtered_depth, diameter, sigma, sigma);
+
+		//Show raw depth map
+		cv::minMaxIdx(depth_mat, &min, &max);
+		cv::convertScaleAbs(depth_mat, scaled_depth, 255 / max);
+		cv::imshow("Raw Depth", scaled_depth);
+
+		//cv::medianBlur(scaled_depth, filtered_depth, diameter);
+
+		//Show filtered depth map
+
+		cv::minMaxIdx(filtered_depth, &min, &max);
+		cv::convertScaleAbs(filtered_depth, scaled_depth, 255 / max);
+		
+		cv::imshow("Filtered Depth", scaled_depth);
+	}
+
+
 	for (auto y = 0; y < m_current_height; y++)
 	{
 		for (auto x = 0; x < m_current_width; x++)

@@ -9,6 +9,11 @@
 #include "../../files-manager/headers/DatasetManager.h"
 #include "Mesh.h"
 
+#include <opencv2/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2\highgui\highgui.hpp>
+
 class PointCloud
 {
 public:
@@ -49,6 +54,7 @@ private:
 	void transform(cv::Mat& depth_mat, cv::Mat& rgb_mat);
 
 	bool m_downsampling = true;
+	bool m_filtering = true;
 	std::vector<Vector3f> m_points;
 	std::vector<Vector3f> m_normals;
 	std::vector<Vector4uc> m_color_points;

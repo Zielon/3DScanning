@@ -38,32 +38,35 @@ int main() {
 	{
 		std::cout << "Frame: " << ++i << std::endl;
 
-		cv::Mat rgb, depth, filteredDepth;
+		cv::Mat rgb, depth, scaledDepth, filteredDepth;
 
 		streamReader->getNextFrame(rgb, depth, false);
 
 		//Debug color image
 		cv::cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
-		cv::imshow("TestRGB", rgb);
+		cv::imshow("RGB Color", rgb);
 
 		//Debug depth image
+
+		//Scale depth map to show as a image
 		double min;
 		double max;
 		cv::minMaxIdx(depth, &min, &max);
-		cv::Mat scaledMap;
-		cv::convertScaleAbs(depth, scaledMap, 255 / max);
-		cv::imshow("TestDepth", scaledMap);
+		cv::convertScaleAbs(depth, scaledDepth, 255 / max);
+		cv::imshow("Raw Depth", scaledDepth);
+
+		//cv::imwrite("raw_depth.png", scaledDepth);
 
 		//Bilateral Filter
-		//cv::bilateralFilter (scaledMap, filteredDepth, 9, 32, 32);
-		cv::medianBlur(scaledMap, filteredDepth, 9);
-		//cv::adaptiveBilateralFilter(scaledMap, filteredDepth, 9, 64, 64);
-		cv::imshow("TestFilteredDepth", filteredDepth);
+		cv::bilateralFilter (scaledDepth, filteredDepth, 9, 32, 32);
+		cv::imshow("Bilateral Filter Depth", filteredDepth);
 
-		/*cv::minMaxIdx(filteredDepth, &min, &max);
-		cv::convertScaleAbs(filteredDepth, adjMap, 255 / max);
-		cv::imshow("TestFilteredDepth", adjMap);*/
+		//cv::imwrite("bilateral_depth.png", scaledDepth);
 
+		/*cv::Mat filteredDepthTest;
+		cv::medianBlur(scaledDepth, filteredDepthTest, 9);
+
+		cv::imwrite("median_depth.png", filteredDepthTest);*/
 
 		cv::waitKey(1);
 	}

@@ -241,7 +241,7 @@ int Xtion2StreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 	depth = cv::Mat(depthFrame.getHeight(), depthFrame.getWidth(), CV_16UC1, (void*)pDepth, cv::Mat::AUTO_STEP);
 
 	// depth images are stored in milimeters (see http://qianyi.info/scenedata.html )
-	depth.convertTo(depth, CV_32FC1, 1.0 / 1000.0);//Right format is CV_16FC1
+	depth.convertTo(depth, CV_32FC1, 1.0 / 1000.0);//Transformation to meters (Right format is CV_16FC1!)
 
 	//Capture frames
 	if (m_use_capture) {
