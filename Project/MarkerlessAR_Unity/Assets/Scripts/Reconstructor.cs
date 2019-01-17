@@ -18,19 +18,20 @@ namespace Assets.Scripts
 
     public class Reconstructor : MonoBehaviour
     {
-        //Unity automatically find DLL files located on Assets/Plugins
+        // Unity automatically find DLL files located on Assets/Plugins
         private const string DllFilePath = @"Tracker_release";
-        private readonly LinkedList<Mesh> _frameMeshes = new LinkedList<Mesh>();
         private readonly Queue<MeshDto> _meshDtoQueue = new Queue<MeshDto>();
         private IntPtr _cppContext;
         private int _framesProcessed;
-        private int _h = -1;
         private byte[] _image;
         private float[] _pose;
         private Thread _thread;
         private int _w = -1;
-        public GameObject CameraRig;
-        public GameObject FrameMeshPrefab;
+        private int _h = -1;
+
+        // Unity injected vars
+        public GameObject cameraRig;
+        public GameObject frameMeshPrefab;
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr createContext(byte[] path);
@@ -62,13 +63,10 @@ namespace Assets.Scripts
             _w = getImageWidth(_cppContext);
             _h = getImageHeight(_cppContext);
 
-            Debug.Log("Created Contex. Image dimensions: " + _w + "x" + _h);
+            Debug.Log("Created Context. Image dimensions: " + _w + "x" + _h);
 
             _pose = new float[16];
             _image = new byte[_w * _h * 3];
-
-            CameraRig = new GameObject();
-            FrameMeshPrefab = new GameObject();
         }
 
         // Update is called once per frame
@@ -92,8 +90,8 @@ namespace Assets.Scripts
             // Apply camera poses
             var pose = Helpers.GetPose(_pose);
 
-            CameraRig.transform.position = pose.GetColumn(3) * 1000;
-            CameraRig.transform.rotation = pose.rotation;
+            cameraRig.transform.position = pose.GetColumn(3) * 1000;
+            cameraRig.transform.rotation = pose.rotation;
 
             //   Debug.Log("Pos: " + cameraRig.transform.position);
             //   Debug.Log("Rot: " + cameraRig.transform.rotation.eulerAngles);
@@ -114,12 +112,9 @@ namespace Assets.Scripts
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
 
-            var frameMeshObject = Instantiate(FrameMeshPrefab);
+            var frameMeshObject = Instantiate(frameMeshPrefab);
 
-            //FrameMeshPrefab.GetComponent<MeshFilter>().mesh = mesh;
-            //frameMeshObject.GetComponent<MeshCollider>().sharedMesh = mesh;
-
-            _frameMeshes.AddLast(mesh);
+            frameMeshPrefab.GetComponent<MeshFilter>().mesh = mesh;
         }
 
         private Thread SpawnFrameMeshThread()
