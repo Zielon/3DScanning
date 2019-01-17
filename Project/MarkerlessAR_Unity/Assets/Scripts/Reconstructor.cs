@@ -23,11 +23,11 @@ namespace Assets.Scripts
         private readonly Queue<MeshDto> _meshDtoQueue = new Queue<MeshDto>();
         private IntPtr _cppContext;
         private int _framesProcessed;
+        private int _h = -1;
         private byte[] _image;
         private float[] _pose;
         private Thread _thread;
         private int _w = -1;
-        private int _h = -1;
 
         // Unity injected vars
         public GameObject cameraRig;
@@ -44,9 +44,6 @@ namespace Assets.Scripts
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern int getImageHeight(IntPtr context);
-
-        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void getMesh(IntPtr context, ref __Mesh mesh);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern void getMeshInfo(IntPtr context, ref __MeshInfo mesh);
@@ -106,7 +103,7 @@ namespace Assets.Scripts
             if (_meshDtoQueue.Count > 0)
                 AddMesh(_meshDtoQueue.Dequeue());
 
-            if (_framesProcessed % 60 != 0 || _thread != null && _thread.IsAlive) return;
+            if (_framesProcessed % 10 != 0 || _thread != null && _thread.IsAlive) return;
 
             _thread = SpawnFrameMeshThread();
             _thread.Start();
@@ -128,17 +125,15 @@ namespace Assets.Scripts
         {
             return new Thread(() =>
             {
-
-                __MeshInfo meshInfo = new __MeshInfo();
+                var meshInfo = new __MeshInfo();
                 getMeshInfo(_cppContext, ref meshInfo);
 
-                Vector3[] vertexBuffer = new Vector3[meshInfo.m_vertex_count];
-                int[] indexBuffer = new int[meshInfo.m_index_count];
+                var vertexBuffer = new Vector3[meshInfo.m_vertex_count];
+                var indexBuffer = new int[meshInfo.m_index_count];
 
-                getMeshBuffers(ref meshInfo, vertexBuffer, indexBuffer); 
+                getMeshBuffers(ref meshInfo, vertexBuffer, indexBuffer);
                 Debug.Log("Loaded mesh with " + vertexBuffer.Length + " vertices and " + vertexBuffer.Length +
                           " indices.");
-
 
                 _meshDtoQueue.Enqueue(new MeshDto
                 {

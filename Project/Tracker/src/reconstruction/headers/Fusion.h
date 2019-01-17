@@ -10,7 +10,6 @@
 #include "Volume.h"
 #include "../../concurency/sources/Buffer.cpp"
 #include "../../concurency/sources/Consumer.cpp"
-#include "../../marshaling/__Mesh.h"
 
 using namespace std;
 
@@ -39,8 +38,6 @@ public:
 	void save(string name) const;
 
 	void processMesh(Mesh& mesh) const;
-
-	void processMesh(__Mesh* __mesh);
 
 	void wait() const;
 

@@ -22,19 +22,6 @@ public:
 		float y = camera_parameters.m_focal_length_Y * point.y() / point.z() + camera_parameters.m_cY;
 		return Vector3f(x, y, point.z());
 	}
-
-	static void transformMesh(__Mesh* __mesh, Mesh& mesh){
-
-		__mesh->m_vertex_buffer = new float[mesh.m_vertices.size() * 3];
-
-		__mesh->m_index_buffer = new int[mesh.m_triangles.size() * 3]; 
-
-		memcpy(__mesh->m_vertex_buffer, mesh.m_vertices.data(), mesh.m_vertices.size() * 3 * sizeof(float)); 
-		memcpy(__mesh->m_index_buffer, mesh.m_triangles.data(), mesh.m_triangles.size() * 3 * sizeof(int));
-
-		__mesh->m_vertex_float_count = mesh.m_vertices.size() * 3;
-		__mesh->m_index_count = mesh.m_triangles.size() * 3;
-	}
 };
 
 #endif

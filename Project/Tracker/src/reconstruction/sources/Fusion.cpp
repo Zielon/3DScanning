@@ -110,14 +110,6 @@ void Fusion::processMesh(Mesh& mesh) const{
 				ProcessVolumeCell(m_volume, x, y, z, 0.f, &mesh);
 }
 
-void Fusion::processMesh(__Mesh* __mesh){
-	m_mutex.lock();
-	Mesh mesh;
-	processMesh(mesh);
-	Transformations::transformMesh(__mesh, mesh);
-	m_mutex.unlock();
-}
-
 void Fusion::integrate(PointCloud* cloud) const{
 	const auto cameraToWorld = cloud->m_pose_estimation;
 	const auto worldToCamera = cameraToWorld.inverse();

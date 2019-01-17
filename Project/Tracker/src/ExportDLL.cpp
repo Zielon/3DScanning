@@ -87,24 +87,16 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
 }
 
-extern "C" __declspec(dllexport) void getMesh(void* context, __Mesh* unity_mesh){
+extern "C" __declspec(dllexport) void getMeshInfo(void* context, __MeshInfo* mesh_info){
 	auto* tracker_context = static_cast<TrackerContext*>(context);
-	tracker_context->m_fusion->processMesh(unity_mesh);
-}
-
-
-extern "C" __declspec(dllexport) void getMeshInfo(void* context, __MeshInfo* mesh_info)
-{
-	auto* tracker_context = static_cast<TrackerContext*>(context);
-	mesh_info->mesh = new Mesh(); 
+	mesh_info->mesh = new Mesh();
 	tracker_context->m_fusion->processMesh(*(mesh_info->mesh));
-	mesh_info->m_index_count = mesh_info->mesh->m_triangles.size() * 3; 
-	mesh_info->m_vertex_count = mesh_info->mesh->m_vertices.size(); 
+	mesh_info->m_index_count = mesh_info->mesh->m_triangles.size() * 3;
+	mesh_info->m_vertex_count = mesh_info->mesh->m_vertices.size();
 }
 
-extern "C" __declspec(dllexport) void getMeshBuffers(__MeshInfo* mesh_info, float* pVB, int* pIB)
-{
-	memcpy(pVB, mesh_info->mesh->m_vertices.data(), mesh_info->m_vertex_count * 3 * sizeof(float)); 
+extern "C" __declspec(dllexport) void getMeshBuffers(__MeshInfo* mesh_info, float* pVB, int* pIB){
+	memcpy(pVB, mesh_info->mesh->m_vertices.data(), mesh_info->m_vertex_count * 3 * sizeof(float));
 	memcpy(pIB, mesh_info->mesh->m_triangles.data(), mesh_info->m_index_count * sizeof(int));
-	delete mesh_info->mesh; 
+	delete mesh_info->mesh;
 }
