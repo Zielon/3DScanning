@@ -5,8 +5,10 @@ class TrackerTest :
 {
 public:
 	void run() {
-		this->cameraPoseTest();
+		//this->cameraPoseTest();
+		this->frameDistanceTest();
 	};
-	void cameraPoseTest();
+	void  cameraPoseTest();
+	void  frameDistanceTest();
 };
 
