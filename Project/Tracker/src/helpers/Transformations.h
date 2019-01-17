@@ -3,6 +3,7 @@
 
 #include "../Eigen.h"
 #include "../reconstruction/headers/CameraParameters.h"
+#include "../marshaling/__Mesh.h"
 
 class Transformations
 {
