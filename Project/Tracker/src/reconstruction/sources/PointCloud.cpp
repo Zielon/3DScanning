@@ -176,7 +176,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	#ifdef TESTING
 	// To build this mesh we need all points from the image
-	// m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
+	m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
 	#endif
 
 	//m_nearestNeighbor->buildIndex(m_points);

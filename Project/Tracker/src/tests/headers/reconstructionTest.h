@@ -12,8 +12,6 @@ public:
 	};
 
 private:
-	void meshTest() const;
-
 	void reconstructionTest();
 
 	void pointCloudTest() const;

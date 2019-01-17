@@ -1,4 +1,5 @@
 #include "ExportDLL.h"
+#include "marshaling/__Mesh.h"
 
 extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 
@@ -58,23 +59,21 @@ extern "C" __declspec(dllexport) void trackerCameraPose(void* context, unsigned 
 
 		return;
 	}
-	else
-	{
-		//std::cout << "Test Tracker Camera Pose" << std::endl;
+	//std::cout << "Test Tracker Camera Pose" << std::endl;
 
-		std::cout << "Previous Pose" << std::endl;
-		std::cout << tracker_context->m_tracker->m_previous_pose << std::endl;
+	std::cout << "Previous Pose" << std::endl;
+	std::cout << tracker_context->m_tracker->m_previous_pose << std::endl;
 
-		Matrix4f deltaPose  = tracker_context->m_tracker->alignNewFrame(source, tracker_context->m_tracker->m_previous_point_cloud);
+	Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(
+		source, tracker_context->m_tracker->m_previous_point_cloud);
 
-		//tracker_context->m_tracker->m_previous_pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
-		tracker_context->m_tracker->m_previous_pose =  tracker_context->m_tracker->m_previous_pose * deltaPose;
+	//tracker_context->m_tracker->m_previous_pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
+	tracker_context->m_tracker->m_previous_pose = tracker_context->m_tracker->m_previous_pose * deltaPose;
 
-		std::cout << "Delta Pose" << std::endl;
-		std::cout << deltaPose << std::endl;
+	std::cout << "Delta Pose" << std::endl;
+	std::cout << deltaPose << std::endl;
 
-		memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));
-	}
+	memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));
 
 	// Safe the last frame reference
 	tracker_context->m_tracker->m_previous_point_cloud = source;
@@ -96,7 +95,7 @@ extern "C" __declspec(dllexport) int getImageHeight(void* context){
 }
 
 extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* image, float* pose){
-	
+
 	TrackerContext* tracker_context = static_cast<TrackerContext*>(context);
 
 	cv::Mat rgb, depth;
@@ -113,15 +112,16 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 		tracker_context->m_tracker->m_previous_point_cloud = source;
 
 		memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));
-		
+
 		return;
 	}
-	else
-	{
-		Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(source, tracker_context->m_tracker->m_previous_point_cloud);
 
-		tracker_context->m_tracker->m_previous_pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
-	}
+	Matrix4f deltaPose = Matrix4f::Identity();
+
+	//Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(
+	//	source, tracker_context->m_tracker->m_previous_point_cloud);
+
+	tracker_context->m_tracker->m_previous_pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
 
 	// Produce a new point cloud (add to the buffer)
 	tracker_context->m_fusion->produce(tracker_context->m_tracker->m_previous_point_cloud);
@@ -135,25 +135,33 @@ extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* imag
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
 }
 
-extern "C" __declspec(dllexport) int getVertexCount(void* context){
-	TrackerContext* c = static_cast<TrackerContext*>(context);
-	return c->m_tracker->m_previous_point_cloud->getPoints().size();
-}
+extern "C" __declspec(dllexport) void getMesh(void* context, __Mesh* unity_mesh){
+	TrackerContext* tracker_context = static_cast<TrackerContext*>(context);
 
-extern "C" __declspec(dllexport) void getVertexBuffer(void* context, float* vertices){
-	TrackerContext* c = static_cast<TrackerContext*>(context);
-	memcpy(vertices, c->m_tracker->m_previous_point_cloud->getPoints().data(),
-	       c->m_tracker->m_previous_point_cloud->getPoints().size() * sizeof(Vector3f));
-}
+	Mesh mesh;
+	tracker_context->m_fusion->processMesh(mesh);
 
-extern "C" __declspec(dllexport) int getIndexCount(void* context){
-	TrackerContext* c = static_cast<TrackerContext*>(context);
-	return c->m_fusion->m_currentIndexBuffer.size();
-}
+	vector<int> index_buffer;
+	vector<float> vertex_buffer;
 
-extern "C" __declspec(dllexport) void getIndexBuffer(void* context, int* indices){
-	TrackerContext* c = static_cast<TrackerContext*>(context);
-	memcpy(indices, c->m_fusion->m_currentIndexBuffer.data(), c->m_fusion->m_currentIndexBuffer.size() * sizeof(int));
+	for (auto triangle : mesh.m_triangles)
+	{
+		index_buffer.push_back(triangle.idx0);
+		index_buffer.push_back(triangle.idx1);
+		index_buffer.push_back(triangle.idx2);
+	}
+
+	for (auto vector : mesh.m_vertices)
+	{
+		vertex_buffer.push_back(vector.x());
+		vertex_buffer.push_back(vector.y());
+		vertex_buffer.push_back(vector.z());
+	}
+
+	unity_mesh->m_vertex_count = vertex_buffer.size();
+	unity_mesh->m_index_count = index_buffer.size();
+	unity_mesh->m_vertex_buffer = &vertex_buffer[0];
+	unity_mesh->m_index_buffer = &index_buffer[0];
 }
 
 void getNormalBuffer(void* context, float* normals){

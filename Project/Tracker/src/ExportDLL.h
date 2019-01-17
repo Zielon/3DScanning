@@ -10,6 +10,8 @@
 
 #define OPENCV_TRAITS_ENABLE_DEPRECATED
 
+struct __Mesh;
+
 extern "C" __declspec(dllexport) void* createContext(const char* dataset_path);
 
 extern "C" __declspec(dllexport) void trackerCameraPose(void* context, unsigned char* image, float* pose);
@@ -20,14 +22,8 @@ extern "C" __declspec(dllexport) int getImageHeight(void* context);
 
 extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* image, float* pose);
 
-extern "C" __declspec(dllexport) int getVertexCount(void* context);
-
-extern "C" __declspec(dllexport) void getVertexBuffer(void* context, float* vertices);
+extern "C" __declspec(dllexport) void getMesh(void* context, __Mesh* unity_mesh);
 
 extern "C" __declspec(dllexport) void getNormalBuffer(void* context, float* normals);
-
-extern "C" __declspec(dllexport) int getIndexCount(void* context);
-
-extern "C" __declspec(dllexport) void getIndexBuffer(void* context, int* indices);
 
 #endif //EXPORT_DLL_H

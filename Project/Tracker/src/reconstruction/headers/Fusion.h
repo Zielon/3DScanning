@@ -37,9 +37,9 @@ public:
 
 	void save(string name) const;
 
-	void wait() const;
+	void processMesh(Mesh& mesh) const;
 
-	std::vector<int> m_currentIndexBuffer;
+	void wait() const;
 
 private:
 	void initialize();

@@ -32,9 +32,9 @@ namespace Assets.Scripts
         private int _w = -1;
         private int _h = -1;
 
+        private int _framesProcessed = 0;
 
-        private LinkedList<Mesh> frameMeshes = new LinkedList<Mesh>(); 
-
+        private LinkedList<UnityEngine.Mesh> frameMeshes = new LinkedList<UnityEngine.Mesh>(); 
 
         //[DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)] private static extern int test();
 
@@ -55,19 +55,7 @@ namespace Assets.Scripts
         private static extern int getImageHeight(IntPtr context);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
-        private static extern int getVertexCount(IntPtr context);
-
-        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void getVertexBuffer(IntPtr context, [In,Out]Vector3[] vertexBuffer);
-
-        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void getNormalBuffer(IntPtr context, [In, Out]Vector3[] normalBuffer);
-
-        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
-        private static extern int getIndexCount(IntPtr context);
-
-        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
-        private static extern void getIndexBuffer(IntPtr context, [In,Out]int[] indexBuffer);
+        private static extern void getMesh(IntPtr context, ref __Mesh mesh);
 
         // Use this for initialization
         private void Start()
@@ -98,6 +86,8 @@ namespace Assets.Scripts
          //   Debug.Log("Update test");
 
             dllMain(_cppContext, _image, _pose);
+
+            _framesProcessed++;
 
             //Create texture from image
             var tex = new Texture2D(_w, _h, TextureFormat.RGB24, false);
@@ -131,32 +121,33 @@ namespace Assets.Scripts
             cameraRig.transform.position = fourthCol * 1000;
             cameraRig.transform.rotation = pose.rotation;
 
-         //   Debug.Log("Pos: " + cameraRig.transform.position);
-         //   Debug.Log("Rot: " + cameraRig.transform.rotation.eulerAngles);
+            //   Debug.Log("Pos: " + cameraRig.transform.position);
+            //   Debug.Log("Rot: " + cameraRig.transform.rotation.eulerAngles);
 
             //enable this once fusion is ready
-        //    spawnFrameMesh(); 
 
-
+            if (_framesProcessed % 10 == 0)
+            {
+                spawnFrameMesh();
+            }
         }
 
 
         private void spawnFrameMesh()
         {
-            int vertexCount = getVertexCount(_cppContext);
-            int indexCount = getIndexCount(_cppContext);
+            __Mesh dllMesh = new __Mesh();
+            getMesh(_cppContext, ref dllMesh);
 
-            Vector3[] vertexBuffer = new Vector3[vertexCount];
-            int[] indexBuffer = new int[indexCount];
-            getVertexBuffer(_cppContext, vertexBuffer);
-            getIndexBuffer(_cppContext, indexBuffer);
+            var indexBuffer = new int[dllMesh.m_vertex_count];
+            var vertexBuffer = new float[dllMesh.m_vertex_count];
 
+            Marshal.Copy(dllMesh.m_index_buffer, indexBuffer, 0 , dllMesh.m_index_count);
+            Marshal.Copy(dllMesh.m_vertex_buffer, vertexBuffer, 0 , dllMesh.m_vertex_count);
 
-
-            Mesh mesh = new Mesh();
-            mesh.name = "Frame Mesh " + Time.frameCount; 
-            mesh.vertices = vertexBuffer;
-            mesh.triangles = indexBuffer; 
+            UnityEngine.Mesh mesh = new UnityEngine.Mesh();
+            mesh.name = "Frame __Mesh " + Time.frameCount; 
+            //mesh.vertices = vertexBuffer;
+            //mesh.triangles = indexBuffer; 
             mesh.RecalculateBounds();
             GameObject frameMeshObject = Instantiate(frameMeshPrefab);
             frameMeshPrefab.GetComponent<MeshFilter>().mesh = mesh;

@@ -38,20 +38,8 @@ float Fusion::getWeight(float depth) const{
 }
 
 void Fusion::save(string name) const{
-
-	wait();
-
 	Mesh mesh;
-
-	m_volume->forAll([](Voxel* v, int i){
-		if (v->m_ctr == 0) v->m_sdf = -MINF;
-	});
-
-	for (int x = 0; x < m_volume->m_size - 1; x++)
-		for (int y = 0; y < m_volume->m_size - 1; y++)
-			for (int z = 0; z < m_volume->m_size - 1; z++)
-				ProcessVolumeCell(m_volume, x, y, z, 0.f, &mesh);
-
+	processMesh(mesh);
 	mesh.save(name);
 }
 
@@ -112,6 +100,20 @@ Vector3i Fusion::clamp(Vector3i value) const{
 void Fusion::stopConsumers(){
 	for (auto& consumer : m_consumers)
 		consumer->stop();
+}
+
+void Fusion::processMesh(Mesh& mesh) const{
+
+	wait();
+
+	m_volume->forAll([](Voxel* v, int i){
+		if (v->m_ctr == 0) v->m_sdf = -MINF;
+	});
+
+	for (int x = 0; x < m_volume->m_size - 1; x++)
+		for (int y = 0; y < m_volume->m_size - 1; y++)
+			for (int z = 0; z < m_volume->m_size - 1; z++)
+				ProcessVolumeCell(m_volume, x, y, z, 0.f, &mesh);
 }
 
 void Fusion::integrate(PointCloud* cloud){
