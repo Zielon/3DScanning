@@ -24,27 +24,16 @@ public:
 	}
 
 	static void transformMesh(__Mesh* __mesh, Mesh& mesh){
-		std::vector<int> index_buffer;
-		std::vector<float> vertex_buffer;
 
-		for (auto triangle : mesh.m_triangles)
-		{
-			index_buffer.push_back(triangle.idx0);
-			index_buffer.push_back(triangle.idx1);
-			index_buffer.push_back(triangle.idx2);
-		}
+		__mesh->m_vertex_buffer = new float[mesh.m_vertices.size() * 3];
 
-		for (auto vector : mesh.m_vertices)
-		{
-			vertex_buffer.push_back(vector.x());
-			vertex_buffer.push_back(vector.y());
-			vertex_buffer.push_back(vector.z());
-		}
+		__mesh->m_index_buffer = new int[mesh.m_triangles.size() * 3]; 
 
-		__mesh->m_vertex_count = vertex_buffer.size();
-		__mesh->m_index_count = index_buffer.size();
-		__mesh->m_vertex_buffer = &vertex_buffer[0];
-		__mesh->m_index_buffer = &index_buffer[0];
+		memcpy(__mesh->m_vertex_buffer, mesh.m_vertices.data(), mesh.m_vertices.size() * 3 * sizeof(float)); 
+		memcpy(__mesh->m_index_buffer, mesh.m_triangles.data(), mesh.m_triangles.size() * 3 * sizeof(int));
+
+		__mesh->m_vertex_float_count = mesh.m_vertices.size() * 3;
+		__mesh->m_index_count = mesh.m_triangles.size() * 3;
 	}
 };
 

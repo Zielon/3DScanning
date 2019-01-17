@@ -11,6 +11,7 @@
 #define OPENCV_TRAITS_ENABLE_DEPRECATED
 
 struct __Mesh;
+struct __MeshInfo; 
 
 extern "C" __declspec(dllexport) void* createContext(const char* dataset_path);
 
@@ -21,5 +22,10 @@ extern "C" __declspec(dllexport) int getImageHeight(void* context);
 extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* image, float* pose);
 
 extern "C" __declspec(dllexport) void getMesh(void* context, __Mesh* unity_mesh);
+
+extern "C" __declspec(dllexport) void getMeshInfo(void* context, __MeshInfo* info);
+
+extern "C" __declspec(dllexport) void getMeshBuffers(__MeshInfo* _mesh_info, float* pVB, int* pIB);
+
 
 #endif //EXPORT_DLL_H

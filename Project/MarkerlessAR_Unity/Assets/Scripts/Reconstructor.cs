@@ -48,6 +48,13 @@ namespace Assets.Scripts
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern void getMesh(IntPtr context, ref __Mesh mesh);
 
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void getMeshInfo(IntPtr context, ref __MeshInfo mesh);
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void getMeshBuffers(ref __MeshInfo mesh, Vector3[] vertices, int[] indices);
+
+
         // Use this for initialization
         private void Start()
         {
@@ -121,30 +128,22 @@ namespace Assets.Scripts
         {
             return new Thread(() =>
             {
-                var dllMesh = new __Mesh();
-                getMesh(_cppContext, ref dllMesh);
 
-                var indexBuffer = new int[dllMesh.m_vertex_count];
-                var vertexBuffer = new float[dllMesh.m_vertex_count];
+                __MeshInfo meshInfo = new __MeshInfo();
+                getMeshInfo(_cppContext, ref meshInfo);
 
-                Marshal.Copy(dllMesh.m_index_buffer, indexBuffer, 0, dllMesh.m_index_count);
-                Marshal.Copy(dllMesh.m_vertex_buffer, vertexBuffer, 0, dllMesh.m_vertex_count);
+                Vector3[] vertexBuffer = new Vector3[meshInfo.m_vertex_count];
+                int[] indexBuffer = new int[meshInfo.m_index_count];
 
+                getMeshBuffers(ref meshInfo, vertexBuffer, indexBuffer); 
                 Debug.Log("Loaded mesh with " + vertexBuffer.Length + " vertices and " + vertexBuffer.Length +
                           " indices.");
 
-                var vertices = new List<Vector3>();
-
-                for (var i = 0; i < vertexBuffer.Length; i++)
-                {
-                    vertices.Add(new Vector3(vertexBuffer[i], vertexBuffer[i + 1], vertexBuffer[i + 2]));
-                    i += 2;
-                }
 
                 _meshDtoQueue.Enqueue(new MeshDto
                 {
                     Triangles = indexBuffer,
-                    Vertices = vertices.ToArray()
+                    Vertices = vertexBuffer
                 });
             });
         }
