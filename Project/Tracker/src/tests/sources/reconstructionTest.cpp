@@ -33,7 +33,7 @@ void ReconstructionTest::pointCloudTest() const{
 
 }
 
-void ReconstructionTest::reconstructionTest(){
+void ReconstructionTest::reconstructionTest() const{
 
 	Verbose::message("START reconstructionTest()");
 
@@ -45,7 +45,7 @@ void ReconstructionTest::reconstructionTest(){
 
 	ProgressBar bar(size, 60, "Frames loaded");
 
-	for (int index = 0; index < size; index += 10)
+	for (int index = 0; index < size; index += 3)
 	{
 		const auto trajectory = getTrajectory(index);
 		cv::Mat rgb, depth;

@@ -14,16 +14,12 @@ struct __Mesh;
 
 extern "C" __declspec(dllexport) void* createContext(const char* dataset_path);
 
-extern "C" __declspec(dllexport) void trackerCameraPose(void* context, unsigned char* image, float* pose);
-
 extern "C" __declspec(dllexport) int getImageWidth(void* context);
 
 extern "C" __declspec(dllexport) int getImageHeight(void* context);
 
-extern "C" __declspec(dllexport) void dllMain(void* context, unsigned char* image, float* pose);
+extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* image, float* pose);
 
 extern "C" __declspec(dllexport) void getMesh(void* context, __Mesh* unity_mesh);
-
-extern "C" __declspec(dllexport) void getNormalBuffer(void* context, float* normals);
 
 #endif //EXPORT_DLL_H

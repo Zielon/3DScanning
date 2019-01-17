@@ -12,7 +12,7 @@ public:
 	};
 
 private:
-	void reconstructionTest();
+	void reconstructionTest() const;
 
 	void pointCloudTest() const;
 };
