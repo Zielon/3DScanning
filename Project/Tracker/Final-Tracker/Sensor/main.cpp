@@ -38,21 +38,35 @@ int main() {
 	{
 		std::cout << "Frame: " << ++i << std::endl;
 
-		cv::Mat rgb;
-		cv::Mat depth;
+		cv::Mat rgb, depth, scaledDepth, filteredDepth;
+
 		streamReader->getNextFrame(rgb, depth, false);
 
 		//Debug color image
 		cv::cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
-		cv::imshow("TestRGB", rgb);
+		cv::imshow("RGB Color", rgb);
 
 		//Debug depth image
+
+		//Scale depth map to show as a image
 		double min;
 		double max;
 		cv::minMaxIdx(depth, &min, &max);
-		cv::Mat adjMap;
-		cv::convertScaleAbs(depth, adjMap, 255 / max);
-		cv::imshow("TestDepth", adjMap);
+		cv::convertScaleAbs(depth, scaledDepth, 255 / max);
+		cv::imshow("Raw Depth", scaledDepth);
+
+		//cv::imwrite("raw_depth.png", scaledDepth);
+
+		//Bilateral Filter
+		cv::bilateralFilter (depth, filteredDepth, 9, 150, 150);//(9,32)
+		cv::imshow("Bilateral Filter Depth", filteredDepth);
+
+		//cv::imwrite("bilateral_depth.png", scaledDepth);
+
+		/*cv::Mat filteredDepthTest;
+		cv::medianBlur(scaledDepth, filteredDepthTest, 9);
+
+		cv::imwrite("median_depth.png", filteredDepthTest);*/
 
 		cv::waitKey(1);
 	}

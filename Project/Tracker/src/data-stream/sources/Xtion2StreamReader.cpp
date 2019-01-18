@@ -166,6 +166,7 @@ bool Xtion2StreamReader::startReading() {
 	m_width_rgb = colorFrame.getWidth();
 	m_fov_x = m_color_stream.getHorizontalFieldOfView();
 	m_fov_y = m_color_stream.getVerticalFieldOfView();
+	m_depth_stream.getMaxPixelValue();//10000
 
 	return true;
 }
@@ -238,6 +239,9 @@ int Xtion2StreamReader::readFrame(cv::Mat &rgb, cv::Mat &depth) {
 	//OpenCV color image from raw color map
 	rgb = cv::Mat(colorFrame.getHeight(), colorFrame.getWidth(), CV_8UC3, (void*)pColor, cv::Mat::AUTO_STEP);
 	depth = cv::Mat(depthFrame.getHeight(), depthFrame.getWidth(), CV_16UC1, (void*)pDepth, cv::Mat::AUTO_STEP);
+
+	// depth images are stored in milimeters (see http://qianyi.info/scenedata.html )
+	depth.convertTo(depth, CV_32FC1, 1.0 / 1000.0);//Transformation to meters (Right format is CV_16FC1!)
 
 	//Capture frames
 	if (m_use_capture) {
