@@ -57,7 +57,7 @@ void TrackerTest::cameraPoseTest(){
 		std::cout << "\n ------- trajectory: " << i << " -------- \n" << trajectory
 			<< "\n------------------------ \n" << std::endl;
 
-		std::cout << "\n ------- Delta Pose: " << i << " -------- \n" << deltaPose.inverse()
+		std::cout << "\n ------- Delta Pose: " << i << " -------- \n" << deltaPose
 			<< "\n------------------------ \n" << std::endl;
 
 		//std::cout << "\n ------- trajectory difference: " << i << " -------- \n" << prev_trajectory.inverse() * trajectory
