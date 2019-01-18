@@ -1,13 +1,45 @@
 #include "../headers/Mesh.h"
 #include <direct.h>
 #include "../../debugger/headers/Verbose.h"
+#include <opencv2/core/mat.hpp>
+#include "../../helpers/Transformations.h"
 
 Mesh::Mesh() = default;
 
 /// Create a mesh using naive approach to generate triangles
-Mesh::Mesh(std::vector<Vector3f>& vertices, std::vector<Vector4uc>& colors, int width, int height){
+Mesh::Mesh(cv::Mat& depthMat, cv::Mat colorMat, CameraParameters camera_parameters){
 
 	const float edge_threshold = 0.01f;
+
+	int height = depthMat.rows;
+	int width = depthMat.cols;
+
+	auto colors = std::vector<Vector4uc>(height * width);
+	auto vertices = std::vector<Vector3f>(height * width);
+
+	#pragma omp parallel for
+	for (auto y = 0; y < height; y++)
+	{
+		for (auto x = 0; x < width; x++)
+		{
+			const unsigned int idx = y * width + x;
+
+			float depth = depthMat.at<float>(y, x);
+			auto color = colorMat.at<cv::Vec3b>(y, x);
+
+			colors[idx] = Vector4uc(color[0], color[1], color[2], 0);
+
+			if (depth > 0.0f)
+			{
+				// Back-projection to camera space.
+				vertices[idx] = Transformations::backproject(x, y, depth, camera_parameters);
+			}
+			else
+			{
+				vertices[idx] = Vector3f(MINF, MINF, MINF);
+			}
+		}
+	}
 
 	m_vertices.insert(m_vertices.end(), vertices.begin(), vertices.end());
 	m_colors.insert(m_colors.end(), colors.begin(), colors.end());
@@ -15,6 +47,7 @@ Mesh::Mesh(std::vector<Vector3f>& vertices, std::vector<Vector4uc>& colors, int 
 	unsigned int idx0, idx1, idx2, idx3;
 	Vector3f p0, p1, p2, p3;
 
+	#pragma omp parallel for
 	for (int y = 0; y < height - 1; y++)
 		for (int x = 0; x < width - 1; x++)
 		{
