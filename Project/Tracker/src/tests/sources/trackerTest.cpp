@@ -87,7 +87,6 @@ void TrackerTest::processedMapsTest()
 	TrackerContext* tracker_context = static_cast<TrackerContext*>(createContext(
 		DatasetManager::getCurrentPath().data()));
 
-
 	int nIters = 3000; //3000
 
 	for (int i = 0; i < nIters; i++)
@@ -98,7 +97,7 @@ void TrackerTest::processedMapsTest()
 
 		PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb);
 
-		cv::Mat scaled_depth, renderdepth;
+		cv::Mat scaled_depth, render_depth;
 		double min, max;
 
 		cv::minMaxIdx(depth, &min, &max);
@@ -106,7 +105,6 @@ void TrackerTest::processedMapsTest()
 		cv::imshow("Raw Depth", scaled_depth);
 
 		//Bilateral filter
-		cv::Mat render_depth;
 		cv::Mat bilateral_depth = source->filterMap(depth, bilateral, 9, 32.0f);
 
 		cv::minMaxIdx(bilateral_depth, &min, &max);
@@ -120,26 +118,7 @@ void TrackerTest::processedMapsTest()
 		cv::imshow("Median Filtered Depth", median_depth);
 
 		cv::waitKey(10);
+
+		//Normal maps (Pending task)
 	}
-
-	/*double min, max;
-	cv::Mat scaled_depth, scale_depth2;
-	int diameter = 9;
-	float sigma = 150.0f;
-
-	cv::bilateralFilter(depth_mat, filtered_depth, diameter, sigma, sigma);
-
-	//Show raw depth map
-	cv::minMaxIdx(depth_mat, &min, &max);
-	cv::convertScaleAbs(depth_mat, scaled_depth, 255 / max);
-	cv::imshow("Raw Depth", scaled_depth);
-
-	//cv::medianBlur(scaled_depth, filtered_depth, diameter);
-
-	//Show filtered depth map
-
-	cv::minMaxIdx(filtered_depth, &min, &max);
-	cv::convertScaleAbs(filtered_depth, scaled_depth, 255 / max);
-
-	cv::imshow("Filtered Depth", scaled_depth);*/
 }
