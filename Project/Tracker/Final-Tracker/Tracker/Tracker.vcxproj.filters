@@ -72,11 +72,14 @@
     <ClInclude Include="..\..\src\tests\headers\TrackerTest.h">
       <Filter>tests\headers</Filter>
     </ClInclude>
-	    <ClInclude Include="..\..\src\tests\headers\ReconstructionTest.h">
+    <ClInclude Include="..\..\src\tests\headers\ReconstructionTest.h">
       <Filter>tests\headers</Filter>
     </ClInclude>
-	    <ClInclude Include="..\..\src\tests\headers\DataStreamTest.h">
+    <ClInclude Include="..\..\src\tests\headers\DataStreamTest.h">
       <Filter>tests\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\marshaling\__Mesh.h">
+      <Filter>marshaling</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +194,9 @@
     </Filter>
     <Filter Include="tests\sources">
       <UniqueIdentifier>{39250202-c9e6-47f9-9caa-f16e7129efd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="marshaling">
+      <UniqueIdentifier>{bb59435f-e12a-47e7-b090-8c21c82ba6a5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

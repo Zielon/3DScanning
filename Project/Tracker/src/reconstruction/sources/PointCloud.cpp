@@ -43,9 +43,12 @@ const std::vector<Vector4uc>& PointCloud::getColors() const{
 
 float PointCloud::getDepthImage(int x, int y) const{
 
+	if (x < 0 || y < 0 || x > m_current_width || y > m_current_height)
+		return INFINITY;
+
 	int idx = y * m_current_width + x;
 
-	if (idx < m_depth_points.size())
+	if (idx >= 0 && idx < m_depth_points.size())
 		return m_depth_points[idx];
 
 	return INFINITY;
@@ -67,17 +70,16 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	cv::Mat image, colors;
 
-	// TODO Think about it!
-	//if (m_downsampling)
-	//{
-	//	pyrDown(depth_mat, image, cv::Size(depth_mat.cols / 2, depth_mat.rows / 2));
-	//	pyrDown(rgb_mat, colors, cv::Size(depth_mat.cols / 2, depth_mat.rows / 2));
-	//}
-	//else
-	//{
-	image = cv::Mat(depth_mat);
-	colors = cv::Mat(rgb_mat);
-	//}
+	if (m_downsampling)
+	{
+		pyrDown(depth_mat, image, cv::Size(depth_mat.cols / 2, depth_mat.rows / 2));
+		pyrDown(rgb_mat, colors, cv::Size(depth_mat.cols / 2, depth_mat.rows / 2));
+	}
+	else
+	{
+		image = cv::Mat(depth_mat);
+		colors = cv::Mat(rgb_mat);
+	}
 
 	m_current_height = image.rows;
 	m_current_width = image.cols;
@@ -100,29 +102,11 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	if (m_filtering) {
 
-		double min, max;
-		cv::Mat scaled_depth, scale_depth2;
-		int diameter = 9;
-		float sigma = 150.0f;
-
-		cv::bilateralFilter(depth_mat, filtered_depth, diameter, sigma, sigma);
-
-		//Show raw depth map
-		cv::minMaxIdx(depth_mat, &min, &max);
-		cv::convertScaleAbs(depth_mat, scaled_depth, 255 / max);
-		cv::imshow("Raw Depth", scaled_depth);
-
-		//cv::medianBlur(scaled_depth, filtered_depth, diameter);
-
-		//Show filtered depth map
-
-		cv::minMaxIdx(filtered_depth, &min, &max);
-		cv::convertScaleAbs(filtered_depth, scaled_depth, 255 / max);
-		
-		cv::imshow("Filtered Depth", scaled_depth);
+		FilterType filter_type = bilateral;
+		filtered_depth = this->filterMap(depth_mat, filter_type, 9.0f, 150.0f);
 	}
 
-
+	#pragma omp parallel for
 	for (auto y = 0; y < m_current_height; y++)
 	{
 		for (auto x = 0; x < m_current_width; x++)
@@ -154,6 +138,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	m_camera_parameters.m_depth_max = depth_max;
 	m_camera_parameters.m_depth_min = depth_min;
 
+	#pragma omp parallel for
 	for (auto y = 1; y < m_current_height - 1; y++)
 	{
 		for (auto x = 1; x < m_current_width - 1; x++)
@@ -214,4 +199,24 @@ int PointCloud::getClosestPoint(Vector3f grid_cell) const{
 		return closestPoints[0].idx;
 
 	return -1;
+}
+
+cv::Mat PointCloud::filterMap(cv::Mat map, FilterType filter_type, int diameter, float sigma)
+{
+	cv::Mat result;
+
+	switch (filter_type)
+	{
+		case bilateral:
+			cv::bilateralFilter(map, result, diameter, sigma, sigma);
+		break;
+
+		case median:
+			cv::medianBlur(map, result, diameter);
+		break;
+
+		default:  result = map; break;
+	}
+
+	return result;
 }

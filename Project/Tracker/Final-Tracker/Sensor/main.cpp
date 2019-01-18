@@ -58,7 +58,7 @@ int main() {
 		//cv::imwrite("raw_depth.png", scaledDepth);
 
 		//Bilateral Filter
-		cv::bilateralFilter (scaledDepth, filteredDepth, 9, 150, 150);//(9,32)
+		cv::bilateralFilter (depth, filteredDepth, 9, 150, 150);//(9,32)
 		cv::imshow("Bilateral Filter Depth", filteredDepth);
 
 		//cv::imwrite("bilateral_depth.png", scaledDepth);

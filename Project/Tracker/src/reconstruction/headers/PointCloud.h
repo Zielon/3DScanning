@@ -14,6 +14,8 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2\highgui\highgui.hpp>
 
+enum FilterType { bilateral, median};
+
 class PointCloud
 {
 public:
@@ -37,6 +39,8 @@ public:
 	const std::vector<Vector4uc>& getColors() const;
 
 	int getClosestPoint(Vector3f grid_cell) const;
+
+	cv::Mat filterMap(cv::Mat map, FilterType filter_type, int diameter, float sigma);
 
 	float getDepthImage(int x, int y) const;
 
