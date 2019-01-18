@@ -150,7 +150,7 @@ int DatasetVideoStreamReader::readAnyFrame(unsigned long index, cv::Mat &rgb, cv
 
     //cv::Mat depthTmp = cv::imread(m_datasetFolderPath + m_depth_names[index].second);
 	cv::Mat depthTmp = cv::imread(m_datasetFolderPath + m_depth_names[index].second, 2);//Right format 
-    
+
 	//double min, max;
 	//cv::minMaxLoc(depthTmp, &min, &max);//Depth range test
 	
@@ -164,8 +164,6 @@ int DatasetVideoStreamReader::readAnyFrame(unsigned long index, cv::Mat &rgb, cv
     m_height_rgb = rgb.rows;
     m_width_depth = depth.cols;
     m_height_depth = depth.rows;
-
-
 
     //not sure why i planned for all of these functions to return something...
     return 0;
