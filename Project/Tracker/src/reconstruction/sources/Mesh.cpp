@@ -14,8 +14,8 @@ Mesh::Mesh(cv::Mat& depthMat, cv::Mat colorMat, CameraParameters camera_paramete
 	int height = depthMat.rows;
 	int width = depthMat.cols;
 
-	auto colors = std::vector<Vector4uc>(height * width);
-	auto vertices = std::vector<Vector3f>(height * width);
+	m_colors.resize(height * width);
+	m_vertices.resize(height * width);
 
 	#pragma omp parallel for
 	for (auto y = 0; y < height; y++)
@@ -27,27 +27,23 @@ Mesh::Mesh(cv::Mat& depthMat, cv::Mat colorMat, CameraParameters camera_paramete
 			float depth = depthMat.at<float>(y, x);
 			auto color = colorMat.at<cv::Vec3b>(y, x);
 
-			colors[idx] = Vector4uc(color[0], color[1], color[2], 0);
+			m_colors[idx] = Vector4uc(color[0], color[1], color[2], 0);
 
 			if (depth > 0.0f)
 			{
 				// Back-projection to camera space.
-				vertices[idx] = Transformations::backproject(x, y, depth, camera_parameters);
+				m_vertices[idx] = Transformations::backproject(x, y, depth, camera_parameters);
 			}
 			else
 			{
-				vertices[idx] = Vector3f(MINF, MINF, MINF);
+				m_vertices[idx] = Vector3f(MINF, MINF, MINF);
 			}
 		}
 	}
 
-	m_vertices.insert(m_vertices.end(), vertices.begin(), vertices.end());
-	m_colors.insert(m_colors.end(), colors.begin(), colors.end());
-
 	unsigned int idx0, idx1, idx2, idx3;
 	Vector3f p0, p1, p2, p3;
 
-	#pragma omp parallel for
 	for (int y = 0; y < height - 1; y++)
 		for (int x = 0; x < width - 1; x++)
 		{
@@ -57,10 +53,10 @@ Mesh::Mesh(cv::Mat& depthMat, cv::Mat colorMat, CameraParameters camera_paramete
 			idx3 = idx2 + 1;
 
 			//Points
-			p0 = vertices[idx0];
-			p1 = vertices[idx1];
-			p2 = vertices[idx2];
-			p3 = vertices[idx3];
+			p0 = m_vertices[idx0];
+			p1 = m_vertices[idx1];
+			p2 = m_vertices[idx2];
+			p3 = m_vertices[idx3];
 
 			//Upper Triangle
 			if (isValidTriangle(p0, p2, p1, edge_threshold))
