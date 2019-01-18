@@ -150,12 +150,12 @@ int DatasetVideoStreamReader::readAnyFrame(unsigned long index, cv::Mat &rgb, cv
 
     //cv::Mat depthTmp = cv::imread(m_datasetFolderPath + m_depth_names[index].second);
 	cv::Mat depthTmp = cv::imread(m_datasetFolderPath + m_depth_names[index].second, 2);//Right format 
-    
+
 	//double min, max;
 	//cv::minMaxLoc(depthTmp, &min, &max);//Depth range test
 	
-	// depth images are scaled by 5000 (see https://vision.in.tum.de/data/datasets/rgbd-dataset/file_formats
-	depthTmp.convertTo(depth, CV_32FC1, 1.0 / 5000.0);//Right format is CV_16FC1
+	// depth images are scaled by 5000 (see https://vision.in.tum.de/data/datasets/rgbd-dataset/file_formats )
+	depthTmp.convertTo(depth, CV_32FC1, 1.0 / 5000.0);// Transformation to meters (Right format is CV_16FC1!)
 
 	//cv::minMaxLoc(depth, &min, &max);//Depth range test
 
@@ -164,8 +164,6 @@ int DatasetVideoStreamReader::readAnyFrame(unsigned long index, cv::Mat &rgb, cv
     m_height_rgb = rgb.rows;
     m_width_depth = depth.cols;
     m_height_depth = depth.rows;
-
-
 
     //not sure why i planned for all of these functions to return something...
     return 0;

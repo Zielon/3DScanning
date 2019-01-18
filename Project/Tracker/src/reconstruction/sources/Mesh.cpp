@@ -44,15 +44,19 @@ Mesh::Mesh(std::vector<Vector3f>& vertices, std::vector<Vector4uc>& colors, int 
 }
 
 unsigned int Mesh::addVertex(Vector3f& vertex){
+	m_mutex.lock();
 	auto v_id = static_cast<unsigned int>(m_vertices.size());
 	m_vertices.emplace_back(vertex);
+	m_mutex.unlock();
 	return v_id;
 }
 
-unsigned Mesh::addFace(unsigned int idx0, unsigned int idx1, unsigned int idx2){
+unsigned Mesh::addFace(unsigned idx0, unsigned idx1, unsigned idx2){
+	m_mutex.lock();
 	auto f_id = static_cast<unsigned int>(m_triangles.size());
 	Triangle triangle(idx0, idx1, idx2);
 	m_triangles.emplace_back(triangle);
+	m_mutex.unlock();
 	return f_id;
 }
 

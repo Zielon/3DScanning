@@ -79,3 +79,46 @@ void TrackerTest::cameraPoseTest(){
 		//std::cin.get();
 	}
 }
+
+void TrackerTest::processedMapsTest()
+{
+	std::cout << "START processedMapsTest()" << std::endl;
+
+	TrackerContext* tracker_context = static_cast<TrackerContext*>(createContext(
+		DatasetManager::getCurrentPath().data()));
+
+	int nIters = 3000; //3000
+
+	for (int i = 0; i < nIters; i++)
+	{
+		cv::Mat rgb, depth;
+
+		dynamic_cast<DatasetVideoStreamReader*>(tracker_context->m_videoStreamReader)->readAnyFrame(i, rgb, depth);
+
+		PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb);
+
+		cv::Mat scaled_depth, render_depth;
+		double min, max;
+
+		cv::minMaxIdx(depth, &min, &max);
+		cv::convertScaleAbs(depth, scaled_depth, 255 / max);
+		cv::imshow("Raw Depth", scaled_depth);
+
+		//Bilateral filter
+		cv::Mat bilateral_depth = source->filterMap(depth, bilateral, 9, 32.0f);
+
+		cv::minMaxIdx(bilateral_depth, &min, &max);
+		cv::convertScaleAbs(bilateral_depth, render_depth, 255 / max);
+
+		cv::imshow("Bilateral Filtered Depth", render_depth);
+
+		//Median Filter
+		cv::Mat median_depth = source->filterMap(scaled_depth, median, 7, 150.0f);
+
+		cv::imshow("Median Filtered Depth", median_depth);
+
+		cv::waitKey(10);
+
+		//Normal maps (Pending task)
+	}
+}

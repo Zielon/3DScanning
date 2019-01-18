@@ -9,6 +9,7 @@
 #include <iostream>
 #include "../../Eigen.h"
 #include <thread>
+#include <mutex>
 
 struct Triangle
 {
@@ -44,6 +45,7 @@ public:
 	std::vector<Vector4uc> m_colors;
 
 private:
+	std::mutex m_mutex;
 	bool isValidTriangle(Vector3f p0, Vector3f p1, Vector3f p2, float edgeThreshold) const;
 };
 

@@ -9,6 +9,13 @@
 #include "../../files-manager/headers/DatasetManager.h"
 #include "Mesh.h"
 
+#include <opencv2/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2\highgui\highgui.hpp>
+
+enum FilterType { bilateral, median};
+
 class PointCloud
 {
 public:
@@ -33,6 +40,8 @@ public:
 
 	int getClosestPoint(Vector3f grid_cell);
 
+	cv::Mat filterMap(cv::Mat map, FilterType filter_type, int diameter, float sigma);
+
 	float getDepthImage(int x, int y) const;
 
 	std::vector<Match> queryNearestNeighbor(std::vector<Vector3f> points); 
@@ -42,7 +51,7 @@ public:
 
 	Matrix4f m_pose_estimation = Matrix4f::Identity();
 	CameraParameters m_camera_parameters;
-	Mesh m_mesh;
+	Mesh m_mesh; // For testing purpose
 	int m_current_width = 0;
 	int m_current_height = 0;
 
@@ -52,6 +61,8 @@ private:
 	NearestNeighborSearch* m_nearestNeighbor;
 	std::thread* m_indexBuildingThread = nullptr; 
 	int m_downsampling_factor = 1;
+	bool m_filtering = true;
+
 	std::vector<Vector3f> m_points;
 	std::vector<Vector3f> m_normals;
 	std::vector<Vector4uc> m_color_points;

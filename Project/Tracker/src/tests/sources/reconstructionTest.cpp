@@ -45,7 +45,7 @@ void ReconstructionTest::reconstructionTest() const{
 
 	ProgressBar bar(size, 60, "Frames loaded");
 
-	for (int index = 0; index < size; index += 3)
+	for (int index = 0; index < size; index += 5)
 	{
 		const auto trajectory = getTrajectory(index);
 		cv::Mat rgb, depth;

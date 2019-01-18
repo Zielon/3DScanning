@@ -98,6 +98,15 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	float depth_min = std::numeric_limits<float>::infinity();
 	float depth_max = -std::numeric_limits<float>::infinity();
 
+	//Bilateral filtering to remove noise
+	cv::Mat filtered_depth;
+
+	if (m_filtering) {
+
+		FilterType filter_type = bilateral;
+		filtered_depth = this->filterMap(depth_mat, filter_type, 9.0f, 150.0f);
+	}
+
 	#pragma omp parallel for
 	for (auto y = 0; y < m_current_height; y++)
 	{
@@ -177,7 +186,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	#ifdef TESTING
 	// To build this mesh we need all points from the image
-	m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
+	// m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
 	#endif
 
 	m_indexBuildingThread = new std::thread([this]()->void {
@@ -213,4 +222,24 @@ int PointCloud::getClosestPoint(Vector3f grid_cell){
 		return closestPoints[0].idx;
 
 	return -1;
+}
+
+cv::Mat PointCloud::filterMap(cv::Mat map, FilterType filter_type, int diameter, float sigma)
+{
+	cv::Mat result;
+
+	switch (filter_type)
+	{
+		case bilateral:
+			cv::bilateralFilter(map, result, diameter, sigma, sigma);
+		break;
+
+		case median:
+			cv::medianBlur(map, result, diameter);
+		break;
+
+		default:  result = map; break;
+	}
+
+	return result;
 }
