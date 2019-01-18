@@ -8,11 +8,13 @@ public:
 	void run() override{
 		//this->meshTest();
 		//this->reconstructionTest();
-		this->pointCloudTest();
+		this->reconstructionTestWithOurTracking();
+		//this->pointCloudTest();
 	};
 
 private:
 	void reconstructionTest() const;
+	void reconstructionTestWithOurTracking() const;
 
 	void pointCloudTest() const;
 };

@@ -59,7 +59,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	if (m_downsampling_factor>1)
 	{
-		cv::resize(depth_mat, image, cv::Size(depth_mat.cols / m_downsampling_factor, depth_mat.rows / m_downsampling_factor),0,0,cv::INTER_AREA);
+		cv::resize(depth_mat, image, cv::Size(depth_mat.cols / m_downsampling_factor, depth_mat.rows / m_downsampling_factor),0,0,cv::INTER_NEAREST);
 		cv::resize(rgb_mat, colors, cv::Size(depth_mat.cols / m_downsampling_factor, depth_mat.rows / m_downsampling_factor),0,0,cv::INTER_AREA);
 	}
 	else
