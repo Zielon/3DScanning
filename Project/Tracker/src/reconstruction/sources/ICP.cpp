@@ -50,8 +50,8 @@ Matrix4f ICP::estimatePose(PointCloud* source, PointCloud* target){
 			// Match exists
 			sourcePoints.emplace_back(transformedPoints[j]);
 			targetPoints.emplace_back(target->getPoints()[idx]);
-			targetNormals.emplace_back(transformedNormals[idx]);
-			//targetNormals.emplace_back(target->getNormals()[idx]);
+			//targetNormals.emplace_back(transformedNormals[idx]);
+			targetNormals.emplace_back(target->getNormals()[idx]);
 		}
 
 		if (numberOfMatches == 0)

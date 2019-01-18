@@ -8,6 +8,7 @@
 #include "../sources/NearestNeighbor.hpp"
 #include "../../files-manager/headers/DatasetManager.h"
 #include "Mesh.h"
+#include <atomic>
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -54,6 +55,8 @@ public:
 	Mesh m_mesh; // For testing purpose
 	int m_current_width = 0;
 	int m_current_height = 0;
+
+	std::atomic<int> refCounter = 2; 
 
 private:
 	void transform(cv::Mat& depth_mat, cv::Mat& rgb_mat);

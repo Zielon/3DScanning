@@ -53,15 +53,14 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 
 	cv::Mat rgb, depth;
 
-	const bool is_first_frame = tracker_context->m_tracker->m_previous_point_cloud == nullptr;
-
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 	
 
 	PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 8);
 
-	if (is_first_frame) // first frame
+	if (tracker_context->m_first_frame) // first frame
 	{
+		tracker_context->m_first_frame = false; 
 		tracker_context->m_tracker->m_previous_point_cloud = source;
 
 		memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));

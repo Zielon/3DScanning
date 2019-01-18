@@ -163,7 +163,10 @@ void Fusion::integrate(PointCloud* cloud) const{
 				//m_mutex.unlock();
 			}
 
-	SAFE_DELETE(cloud);
+	if (!--cloud->refCounter)
+	{
+		SAFE_DELETE(cloud);
+	}
 }
 
 FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld, CameraParameters camera_parameters) const{
