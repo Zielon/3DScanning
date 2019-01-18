@@ -50,7 +50,7 @@ public:
 	Matrix4f m_pose_estimation = Matrix4f::Identity();
 	NearestNeighborSearch* m_nearestNeighbor;
 	CameraParameters m_camera_parameters;
-	Mesh m_mesh;
+	Mesh m_mesh; // For testing purpose
 	int m_current_width = 0;
 	int m_current_height = 0;
 

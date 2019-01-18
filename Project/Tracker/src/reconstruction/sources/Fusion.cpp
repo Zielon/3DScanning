@@ -104,6 +104,7 @@ void Fusion::stopConsumers(){
 }
 
 void Fusion::processMesh(Mesh& mesh) const{
+	#pragma omp parallel for
 	for (int x = 0; x < m_volume->m_size - 1; x++)
 		for (int y = 0; y < m_volume->m_size - 1; y++)
 			for (int z = 0; z < m_volume->m_size - 1; z++)
