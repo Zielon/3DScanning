@@ -38,7 +38,7 @@ void ReconstructionTest::reconstructionTest() const{
 
 	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
 
-	unsigned char* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
+	//unsigned char* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
 	auto size = getIterations();
 
@@ -64,7 +64,7 @@ void ReconstructionTest::reconstructionTest() const{
 
 	Verbose::message("DONE reconstructionTest()", SUCCESS);
 
-	delete[]img;
+	//delete[]img;
 	SAFE_DELETE(context);
 }
 
@@ -78,8 +78,11 @@ void ReconstructionTest::pointCloudWithIcpTest()
 
 	int startFrame = 0;
 	Matrix4f pose;
+	auto size = getIterations();
 
-	for (int index = startFrame; index < 40; index += 10)
+	ProgressBar bar(size, 60, "Frames loaded");
+
+	for (int index = startFrame; index < size; index += 10)
 	{
 		const auto trajectory = getTrajectory(index); //get camera trajectory of index from testBase class
 		cv::Mat rgb, depth;
@@ -98,16 +101,17 @@ void ReconstructionTest::pointCloudWithIcpTest()
 		Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(source, tracker_context->m_tracker->m_previous_point_cloud);
 		pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
 
-		ThreadManager::add([source, index, pose]() {
-			source->m_mesh.transform(pose);
-			source->m_mesh.save("point_cloud_" + std::to_string(index));
-			delete source;
-		});
+		source->m_pose_estimation = pose;
+		tracker_context->m_fusion->produce(source);
+
+		bar.set(index);
+		bar.display();
 	}
 
-	ThreadManager::waitForAll();
+	tracker_context->m_fusion->save("mesh");
 
-	Verbose::message("DONE streamPointCloudTest()", SUCCESS);
+	Verbose::message("DONE pointCloudWithIcpTest()", SUCCESS);
+
 
 	delete[]img;
 	SAFE_DELETE(tracker_context);

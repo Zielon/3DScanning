@@ -7,9 +7,9 @@ class ReconstructionTest :
 public:
 
 	void run() override{
-		//this->meshTest();
-		//this->reconstructionTest();
-		this->pointCloudTest();
+		this->reconstructionTest();
+		//this->pointCloudTest();
+		//rhis-> pointCloudWithIcpTest();
 	};
 
 private:

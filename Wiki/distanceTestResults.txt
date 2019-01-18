@@ -1,0 +1,39 @@
+Source Point Cloud Transformed to World Space
+
+1)Start Frame: 100, End Frame: 110
+Groundtruth Trajectory Difference: 0.128395
+ICP Pose Difference: 0.116080
+
+2)Start Frame: 110, End Frame: 120
+Groundtruth Trajectory Difference: 0.11923
+ICP Pose Difference: 0.124390
+
+3)Start Frame: 110, End Frame: 125
+Groundtruth Trajectory Difference: 0.1638
+ICP Pose Difference: 0.928411
+
+------------------------------------------------------------------
+Without Source Point Cloud Transformed to World Space
+
+1)Start Frame: 100, End Frame: 125
+Groundtruth Trajectory Distance Difference: 0.163856
+ICP Pose Distance Difference: 0.107448
+Total Difference: 0.056409
+
+2)Start Frame: 150, End Frame: 170, index+=3
+Groundtruth Trajectory Distance Difference: 0.089516
+ICP Pose Distance Difference: 0.079875
+Total Difference: 0.056409
+
+3)Start Frame: 150, End Frame: 200, index+=3
+Groundtruth Trajectory Distance Difference: 0.340197
+ICP Pose Distance Difference: 0.053689
+Total Difference: 0.286507
+
+4)Start Frame: 150, End Frame: 180, index+=3
+Groundtruth Trajectory Distance Difference: 0.112761
+ICP Pose Distance Difference: 0.082599
+Total Difference: 0.030162
+
+
+
