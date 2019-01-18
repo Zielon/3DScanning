@@ -9,6 +9,9 @@
 #include <iostream>
 #include "../../Eigen.h"
 #include <thread>
+#include <mutex>
+#include <opencv2/core.hpp>
+#include "CameraParameters.h"
 
 struct Triangle
 {
@@ -26,7 +29,7 @@ public:
 
 	Mesh();
 
-	Mesh(std::vector<Vector3f>& vertices, std::vector<Vector4uc>& colors, int width, int height);
+	Mesh(cv::Mat& depthMat, cv::Mat colorMat, CameraParameters camera_parameters);
 
 	unsigned int addVertex(Vector3f& vertex);
 
@@ -43,6 +46,8 @@ public:
 	std::vector<Vector4uc> m_colors;
 
 private:
+	std::mutex m_mutex;
+
 	bool isValidTriangle(Vector3f p0, Vector3f p1, Vector3f p2, float edgeThreshold) const;
 };
 

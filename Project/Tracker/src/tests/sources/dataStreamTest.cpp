@@ -1,7 +1,6 @@
 #include "../headers/DataStreamTest.h"
 
-void DataStreamTest::vidReadTest()
-{
+void DataStreamTest::vidReadTest(){
 	std::cout << "START vidReadTest()" << std::endl;
 
 	VideoStreamReaderBase* videoInputReader = new DatasetVideoStreamReader(
@@ -31,5 +30,3 @@ void DataStreamTest::vidReadTest()
 		cv::waitKey(1);
 	}
 }
-
-

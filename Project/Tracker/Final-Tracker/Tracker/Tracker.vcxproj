@@ -33,10 +33,13 @@
     <ClInclude Include="..\..\src\concurency\headers\ThreadManager.h" />
     <ClInclude Include="..\..\src\data-stream\headers\DatasetVideoStreamReader.h" />
     <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h" />
+    <ClInclude Include="..\..\src\debugger\headers\ProgressBar.hpp" />
     <ClInclude Include="..\..\src\debugger\headers\Verbose.h" />
     <ClInclude Include="..\..\src\Eigen.h" />
     <ClInclude Include="..\..\src\ExportDLL.h" />
     <ClInclude Include="..\..\src\files-manager\headers\DatasetManager.h" />
+    <ClInclude Include="..\..\src\helpers\Transformations.h" />
+    <ClInclude Include="..\..\src\marshaling\__Mesh.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\CameraParameters.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Fusion.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\ICP.h" />
@@ -178,6 +181,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(FLANN_DIR)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;TESTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENCV_DIR)\bin</AdditionalLibraryDirectories>

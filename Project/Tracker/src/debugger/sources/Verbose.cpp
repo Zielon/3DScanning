@@ -14,12 +14,16 @@ void Verbose::stop(std::string message = "", Type type){
 	end = clock();
 	const double seconds = double(end - begin) / CLOCKS_PER_SEC;
 	changeConsole(type);
+	#ifdef TESTING
 	std::cout << message << " [ " << seconds << " s ] " << std::endl;
+	#endif
 }
 
 void Verbose::message(std::string message, Type type){
 	changeConsole(type);
+	#ifdef TESTING
 	std::cout << message << std::endl;
+	#endif
 }
 
 void Verbose::changeConsole(Type type){

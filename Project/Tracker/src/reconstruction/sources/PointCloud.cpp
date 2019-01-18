@@ -1,5 +1,6 @@
 #include "../headers/PointCloud.h"
 #include <opencv2/imgproc.hpp>
+#include "../../helpers/Transformations.h"
 
 PointCloud::PointCloud(CameraParameters camera_parameters, cv::Mat& depth, cv::Mat& rgb, bool downsampling)
 	: m_camera_parameters(camera_parameters){
@@ -12,20 +13,6 @@ PointCloud::PointCloud(CameraParameters camera_parameters, cv::Mat& depth, cv::M
 
 PointCloud::~PointCloud(){
 	SAFE_DELETE(m_nearestNeighbor);
-}
-
-void PointCloud::save(std::string name){ }
-
-std::vector<Vector3f>& PointCloud::getPoints(){
-	return m_points;
-}
-
-std::vector<Vector3f>& PointCloud::getNormals(){
-	return m_normals;
-}
-
-std::vector<Vector4uc>& PointCloud::getColors(){
-	return m_color_points;
 }
 
 const std::vector<Vector3f>& PointCloud::getPoints() const{
@@ -42,16 +29,18 @@ const std::vector<Vector4uc>& PointCloud::getColors() const{
 
 float PointCloud::getDepthImage(int x, int y) const{
 
+	if (x < 0 || y < 0 || x > m_current_width || y > m_current_height)
+		return INFINITY;
+
 	int idx = y * m_current_width + x;
 
-	if (idx < m_depth_points.size())
+	if (idx >= 0 && idx < m_depth_points.size())
 		return m_depth_points[idx];
 
 	return INFINITY;
 }
 
-void PointCloud::transform(Matrix4f transformation)
-{
+void PointCloud::transform(Matrix4f transformation){
 	// Camera space to world space
 	for (int i = 0; i < m_points.size(); i++)
 	{
@@ -78,8 +67,6 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 		colors = cv::Mat(rgb_mat);
 	}
 
-	Vector3f pixel_coords;
-
 	m_current_height = image.rows;
 	m_current_width = image.cols;
 
@@ -94,8 +81,18 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	//Depth range check
 	float depth_min = std::numeric_limits<float>::infinity();
-	float depth_max = -1;
+	float depth_max = -std::numeric_limits<float>::infinity();
 
+	//Bilateral filtering to remove noise
+	cv::Mat filtered_depth;
+
+	if (m_filtering) {
+
+		FilterType filter_type = bilateral;
+		filtered_depth = this->filterMap(depth_mat, filter_type, 9.0f, 150.0f);
+	}
+
+	#pragma omp parallel for
 	for (auto y = 0; y < m_current_height; y++)
 	{
 		for (auto x = 0; x < m_current_width; x++)
@@ -109,21 +106,13 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			m_color_points[idx] = Vector4uc(color[0], color[1], color[2], 0);
 
 			//Depth range check
-			//depth_min = std::min(depth_min, depth);
-			//depth_max = std::max(depth_max, depth);
+			depth_min = std::min(depth_min, depth);
+			depth_max = std::max(depth_max, depth);
 
 			if (depth > 0.0f)
 			{
 				// Back-projection to camera space.
-				pixel_coords << (x - m_camera_parameters.m_cX) / m_camera_parameters.m_focal_length_X *
-					depth, (y - m_camera_parameters.m_cY) / m_camera_parameters.m_focal_length_Y * depth,
-					depth;
-
-
-				depth_min = std::min(depth_min, pixel_coords.z());
-				depth_max = std::max(depth_max, pixel_coords.z());
-
-				temp_points[idx] = pixel_coords;
+				temp_points[idx] = Transformations::backproject(x, y, depth, m_camera_parameters);
 			}
 			else
 			{
@@ -132,9 +121,10 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 		}
 	}
 
-	std::cout << depth_min << std::endl;
-	std::cout << depth_max << std::endl;
+	m_camera_parameters.m_depth_max = depth_max;
+	m_camera_parameters.m_depth_min = depth_min;
 
+	#pragma omp parallel for
 	for (auto y = 1; y < m_current_height - 1; y++)
 	{
 		for (auto x = 1; x < m_current_width - 1; x++)
@@ -179,12 +169,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 		}
 	}
 
-	#ifdef TESTING
-	// To build this mesh we need all points from the image
-	m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
-	#endif
-
-	m_nearestNeighbor->buildIndex(m_points);
+	//m_nearestNeighbor->buildIndex(m_points);
 }
 
 int PointCloud::getClosestPoint(Vector3f grid_cell) const{
@@ -195,4 +180,23 @@ int PointCloud::getClosestPoint(Vector3f grid_cell) const{
 		return closestPoints[0].idx;
 
 	return -1;
+}
+
+cv::Mat PointCloud::filterMap(cv::Mat map, FilterType filter_type, int diameter, float sigma){
+	cv::Mat result;
+
+	switch (filter_type)
+	{
+		case bilateral:
+			cv::bilateralFilter(map, result, diameter, sigma, sigma);
+		break;
+
+		case median:
+			cv::medianBlur(map, result, diameter);
+		break;
+
+		default:  result = map; break;
+	}
+
+	return result;
 }

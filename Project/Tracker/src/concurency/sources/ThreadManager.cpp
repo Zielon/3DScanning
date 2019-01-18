@@ -1,4 +1,5 @@
 #include "../headers/ThreadManager.h"
+#include <sstream>
 
 std::vector<std::thread> ThreadManager::m_threads;
 
@@ -18,4 +19,11 @@ void ThreadManager::waitForAll(){
 void ThreadManager::waitForAll(std::vector<std::thread>& threads){
 	std::for_each(threads.begin(), threads.end(), std::mem_fn(&std::thread::join));
 	threads.clear();
+}
+
+std::string ThreadManager::getId(){
+	auto id = std::this_thread::get_id();
+	std::stringstream ss;
+	ss << id;
+	return ss.str();
 }

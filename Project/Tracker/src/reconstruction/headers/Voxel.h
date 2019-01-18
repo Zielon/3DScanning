@@ -1,16 +1,16 @@
 #ifndef TRACKER_LIB_VOXEL_H
 #define TRACKER_LIB_VOXEL_H
-#include <Eigen/StdVector>
+
+#define SDF_MIN -10000000000.f
 
 struct Voxel final
 {
-	Voxel(): m_sdf(1), m_weight(0), m_free_ctr(0){ }
+	Voxel(): m_sdf(SDF_MIN), m_weight(0), m_ctr(0){ }
 
 	float m_sdf;
-	unsigned char m_weight;
-	int m_free_ctr;
+	float m_weight;
+	int m_ctr;
 	Vector3f m_color;
-	Vector3f m_position;
 };
 
 #endif

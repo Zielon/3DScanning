@@ -1,17 +1,19 @@
 #include "../headers/TrackerTest.h"
 
-void TrackerTest::cameraPoseTest() {
+
+void TrackerTest::cameraPoseTest(){
 	std::cout << "START cameraPoseTest()" << std::endl;
 
-	TrackerContext* tracker_context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+	TrackerContext* tracker_context = static_cast<TrackerContext*>(createContext(
+		DatasetManager::getCurrentPath().data()));
 
 	Matrix4f prev_trajectory;
 
-	int nIters = 50;//3000
+	int nIters = 50; //3000
 
 	for (int i = 0; i < nIters; i++)
 	{
-		const auto trajectory = m_trajectories[i]; //get camera trajectory of index from testBase class
+		const auto trajectory = getTrajectory(i); //get camera trajectory of index from testBase class
 
 		cv::Mat rgb, depth;
 
@@ -27,14 +29,14 @@ void TrackerTest::cameraPoseTest() {
 			continue;
 		}
 
-
 		source->transform(tracker_context->m_tracker->m_previous_pose);
 		//tracker_context->m_tracker->m_previous_point_cloud->transform(tracker_context->m_tracker->m_previous_pose);
 
 		std::cout << "Previous Pose" << std::endl;
 		std::cout << tracker_context->m_tracker->m_previous_pose << std::endl;
 
-		Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(source, tracker_context->m_tracker->m_previous_point_cloud);
+		Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(
+			source, tracker_context->m_tracker->m_previous_point_cloud);
 		//Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(tracker_context->m_tracker->m_previous_point_cloud, source);
 
 		//Matrix4f pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
@@ -80,30 +82,76 @@ void TrackerTest::cameraPoseTest() {
 	}
 }
 
+
+void TrackerTest::processedMapsTest()
+{
+	std::cout << "START processedMapsTest()" << std::endl;
+
+	TrackerContext* tracker_context = static_cast<TrackerContext*>(createContext(
+		DatasetManager::getCurrentPath().data()));
+
+	int nIters = 3000; //3000
+
+	for (int i = 0; i < nIters; i++){
+		const auto trajectory = getTrajectory(i); //get camera trajectory of index from testBase class
+
+		cv::Mat rgb, depth;
+
+		PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb);
+
+		cv::Mat scaled_depth, render_depth;
+		double min, max;
+
+		cv::minMaxIdx(depth, &min, &max);
+		cv::convertScaleAbs(depth, scaled_depth, 255 / max);
+		cv::imshow("Raw Depth", scaled_depth);
+
+		//Bilateral filter
+		cv::Mat bilateral_depth = source->filterMap(depth, bilateral, 9, 32.0f);
+
+		cv::minMaxIdx(bilateral_depth, &min, &max);
+		cv::convertScaleAbs(bilateral_depth, render_depth, 255 / max);
+
+		cv::imshow("Bilateral Filtered Depth", render_depth);
+
+		//Median Filter
+		cv::Mat median_depth = source->filterMap(scaled_depth, median, 7, 150.0f);
+
+		cv::imshow("Median Filtered Depth", median_depth);
+
+		cv::waitKey(10);
+
+		//Normal maps (Pending task)
+	}
+}
+
+
 void TrackerTest::frameDistanceTest() {
 
 	std::cout << "START frameDiffTest()" << std::endl;
-	
+
 	std::vector<cv::Mat> images;
 
 	TrackerContext* tracker_context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
 
-	Matrix4f prev_trajectory,pose;
+	Matrix4f prev_trajectory, pose;
 	prev_trajectory = Matrix4f::Zero();
 
 	int nIters = 180;//3000
 	int startFrame = 150;
 
-	for (int i = startFrame; i < nIters; i+=3)
+	for (int i = startFrame; i < nIters; i += 3)
 	{
 		cv::Mat rgb, depth;
+
+		const auto trajectory = getTrajectory(i);
 
 		dynamic_cast<DatasetVideoStreamReader*>(tracker_context->m_videoStreamReader)->readAnyFrame(i, rgb, depth);
 
 		images.push_back(rgb);
 
 		PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb);
-		
+
 		if (i == startFrame) // first frame
 		{
 			tracker_context->m_tracker->m_previous_pose = Matrix4f::Identity();
@@ -122,9 +170,9 @@ void TrackerTest::frameDistanceTest() {
 		*/
 
 		Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(source, tracker_context->m_tracker->m_previous_point_cloud);
-		
+
 		pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
-		
+
 		/*
 		std::cout << "Delta Pose" << std::endl;
 		std::cout << deltaPose << std::endl;
@@ -133,30 +181,30 @@ void TrackerTest::frameDistanceTest() {
 		std::cout << "\n ------- pose: " << i << " -------- \n" << pose
 			<< "\n------------------------ " << std::endl;
 
-		std::cout << "\n ------- trajectory: " << i << " -------- \n" << m_trajectories[i]
+		std::cout << "\n ------- trajectory: " << i << " -------- \n" << trajectory
 			<< "\n------------------------ " << std::endl;
 
-		std::cout << "\n ------- trajectory difference: " << i << " -------- \n" << m_trajectories[i] - prev_trajectory
+		std::cout << "\n ------- trajectory difference: " << i << " -------- \n" << trajectory - prev_trajectory
 			<< "\n------------------------ " << std::endl;
 
 		std::cout << "\n ------- pose difference: " << i << " -------- \n" << pose - tracker_context->m_tracker->m_previous_pose
 			<< "\n------------------------ " << std::endl;
 
-		prev_trajectory = m_trajectories[i];
+		prev_trajectory = trajectory;
 		// Save the last frame reference
 		tracker_context->m_tracker->m_previous_point_cloud = source;
 		tracker_context->m_tracker->m_previous_pose = pose;
 
 
-		imshow("test",rgb);
+		imshow("test", rgb);
 		cv::waitKey(1);
-	}	
+	}
 	const Eigen::VectorXf frame1Pose = Matrix4f::Identity().col(3);
 	const Eigen::VectorXf frame2Pose = pose.col(3);
 	float icpDistance = (frame2Pose.head(3) - frame1Pose.head(3)).norm();
 
-	const Eigen::VectorXf frame1Truth = m_trajectories[startFrame].col(3);
-	const Eigen::VectorXf frame2Truth = m_trajectories[nIters - 1].col(3);
+	const Eigen::VectorXf frame1Truth = getTrajectory(startFrame).col(3);
+	const Eigen::VectorXf frame2Truth = getTrajectory(nIters - 1).col(3);
 	float trajectoryDistance = (frame2Truth.head(3) - frame1Truth.head(3)).norm();
 
 	/*
@@ -165,7 +213,7 @@ void TrackerTest::frameDistanceTest() {
 	*/
 	std::cout << "Trajectory distance difference between frames: " << trajectoryDistance << endl; //Groundtruth distance btw two frames
 	std::cout << "------------------------------------------------" << endl;
-	
+
 	/*
 	std::cout << "frame1pose translation " << frame1Pose.head(3) << endl;
 	std::cout << "frame2pose translation " << frame2Pose.head(3) << endl;

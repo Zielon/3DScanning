@@ -1,11 +1,21 @@
 #include <utility>
 #include "../headers/Volume.h"
 
-Volume::Volume(Vector3d min, Vector3d max, uint size, uint dim) : m_min(std::move(min)), m_max(std::move(max)){
+/// Size vector elements:
+/// y -> width
+/// x -> height
+///
+Volume::Volume(Size min, Size max, uint size, uint dim){
 	m_dim = dim;
 	m_size = size;
 	m_length = std::pow(m_size, 3);
+
+	// depth, width, height
+	m_min = Vector3d(min.m_depth, min.m_width, min.m_height);
+	m_max = Vector3d(max.m_depth, max.m_width, max.m_height);
+
 	m_voxels = std::vector<Voxel*>(m_length, nullptr);
+
 	forAll([this](Voxel*, int index){
 		m_voxels[index] = new Voxel();
 	});
@@ -19,6 +29,7 @@ Volume::~Volume(){
 }
 
 void Volume::forAll(std::function<void(Voxel*, int)> func) const{
+	#pragma omp parallel for
 	for (auto x = 0; x < m_length; x++)
 		func(m_voxels[x], x);
 }
@@ -31,9 +42,7 @@ Voxel* Volume::getVoxel(int idx) const{
 
 Voxel* Volume::getVoxel(int x, int y, int z) const{
 	const int index = x * m_size * m_size + y * m_size + z;
-	if (index < m_length)
-		return m_voxels[index];
-	return nullptr;
+	return m_voxels[index];
 }
 
 Voxel* Volume::getVoxel(Vector3i position) const{
@@ -42,23 +51,18 @@ Voxel* Volume::getVoxel(Vector3i position) const{
 
 /// Returns 3D world position for a given voxel
 Vector3f Volume::getWorldPosition(Vector3i position){
-	Vector3f world;
 
-	const auto scaling = 1.0f / (m_size - 1);
-
-	for (int i = 0; i < 3; i++)
-		world[i] = m_min[i] + (m_max[i] - m_min[i]) * (double(position[i]) * scaling);
+	const auto invScaling = (m_size - 1.0);
+	Vector3f world = (m_min + (m_max - m_min).cwiseProduct(position.cast<double>() / invScaling)).cast<float>();
 
 	return world;
 }
 
 Vector3i Volume::getGridPosition(Vector3f position){
-	Vector3i grid;
 
-	const auto scaling = 1.0f / (m_size - 1);
-
-	for (int i = 0; i < 3; i++)
-		grid[i] = std::round((position[i] - m_min[i]) / (m_max[i] - m_min[i]) / scaling);
+	const auto invScaling = (m_size - 1.0);
+	Vector3i grid = (invScaling * (position.cast<double>() - m_min).cwiseQuotient(m_max - m_min))
+	                .array().round().matrix().cast<int>();
 
 	return grid;
 }
