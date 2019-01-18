@@ -4,7 +4,6 @@
 
 
 ICP::ICP(){
-	m_nearestNeighbor = new NearestNeighborSearchFlann();
 	m_procrustesAligner = new ProcrustesAligner();
 }
 
