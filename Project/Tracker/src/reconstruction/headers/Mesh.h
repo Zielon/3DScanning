@@ -32,7 +32,8 @@ public:
 
 	unsigned int addFace(unsigned int idx0, unsigned int idx1, unsigned int idx2);
 
-	void merge(const Mesh& mesh);
+	////BROKEN!!!
+	//void merge(const Mesh& mesh);
 
 	bool save(const std::string& filename);
 

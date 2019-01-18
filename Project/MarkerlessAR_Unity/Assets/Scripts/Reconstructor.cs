@@ -132,7 +132,7 @@ namespace Assets.Scripts
                 var indexBuffer = new int[meshInfo.m_index_count];
 
                 getMeshBuffers(ref meshInfo, vertexBuffer, indexBuffer);
-                Debug.Log("Loaded mesh with " + vertexBuffer.Length + " vertices and " + vertexBuffer.Length +
+                Debug.Log("Loaded mesh with " + vertexBuffer.Length + " vertices and " + indexBuffer.Length +
                           " indices.");
 
                 _meshDtoQueue.Enqueue(new MeshDto

@@ -1,6 +1,7 @@
 #include "ExportDLL.h"
 #include "marshaling/__Mesh.h"
 
+
 extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 
 	auto* tracker_context = new TrackerContext();
@@ -55,12 +56,12 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 	const bool is_first_frame = tracker_context->m_tracker->m_previous_point_cloud == nullptr;
 
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
+	
 
-	PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb);
+	PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 8);
 
 	if (is_first_frame) // first frame
 	{
-		tracker_context->m_tracker->m_previous_pose = Matrix4f::Identity();
 		tracker_context->m_tracker->m_previous_point_cloud = source;
 
 		memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));
@@ -68,12 +69,13 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 		return;
 	}
 
-	Matrix4f deltaPose = Matrix4f::Identity();
-
-	//Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(
-	//	source, tracker_context->m_tracker->m_previous_point_cloud);
+	Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(
+		source, tracker_context->m_tracker->m_previous_point_cloud);
 
 	tracker_context->m_tracker->m_previous_pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
+
+	memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));
+
 
 	// Produce a new point cloud (add to the buffer)
 	tracker_context->m_fusion->produce(tracker_context->m_tracker->m_previous_point_cloud);

@@ -1,5 +1,8 @@
 #include "../headers/ICP.h"
 
+#include "../../debugger/headers/Verbose.h"
+
+
 ICP::ICP(){
 	m_nearestNeighbor = new NearestNeighborSearchFlann();
 	m_procrustesAligner = new ProcrustesAligner();
@@ -26,7 +29,7 @@ Matrix4f ICP::estimatePose(PointCloud* source, PointCloud* target){
 		auto transformedPoints = transformPoints(source->getPoints(), pose);
 		auto transformedNormals = transformNormals(source->getNormals(), pose);
 
-		auto matches = target->m_nearestNeighbor->queryMatches(transformedPoints);
+		auto matches = target->queryNearestNeighbor(transformedPoints);
 
 		pruneCorrespondences(transformedNormals, target->getNormals(), matches);
 
@@ -53,6 +56,8 @@ Matrix4f ICP::estimatePose(PointCloud* source, PointCloud* target){
 
 		if (numberOfMatches == 0)
 		{
+			Verbose::message("Aborted ICP: 0  valid matches", WARNING);
+
 			return pose;
 		}
 
@@ -88,7 +93,7 @@ void ICP::pruneCorrespondences(
 			continue;
 		}
 
-		const auto& sourceNormal = sourceNormals[match.idx];
+		const auto& sourceNormal = sourceNormals[i];
 		const auto& targetNormal = targetNormals[match.idx];
 
 		double normal_angle = std::acos(targetNormal.dot(sourceNormal)) * 180.0 / M_PI;
@@ -148,47 +153,16 @@ Matrix4f ICP::estimatePosePointToPlane(
 
 		VectorXf nxs = s.cross(n);
 
-		for (int j = 0; j < 3; j++)
-		{
-			A(i, j) = nxs[j];
-			A(i, j + 3) = n[j];
-		}
+		b(4 * i) = n.dot(d - s);
+		A.row(4 * i).head<3>() = s.cross(n);
+		A.row(4 * i).tail<3>() = n;
 
-		b(i) = n.dot(d) - n.dot(s);
+		b.segment(4 * i + 1, 3) = d - s;
 
-		unsigned int j = i + 1;
-
-		// Coordinate x
-		A(j, 0) = 0;
-		A(j, 1) = s[2];
-		A(j, 2) = -s[1];
-		A(j, 3) = 1;
-		A(j, 4) = 0;
-		A(j, 5) = 0;
-
-		b(j) = d[0] - s[0];
-		j++;
-
-		// Coordinate y
-		A(j, 0) = -s[2];
-		A(j, 1) = 0;
-		A(j, 2) = s[0];
-		A(j, 3) = 0;
-		A(j, 4) = 1;
-		A(j, 5) = 0;
-
-		b(j) = d[1] - s[1];
-		j++;
-
-		// Coordinate z
-		A(j, 0) = s[1];
-		A(j, 1) = -s[0];
-		A(j, 2) = 0;
-		A(j, 3) = 0;
-		A(j, 4) = 0;
-		A(j, 5) = 1;
-
-		b(j) = d[2] - s[2];
+		A.block(4 * i + 1, 0, 3, 6) <<
+			0, s.z(), -s.y(), 1, 0, 0,
+			-s.z(), 0, s.x(), 0, 1, 0,
+			s.y(), -s.x(), 0, 0, 0, 1;
 	}
 
 	//std::cout << A << std::endl;

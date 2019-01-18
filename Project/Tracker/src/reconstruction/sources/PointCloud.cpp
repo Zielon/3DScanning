@@ -2,11 +2,12 @@
 #include <opencv2/imgproc.hpp>
 #include "../../helpers/Transformations.h"
 
-PointCloud::PointCloud(CameraParameters camera_parameters, cv::Mat& depth, cv::Mat& rgb, bool downsampling)
+PointCloud::PointCloud(CameraParameters camera_parameters, cv::Mat& depth, cv::Mat& rgb, int downsamplingFactor)
 	: m_camera_parameters(camera_parameters){
 
 	m_nearestNeighbor = new NearestNeighborSearchFlann();
-	m_downsampling = downsampling;
+	m_nearestNeighbor->setMatchingMaxDistance(0.0003f); 
+	m_downsampling_factor = downsamplingFactor;
 
 	this->transform(depth, rgb);
 }
@@ -70,10 +71,10 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	cv::Mat image, colors;
 
-	if (m_downsampling)
+	if (m_downsampling_factor>1)
 	{
-		pyrDown(depth_mat, image, cv::Size(depth_mat.cols / 2, depth_mat.rows / 2));
-		pyrDown(rgb_mat, colors, cv::Size(depth_mat.cols / 2, depth_mat.rows / 2));
+		cv::resize(depth_mat, image, cv::Size(depth_mat.cols / m_downsampling_factor, depth_mat.rows / m_downsampling_factor),0,0,cv::INTER_AREA);
+		cv::resize(rgb_mat, colors, cv::Size(depth_mat.cols / m_downsampling_factor, depth_mat.rows / m_downsampling_factor),0,0,cv::INTER_AREA);
 	}
 	else
 	{
@@ -117,7 +118,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			if (depth > 0.0f)
 			{
 				// Back-projection to camera space.
-				temp_points[idx] = Transformations::backproject(x, y, depth, m_camera_parameters);
+				temp_points[idx] = Transformations::backproject(x*m_downsampling_factor, y*m_downsampling_factor, depth, m_camera_parameters);
 			}
 			else
 			{
@@ -179,10 +180,32 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
 	#endif
 
-	//m_nearestNeighbor->buildIndex(m_points);
+	m_indexBuildingThread = new std::thread([this]()->void {
+		m_nearestNeighbor->buildIndex(m_points);
+	});
+
 }
 
-int PointCloud::getClosestPoint(Vector3f grid_cell) const{
+std::vector<Match> PointCloud::queryNearestNeighbor(std::vector<Vector3f> points)
+{
+	if (m_indexBuildingThread != nullptr)
+	{
+		m_indexBuildingThread->join(); 
+		SAFE_DELETE(m_indexBuildingThread); 
+	}
+
+	return m_nearestNeighbor->queryMatches(points); 
+}
+
+
+int PointCloud::getClosestPoint(Vector3f grid_cell){
+
+	if (m_indexBuildingThread != nullptr)
+	{
+		m_indexBuildingThread->join();
+		SAFE_DELETE(m_indexBuildingThread);
+	}
+
 
 	auto closestPoints = m_nearestNeighbor->queryMatches({grid_cell});
 

@@ -15,7 +15,7 @@ void ReconstructionTest::pointCloudTest() const{
 		cv::Mat rgb, depth;
 
 		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
-		PointCloud* cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, false);
+		PointCloud* cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 4);
 
 		ThreadManager::add([cloud, index, trajectory](){
 			cloud->m_mesh.transform(trajectory);
@@ -51,7 +51,7 @@ void ReconstructionTest::reconstructionTest() const{
 		cv::Mat rgb, depth;
 
 		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
-		PointCloud* cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, false);
+		PointCloud* cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 1);
 		cloud->m_pose_estimation = trajectory;
 		context->m_fusion->produce(cloud);
 
