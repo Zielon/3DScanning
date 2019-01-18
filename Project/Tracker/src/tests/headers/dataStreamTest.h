@@ -5,9 +5,9 @@ class DataStreamTest :
 	public TestBase
 {
 public:
-	void run() {
+	void run() override{
 		this->vidReadTest();
 	};
+
 	void vidReadTest();
 };
-
