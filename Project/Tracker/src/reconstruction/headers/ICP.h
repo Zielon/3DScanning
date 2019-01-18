@@ -29,7 +29,7 @@ public:
 
 	~ICP();
 
-	Matrix4f estimatePose(PointCloud* source, PointCloud* target);
+	Matrix4f estimatePose(std::shared_ptr<PointCloud> source, std::shared_ptr<PointCloud> target);
 
 private:
 	NearestNeighborSearch* m_nearestNeighbor;

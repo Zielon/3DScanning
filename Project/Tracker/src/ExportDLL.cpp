@@ -56,7 +56,9 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 	
 
-	PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 8);
+	PointCloud* _source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 8);
+	std::shared_ptr<PointCloud> source(_source); 
+
 
 	if (tracker_context->m_first_frame) // first frame
 	{
@@ -64,7 +66,8 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 		tracker_context->m_tracker->m_previous_point_cloud = source;
 
 		memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));
-
+		// Produce a new point cloud (add to the buffer)
+		tracker_context->m_fusion->produce(std::shared_ptr<PointCloud>(source));
 		return;
 	}
 
@@ -77,7 +80,7 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 
 
 	// Produce a new point cloud (add to the buffer)
-	tracker_context->m_fusion->produce(tracker_context->m_tracker->m_previous_point_cloud);
+	tracker_context->m_fusion->produce(std::shared_ptr<PointCloud>(source));
 
 	// Safe the last frame reference
 	tracker_context->m_tracker->m_previous_point_cloud = source;

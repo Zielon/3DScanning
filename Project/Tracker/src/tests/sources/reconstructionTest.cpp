@@ -50,19 +50,14 @@ void ReconstructionTest::reconstructionTest() const{
 		cv::Mat rgb, depth;
 
 		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
-		PointCloud* cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 1);
+		PointCloud* _cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 2);
+		std::shared_ptr<PointCloud> cloud(_cloud);
+
+
 		cloud->m_pose_estimation = trajectory;
 		context->m_fusion->produce(cloud);
 
-
-		std::vector<Vector3f> dump; 
-		dump.push_back(Vector3f::Zero()); 
-		cloud->queryNearestNeighbor(dump); 
-		--cloud->refCounter; //this would be decreased once by alignToFrame()
-		if (!cloud->refCounter)
-		{
-			SAFE_DELETE(cloud); 
-		}
+		cloud->getClosestPoint(Vector3f::Zero()); // Waits for the index building thread to finish before deleting the pointcloud
 
 
 		bar.set(index);

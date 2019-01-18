@@ -18,7 +18,8 @@ void TrackerTest::cameraPoseTest(){
 
 		dynamic_cast<DatasetVideoStreamReader*>(tracker_context->m_videoStreamReader)->readAnyFrame(i, rgb, depth);
 
-		PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 8 );
+		PointCloud* _source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 8 );
+		std::shared_ptr<PointCloud> source(_source); 
 
 		if (i == 0) // first frame
 		{

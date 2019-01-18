@@ -4,16 +4,13 @@ Tracker::~Tracker(){
 	SAFE_DELETE(m_icp);
 }
 
-Matrix4f Tracker::alignNewFrame(PointCloud* source, PointCloud* target){
+Matrix4f Tracker::alignNewFrame(std::shared_ptr<PointCloud> source, std::shared_ptr<PointCloud> target){
 
 	std::cout << "Align New frame" << std::endl;
 
 	const auto pose = m_icp->estimatePose(source, target);
 
-	if (!--m_previous_point_cloud->refCounter)
-	{
-		SAFE_DELETE(m_previous_point_cloud); 
-	}
+
 
 	/*const auto data = pose.data();
 
