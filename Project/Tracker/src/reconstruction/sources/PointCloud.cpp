@@ -6,7 +6,7 @@ PointCloud::PointCloud(CameraParameters camera_parameters, cv::Mat& depth, cv::M
 	: m_camera_parameters(camera_parameters){
 
 	m_nearestNeighbor = new NearestNeighborSearchFlann();
-	m_nearestNeighbor->setMatchingMaxDistance(0.0003f); 
+	m_nearestNeighbor->setMatchingMaxDistance(max_distance); 
 	m_downsampling_factor = downsamplingFactor;
 
 	this->transform(depth, rgb);
@@ -171,11 +171,6 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	}
 
 
-	#ifdef TESTING
-	// To build this mesh we need all points from the image
-	// m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
-	#endif
-
 	m_indexBuildingThread = new std::thread([this]()->void {
 		m_nearestNeighbor->buildIndex(m_points);
 	});
@@ -191,9 +186,6 @@ std::vector<Match> PointCloud::queryNearestNeighbor(std::vector<Vector3f> points
 	}
 
 	return m_nearestNeighbor->queryMatches(points); 
-
-	//m_nearestNeighbor->buildIndex(m_points);
-
 }
 
 

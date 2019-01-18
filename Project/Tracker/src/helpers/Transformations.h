@@ -5,6 +5,9 @@
 #include "../reconstruction/headers/CameraParameters.h"
 #include "../marshaling/__Mesh.h"
 
+//ICP Parameters
+#define max_distance 0.0003f
+
 class Transformations
 {
 public:

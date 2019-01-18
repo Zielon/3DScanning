@@ -8,7 +8,6 @@
 #include "../sources/NearestNeighbor.hpp"
 #include "../../files-manager/headers/DatasetManager.h"
 #include "Mesh.h"
-#include <atomic>
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -47,14 +46,13 @@ public:
 	int m_current_width = 0;
 	int m_current_height = 0;
 
-	std::atomic<int> refCounter = 2; 
+	int m_downsampling_factor = 1;
 
 private:
 	void transform(cv::Mat& depth_mat, cv::Mat& rgb_mat);
 
 	NearestNeighborSearch* m_nearestNeighbor;
 	std::thread* m_indexBuildingThread = nullptr; 
-	int m_downsampling_factor = 1;
 	bool m_filtering = true;
 
 	std::vector<Vector3f> m_points;

@@ -4,7 +4,6 @@
 
 
 ICP::ICP(){
-	m_nearestNeighbor = new NearestNeighborSearchFlann();
 	m_procrustesAligner = new ProcrustesAligner();
 }
 
@@ -13,7 +12,7 @@ ICP::~ICP(){
 	SAFE_DELETE(m_procrustesAligner);
 }
 
-Matrix4f ICP::estimatePose(PointCloud* source, PointCloud* target){
+Matrix4f ICP::estimatePose(std::shared_ptr<PointCloud> source, std::shared_ptr<PointCloud> target){
 
 	Matrix4f pose = Matrix4f::Identity();
 

@@ -18,7 +18,8 @@ void TrackerTest::cameraPoseTest(){
 
 		dynamic_cast<DatasetVideoStreamReader*>(tracker_context->m_videoStreamReader)->readAnyFrame(i, rgb, depth);
 
-		PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 8 );
+		PointCloud* _source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 8 );
+		std::shared_ptr<PointCloud> source(_source); 
 
 		if (i == 0) // first frame
 		{
@@ -57,7 +58,7 @@ void TrackerTest::cameraPoseTest(){
 		std::cout << "\n ------- trajectory: " << i << " -------- \n" << trajectory
 			<< "\n------------------------ \n" << std::endl;
 
-		std::cout << "\n ------- Delta Pose: " << i << " -------- \n" << deltaPose.inverse()
+		std::cout << "\n ------- Delta Pose: " << i << " -------- \n" << deltaPose
 			<< "\n------------------------ \n" << std::endl;
 
 		//std::cout << "\n ------- trajectory difference: " << i << " -------- \n" << prev_trajectory.inverse() * trajectory

@@ -31,9 +31,9 @@ public:
 
 	void consume();
 
-	void produce(PointCloud* cloud) const;
+	void produce(std::shared_ptr<PointCloud> cloud) const;
 
-	void integrate(PointCloud* cloud) const;
+	void integrate(std::shared_ptr<PointCloud> cloud) const;
 
 	void save(string name) const;
 
@@ -58,8 +58,8 @@ private:
 
 	float m_trunaction = 0;
 	std::vector<std::thread> m_consumer_threads;
-	std::vector<Consumer<PointCloud*>*> m_consumers;
-	Buffer<PointCloud*>* m_buffer;
+	std::vector<Consumer<std::shared_ptr<PointCloud>>*> m_consumers;
+	Buffer<std::shared_ptr<PointCloud>>* m_buffer;
 	Volume* m_volume;
 	std::mutex m_mutex;
 	CameraParameters m_camera_parameters;
