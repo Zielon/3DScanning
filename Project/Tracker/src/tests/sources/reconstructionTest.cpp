@@ -83,15 +83,16 @@ void ReconstructionTest::pointCloudTestWithICP() const {
 
 	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
 	
-	int startFrame = 100;
+	int startFrame = 0;
 	
-	for (int index = startFrame; index < 120; index++)
+	for (int index = startFrame; index < 20; index++)
 	{
 		cv::Mat rgb, depth;
 
 		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
 
-		PointCloud* source = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 8);
+		PointCloud* _source = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 8);
+		std::shared_ptr<PointCloud> source(_source);
 
 		if (index == startFrame) // first frame
 		{
@@ -102,7 +103,6 @@ void ReconstructionTest::pointCloudTestWithICP() const {
 		}
 
 		Matrix4f deltaPose = context->m_tracker->alignNewFrame(source, context->m_tracker->m_previous_point_cloud);
-
 		Matrix4f pose = deltaPose * context->m_tracker->m_previous_pose;
 
 		context->m_tracker->m_previous_point_cloud = source;
