@@ -25,14 +25,6 @@ public:
 
 	~PointCloud();
 
-	void save(std::string name);
-
-	std::vector<Vector3f>& getPoints();
-
-	std::vector<Vector3f>& getNormals();
-
-	std::vector<Vector4uc>& getColors();
-
 	const std::vector<Vector3f>& getPoints() const;
 
 	const std::vector<Vector3f>& getNormals() const;
@@ -41,7 +33,7 @@ public:
 
 	int getClosestPoint(Vector3f grid_cell);
 
-	cv::Mat filterMap(cv::Mat map, FilterType filter_type, int diameter, float sigma);
+	static cv::Mat filterMap(cv::Mat map, FilterType filter_type, int diameter, float sigma);
 
 	float getDepthImage(int x, int y) const;
 
@@ -52,7 +44,6 @@ public:
 
 	Matrix4f m_pose_estimation = Matrix4f::Identity();
 	CameraParameters m_camera_parameters;
-	Mesh m_mesh; // For testing purpose
 	int m_current_width = 0;
 	int m_current_height = 0;
 
