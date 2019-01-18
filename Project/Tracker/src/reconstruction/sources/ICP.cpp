@@ -6,6 +6,8 @@
 ICP::ICP(){
 	m_nearestNeighbor = new NearestNeighborSearchFlann();
 	m_procrustesAligner = new ProcrustesAligner();
+
+	m_nearestNeighbor->setMatchingMaxDistance(0.0003f);//Parameter taking from the exercise 3
 }
 
 ICP::~ICP(){
