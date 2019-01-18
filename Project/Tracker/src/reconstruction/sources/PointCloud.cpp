@@ -15,20 +15,6 @@ PointCloud::~PointCloud(){
 	SAFE_DELETE(m_nearestNeighbor);
 }
 
-void PointCloud::save(std::string name){ }
-
-std::vector<Vector3f>& PointCloud::getPoints(){
-	return m_points;
-}
-
-std::vector<Vector3f>& PointCloud::getNormals(){
-	return m_normals;
-}
-
-std::vector<Vector4uc>& PointCloud::getColors(){
-	return m_color_points;
-}
-
 const std::vector<Vector3f>& PointCloud::getPoints() const{
 	return m_points;
 }
@@ -183,11 +169,6 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 		}
 	}
 
-	#ifdef TESTING
-	// To build this mesh we need all points from the image
-	// m_mesh = Mesh(temp_points, m_color_points, m_current_width, m_current_height);
-	#endif
-
 	//m_nearestNeighbor->buildIndex(m_points);
 }
 
@@ -201,8 +182,7 @@ int PointCloud::getClosestPoint(Vector3f grid_cell) const{
 	return -1;
 }
 
-cv::Mat PointCloud::filterMap(cv::Mat map, FilterType filter_type, int diameter, float sigma)
-{
+cv::Mat PointCloud::filterMap(cv::Mat map, FilterType filter_type, int diameter, float sigma){
 	cv::Mat result;
 
 	switch (filter_type)

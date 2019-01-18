@@ -12,8 +12,8 @@ public:
 	static Vector3f backproject(float x, float y, float depth, CameraParameters camera_parameters){
 		Vector3f point;
 		point[0] = (x - camera_parameters.m_cX) / camera_parameters.m_focal_length_X * depth;
-		point[0] = (y - camera_parameters.m_cY) / camera_parameters.m_focal_length_Y * depth;
-		point[0] = depth;
+		point[1] = (y - camera_parameters.m_cY) / camera_parameters.m_focal_length_Y * depth;
+		point[2] = depth;
 		return point;
 	}
 
