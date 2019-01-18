@@ -33,9 +33,6 @@ public:
 
 	unsigned int addFace(unsigned int idx0, unsigned int idx1, unsigned int idx2);
 
-	////BROKEN!!!
-	//void merge(const Mesh& mesh);
-
 	bool save(const std::string& filename);
 
 	void transform(const Matrix4f& matrix);
