@@ -98,7 +98,6 @@ void TrackerTest::processedMapsTest()
 
 		PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb);
 
-		
 		cv::Mat scaled_depth, renderdepth;
 		double min, max;
 
@@ -108,7 +107,7 @@ void TrackerTest::processedMapsTest()
 
 		//Bilateral filter
 		cv::Mat render_depth;
-		cv::Mat bilateral_depth = source->filterMap(depth, bilateral, 9, 150.0f);
+		cv::Mat bilateral_depth = source->filterMap(depth, bilateral, 9, 32.0f);
 
 		cv::minMaxIdx(bilateral_depth, &min, &max);
 		cv::convertScaleAbs(bilateral_depth, render_depth, 255 / max);
@@ -116,7 +115,7 @@ void TrackerTest::processedMapsTest()
 		cv::imshow("Bilateral Filtered Depth", render_depth);
 
 		//Median Filter
-		cv::Mat median_depth = source->filterMap(scaled_depth, median, 9, 150.0f);
+		cv::Mat median_depth = source->filterMap(scaled_depth, median, 7, 150.0f);
 
 		cv::imshow("Median Filtered Depth", median_depth);
 

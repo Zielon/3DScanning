@@ -42,31 +42,25 @@ int main() {
 
 		streamReader->getNextFrame(rgb, depth, false);
 
-		//Debug color image
+		//----------------------------Debug color image
 		cv::cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
 		cv::imshow("RGB Color", rgb);
-
-		//Debug depth image
+		
+		//----------------------------Debug depth image
 
 		//Scale depth map to show as a image
-		double min;
-		double max;
+		double min, max;
 		cv::minMaxIdx(depth, &min, &max);
 		cv::convertScaleAbs(depth, scaledDepth, 255 / max);
 		cv::imshow("Raw Depth", scaledDepth);
 
 		//cv::imwrite("raw_depth.png", scaledDepth);
 
-		//Bilateral Filter
-		cv::bilateralFilter (depth, filteredDepth, 9, 150, 150);//(9,32)
+		//--------------------------Bilateral Filter
+		cv::bilateralFilter (scaledDepth, filteredDepth, 9, 150, 150);//(9,32)
 		cv::imshow("Bilateral Filter Depth", filteredDepth);
 
-		//cv::imwrite("bilateral_depth.png", scaledDepth);
-
-		/*cv::Mat filteredDepthTest;
-		cv::medianBlur(scaledDepth, filteredDepthTest, 9);
-
-		cv::imwrite("median_depth.png", filteredDepthTest);*/
+		//cv::imwrite("bilateral_depth.png", filteredDepth);
 
 		cv::waitKey(1);
 	}
