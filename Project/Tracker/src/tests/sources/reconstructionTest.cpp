@@ -53,12 +53,11 @@ void ReconstructionTest::reconstructionTest() const{
 		PointCloud* _cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 8);
 		std::shared_ptr<PointCloud> cloud(_cloud);
 
-
 		cloud->m_pose_estimation = trajectory;
 		context->m_fusion->produce(cloud);
 
-		cloud->getClosestPoint(Vector3f::Zero()); // Waits for the index building thread to finish before deleting the pointcloud
-
+		// Waits for the index building thread to finish before deleting the point cloud
+		cloud->getClosestPoint(Vector3f::Zero());
 
 		bar.set(index);
 		bar.display();
@@ -74,8 +73,7 @@ void ReconstructionTest::reconstructionTest() const{
 	SAFE_DELETE(context);
 }
 
-
-void ReconstructionTest::reconstructionTestWithOurTracking() const {
+void ReconstructionTest::reconstructionTestWithOurTracking() const{
 
 	Verbose::message("START reconstructionTest()");
 
@@ -85,8 +83,7 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const {
 
 	auto size = getIterations();
 
-	float pose[16]; 
-
+	float pose[16];
 
 	ProgressBar bar(size, 60, "Frames loaded");
 
@@ -96,8 +93,6 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const {
 		cv::Mat rgb, depth;
 
 		tracker(context, img, pose);
-
-
 
 		bar.set(index);
 		bar.display();

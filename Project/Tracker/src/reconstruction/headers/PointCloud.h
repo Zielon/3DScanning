@@ -12,9 +12,9 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
-#include <opencv2\highgui\highgui.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
-enum FilterType { bilateral, median};
+enum FilterType { bilateral, median };
 
 class PointCloud
 {
@@ -36,23 +36,21 @@ public:
 
 	float getDepthImage(int x, int y) const;
 
-	std::vector<Match> queryNearestNeighbor(std::vector<Vector3f> points); 
+	std::vector<Match> queryNearestNeighbor(std::vector<Vector3f> points);
 
-	//Juan Test
 	void transform(Matrix4f transformation);
 
 	Matrix4f m_pose_estimation = Matrix4f::Identity();
 	CameraParameters m_camera_parameters;
 	int m_current_width = 0;
 	int m_current_height = 0;
-
 	int m_downsampling_factor = 1;
 
 private:
 	void transform(cv::Mat& depth_mat, cv::Mat& rgb_mat);
 
 	NearestNeighborSearch* m_nearestNeighbor;
-	std::thread* m_indexBuildingThread = nullptr; 
+	std::thread* m_indexBuildingThread = nullptr;
 	bool m_filtering = true;
 
 	std::vector<Vector3f> m_points;

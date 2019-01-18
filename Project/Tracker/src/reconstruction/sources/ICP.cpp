@@ -2,7 +2,6 @@
 
 #include "../../debugger/headers/Verbose.h"
 
-
 ICP::ICP(){
 	m_procrustesAligner = new ProcrustesAligner();
 }

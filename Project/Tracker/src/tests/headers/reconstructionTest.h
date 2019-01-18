@@ -14,6 +14,7 @@ public:
 
 private:
 	void reconstructionTest() const;
+
 	void reconstructionTestWithOurTracking() const;
 
 	void pointCloudTest() const;

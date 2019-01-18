@@ -10,7 +10,8 @@ void TrackerTest::cameraPoseTest(){
 	Matrix4f firs_trajectory_inverse = getTrajectory(0).inverse();
 
 	int nIters = 50; //3000
-	Matrix4f trajectory; // for some reason when the scope of this mat is inside the loop it gets borked after alignNewFrame() is called 
+	Matrix4f trajectory;
+	// for some reason when the scope of this mat is inside the loop it gets borked after alignNewFrame() is called 
 	for (int i = 0; i < nIters; i++)
 	{
 		trajectory = firs_trajectory_inverse * getTrajectory(i); //get camera trajectory of index from testBase class
@@ -18,14 +19,14 @@ void TrackerTest::cameraPoseTest(){
 
 		dynamic_cast<DatasetVideoStreamReader*>(tracker_context->m_videoStreamReader)->readAnyFrame(i, rgb, depth);
 
-		PointCloud* _source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 8 );
-		std::shared_ptr<PointCloud> source(_source); 
+		PointCloud* _source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 8);
+		std::shared_ptr<PointCloud> source(_source);
 
 		if (i == 0) // first frame
 		{
 			tracker_context->m_tracker->m_previous_pose = Matrix4f::Identity();
 			tracker_context->m_tracker->m_previous_point_cloud = source;
-			prev_trajectory = trajectory; 
+			prev_trajectory = trajectory;
 			continue;
 		}
 
@@ -39,7 +40,11 @@ void TrackerTest::cameraPoseTest(){
 
 		Matrix4f pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
 
-		std::cout << "Vertices: source: " << source->getPoints().size() << " target: " << tracker_context->m_tracker->m_previous_point_cloud->getPoints().size() << std::endl; 
+		std::cout << "Vertices: source: " << source->getPoints().size() << " target: " << tracker_context
+		                                                                                  ->m_tracker->
+		                                                                                  m_previous_point_cloud->
+		                                                                                  getPoints().size() << std::
+			endl;
 
 		// Safe the last frame reference
 		tracker_context->m_tracker->m_previous_point_cloud = source;
@@ -76,13 +81,11 @@ void TrackerTest::cameraPoseTest(){
 
 			<< "\n------------------------ " << std::endl;
 
-
 		//std::cin.get();
 	}
 }
 
-void TrackerTest::processedMapsTest()
-{
+void TrackerTest::processedMapsTest(){
 	std::cout << "START processedMapsTest()" << std::endl;
 
 	TrackerContext* tracker_context = static_cast<TrackerContext*>(createContext(
@@ -101,22 +104,22 @@ void TrackerTest::processedMapsTest()
 		cv::Mat scaled_depth, render_depth;
 		double min, max;
 
-		cv::minMaxIdx(depth, &min, &max);
-		cv::convertScaleAbs(depth, scaled_depth, 255 / max);
-		cv::imshow("Raw Depth", scaled_depth);
+		minMaxIdx(depth, &min, &max);
+		convertScaleAbs(depth, scaled_depth, 255 / max);
+		imshow("Raw Depth", scaled_depth);
 
 		//Bilateral filter
 		cv::Mat bilateral_depth = source->filterMap(depth, bilateral, 9, 32.0f);
 
-		cv::minMaxIdx(bilateral_depth, &min, &max);
-		cv::convertScaleAbs(bilateral_depth, render_depth, 255 / max);
+		minMaxIdx(bilateral_depth, &min, &max);
+		convertScaleAbs(bilateral_depth, render_depth, 255 / max);
 
-		cv::imshow("Bilateral Filtered Depth", render_depth);
+		imshow("Bilateral Filtered Depth", render_depth);
 
 		//Median Filter
 		cv::Mat median_depth = source->filterMap(scaled_depth, median, 7, 150.0f);
 
-		cv::imshow("Median Filtered Depth", median_depth);
+		imshow("Median Filtered Depth", median_depth);
 
 		cv::waitKey(10);
 

@@ -44,7 +44,7 @@ public:
 private:
 	void initialize();
 
-	FrustumBox computeFrustumBounds(Matrix4f pose, CameraParameters camera_parameters) const;
+	FrustumBox computeFrustumBounds(Matrix4f cameraToWorld, CameraParameters camera_parameters) const;
 
 	int clamp(float value) const;
 
