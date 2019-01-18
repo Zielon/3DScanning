@@ -89,11 +89,6 @@ unsigned Mesh::addFace(unsigned idx0, unsigned idx1, unsigned idx2){
 	return f_id;
 }
 
-void Mesh::merge(const Mesh& mesh){
-	m_triangles.insert(m_triangles.end(), mesh.m_triangles.begin(), mesh.m_triangles.end());
-	m_vertices.insert(m_vertices.end(), mesh.m_vertices.begin(), mesh.m_vertices.end());
-}
-
 void Mesh::transform(const Matrix4f& matrix){
 	// Camera space to world space
 	for (int i = 0; i < m_vertices.size(); i++)

@@ -45,8 +45,8 @@ void Fusion::save(string name) const{
 }
 
 void Fusion::initialize(){
-	m_volume = new Volume(Size(-1, -4, -2), Size(2, 4, 4), 200, 1);
-	m_buffer = new Buffer<PointCloud*>();
+	m_volume = new Volume(Size(-1, -4, -2), Size(2, 4, 4), 128, 1);
+	m_buffer = new Buffer<std::shared_ptr<PointCloud>>();
 	m_trunaction = m_volume->m_voxel_size * 2.f; // 2 voxels truncations
 }
 
@@ -69,7 +69,7 @@ void Fusion::wait() const{
 
 /// Buffer has a certain capacity when it is exceeded 
 /// this method will block the execution
-void Fusion::produce(PointCloud* cloud) const{
+void Fusion::produce(std::shared_ptr<PointCloud> cloud) const{
 	m_buffer->add(cloud);
 }
 
@@ -79,10 +79,10 @@ void Fusion::consume(){
 
 	for (int i = 0; i < NUMBER_OF_CONSUMERS; i++)
 	{
-		auto consumer = new Consumer<PointCloud*>(m_buffer);
+		auto consumer = new Consumer<std::shared_ptr<PointCloud>>(m_buffer);
 		m_consumers.emplace_back(consumer);
 		m_consumer_threads.emplace_back([this, consumer](){
-			consumer->run([this](PointCloud* cloud){
+			consumer->run([this](std::shared_ptr<PointCloud> cloud){
 				this->integrate(cloud);
 			});
 		});
@@ -111,13 +111,15 @@ void Fusion::processMesh(Mesh& mesh) const{
 				ProcessVolumeCell(m_volume, x, y, z, 0.f, &mesh);
 }
 
-void Fusion::integrate(PointCloud* cloud) const{
+void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
 	const auto cameraToWorld = cloud->m_pose_estimation;
 	const auto worldToCamera = cameraToWorld.inverse();
 
 	const auto rotation = worldToCamera.block(0, 0, 3, 3);
 	const auto translation = worldToCamera.block(0, 3, 3, 1);
 	const auto frustum_box = computeFrustumBounds(cameraToWorld, cloud->m_camera_parameters);
+
+	int downsamplingFactor = cloud->m_downsampling_factor;
 
 	#pragma omp parallel for
 	for (int z = frustum_box.m_min.z(); z < frustum_box.m_max.z(); z++)
@@ -133,7 +135,7 @@ void Fusion::integrate(PointCloud* cloud) const{
 				// Pixels space
 				auto pixels = round(cell);
 
-				float depth = cloud->getDepthImage(pixels.x(), pixels.y());
+				float depth = cloud->getDepthImage(pixels.x() / downsamplingFactor, pixels.y() / downsamplingFactor);
 
 				// Depth was not found
 				if (depth == INFINITY) continue;
@@ -163,7 +165,6 @@ void Fusion::integrate(PointCloud* cloud) const{
 				//m_mutex.unlock();
 			}
 
-	SAFE_DELETE(cloud);
 }
 
 FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld, CameraParameters camera_parameters) const{

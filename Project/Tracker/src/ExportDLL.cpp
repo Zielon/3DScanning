@@ -5,11 +5,7 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 
 	auto* tracker_context = new TrackerContext();
 
-	#if _DEBUG
 	tracker_context->m_videoStreamReader = new DatasetVideoStreamReader(dataset_path, false);
-	#else
-	tracker_context->m_videoStreamReader = new DatasetVideoStreamReader(dataset_path, true);
-	#endif
 
 	tracker_context->m_videoStreamReader->startReading();
 	//FIXME: Frame Info only set after first frame is read... FIXME: mb split this into seperate call?
@@ -52,31 +48,29 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 
 	cv::Mat rgb, depth;
 
-	const bool is_first_frame = tracker_context->m_tracker->m_previous_point_cloud == nullptr;
-
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
-	PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb);
+	PointCloud* _source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 8);
+	std::shared_ptr<PointCloud> source(_source);
 
-	if (is_first_frame) // first frame
+	// Produce a new point cloud (add to the buffer)
+	tracker_context->m_fusion->produce(std::shared_ptr<PointCloud>(source));
+
+	if (tracker_context->m_first_frame) // first frame
 	{
-		tracker_context->m_tracker->m_previous_pose = Matrix4f::Identity();
+		tracker_context->m_first_frame = false;
 		tracker_context->m_tracker->m_previous_point_cloud = source;
 
 		memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));
-
 		return;
 	}
 
-	Matrix4f deltaPose = Matrix4f::Identity();
+	const Matrix4f delta_pose = tracker_context->m_tracker->alignNewFrame(
+		source, tracker_context->m_tracker->m_previous_point_cloud);
 
-	//Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(
-	//	source, tracker_context->m_tracker->m_previous_point_cloud);
+	tracker_context->m_tracker->m_previous_pose = delta_pose * tracker_context->m_tracker->m_previous_pose;
 
-	tracker_context->m_tracker->m_previous_pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
-
-	// Produce a new point cloud (add to the buffer)
-	tracker_context->m_fusion->produce(tracker_context->m_tracker->m_previous_point_cloud);
+	memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));
 
 	// Safe the last frame reference
 	tracker_context->m_tracker->m_previous_point_cloud = source;

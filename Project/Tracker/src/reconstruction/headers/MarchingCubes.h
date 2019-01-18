@@ -449,14 +449,14 @@ bool ProcessVolumeCell(Volume* volume, int x, int y, int z, double iso, Mesh* me
 	cell.p[7] = Vector3d(tmp[0], tmp[1], tmp[2]);
 
 	// cell corner values
-	for(int i = 0; i < 8; i++)
+	for (int i = 0; i < 8; i++)
 	{
-		if (voxels[i]->m_ctr == 0) 
+		if (voxels[i]->m_ctr == 0)
 			cell.val[i] = INFINITY; // Empty space
 		else
 			cell.val[i] = double(voxels[i]->m_sdf);
 	}
-		
+
 	MC_Triangle tris[6];
 	int num_tris = Polygonise(cell, iso, tris);
 

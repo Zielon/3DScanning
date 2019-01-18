@@ -14,35 +14,28 @@ Volume::Volume(Size min, Size max, uint size, uint dim){
 	m_min = Vector3d(min.m_depth, min.m_width, min.m_height);
 	m_max = Vector3d(max.m_depth, max.m_width, max.m_height);
 
-	m_voxels = std::vector<Voxel*>(m_length, nullptr);
-
-	forAll([this](Voxel*, int index){
-		m_voxels[index] = new Voxel();
-	});
+	m_voxels = new Voxel[m_length];
 }
 
 Volume::~Volume(){
-	forAll([this](Voxel* voxel, int index){
-		SAFE_DELETE(voxel);
-	});
-	m_voxels.clear();
+	delete[] m_voxels;
 }
 
 void Volume::forAll(std::function<void(Voxel*, int)> func) const{
 	#pragma omp parallel for
 	for (auto x = 0; x < m_length; x++)
-		func(m_voxels[x], x);
+		func(m_voxels + x, x);
 }
 
 Voxel* Volume::getVoxel(int idx) const{
 	if (idx >= 0 && idx < m_length)
-		return m_voxels[idx];
+		return m_voxels + idx;
 	return nullptr;
 }
 
 Voxel* Volume::getVoxel(int x, int y, int z) const{
 	const int index = x * m_size * m_size + y * m_size + z;
-	return m_voxels[index];
+	return m_voxels + index;
 }
 
 Voxel* Volume::getVoxel(Vector3i position) const{
