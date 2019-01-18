@@ -6,7 +6,7 @@ PointCloud::PointCloud(CameraParameters camera_parameters, cv::Mat& depth, cv::M
 	: m_camera_parameters(camera_parameters){
 
 	m_nearestNeighbor = new NearestNeighborSearchFlann();
-	m_nearestNeighbor->setMatchingMaxDistance(0.0003f); 
+	m_nearestNeighbor->setMatchingMaxDistance(max_distance); 
 	m_downsampling_factor = downsamplingFactor;
 
 	this->transform(depth, rgb);
