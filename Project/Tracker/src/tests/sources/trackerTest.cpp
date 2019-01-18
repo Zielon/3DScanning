@@ -91,10 +91,10 @@ void TrackerTest::frameDistanceTest() {
 	Matrix4f prev_trajectory,pose;
 	prev_trajectory = Matrix4f::Zero();
 
-	int nIters = 125;//3000
-	int startFrame = 110;
+	int nIters = 180;//3000
+	int startFrame = 150;
 
-	for (int i = startFrame; i < nIters; i+=1)
+	for (int i = startFrame; i < nIters; i+=3)
 	{
 		cv::Mat rgb, depth;
 
@@ -113,7 +113,7 @@ void TrackerTest::frameDistanceTest() {
 		}
 
 
-		//source->transform(tracker_context->m_tracker->m_previous_pose);
+		source->transform(tracker_context->m_tracker->m_previous_pose);
 		//tracker_context->m_tracker->m_previous_point_cloud->transform(tracker_context->m_tracker->m_previous_pose);
 
 		/*
@@ -122,10 +122,8 @@ void TrackerTest::frameDistanceTest() {
 		*/
 
 		Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(source, tracker_context->m_tracker->m_previous_point_cloud);
-		//Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(tracker_context->m_tracker->m_previous_point_cloud, source);
-
+		
 		pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
-		//pose = tracker_context->m_tracker->m_previous_pose * deltaPose;
 		
 		/*
 		std::cout << "Delta Pose" << std::endl;

@@ -34,7 +34,7 @@ private:
 	ProcrustesAligner* m_procrustesAligner;
 
 	#if _DEBUG
-	int m_number_iterations = 1;
+	int m_number_iterations = 5;
 	#else
 	int m_number_iterations = 20;
 	#endif
