@@ -7,7 +7,7 @@ void ReconstructionTest::pointCloudTest() const{
 
 	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
 
-	unsigned char* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
+	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
 	for (int index = 0; index < 600; index += 100)
 	{
@@ -38,7 +38,7 @@ void ReconstructionTest::reconstructionTest() const{
 
 	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
 
-	unsigned char* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
+	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
 	auto size = getIterations();
 
@@ -79,7 +79,7 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 
 	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
 
-	unsigned char* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
+	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
 	auto size = getIterations();
 
@@ -89,7 +89,6 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 
 	for (int index = 0; index < size; index += 1)
 	{
-		const auto trajectory = getTrajectory(index);
 		cv::Mat rgb, depth;
 
 		tracker(context, img, pose);

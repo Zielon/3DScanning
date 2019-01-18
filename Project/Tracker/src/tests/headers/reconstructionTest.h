@@ -7,8 +7,8 @@ class ReconstructionTest :
 public:
 	void run() override{
 		//this->meshTest();
-		this->reconstructionTest();
-		//this->reconstructionTestWithOurTracking();
+		//this->reconstructionTest();
+		this->reconstructionTestWithOurTracking();
 		//this->pointCloudTest();
 	};
 
