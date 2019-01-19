@@ -9,6 +9,11 @@ void TrackerTest::cameraPoseTest(){
 	Matrix4f prev_trajectory;
 	Matrix4f firs_trajectory_inverse = getTrajectory(0).inverse();
 
+	//Statistics variables
+	double icp_time = 0.0;
+	float final_error = 0.0f;
+	float displacement_error = 0.0f;
+
 	int nIters = 50; //3000
 	Matrix4f trajectory;
 	// for some reason when the scope of this mat is inside the loop it gets borked after alignNewFrame() is called 
@@ -35,16 +40,23 @@ void TrackerTest::cameraPoseTest(){
 		//std::cout << "Previous Pose" << std::endl;
 		//std::cout << tracker_context->m_tracker->m_previous_pose << std::endl;
 
+		std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+
 		Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(
 			source, tracker_context->m_tracker->m_previous_point_cloud);
 
 		Matrix4f pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
 
+		std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+
+		std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+		icp_time += time_span.count();
+
 		std::cout << "Vertices: source: " << source->getPoints().size() << " target: " << tracker_context
 		                                                                                  ->m_tracker->
 		                                                                                  m_previous_point_cloud->
 		                                                                                  getPoints().size() << std::
-			endl;
+		endl;
 
 		// Safe the last frame reference
 		tracker_context->m_tracker->m_previous_point_cloud = source;
@@ -81,8 +93,19 @@ void TrackerTest::cameraPoseTest(){
 
 			<< "\n------------------------ " << std::endl;
 
-		//std::cin.get();
+
+		final_error += error.norm();
+
+		displacement_error += error.block(0, 3, 3, 1).norm();
 	}
+
+	std::cout << "Average ICP time:  " << icp_time / nIters << " seconds\n";
+	std::cout << "Total ICP error:  " << final_error << " meters\n";
+	std::cout << "Average ICP error:  " << final_error / nIters << " meters\n";
+	std::cout << "Total ICP displacement error:  " << displacement_error  << " meters\n";
+	std::cout << "Average ICP displacement error:  " << displacement_error / nIters << " meters\n";
+
+	std::cin.get();
 }
 
 void TrackerTest::processedMapsTest(){

@@ -10,6 +10,8 @@
 #include <sstream>
 #include <direct.h>
 #include <io.h>
+#include <ctime>
+#include <chrono>
 #include "../../debugger/headers/Verbose.h"
 #include "../../reconstruction/headers/Mesh.h"
 #include "../../concurency/headers/ThreadManager.h"
