@@ -106,3 +106,44 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 	delete[]img;
 	SAFE_DELETE(context);
 }
+
+void ReconstructionTest::pointCloudTestWithICP() const{
+
+	Verbose::message("START pointCloudTestWithICP()");
+
+	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+
+	for (int index = 0; index < getIterations(); index++)
+	{
+		cv::Mat rgb, depth;
+
+		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
+
+		PointCloud* _source = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 8);
+		std::shared_ptr<PointCloud> source(_source);
+
+		if (index == 0)
+		{
+			context->m_tracker->m_previous_pose = Matrix4f::Identity();
+			context->m_tracker->m_previous_point_cloud = source;
+			continue;
+		}
+
+		Matrix4f deltaPose = context->m_tracker->alignNewFrame(source, context->m_tracker->m_previous_point_cloud);
+		Matrix4f pose = deltaPose * context->m_tracker->m_previous_pose;
+
+		context->m_tracker->m_previous_point_cloud = source;
+		context->m_tracker->m_previous_pose = pose;
+
+		if (index % 100 == 0)
+		{
+			Mesh mesh(depth, rgb, context->m_tracker->getCameraParameters());
+			mesh.transform(pose);
+			mesh.save("point_cloud_" + std::to_string(index));
+		}
+	}
+
+	Verbose::message("DONE pointCloudTestWithICP()", SUCCESS);
+	SAFE_DELETE(context);
+
+}
