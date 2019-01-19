@@ -11,7 +11,6 @@ void ReconstructionTest::pointCloudTest() const{
 
 	for (int index = 0; index < 600; index += 100)
 	{
-
 		const auto trajectory = getTrajectory(index);
 
 		// Process each point cloud in a different thread
@@ -22,7 +21,6 @@ void ReconstructionTest::pointCloudTest() const{
 			mesh.transform(trajectory);
 			mesh.save("point_cloud_" + std::to_string(index));
 		});
-
 	}
 
 	ThreadManager::waitForAll();
@@ -109,16 +107,13 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 	SAFE_DELETE(context);
 }
 
-
-void ReconstructionTest::pointCloudTestWithICP() const {
+void ReconstructionTest::pointCloudTestWithICP() const{
 
 	Verbose::message("START pointCloudTestWithICP()");
 
 	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
-	
-	int startFrame = 0;
-	
-	for (int index = startFrame; index < 20; index++)
+
+	for (int index = 0; index < getIterations(); index++)
 	{
 		cv::Mat rgb, depth;
 
@@ -127,11 +122,10 @@ void ReconstructionTest::pointCloudTestWithICP() const {
 		PointCloud* _source = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 8);
 		std::shared_ptr<PointCloud> source(_source);
 
-		if (index == startFrame) // first frame
+		if (index == 0)
 		{
 			context->m_tracker->m_previous_pose = Matrix4f::Identity();
 			context->m_tracker->m_previous_point_cloud = source;
-
 			continue;
 		}
 
@@ -141,10 +135,12 @@ void ReconstructionTest::pointCloudTestWithICP() const {
 		context->m_tracker->m_previous_point_cloud = source;
 		context->m_tracker->m_previous_pose = pose;
 
-		Mesh mesh(depth, rgb, context->m_tracker->getCameraParameters());
-		mesh.transform(pose);
-		mesh.save("point_cloud_" + std::to_string(index));
-
+		if (index % 100 == 0)
+		{
+			Mesh mesh(depth, rgb, context->m_tracker->getCameraParameters());
+			mesh.transform(pose);
+			mesh.save("point_cloud_" + std::to_string(index));
+		}
 	}
 
 	Verbose::message("DONE pointCloudTestWithICP()", SUCCESS);
