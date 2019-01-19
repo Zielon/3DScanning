@@ -10,7 +10,7 @@
 
 #define OPENCV_TRAITS_ENABLE_DEPRECATED
 
-struct __MeshInfo; 
+struct __MeshInfo;
 
 extern "C" __declspec(dllexport) void* createContext(const char* dataset_path);
 

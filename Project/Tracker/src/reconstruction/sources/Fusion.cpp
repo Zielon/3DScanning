@@ -119,7 +119,7 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
 	const auto translation = worldToCamera.block(0, 3, 3, 1);
 	const auto frustum_box = computeFrustumBounds(cameraToWorld, cloud->m_camera_parameters);
 
-	int downsamplingFactor = cloud->m_downsampling_factor; 
+	int downsamplingFactor = cloud->m_downsampling_factor;
 
 	#pragma omp parallel for
 	for (int z = frustum_box.m_min.z(); z < frustum_box.m_max.z(); z++)
@@ -135,7 +135,7 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
 				// Pixels space
 				auto pixels = round(cell);
 
-				float depth = cloud->getDepthImage(pixels.x() / downsamplingFactor, pixels.y()/ downsamplingFactor);
+				float depth = cloud->getDepthImage(pixels.x() / downsamplingFactor, pixels.y() / downsamplingFactor);
 
 				// Depth was not found
 				if (depth == INFINITY) continue;
@@ -164,7 +164,6 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
 
 				//m_mutex.unlock();
 			}
-
 
 }
 

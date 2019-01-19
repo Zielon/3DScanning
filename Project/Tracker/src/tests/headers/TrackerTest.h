@@ -12,5 +12,6 @@ public:
 private:
 
 	void cameraPoseTest();
+
 	void processedMapsTest();
 };

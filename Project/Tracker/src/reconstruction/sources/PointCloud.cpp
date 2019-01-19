@@ -6,7 +6,7 @@ PointCloud::PointCloud(CameraParameters camera_parameters, cv::Mat& depth, cv::M
 	: m_camera_parameters(camera_parameters){
 
 	m_nearestNeighbor = new NearestNeighborSearchFlann();
-	m_nearestNeighbor->setMatchingMaxDistance(max_distance); 
+	m_nearestNeighbor->setMatchingMaxDistance(max_distance);
 	m_downsampling_factor = downsamplingFactor;
 
 	this->transform(depth, rgb);
@@ -57,10 +57,14 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	cv::Mat image, colors;
 
-	if (m_downsampling_factor>1)
+	if (m_downsampling_factor > 1)
 	{
-		cv::resize(depth_mat, image, cv::Size(depth_mat.cols / m_downsampling_factor, depth_mat.rows / m_downsampling_factor),0,0,cv::INTER_AREA);
-		cv::resize(rgb_mat, colors, cv::Size(depth_mat.cols / m_downsampling_factor, depth_mat.rows / m_downsampling_factor),0,0,cv::INTER_AREA);
+		resize(depth_mat, image,
+		       cv::Size(depth_mat.cols / m_downsampling_factor, depth_mat.rows / m_downsampling_factor), 0, 0,
+		       cv::INTER_NEAREST);
+		resize(rgb_mat, colors,
+		       cv::Size(depth_mat.cols / m_downsampling_factor, depth_mat.rows / m_downsampling_factor), 0, 0,
+		       cv::INTER_AREA);
 	}
 	else
 	{
@@ -87,8 +91,8 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	//Bilateral filtering to remove noise
 	cv::Mat filtered_depth;
 
-	if (m_filtering) {
-
+	if (m_filtering)
+	{
 		FilterType filter_type = bilateral;
 		filtered_depth = this->filterMap(depth_mat, filter_type, 9.0f, 150.0f);
 	}
@@ -113,7 +117,8 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			if (depth > 0.0f)
 			{
 				// Back-projection to camera space.
-				temp_points[idx] = Transformations::backproject(x*m_downsampling_factor, y*m_downsampling_factor, depth, m_camera_parameters);
+				temp_points[idx] = Transformations::backproject(x * m_downsampling_factor, y * m_downsampling_factor,
+				                                                depth, m_camera_parameters);
 			}
 			else
 			{
@@ -170,24 +175,21 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 		}
 	}
 
-
-	m_indexBuildingThread = new std::thread([this]()->void {
+	m_indexBuildingThread = new std::thread([this]()-> void{
 		m_nearestNeighbor->buildIndex(m_points);
 	});
 
 }
 
-std::vector<Match> PointCloud::queryNearestNeighbor(std::vector<Vector3f> points)
-{
+std::vector<Match> PointCloud::queryNearestNeighbor(std::vector<Vector3f> points){
 	if (m_indexBuildingThread != nullptr)
 	{
-		m_indexBuildingThread->join(); 
-		SAFE_DELETE(m_indexBuildingThread); 
+		m_indexBuildingThread->join();
+		SAFE_DELETE(m_indexBuildingThread);
 	}
 
-	return m_nearestNeighbor->queryMatches(points); 
+	return m_nearestNeighbor->queryMatches(points);
 }
-
 
 int PointCloud::getClosestPoint(Vector3f grid_cell){
 
@@ -196,7 +198,6 @@ int PointCloud::getClosestPoint(Vector3f grid_cell){
 		m_indexBuildingThread->join();
 		SAFE_DELETE(m_indexBuildingThread);
 	}
-
 
 	auto closestPoints = m_nearestNeighbor->queryMatches({grid_cell});
 
@@ -211,15 +212,16 @@ cv::Mat PointCloud::filterMap(cv::Mat map, FilterType filter_type, int diameter,
 
 	switch (filter_type)
 	{
-		case bilateral:
-			cv::bilateralFilter(map, result, diameter, sigma, sigma);
+	case bilateral:
+		bilateralFilter(map, result, diameter, sigma, sigma);
 		break;
 
-		case median:
-			cv::medianBlur(map, result, diameter);
+	case median:
+		medianBlur(map, result, diameter);
 		break;
 
-		default:  result = map; break;
+	default: result = map;
+		break;
 	}
 
 	return result;

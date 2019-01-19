@@ -33,6 +33,8 @@ namespace Assets.Scripts
         public GameObject cameraRig;
         public GameObject frameMeshPrefab;
 
+        private GameObject frameMeshObject; 
+
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr createContext(byte[] path);
 
@@ -55,6 +57,7 @@ namespace Assets.Scripts
         // Use this for initialization
         private void Start()
         {
+            frameMeshObject = Instantiate(frameMeshPrefab); 
             var segments = new List<string>(
                     Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
                 {"..", "Datasets", "freiburg", " "};
@@ -115,10 +118,7 @@ namespace Assets.Scripts
 
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
-
-            var frameMeshObject = Instantiate(frameMeshPrefab);
-
-            frameMeshPrefab.GetComponent<MeshFilter>().mesh = mesh;
+            frameMeshObject.GetComponent<MeshFilter>().mesh = mesh;
         }
 
         private Thread SpawnFrameMeshThread()

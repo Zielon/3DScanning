@@ -7,20 +7,8 @@
 #include "../sources/ProcrustesAligner.hpp"
 #include "../headers/PointCloud.h"
 
-#ifdef linux
-
-#include <opencv2/core/mat.hpp>
-
-#endif
-
-#ifdef _WIN32
-
 #define OPENCV_TRAITS_ENABLE_DEPRECATED
 #include <opencv2/core.hpp>
-
-#endif
-
-
 
 class ICP
 {
@@ -38,7 +26,7 @@ private:
 	#if _DEBUG
 	int m_number_iterations = 1;
 	#else
-	int m_number_iterations = 25;
+	int m_number_iterations = 10;
 	#endif
 
 	std::vector<Vector3f> transformPoints(const std::vector<Vector3f>& sourcePoints, const Matrix4f& pose);

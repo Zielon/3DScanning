@@ -47,7 +47,7 @@ private:
 
 	double m_ddx, m_ddy, m_ddz;
 
-	std::vector<Voxel*> m_voxels;
+	Voxel* m_voxels;
 
 	int m_length = 0;
 
