@@ -63,7 +63,6 @@ Matrix4f ICP::estimatePose(std::shared_ptr<PointCloud> source, std::shared_ptr<P
 		pose = estimatePosePointToPlane(sourcePoints, targetPoints, targetNormals) * pose;
 	}
 
-	source->m_pose_estimation = pose;
 	return pose;
 }
 

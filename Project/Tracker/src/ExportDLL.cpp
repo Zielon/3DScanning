@@ -53,9 +53,6 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 	PointCloud* _source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 8);
 	std::shared_ptr<PointCloud> source(_source);
 
-	// Produce a new point cloud (add to the buffer)
-	tracker_context->m_fusion->produce(std::shared_ptr<PointCloud>(source));
-
 	if (tracker_context->m_first_frame) // first frame
 	{
 		tracker_context->m_first_frame = false;
@@ -68,9 +65,16 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 	const Matrix4f delta_pose = tracker_context->m_tracker->alignNewFrame(
 		source, tracker_context->m_tracker->m_previous_point_cloud);
 
-	tracker_context->m_tracker->m_previous_pose = delta_pose * tracker_context->m_tracker->m_previous_pose;
+	Matrix4f pose_estimation = delta_pose * tracker_context->m_tracker->m_previous_pose;
 
-	memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));
+	// Set pose before adding to Fusion consumers
+	tracker_context->m_tracker->m_previous_pose = pose_estimation;
+	source->m_pose_estimation = pose_estimation;
+
+	// Produce a new point cloud (add to the buffer)
+	tracker_context->m_fusion->produce(std::shared_ptr<PointCloud>(source));
+
+	memcpy(pose, pose_estimation.data(), 16 * sizeof(float));
 
 	// Safe the last frame reference
 	tracker_context->m_tracker->m_previous_point_cloud = source;
