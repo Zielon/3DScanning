@@ -64,7 +64,7 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 	const Matrix4f delta_pose = tracker_context->m_tracker->alignNewFrame(
 		source, tracker_context->m_tracker->m_previous_point_cloud);
 
-	tracker_context->m_tracker->m_previous_pose = tracker_context->m_tracker->m_previous_pose * delta_pose;
+	tracker_context->m_tracker->m_previous_pose = delta_pose * tracker_context->m_tracker->m_previous_pose;
 
 	memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));
 
