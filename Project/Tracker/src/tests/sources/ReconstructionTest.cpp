@@ -32,6 +32,74 @@ void ReconstructionTest::pointCloudTest() const{
 
 }
 
+void ReconstructionTest::unityIntegrationTest() const
+{
+	Verbose::message("START unityIntegrationTest()");
+
+	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+
+	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
+
+	auto size = getIterations();
+
+	float pose[16];
+	std::chrono::high_resolution_clock::time_point t2;
+	const int SAVE_MESH_INTERVAL = 200; 
+
+
+
+	for (int index = 0; index < size; index += 1)
+	{
+		std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+
+		tracker(context, img, pose);
+
+
+		t2 = std::chrono::high_resolution_clock::now();
+
+		if (index % SAVE_MESH_INTERVAL == 0 || index == size-1)
+		{
+			Mesh mesh;
+
+
+//			context->m_fusion->wait();
+
+			__MeshInfo meshinfo; 
+			getMeshInfo(context, &meshinfo); 
+
+			assert(meshinfo.mesh->m_vertices.size() == meshinfo.m_vertex_count); 
+			assert(meshinfo.mesh->m_triangles.size() == meshinfo.m_index_count / 3);
+			assert(meshinfo.m_index_count % 3 == 0);
+
+
+
+			t2 = std::chrono::high_resolution_clock::now();
+
+			meshinfo.mesh->save("mesh_" + std::to_string(index));
+
+		}
+
+		std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+
+		std::cout << "Frame_" << index << ": ";
+		std::cout <<std::setprecision(3) << time_span.count()*1000 << "ms"; 
+
+		if (index % SAVE_MESH_INTERVAL == 0 || index == size - 1)
+		{
+				std::cout << "  [mesh]";
+		}
+		std::cout << endl; 
+
+	}
+
+	context->m_fusion->save("mesh_FINAL"); 
+
+	Verbose::message("DONE unityIntegrationTest()", SUCCESS);
+
+	delete[]img;
+	SAFE_DELETE(context);
+}
+
 void ReconstructionTest::reconstructionTest() const{
 
 	Verbose::message("START reconstructionTest()");

@@ -22,7 +22,7 @@ namespace Assets.Scripts
         private const string DllFilePath = @"Tracker_release";
         private readonly Queue<MeshDto> _meshDtoQueue = new Queue<MeshDto>();
         private IntPtr _cppContext;
-        private int _framesProcessed;
+        private int _framesProcessed = 0;
         private int _h = -1;
         private byte[] _image;
         private float[] _pose;
@@ -31,9 +31,10 @@ namespace Assets.Scripts
 
         // Unity injected vars
         public GameObject cameraRig;
+        public Image videoBG; 
+        public int abortAfterNFrames = -1; 
 
-        private GameObject frameMeshObject;
-        public GameObject frameMeshPrefab;
+        public  GameObject frameMeshObject;
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr createContext(byte[] path);
@@ -57,7 +58,6 @@ namespace Assets.Scripts
         // Use this for initialization
         private void Start()
         {
-            frameMeshObject = Instantiate(frameMeshPrefab);
             var segments = new List<string>(
                     Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
                 {"..", "Datasets", "freiburg", " "};
@@ -79,6 +79,14 @@ namespace Assets.Scripts
         // Update is called once per frame
         private void Update()
         {
+            // Unity just dies if the dataset runs out
+            if(_framesProcessed > abortAfterNFrames && abortAfterNFrames > 0)
+            {
+                Debug.Log("Tracking aborted"); 
+                return; 
+            }
+
+
             //   Debug.Log("Update test");
 
             tracker(_cppContext, _image, _pose);
@@ -91,8 +99,7 @@ namespace Assets.Scripts
             tex.LoadRawTextureData(_image);
             tex.Apply();
 
-            var videoBg = GetComponent<Image>();
-            videoBg.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
+            videoBG.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
 
             // Apply camera poses
             var pose = Helpers.GetPose(_pose);
@@ -106,7 +113,8 @@ namespace Assets.Scripts
             if (_meshDtoQueue.Count > 0)
                 AddMesh(_meshDtoQueue.Dequeue());
 
-            if (_framesProcessed % 100 != 0 || _thread != null && _thread.IsAlive) return;
+            //get first mesh after n frames
+            if (_framesProcessed % 100 != 15 || _thread != null && _thread.IsAlive) return;
 
             _thread = SpawnFrameMeshThread();
             _thread.Start();
@@ -119,6 +127,7 @@ namespace Assets.Scripts
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
             frameMeshObject.GetComponent<MeshFilter>().mesh = mesh;
+            frameMeshObject.GetComponent<MeshCollider>().sharedMesh = mesh; 
         }
 
         private Thread SpawnFrameMeshThread()
