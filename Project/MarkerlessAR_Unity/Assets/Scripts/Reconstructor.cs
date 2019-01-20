@@ -115,7 +115,7 @@ namespace Assets.Scripts
                 AddMesh(_meshDtoQueue.Dequeue());
 
             //get first mesh after n frames
-            if (_framesProcessed % meshUpdateRate != 1 || _thread != null && _thread.IsAlive) return;
+            if (_framesProcessed % meshUpdateRate != 0 || _thread != null && _thread.IsAlive) return;
 
             _thread = SpawnFrameMeshThread();
             _thread.Start();

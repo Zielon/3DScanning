@@ -46,7 +46,8 @@ void ReconstructionTest::unityIntegrationTest() const
 	std::chrono::high_resolution_clock::time_point t2;
 	const int SAVE_MESH_INTERVAL = 200; 
 
-
+	double sum_track = 0.0;
+	double sum_getMesh = 0.0; 
 
 	for (int index = 0; index < size; index += 1)
 	{
@@ -54,14 +55,10 @@ void ReconstructionTest::unityIntegrationTest() const
 
 		tracker(context, img, pose);
 
-
 		t2 = std::chrono::high_resolution_clock::now();
 
 		if (index % SAVE_MESH_INTERVAL == 0 || index == size-1)
 		{
-			Mesh mesh;
-
-
 //			context->m_fusion->wait();
 
 			__MeshInfo meshinfo; 
@@ -70,9 +67,6 @@ void ReconstructionTest::unityIntegrationTest() const
 			assert(meshinfo.mesh->m_vertices.size() == meshinfo.m_vertex_count); 
 			assert(meshinfo.mesh->m_triangles.size() == meshinfo.m_index_count / 3);
 			assert(meshinfo.m_index_count % 3 == 0);
-
-
-
 			t2 = std::chrono::high_resolution_clock::now();
 
 			meshinfo.mesh->save("mesh_" + std::to_string(index));
@@ -86,13 +80,24 @@ void ReconstructionTest::unityIntegrationTest() const
 
 		if (index % SAVE_MESH_INTERVAL == 0 || index == size - 1)
 		{
-				std::cout << "  [mesh]";
+			std::cout << "  [mesh]";
+			sum_getMesh += time_span.count();
+		}
+		else
+		{
+			sum_track += time_span.count(); 
 		}
 		std::cout << endl; 
 
 	}
 
 	context->m_fusion->save("mesh_FINAL"); 
+
+	int num_mesh_frames = std::ceil(1.0*size / SAVE_MESH_INTERVAL);
+
+	std::cout << "Average Time for tracking frame: " << sum_track / (size - num_mesh_frames) * 1000 << "ms" << std::endl;
+	std::cout << "Average Time for getMesh frame:  " << sum_getMesh / num_mesh_frames * 1000 << "ms" << std::endl;
+
 
 	Verbose::message("DONE unityIntegrationTest()", SUCCESS);
 
