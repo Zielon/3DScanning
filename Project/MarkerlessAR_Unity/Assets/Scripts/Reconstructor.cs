@@ -32,7 +32,8 @@ namespace Assets.Scripts
         // Unity injected vars
         public GameObject cameraRig;
         public Image videoBG; 
-        public int abortAfterNFrames = -1; 
+        public int abortAfterNFrames = -1;
+        public int meshUpdateRate = 15; 
 
         public  GameObject frameMeshObject;
 
@@ -114,7 +115,7 @@ namespace Assets.Scripts
                 AddMesh(_meshDtoQueue.Dequeue());
 
             //get first mesh after n frames
-            if (_framesProcessed % 100 != 15 || _thread != null && _thread.IsAlive) return;
+            if (_framesProcessed % meshUpdateRate != 1 || _thread != null && _thread.IsAlive) return;
 
             _thread = SpawnFrameMeshThread();
             _thread.Start();
