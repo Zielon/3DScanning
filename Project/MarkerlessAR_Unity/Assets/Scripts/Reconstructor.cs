@@ -31,9 +31,9 @@ namespace Assets.Scripts
 
         // Unity injected vars
         public GameObject cameraRig;
-        public GameObject frameMeshPrefab;
 
-        private GameObject frameMeshObject; 
+        private GameObject frameMeshObject;
+        public GameObject frameMeshPrefab;
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr createContext(byte[] path);
@@ -57,7 +57,7 @@ namespace Assets.Scripts
         // Use this for initialization
         private void Start()
         {
-            frameMeshObject = Instantiate(frameMeshPrefab); 
+            frameMeshObject = Instantiate(frameMeshPrefab);
             var segments = new List<string>(
                     Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
                 {"..", "Datasets", "freiburg", " "};
@@ -106,7 +106,7 @@ namespace Assets.Scripts
             if (_meshDtoQueue.Count > 0)
                 AddMesh(_meshDtoQueue.Dequeue());
 
-            if (_framesProcessed % 10 != 0 || _thread != null && _thread.IsAlive) return;
+            if (_framesProcessed % 100 != 0 || _thread != null && _thread.IsAlive) return;
 
             _thread = SpawnFrameMeshThread();
             _thread.Start();

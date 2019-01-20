@@ -12,9 +12,6 @@
     <ClInclude Include="..\..\src\reconstruction\headers\Fusion.h">
       <Filter>reconstruction\headers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\reconstruction\headers\ICP.h">
-      <Filter>reconstruction\headers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\reconstruction\headers\Tracker.h">
       <Filter>reconstruction\headers</Filter>
     </ClInclude>
@@ -81,6 +78,15 @@
     <ClInclude Include="..\..\src\marshaling\__Mesh.h">
       <Filter>marshaling</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPComplete.h">
+      <Filter>reconstruction\headers\icp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICP.h">
+      <Filter>reconstruction\headers\icp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPNaive.h">
+      <Filter>reconstruction\headers\icp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -89,9 +95,6 @@
       <Filter>data-stream\sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\reconstruction\sources\Fusion.cpp">
-      <Filter>reconstruction\sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\reconstruction\sources\ICP.cpp">
       <Filter>reconstruction\sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\reconstruction\sources\Tracker.cpp">
@@ -135,6 +138,12 @@
     </ClCompile>
     <ClCompile Include="..\..\src\tests\sources\TrackerTest.cpp">
       <Filter>tests\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPComplete.cpp">
+      <Filter>reconstruction\sources\icp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPNaive.cpp">
+      <Filter>reconstruction\sources\icp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -197,6 +206,12 @@
     </Filter>
     <Filter Include="marshaling">
       <UniqueIdentifier>{bb59435f-e12a-47e7-b090-8c21c82ba6a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="reconstruction\headers\icp">
+      <UniqueIdentifier>{0764dc48-04ea-4e33-85c2-c485ef31ef16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="reconstruction\sources\icp">
+      <UniqueIdentifier>{02e34276-cadd-45f3-9b44-6f3a924352d2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
