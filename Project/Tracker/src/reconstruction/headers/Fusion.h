@@ -63,7 +63,7 @@ private:
 	Volume* m_volume;
 	std::mutex m_mutex;
 	CameraParameters m_camera_parameters;
-	const int NUMBER_OF_CONSUMERS = 3;
+	const int NUMBER_OF_CONSUMERS = 5;
 };
 
 #endif //TRACKER_LIB_FUSION_H

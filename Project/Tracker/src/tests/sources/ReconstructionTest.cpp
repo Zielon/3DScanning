@@ -91,6 +91,12 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 	{
 		tracker(context, img, pose);
 
+		if(index % 100 == 0)
+		{
+			Mesh mesh;
+			context->m_fusion->processMesh(mesh);
+		}
+		
 		bar.set(index);
 		bar.display();
 	}

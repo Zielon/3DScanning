@@ -104,7 +104,7 @@ void Fusion::stopConsumers(){
 }
 
 void Fusion::processMesh(Mesh& mesh) const{
-	#pragma omp parallel for
+	#pragma omp parallel for num_threads(2)
 	for (int x = 0; x < m_volume->m_size - 1; x++)
 		for (int y = 0; y < m_volume->m_size - 1; y++)
 			for (int z = 0; z < m_volume->m_size - 1; z++)
@@ -119,9 +119,9 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
 	const auto translation = worldToCamera.block(0, 3, 3, 1);
 	const auto frustum_box = computeFrustumBounds(cameraToWorld, cloud->m_camera_parameters);
 
-	int downsamplingFactor = cloud->m_downsampling_factor;
+	const int downsampling_factor = cloud->m_downsampling_factor;
 
-	#pragma omp parallel for
+	#pragma omp parallel for num_threads(3)
 	for (int z = frustum_box.m_min.z(); z < frustum_box.m_max.z(); z++)
 		for (int y = frustum_box.m_min.y(); y < frustum_box.m_max.y(); y++)
 			for (int x = frustum_box.m_min.x(); x < frustum_box.m_max.x(); x++)
@@ -135,7 +135,7 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
 				// Pixels space
 				auto pixels = round(cell);
 
-				float depth = cloud->getDepthImage(pixels.x() / downsamplingFactor, pixels.y() / downsamplingFactor);
+				float depth = cloud->getDepthImage(pixels.x() / downsampling_factor, pixels.y() / downsampling_factor);
 
 				// Depth was not found
 				if (depth == INFINITY) continue;
@@ -143,8 +143,6 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
 				//m_mutex.lock();
 
 				Voxel* voxel = m_volume->getVoxel(x, y, z);
-
-				if (!voxel) continue;
 
 				// Positive in front of the observation
 				const float sdf = depth - cell.z();

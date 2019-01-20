@@ -5,15 +5,7 @@ Tracker::~Tracker(){
 }
 
 Matrix4f Tracker::alignNewFrame(std::shared_ptr<PointCloud> source, std::shared_ptr<PointCloud> target) const{
-
-	const auto pose = m_icp->estimatePose(source, target);
-
-	/*const auto data = pose.data();
-
-	for (int i = 0; i < 16; i++)
-		outPose[i] = data[i];*/
-
-	return pose;
+	return m_icp->estimatePose(source, target);
 }
 
 CameraParameters Tracker::getCameraParameters() const{
