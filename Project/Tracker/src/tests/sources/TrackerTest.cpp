@@ -11,10 +11,8 @@ void TrackerTest::cameraPoseTest(){
 
 	//Statistics variables
 	double icp_time = 0.0;
-	float final_error = 0.0f;
-	float avg_error = 0.0f;
-	float avg_displacement_error = 0.0f;
-	float displacement_error = 0.0f;
+	float final_error = 0.0f, avg_error = 0.0f;
+	float avg_displacement_error = 0.0f, displacement_error = 0.0f;
 
 	int nIters = 100; //3000
 	Matrix4f trajectory;
@@ -91,11 +89,14 @@ void TrackerTest::cameraPoseTest(){
 
 		Matrix4f error = pose - trajectory;
 
+		double prev_drift = final_error;
+		double prev_displacement_drift = displacement_error;
+
 		final_error = error.norm();
 		displacement_error = error.block(0, 3, 3, 1).norm();
 
-		avg_error += final_error;
-		avg_displacement_error += displacement_error;
+		avg_error += fabs(final_error - prev_drift);
+		avg_displacement_error += fabs(displacement_error - prev_displacement_drift);
 
 		std::cout << "\n ------- Error: " << i << " -------- \n" << final_error
 			<< "\n ------- Translational Error: " << i << " -------- \n" << displacement_error
