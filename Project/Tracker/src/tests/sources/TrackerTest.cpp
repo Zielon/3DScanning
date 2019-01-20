@@ -12,10 +12,13 @@ void TrackerTest::cameraPoseTest(){
 	//Statistics variables
 	double icp_time = 0.0;
 	float final_error = 0.0f;
+	float avg_error = 0.0f;
+	float avg_displacement_error = 0.0f;
 	float displacement_error = 0.0f;
 
 	int nIters = 100; //3000
 	Matrix4f trajectory;
+
 	// for some reason when the scope of this mat is inside the loop it gets borked after alignNewFrame() is called 
 	for (int i = 0; i < nIters; i++)
 	{
@@ -88,21 +91,23 @@ void TrackerTest::cameraPoseTest(){
 
 		Matrix4f error = pose - trajectory;
 
-		std::cout << "\n ------- Error: " << i << " -------- \n" << error.norm()
-			<< "\n ------- Translational Error: " << i << " -------- \n" << error.block(0, 3, 3, 1).norm()
+		final_error = error.norm();
+		displacement_error = error.block(0, 3, 3, 1).norm();
+
+		avg_error += final_error;
+		avg_displacement_error += displacement_error;
+
+		std::cout << "\n ------- Error: " << i << " -------- \n" << final_error
+			<< "\n ------- Translational Error: " << i << " -------- \n" << displacement_error
 
 			<< "\n------------------------ " << std::endl;
-
-		final_error += error.norm();
-
-		displacement_error += error.block(0, 3, 3, 1).norm();
 	}
 
-	std::cout << "Average ICP time:  " << icp_time / nIters << " seconds\n";
-	std::cout << "Total ICP error:  " << final_error << " meters\n";
-	std::cout << "Average ICP error:  " << final_error / nIters << " meters\n";
-	std::cout << "Total ICP displacement error:  " << displacement_error << " meters\n";
-	std::cout << "Average ICP displacement error:  " << displacement_error / nIters << " meters\n";
+	std::cout << "Average ICP time:  " << 1000.0 * icp_time / nIters << " ms\n";
+	std::cout << "Total ICP error:  " << 100.0 * final_error << " cm\n";
+	std::cout << "Average ICP error:  " << 100.0* avg_error / nIters << " cm\n";
+	std::cout << "Total ICP displacement error:  " << 100.0 * displacement_error << " cm\n";
+	std::cout << "Average ICP displacement error:  " << 100.0 * avg_displacement_error / nIters << " cm\n";
 
 	std::cin.get();
 }
