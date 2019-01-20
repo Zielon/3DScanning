@@ -16,18 +16,10 @@ Matrix4f ICPComplete::estimatePose(std::shared_ptr<PointCloud> source, std::shar
 	cloud_out->points.resize(output.size());
 
 	for (int i = 0; i < input.size(); i++)
-	{
-		cloud_in->points[i].x = input[i].x();
-		cloud_in->points[i].y = input[i].y();
-		cloud_in->points[i].z = input[i].z();
-	}
+		cloud_in->points[i].getVector3fMap() = input[i];
 
 	for (int i = 0; i < output.size(); i++)
-	{
-		cloud_out->points[i].x = output[i].x();
-		cloud_out->points[i].y = output[i].y();
-		cloud_out->points[i].z = output[i].z();
-	}
+		cloud_out->points[i].getVector3fMap() = output[i];
 
 	pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
 
