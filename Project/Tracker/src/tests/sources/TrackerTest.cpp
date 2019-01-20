@@ -80,9 +80,9 @@ void TrackerTest::cameraPoseTest(){
 			<< "\n ------- Translational Error: " << i << " -------- \n" << error.block(0, 3, 3, 1).norm()
 
 			<< "\n------------------------ " << std::endl;
-
-		//std::cin.get();
 	}
+
+	std::cin.get();
 }
 
 void TrackerTest::processedMapsTest(){

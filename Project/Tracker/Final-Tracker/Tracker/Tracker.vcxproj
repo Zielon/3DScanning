@@ -182,7 +182,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_DIR);$(PCL_ROOT)\3rdParty\FLANN\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(PCL_ROOT)\3rdParty\FLANN\include</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;TESTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
@@ -246,7 +246,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_DIR);$(PCL_ROOT)\3rdParty\FLANN\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(PCL_ROOT)\3rdParty\FLANN\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;TESTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <OpenMPSupport>true</OpenMPSupport>
       <UndefinePreprocessorDefinitions>
