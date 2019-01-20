@@ -42,7 +42,9 @@
     <ClInclude Include="..\..\src\marshaling\__Mesh.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\CameraParameters.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Fusion.h" />
-    <ClInclude Include="..\..\src\reconstruction\headers\ICP.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICP.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPComplete.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPNaive.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\MarchingCubes.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Mesh.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\PointCloud.h" />
@@ -67,7 +69,8 @@
     <ClCompile Include="..\..\src\files-manager\sources\DatasetManager.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Fusion.cpp" />
-    <ClCompile Include="..\..\src\reconstruction\sources\ICP.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPComplete.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPNaive.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Mesh.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\PointCloud.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Tracker.cpp" />
@@ -179,13 +182,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(FLANN_DIR)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;TESTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(PCL_ROOT)\3rdParty\FLANN\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;TESTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;$(OPENCV_DIR)\bin</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world400d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(PCL_ROOT)\3rdParty\FLANN\lib;$(PCL_ROOT)\3rdParty\VTK\lib;$(PCL_ROOT)\3rdParty\Boost\lib;$(PCL_ROOT)\lib;$(OPENCV_DIR)\lib;$(OPENCV_DIR)\bin</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world400d.lib;pcl_common_debug.lib;pcl_recognition_debug.lib;pcl_kdtree_debug.lib;pcl_search_debug.lib;flann.lib</AdditionalDependencies>
       <RegisterOutput>false</RegisterOutput>
       <AddModuleNamesToAssembly>
       </AddModuleNamesToAssembly>
@@ -243,8 +246,8 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(FLANN_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;TESTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(PCL_ROOT)\3rdParty\FLANN\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;TESTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <OpenMPSupport>true</OpenMPSupport>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
@@ -252,8 +255,8 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;(OPENCV_DIR)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world400.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(PCL_ROOT)\3rdParty\FLANN\lib;$(PCL_ROOT)\3rdParty\VTK\lib;$(PCL_ROOT)\3rdParty\Boost\lib;$(PCL_ROOT)\lib;$(OPENCV_DIR)\lib;(OPENCV_DIR)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world400.lib;pcl_common_release.lib;pcl_recognition_release.lib;pcl_kdtree_release.lib;pcl_search_release.lib;flann.lib</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <SubSystem>Console</SubSystem>
@@ -271,16 +274,16 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(FLANN_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PROJECT_DIR=R"($(SolutionDir))";GOOGLE_GLOG_DLL_DECL=;CERES_USING_STATIC_LIBRARY;IDK_HOW_TO_NOT_USE_ABS_PATH_IN_THIS_SITUATION;_ENABLE_EXTENDED_ALIGNED_STORAGE;_ENABLE_EXTENDED_ALIGNED_STORAGE;NDEBUG;_CONSOLE;CERES_MSVC_USE_UNDERSCORE_PREFIXED_BESSEL_FUNCTIONS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(PCL_ROOT)\3rdParty\FLANN\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;PROJECT_DIR=R"($(SolutionDir))";GOOGLE_GLOG_DLL_DECL=;CERES_USING_STATIC_LIBRARY;IDK_HOW_TO_NOT_USE_ABS_PATH_IN_THIS_SITUATION;_ENABLE_EXTENDED_ALIGNED_STORAGE;_ENABLE_EXTENDED_ALIGNED_STORAGE;NDEBUG;_CONSOLE;CERES_MSVC_USE_UNDERSCORE_PREFIXED_BESSEL_FUNCTIONS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <OpenMPSupport>true</OpenMPSupport>
       <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;(OPENCV_DIR)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world400.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(PCL_ROOT)\3rdParty\FLANN\lib;$(PCL_ROOT)\3rdParty\VTK\lib;$(PCL_ROOT)\3rdParty\Boost\lib;$(PCL_ROOT)\lib;$(OPENCV_DIR)\lib;(OPENCV_DIR)\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world400.lib;pcl_common_release.lib;pcl_recognition_release.lib;pcl_kdtree_release.lib;pcl_search_release.lib;flann.lib</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <SubSystem>Console</SubSystem>

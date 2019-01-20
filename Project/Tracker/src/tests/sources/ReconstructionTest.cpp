@@ -75,7 +75,7 @@ void ReconstructionTest::reconstructionTest() const{
 
 void ReconstructionTest::reconstructionTestWithOurTracking() const{
 
-	Verbose::message("START reconstructionTest()");
+	Verbose::message("START reconstructionTestWithOurTracking()");
 
 	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
 
@@ -89,8 +89,6 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 
 	for (int index = 0; index < size; index += 1)
 	{
-		cv::Mat rgb, depth;
-
 		tracker(context, img, pose);
 
 		bar.set(index);

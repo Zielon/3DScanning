@@ -9,8 +9,14 @@ void TrackerTest::cameraPoseTest(){
 	Matrix4f prev_trajectory;
 	Matrix4f firs_trajectory_inverse = getTrajectory(0).inverse();
 
-	int nIters = 50; //3000
+	//Statistics variables
+	double icp_time = 0.0;
+	float final_error = 0.0f, avg_error = 0.0f;
+	float avg_displacement_error = 0.0f, displacement_error = 0.0f;
+
+	int nIters = 100; //3000
 	Matrix4f trajectory;
+
 	// for some reason when the scope of this mat is inside the loop it gets borked after alignNewFrame() is called 
 	for (int i = 0; i < nIters; i++)
 	{
@@ -35,6 +41,8 @@ void TrackerTest::cameraPoseTest(){
 		//std::cout << "Previous Pose" << std::endl;
 		//std::cout << tracker_context->m_tracker->m_previous_pose << std::endl;
 
+		std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+
 		Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(
 			source, tracker_context->m_tracker->m_previous_point_cloud);
 
@@ -45,6 +53,11 @@ void TrackerTest::cameraPoseTest(){
 		                                                                                  m_previous_point_cloud->
 		                                                                                  getPoints().size() << std::
 			endl;
+
+		std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+
+		std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+		icp_time += time_span.count();
 
 		// Safe the last frame reference
 		tracker_context->m_tracker->m_previous_point_cloud = source;
@@ -76,13 +89,28 @@ void TrackerTest::cameraPoseTest(){
 
 		Matrix4f error = pose - trajectory;
 
-		std::cout << "\n ------- Error: " << i << " -------- \n" << error.norm()
-			<< "\n ------- Translational Error: " << i << " -------- \n" << error.block(0, 3, 3, 1).norm()
+		double prev_drift = final_error;
+		double prev_displacement_drift = displacement_error;
+
+		final_error = error.norm();
+		displacement_error = error.block(0, 3, 3, 1).norm();
+
+		avg_error += fabs(final_error - prev_drift);
+		avg_displacement_error += fabs(displacement_error - prev_displacement_drift);
+
+		std::cout << "\n ------- Error: " << i << " -------- \n" << final_error
+			<< "\n ------- Translational Error: " << i << " -------- \n" << displacement_error
 
 			<< "\n------------------------ " << std::endl;
-
-		//std::cin.get();
 	}
+
+	std::cout << "Average ICP time:  " << 1000.0 * icp_time / nIters << " ms\n";
+	std::cout << "Total ICP error:  " << 100.0 * final_error << " cm\n";
+	std::cout << "Average ICP error:  " << 100.0* avg_error / nIters << " cm\n";
+	std::cout << "Total ICP displacement error:  " << 100.0 * displacement_error << " cm\n";
+	std::cout << "Average ICP displacement error:  " << 100.0 * avg_displacement_error / nIters << " cm\n";
+
+	std::cin.get();
 }
 
 void TrackerTest::processedMapsTest(){

@@ -42,7 +42,7 @@ float PointCloud::getDepthImage(int x, int y) const{
 }
 
 void PointCloud::transform(Matrix4f transformation){
-	// Camera space to world space
+	#pragma omp parallel for
 	for (int i = 0; i < m_points.size(); i++)
 	{
 		auto camera = m_points[i];
