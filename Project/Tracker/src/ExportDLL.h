@@ -5,7 +5,9 @@
 #include "data-stream/headers/DatasetVideoStreamReader.h"
 #include <opencv2/imgproc/imgproc.hpp>
 #include "reconstruction/headers/Fusion.h"
+#include "marshaling/__Mesh.h"
 #include "data-stream/headers/Xtion2StreamReader.h"
+
 
 //DLL exports of the m_tracker
 

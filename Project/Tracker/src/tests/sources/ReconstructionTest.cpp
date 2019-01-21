@@ -32,6 +32,79 @@ void ReconstructionTest::pointCloudTest() const{
 
 }
 
+void ReconstructionTest::unityIntegrationTest() const
+{
+	Verbose::message("START unityIntegrationTest()");
+
+	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+
+	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
+
+	auto size = getIterations();
+
+	float pose[16];
+	std::chrono::high_resolution_clock::time_point t2;
+	const int SAVE_MESH_INTERVAL = 200; 
+
+	double sum_track = 0.0;
+	double sum_getMesh = 0.0; 
+
+	for (int index = 0; index < size; index += 1)
+	{
+		std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
+
+		tracker(context, img, pose);
+
+		t2 = std::chrono::high_resolution_clock::now();
+
+		if (index % SAVE_MESH_INTERVAL == 0 || index == size-1)
+		{
+//			context->m_fusion->wait();
+
+			__MeshInfo meshinfo; 
+			getMeshInfo(context, &meshinfo); 
+
+			assert(meshinfo.mesh->m_vertices.size() == meshinfo.m_vertex_count); 
+			assert(meshinfo.mesh->m_triangles.size() == meshinfo.m_index_count / 3);
+			assert(meshinfo.m_index_count % 3 == 0);
+			t2 = std::chrono::high_resolution_clock::now();
+
+			meshinfo.mesh->save("mesh_" + std::to_string(index));
+
+		}
+
+		std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
+
+		std::cout << "Frame_" << index << ": ";
+		std::cout <<std::setprecision(3) << time_span.count()*1000 << "ms"; 
+
+		if (index % SAVE_MESH_INTERVAL == 0 || index == size - 1)
+		{
+			std::cout << "  [mesh]";
+			sum_getMesh += time_span.count();
+		}
+		else
+		{
+			sum_track += time_span.count(); 
+		}
+		std::cout << endl; 
+
+	}
+
+	context->m_fusion->save("mesh_FINAL"); 
+
+	int num_mesh_frames = std::ceil(1.0*size / SAVE_MESH_INTERVAL);
+
+	std::cout << "Average Time for tracking frame: " << sum_track / (size - num_mesh_frames) * 1000 << "ms" << std::endl;
+	std::cout << "Average Time for getMesh frame:  " << sum_getMesh / num_mesh_frames * 1000 << "ms" << std::endl;
+
+
+	Verbose::message("DONE unityIntegrationTest()", SUCCESS);
+
+	delete[]img;
+	SAFE_DELETE(context);
+}
+
 void ReconstructionTest::reconstructionTest() const{
 
 	Verbose::message("START reconstructionTest()");

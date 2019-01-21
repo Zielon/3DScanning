@@ -295,7 +295,7 @@
       </Command>
     </PreLinkEvent>
     <PostBuildEvent>
-      <Command>echo f | xcopy /y "$(TargetPath)" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\$(TargetFileName)"</Command>
+      <Command>echo f | xcopy /y "$(OutDir)*.dll" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

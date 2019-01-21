@@ -1,5 +1,4 @@
 #include "ExportDLL.h"
-#include "marshaling/__Mesh.h"
 
 extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 
