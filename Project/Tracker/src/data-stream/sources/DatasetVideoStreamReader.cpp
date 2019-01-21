@@ -86,14 +86,14 @@ Matrix3f DatasetVideoStreamReader::getCameraIntrinsics()
 	Matrix3f i;
 	
 	//ROS default
-	//i << 525.0f, 0.0f, 319.5f,
-	//	0.0f, 525.0f, 239.5f,
-	//	0.0f, 0.0f, 1.0f;
+	i << 525.0f, 0.0f, 319.5f,
+		0.0f, 525.0f, 239.5f,
+		0.0f, 0.0f, 1.0f;
 
-	//Freiburg 1
-	i << 517.3, 0, 318.6,
-		0, 516.5, 255.3,
-		0, 0, 0;
+	////Freiburg 1
+	//i << 517.3, 0, 318.6,
+	//	0, 516.5, 255.3,
+	//	0, 0, 0;
 
 	//Freiburg 2
 	/*i << 520.9, 0, 325.1,
