@@ -212,7 +212,7 @@ void ReconstructionTest::pointCloudTestWithICP() const{
 		context->m_tracker->m_previous_point_cloud = source;
 		context->m_tracker->m_previous_pose = pose;
 
-		if (index % 100 == 0)
+		if (index % 50 == 0 || index == 1)
 		{
 			Mesh mesh(depth, rgb, context->m_tracker->getCameraParameters());
 			mesh.transform(pose);

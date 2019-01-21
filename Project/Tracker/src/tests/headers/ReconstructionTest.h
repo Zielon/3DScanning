@@ -9,8 +9,8 @@ public:
 		//this->reconstructionTest();
 		//this->reconstructionTestWithOurTracking();
 		//this->pointCloudTest();
-		//this->pointCloudTestWithICP();
-		this->unityIntegrationTest(); 
+		this->pointCloudTestWithICP();
+		//this->unityIntegrationTest(); 
 	};
 
 private:
