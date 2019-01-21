@@ -9,6 +9,7 @@ Volume::Volume(Size min, Size max, uint size, uint dim){
 	m_dim = dim;
 	m_size = size;
 	m_length = std::pow(m_size, 3);
+	m_voxel_size = (max.m_width - min.m_width) / float(size);
 
 	// depth, width, height
 	m_min = Vector3d(min.m_depth, min.m_width, min.m_height);

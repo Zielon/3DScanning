@@ -6,11 +6,11 @@ class ReconstructionTest :
 {
 public:
 	void run() override{
-		//this->reconstructionTest();
+		this->reconstructionTest();
 		//this->reconstructionTestWithOurTracking();
 		//this->pointCloudTest();
 		//this->pointCloudTestWithICP();
-		this->unityIntegrationTest(); 
+		//this->unityIntegrationTest(); 
 	};
 
 private:
