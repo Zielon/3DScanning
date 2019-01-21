@@ -38,10 +38,10 @@ int DataStreamTest::sensorTest(bool useOpenni2)
 
 	string path = "";
 
-#if _DEBUG
-	capture = true;
-	verbose = true;
-#endif
+	#if _DEBUG
+		capture = true;
+		verbose = true;
+	#endif
 
 	//Sensor Class using OpenNI 2
 	if (useOpenni2) {

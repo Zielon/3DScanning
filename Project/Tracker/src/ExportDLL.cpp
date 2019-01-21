@@ -32,6 +32,46 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 	return tracker_context;
 }
 
+void * createSensorContext()
+{
+	TrackerContext* tracker_context = new TrackerContext();
+
+	bool realtime = true, capture = false, verbose = false;
+
+	#if _DEBUG
+			capture = true;
+			verbose = true;
+	#endif
+
+
+	//Sensor Class using OpenNI 2
+	tracker_context->m_videoStreamReader = new Xtion2StreamReader(realtime, verbose, capture);
+
+	tracker_context->m_videoStreamReader->startReading();
+	//FIXME: Frame Info only set after first frame is read... FIXME: mb split this into seperate call?
+
+	const auto height = tracker_context->m_videoStreamReader->m_height_depth;
+	const auto width = tracker_context->m_videoStreamReader->m_width_depth;
+
+	Matrix3f intrinsics = tracker_context->m_videoStreamReader->getCameraIntrinsics();
+	const CameraParameters camera_parameters = CameraParameters(
+		intrinsics(0, 0),
+		intrinsics(1, 1),
+		intrinsics(0, 2),
+		intrinsics(1, 2),
+		height,
+		width,
+		intrinsics
+	);
+
+	tracker_context->m_tracker = new Tracker(camera_parameters);
+	tracker_context->m_fusion = new Fusion(camera_parameters);
+	// Start consuming the point clouds buffer
+	tracker_context->m_fusion->consume();
+
+	return tracker_context;
+}
+
 extern "C" __declspec(dllexport) int getImageWidth(void* context){
 	auto* c = static_cast<TrackerContext*>(context);
 	return c->m_videoStreamReader->m_width_rgb;
