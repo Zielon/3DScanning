@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 3193763009030739551}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 25, y: 25, z: 25}
+  m_LocalScale: {x: 0.025, y: 0.025, z: 0.025}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -108,7 +108,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SplatPrefab: {fileID: 2387208673431519711, guid: e447c31f8f7e5434c8a897feccf8af68,
     type: 3}
-  speed: 750
+  speed: 0.75
 --- !u!54 &6980633876191930133
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -117,7 +117,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3193763009030739551}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 0.001
   m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 0
