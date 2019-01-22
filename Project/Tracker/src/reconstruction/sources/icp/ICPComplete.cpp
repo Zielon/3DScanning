@@ -23,10 +23,13 @@ Matrix4f ICPComplete::estimatePose(std::shared_ptr<PointCloud> source, std::shar
 
 	pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
 
-	icp.setMaxCorrespondenceDistance(0.025);
+	icp.setMaxCorrespondenceDistance(0.05);
+	icp.setRANSACOutlierRejectionThreshold(0.05);
+	icp.setRANSACIterations(50);
+	icp.setUseReciprocalCorrespondences(true);
 	icp.setMaximumIterations(50);
-	icp.setTransformationEpsilon(1e-9);
-	icp.setEuclideanFitnessEpsilon(0.8);
+	icp.setTransformationEpsilon(1e-8);
+	icp.setEuclideanFitnessEpsilon(0.01);
 	icp.setInputSource(cloud_in);
 	icp.setInputTarget(cloud_out);
 

@@ -16,7 +16,7 @@ public class UserInputHandler : MonoBehaviour
 
     public GameObject placeObjectGhost; 
 
-    public float solidBallSpeed = 350.0f;
+    public float solidBallSpeed = 0.3f;
 
     private bool mouseOverButton = false; 
 

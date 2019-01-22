@@ -3346,7 +3346,7 @@ MonoBehaviour:
   PlaceObjectPrefab: {fileID: 3304650536695136520, guid: fc55555ed19b9324d8782cbb00870511,
     type: 3}
   placeObjectGhost: {fileID: 902312035}
-  solidBallSpeed: 350
+  solidBallSpeed: 1
 --- !u!1 &1990215441
 GameObject:
   m_ObjectHideFlags: 0

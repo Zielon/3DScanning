@@ -6,8 +6,8 @@ class ReconstructionTest :
 {
 public:
 	void run() override{
-		//this->reconstructionTest();
-		this->reconstructionTestWithOurTracking();
+		this->reconstructionTest();
+		//this->reconstructionTestWithOurTracking();
 		//this->pointCloudTest();
 		//this->pointCloudTestWithICP();
 		//this->unityIntegrationTest(); 
