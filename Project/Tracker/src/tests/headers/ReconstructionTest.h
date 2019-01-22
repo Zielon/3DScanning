@@ -8,15 +8,17 @@ public:
 	void run() override{
 		//this->reconstructionTest();
 		//this->reconstructionTestWithOurTracking();
+		this->reconstructionTestSensor();
 		//this->pointCloudTest();
 		//this->pointCloudTestWithICP();
-		this->unityIntegrationTest(); 
+		//this->unityIntegrationTest(); 
 	};
 
 private:
 	void reconstructionTest() const;
 	void pointCloudTestWithICP() const;
 	void reconstructionTestWithOurTracking() const;
+	void reconstructionTestSensor() const;
 	void pointCloudTest() const;
 	void unityIntegrationTest() const; 
 };

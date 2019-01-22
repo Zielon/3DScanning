@@ -184,6 +184,34 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 	SAFE_DELETE(context);
 }
 
+void ReconstructionTest::reconstructionTestSensor() const
+{
+	Verbose::message("START reconstructionTestSensor()");
+
+	TrackerContext* context = static_cast<TrackerContext*>(createSensorContext());
+	float pose[16];
+	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
+	int index = 0;
+
+	while (!wasKeyboardHit())
+	{
+		tracker(context, img, pose);
+
+		if (index % 100 == 0)
+		{
+			Mesh mesh;
+			context->m_fusion->processMesh(mesh);
+		}
+
+		index++;
+	}
+
+	Verbose::message("DONE reconstructionTestSensor()", SUCCESS);
+
+	delete[]img;
+	SAFE_DELETE(context);
+}
+
 void ReconstructionTest::pointCloudTestWithICP() const{
 
 	Verbose::message("START pointCloudTestWithICP()");

@@ -31,7 +31,7 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 	return tracker_context;
 }
 
-void * createSensorContext()
+extern "C" __declspec(dllexport) void * createSensorContext()
 {
 	TrackerContext* tracker_context = new TrackerContext();
 
