@@ -14,7 +14,7 @@ void TrackerTest::cameraPoseTest(){
 	float final_error = 0.0f, avg_error = 0.0f;
 	float avg_displacement_error = 0.0f, displacement_error = 0.0f;
 
-	int nIters = 100; //3000
+	int nIters = 700; //3000
 	Matrix4f trajectory;
 
 	// for some reason when the scope of this mat is inside the loop it gets borked after alignNewFrame() is called 
