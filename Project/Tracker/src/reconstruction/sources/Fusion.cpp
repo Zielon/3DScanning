@@ -30,10 +30,6 @@ inline Vector3i round(const Vector3f& point){
 	return Vector3i(std::round(point.x()), std::round(point.y()), std::round(point.z()));
 }
 
-float Fusion::getTruncation(float depth) const{
-	return m_trunaction + depth;
-}
-
 float Fusion::getWeight(float depth, float max) const{
 	if (depth <= 0.01) return 1.f;
 	return 1.f - depth / max;
@@ -49,7 +45,7 @@ void Fusion::save(string name) const{
 void Fusion::initialize(){
 	m_volume = new Volume(Size(-1, -4, -2), Size(2, 4, 4), 128, 1);
 	m_buffer = new Buffer<std::shared_ptr<PointCloud>>();
-	m_trunaction = m_volume->m_voxel_size * 3.f;
+	m_trunaction = m_volume->m_voxel_size * 2.f;
 }
 
 void Fusion::wait() const{
@@ -100,6 +96,10 @@ Vector3i Fusion::clamp(Vector3i value) const{
 	return Vector3i(clamp(value.x()), clamp(value.y()), clamp(value.z()));
 }
 
+bool Fusion::isSDFRange(float cell, float depth) const{
+	return cell < depth + m_trunaction && cell > depth - m_trunaction;
+}
+
 void Fusion::stopConsumers(){
 	for (auto& consumer : m_consumers)
 		consumer->stop();
@@ -146,19 +146,17 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
 
 				// Positive in front of the observation
 				const float sdf = depth - cell.z();
-				const float truncation = getTruncation(depth);
 				const float weight_update = getWeight(depth, cloud->m_camera_parameters.m_depth_max);
 
 				if (depth - m_trunaction > cell.z())
 				{
 					voxel->m_state = EMPTY; // In front of a surface
-					continue;
 				}
-
-				if (sdf >= -truncation)
+				else if (isSDFRange(cell.z(), depth))
 				{
 					voxel->m_state = SDF;
-					voxel->m_sdf = (voxel->m_sdf * voxel->m_weight + sdf * weight_update) / (voxel->m_weight + weight_update);
+					voxel->m_sdf = (voxel->m_sdf * voxel->m_weight + sdf * weight_update) / (voxel->m_weight +
+						weight_update);
 					voxel->m_weight = min(voxel->m_weight + weight_update, MAX_WEIGHT);
 				}
 			}

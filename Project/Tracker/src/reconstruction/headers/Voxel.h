@@ -10,7 +10,7 @@ enum State
 
 struct Voxel final
 {
-	Voxel(): m_sdf(-std::numeric_limits<unsigned char>::infinity()), m_weight(0), m_state(UNSEEN){ }
+	Voxel(): m_sdf(0), m_weight(0), m_state(UNSEEN){ }
 
 	float m_sdf;
 	float m_weight;

@@ -50,9 +50,9 @@ private:
 
 	Vector3i clamp(Vector3i value) const;
 
-	void stopConsumers();
+	bool isSDFRange(float cell, float depth) const;
 
-	float getTruncation(float depth) const;
+	void stopConsumers();
 
 	float getWeight(float depth, float max) const;
 
