@@ -146,6 +146,78 @@ void ReconstructionTest::reconstructionTest() const{
 	SAFE_DELETE(context);
 }
 
+void ReconstructionTest::reconstructionTest2() const
+{
+	Verbose::message("START reconstructionTest2()");
+
+	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+
+	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
+
+	auto size = getIterations();
+
+	std::shared_ptr<PointCloud> prev_point_cloud = nullptr;
+	Matrix4f prev_pose;
+
+	ProgressBar bar(size, 60, "Frames loaded");
+
+	for (int index = 0; index < size; index++)
+	{
+		auto trajectory = getTrajectory(index);
+		cv::Mat rgb, depth;
+
+		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->getNextFrame(rgb, depth, false);
+		PointCloud* _cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 8);
+		std::shared_ptr<PointCloud> cloud(_cloud);
+
+		if (index == 0) {
+			trajectory = Matrix4f::Identity();
+		} else{
+			//const Matrix4f delta_pose = context->m_tracker->alignNewFrame(cloud, prev_point_cloud);
+
+			const Matrix4f delta_pose = context->m_tracker->alignNewFrame(prev_point_cloud, cloud);
+
+			trajectory = delta_pose * prev_pose;
+		}
+
+		//std::cout << "Before scale: \n" << trajectory << std::endl;
+
+		/*trajectory(0, 3) *= 5.0f;
+		trajectory(1, 3) *= 5.0f;
+		trajectory(2, 3) *= 5.0f;*/
+
+		std::cout << "After scale: \n" << trajectory << std::endl;
+
+		cloud->m_pose_estimation = trajectory;
+		context->m_fusion->produce(cloud);
+
+		/*trajectory(0, 3) /= 5.0f;
+		trajectory(1, 3) /= 5.0f;
+		trajectory(2, 3) /= 5.0f;*/
+
+		//cin.get();
+
+		prev_point_cloud = cloud;
+		prev_pose = trajectory;
+
+		// Waits for the index building thread to finish before deleting the point cloud
+		cloud->getClosestPoint(Vector3f::Zero());
+
+		bar.set(index);
+		bar.display();
+	}
+
+	bar.done();
+
+	context->m_fusion->save("mesh");
+
+	Verbose::message("DONE reconstructionTest2()", SUCCESS);
+
+	delete[]img;
+	SAFE_DELETE(context);
+
+}
+
 void ReconstructionTest::reconstructionTestWithOurTracking() const{
 
 	Verbose::message("START reconstructionTestWithOurTracking()");
@@ -163,6 +235,8 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 	for (int index = 0; index < size; index += 1)
 	{
 		tracker(context, img, pose);
+
+		//cin.get();
 
 		if(index % 100 == 0)
 		{

@@ -69,8 +69,11 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 
 	source->m_pose_estimation = tracker_context->m_tracker->m_previous_pose;
 
+	std::cout << tracker_context->m_tracker->m_previous_pose << std::endl;
+
 	// Produce a new point cloud (add to the buffer)
 	tracker_context->m_fusion->produce(std::shared_ptr<PointCloud>(tracker_context->m_tracker->m_previous_point_cloud));
+	//tracker_context->m_fusion->produce(source);
 
 	// Safe the last frame reference
 	tracker_context->m_tracker->m_previous_point_cloud = source;
