@@ -2,7 +2,6 @@
 #define PROJECT_POINT_CLOUD_H
 
 #include <vector>
-#include <unordered_map>
 #include "../../Eigen.h"
 #include "CameraParameters.h"
 #include <opencv2/core/mat.hpp>
@@ -43,10 +42,6 @@ public:
 
 	Matrix4f m_pose_estimation = Matrix4f::Identity();
 	CameraParameters m_camera_parameters;
-
-
-
-
 
 private:
 	void transform(cv::Mat& depth_mat, cv::Mat& rgb_mat);
