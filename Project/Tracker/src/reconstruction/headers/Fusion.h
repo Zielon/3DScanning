@@ -54,7 +54,7 @@ private:
 
 	float getTruncation(float depth) const;
 
-	float getWeight(float depth) const;
+	float getWeight(float depth, float max) const;
 
 	float m_trunaction = 0;
 	std::vector<std::thread> m_consumer_threads;

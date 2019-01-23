@@ -451,8 +451,10 @@ bool ProcessVolumeCell(Volume* volume, int x, int y, int z, double iso, Mesh* me
 	// cell corner values
 	for (int i = 0; i < 8; i++)
 	{
-		if (voxels[i]->m_ctr == 0)
-			cell.val[i] = INFINITY; // Empty space
+		if (voxels[i]->m_state == EMPTY)
+			cell.val[i] = HUGE_VAL;
+		else if (voxels[i]->m_state == UNSEEN)
+			cell.val[i] = -HUGE_VAL;
 		else
 			cell.val[i] = double(voxels[i]->m_sdf);
 	}
