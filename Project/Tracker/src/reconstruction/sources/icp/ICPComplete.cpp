@@ -35,6 +35,5 @@ Matrix4f ICPComplete::estimatePose(std::shared_ptr<PointCloud> source, std::shar
 
 	pcl::PointCloud<pcl::PointXYZ> Final;
 	icp.align(Final);
-
 	return icp.getFinalTransformation();
 }

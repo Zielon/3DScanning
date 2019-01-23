@@ -157,7 +157,6 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 
 	auto size = getIterations();
 
-	size = max(size, 300); 
 
 	float pose[16];
 
