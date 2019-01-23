@@ -25,7 +25,7 @@ struct FrustumBox
 class Fusion final
 {
 public:
-	Fusion(CameraParameters camera_parameters);
+	Fusion(CameraParameters camera_parameters, int downSamplingFactor = 2);
 
 	~Fusion();
 
@@ -50,12 +50,11 @@ private:
 
 	Vector3i clamp(Vector3i value) const;
 
-	bool isSDFRange(float cell, float depth) const;
-
 	void stopConsumers();
 
 	float getWeight(float depth, float max) const;
 
+	int m_downsampling_factor; 
 	float m_trunaction = 0;
 	std::vector<std::thread> m_consumer_threads;
 	std::vector<Consumer<std::shared_ptr<PointCloud>>*> m_consumers;

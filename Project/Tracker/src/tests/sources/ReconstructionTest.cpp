@@ -123,14 +123,15 @@ void ReconstructionTest::reconstructionTest() const{
 		cv::Mat rgb, depth;
 
 		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
-		PointCloud* _cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 8);
+		PointCloud* _cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 1);
 		std::shared_ptr<PointCloud> cloud(_cloud);
 
 		cloud->m_pose_estimation = trajectory;
 		context->m_fusion->produce(cloud);
 
 		// Waits for the index building thread to finish before deleting the point cloud
-		cloud->getClosestPoint(Vector3f::Zero());
+		//dont use our flann with pcl icp
+		//cloud->getClosestPoint(Vector3f::Zero());
 
 		bar.set(index);
 		bar.display();
@@ -138,7 +139,7 @@ void ReconstructionTest::reconstructionTest() const{
 
 	bar.done();
 
-	context->m_fusion->save("mesh");
+	context->m_fusion->save("ReconstructionTestMesh");
 
 	Verbose::message("DONE reconstructionTest()", SUCCESS);
 
@@ -155,6 +156,8 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
 	auto size = getIterations();
+
+	size = max(size, 300); 
 
 	float pose[16];
 
@@ -176,9 +179,9 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 
 	bar.done();
 
-	context->m_fusion->save("mesh");
+	context->m_fusion->save("reconstructionTestWithOurTrackingMesh");
 
-	Verbose::message("DONE reconstructionTest()", SUCCESS);
+	Verbose::message("DONE reconstructionTestWithOurTracking()", SUCCESS);
 
 	delete[]img;
 	SAFE_DELETE(context);

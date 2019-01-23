@@ -12,7 +12,7 @@
 
 const unsigned char MAX_WEIGHT = std::numeric_limits<unsigned char>::infinity();
 
-Fusion::Fusion(CameraParameters camera_parameters) : m_camera_parameters(std::move(camera_parameters)){
+Fusion::Fusion(CameraParameters camera_parameters, int downsamplingFactor) : m_camera_parameters(std::move(camera_parameters)), m_downsampling_factor(downsamplingFactor){
 	initialize();
 }
 
@@ -96,9 +96,6 @@ Vector3i Fusion::clamp(Vector3i value) const{
 	return Vector3i(clamp(value.x()), clamp(value.y()), clamp(value.z()));
 }
 
-bool Fusion::isSDFRange(float cell, float depth) const{
-	return cell < depth + m_trunaction && cell > depth - m_trunaction;
-}
 
 void Fusion::stopConsumers(){
 	for (auto& consumer : m_consumers)
@@ -121,7 +118,18 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
 	const auto translation = worldToCamera.block(0, 3, 3, 1);
 	const auto frustum_box = computeFrustumBounds(cameraToWorld, cloud->m_camera_parameters);
 
-	const int downsampling_factor = cloud->m_downsampling_factor;
+	cv::Mat depthImage;
+
+	if (m_downsampling_factor > 1)
+	{
+		resize(cloud->getDepthImage(), depthImage,
+			cv::Size(cloud->getDepthImage().cols / m_downsampling_factor, cloud->getDepthImage().rows / m_downsampling_factor), 0, 0,
+			cv::INTER_NEAREST);
+	}
+	else
+	{
+		depthImage = cloud->getDepthImage();
+	}
 
 	#pragma omp parallel for num_threads(3)
 	for (int z = frustum_box.m_min.z(); z < frustum_box.m_max.z(); z++)
@@ -135,9 +143,9 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
 				cell = Transformations::reproject(cell, cloud->m_camera_parameters);
 
 				// Pixels space
-				auto pixels = round(cell / downsampling_factor);
+				auto pixels = round(cell / m_downsampling_factor);
 
-				const float depth = cloud->getDepthImage(pixels.x(), pixels.y());
+				const float depth = Transformations::sampleImage(depthImage, pixels.x(), pixels.y()); 
 
 				// Depth was not found
 				if (depth == INFINITY) continue;
@@ -152,7 +160,7 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
 				{
 					voxel->m_state = EMPTY; // In front of a surface
 				}
-				else if (isSDFRange(cell.z(), depth))
+				else if (fabs(sdf) < m_trunaction)
 				{
 					voxel->m_state = SDF;
 					voxel->m_sdf = (voxel->m_sdf * voxel->m_weight + sdf * weight_update) / (voxel->m_weight +

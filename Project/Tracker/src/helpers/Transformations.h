@@ -25,6 +25,17 @@ public:
 		float y = camera_parameters.m_focal_length_Y * point.y() / point.z() + camera_parameters.m_cY;
 		return Vector3f(x, y, point.z());
 	}
+
+
+	static float sampleImage(const cv::Mat& mat, int x, int y)
+	{
+		if (x < 0 || y < 0 || x >= mat.cols || y >= mat.rows)
+			return INFINITY;
+
+		return mat.at<float>(y, x);
+	}
+
+
 };
 
 #endif

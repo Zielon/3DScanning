@@ -7,7 +7,9 @@ void TrackerTest::cameraPoseTest(){
 		DatasetManager::getCurrentPath().data()));
 
 	Matrix4f prev_trajectory;
-	Matrix4f firs_trajectory_inverse = getTrajectory(0).inverse();
+	Matrix4f first_trajectory_inverse = getTrajectory(0).inverse();
+	Matrix4f first_trajectory = getTrajectory(0);
+
 
 	//Statistics variables
 	double icp_time = 0.0;
@@ -20,17 +22,17 @@ void TrackerTest::cameraPoseTest(){
 	// for some reason when the scope of this mat is inside the loop it gets borked after alignNewFrame() is called 
 	for (int i = 0; i < nIters; i++)
 	{
-		trajectory = firs_trajectory_inverse * getTrajectory(i); //get camera trajectory of index from testBase class
+		trajectory = getTrajectory(i); //get camera trajectory of index from testBase class
 		cv::Mat rgb, depth;
 
 		dynamic_cast<DatasetVideoStreamReader*>(tracker_context->m_videoStreamReader)->readAnyFrame(i, rgb, depth);
 
-		PointCloud* _source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 8);
+		PointCloud* _source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 4);
 		std::shared_ptr<PointCloud> source(_source);
 
 		if (i == 0) // first frame
 		{
-			tracker_context->m_tracker->m_previous_pose = Matrix4f::Identity();
+			tracker_context->m_tracker->m_previous_pose = first_trajectory;
 			tracker_context->m_tracker->m_previous_point_cloud = source;
 			prev_trajectory = trajectory;
 			continue;
@@ -44,7 +46,7 @@ void TrackerTest::cameraPoseTest(){
 		std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
 		Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(
-			source, tracker_context->m_tracker->m_previous_point_cloud);
+			tracker_context->m_tracker->m_previous_point_cloud, source);
 
 		Matrix4f pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
 

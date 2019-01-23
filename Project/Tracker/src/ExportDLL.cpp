@@ -24,7 +24,8 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 	);
 
 	tracker_context->m_tracker = new Tracker(camera_parameters);
-	tracker_context->m_fusion = new Fusion(camera_parameters);
+	tracker_context->m_fusion = new Fusion(camera_parameters, 4);
+	tracker_context->m_point_cloud_subsample_factor = 4; 
 	// Start consuming the point clouds buffer
 	tracker_context->m_fusion->consume();
 
@@ -49,7 +50,7 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
-	PointCloud* _source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 8);
+	PointCloud* _source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, tracker_context->m_point_cloud_subsample_factor);
 	std::shared_ptr<PointCloud> source(_source);
 
 	if (tracker_context->m_first_frame) // first frame
