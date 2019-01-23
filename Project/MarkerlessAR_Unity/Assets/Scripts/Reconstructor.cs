@@ -29,6 +29,11 @@ namespace Assets.Scripts
         private Thread _thread;
         private int _w = -1;
 
+        //general setup
+        bool _use_sensor = true;
+        //bool _use_reconstruction = true;
+        //bool _use_fusion = true;
+
         // Unity injected vars
         public GameObject cameraRig;
         public Image videoBG; 
@@ -39,6 +44,9 @@ namespace Assets.Scripts
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr createContext(byte[] path);
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern IntPtr createSensorContext();
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern void tracker(IntPtr context, byte[] image, float[] pose);
@@ -59,14 +67,22 @@ namespace Assets.Scripts
         // Use this for initialization
         private void Start()
         {
-            var segments = new List<string>(
+
+            if (_use_sensor)
+            {
+                _cppContext = createSensorContext();
+            }
+            else
+            {
+                var segments = new List<string>(
                     Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
                 {"..", "Datasets", "freiburg", " "};
 
-            var absolutePath = segments.Aggregate(
-                (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
+                var absolutePath = segments.Aggregate(
+                    (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
 
-            _cppContext = createContext(Encoding.ASCII.GetBytes(absolutePath));
+                _cppContext = createContext(Encoding.ASCII.GetBytes(absolutePath));
+            }
 
             _w = getImageWidth(_cppContext);
             _h = getImageHeight(_cppContext);
@@ -89,6 +105,12 @@ namespace Assets.Scripts
 
 
             //   Debug.Log("Update test");
+
+            if (_w <= 0 || _h <= 0)
+            {
+                Debug.Log("There is a problem with the stream of the tracker");
+                return;
+            }
 
             tracker(_cppContext, _image, _pose);
 
