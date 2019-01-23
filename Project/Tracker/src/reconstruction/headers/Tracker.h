@@ -1,3 +1,4 @@
+#pragma once
 #ifndef PROJECT_TRACKER_H
 #define PROJECT_TRACKER_H
 
@@ -29,7 +30,7 @@ public:
 
 	std::shared_ptr<PointCloud> m_previous_point_cloud = nullptr;
 
-	Matrix4f m_previous_pose = Matrix4f::Identity();
+	Matrix4f m_pose = Matrix4f::Identity();
 
 private:
 	ICP* m_icp = nullptr;

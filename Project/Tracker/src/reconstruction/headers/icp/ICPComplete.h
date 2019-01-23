@@ -1,3 +1,4 @@
+#pragma once
 #ifndef PROJECT_ICP_COMPLETE_H
 #define PROJECT_ICP_COMPLETE_H
 
@@ -11,9 +12,10 @@ public:
 
 	~ICPComplete(){}
 
-	Matrix4f estimatePose(std::shared_ptr<PointCloud> source, std::shared_ptr<PointCloud> target) override;
+	Matrix4f estimatePose(std::shared_ptr<PointCloud> model, std::shared_ptr<PointCloud> data) override;
 
 private:
+	
 };
 
 #endif //PROJECT_ICP_COMPLETE_H

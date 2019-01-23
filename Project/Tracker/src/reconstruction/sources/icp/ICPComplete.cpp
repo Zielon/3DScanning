@@ -3,38 +3,51 @@
 #include <pcl/io/pcd_io.h>
 #include <pcl/point_types.h>
 #include <pcl/registration/icp.h>
+#include <pcl/registration/icp_nl.h>
+#include <pcl/registration/transformation_estimation_lm.h>
+#include <pcl/registration/warp_point_rigid_3d.h>
 
-Matrix4f ICPComplete::estimatePose(std::shared_ptr<PointCloud> source, std::shared_ptr<PointCloud> target){
+typedef pcl::PointXYZ PointType;
+typedef pcl::PointCloud<PointType> Cloud;
+typedef Cloud::ConstPtr CloudConstPtr;
+typedef Cloud::Ptr CloudPtr;
 
-	std::vector<Vector3f> input = source->getPoints();
-	std::vector<Vector3f> output = target->getPoints();
+Matrix4f ICPComplete::estimatePose(std::shared_ptr<PointCloud> previous, std::shared_ptr<PointCloud> current){
 
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_in(new pcl::PointCloud<pcl::PointXYZ>);
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_out(new pcl::PointCloud<pcl::PointXYZ>);
+	std::vector<Vector3f> current_points = current->getPoints();
+	std::vector<Vector3f> previous_points = previous->getPoints();
 
-	cloud_in->points.resize(input.size());
-	cloud_out->points.resize(output.size());
+	pcl::PointCloud<PointType>::Ptr model(new pcl::PointCloud<PointType>);
+	pcl::PointCloud<PointType>::Ptr data(new pcl::PointCloud<PointType>);
 
-	for (int i = 0; i < input.size(); i++)
-		cloud_in->points[i].getVector3fMap() = input[i];
+	model->points.resize(previous_points.size());
+	for (int i = 0; i < previous_points.size(); i++)
+		model->points[i].getVector3fMap() = previous_points[i];
 
-	for (int i = 0; i < output.size(); i++)
-		cloud_out->points[i].getVector3fMap() = output[i];
+	data->points.resize(current_points.size());
+	for (int i = 0; i < current_points.size(); i++)
+		data->points[i].getVector3fMap() = current_points[i];
 
-	pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
+	pcl::IterativeClosestPointNonLinear<PointType, PointType> icp;
 
+	boost::shared_ptr<pcl::registration::WarpPointRigid3D<PointType, PointType>> warp_fcn
+		(new pcl::registration::WarpPointRigid3D<PointType, PointType>);
+
+	boost::shared_ptr<pcl::registration::TransformationEstimationLM<PointType, PointType>> te(
+		new pcl::registration::TransformationEstimationLM<PointType, PointType>);
+	te->setWarpFunction(warp_fcn);
+
+	icp.setTransformationEstimation(te);
+
+	icp.setMaximumIterations(50);
 	icp.setMaxCorrespondenceDistance(0.05);
 	icp.setRANSACOutlierRejectionThreshold(0.05);
-	icp.setRANSACIterations(50);
-	icp.setUseReciprocalCorrespondences(true);
-	icp.setMaximumIterations(50);
-	icp.setTransformationEpsilon(1e-8);
-	icp.setEuclideanFitnessEpsilon(0.01);
-	icp.setInputSource(cloud_in);
-	icp.setInputTarget(cloud_out);
 
-	pcl::PointCloud<pcl::PointXYZ> Final;
-	icp.align(Final);
+	icp.setInputTarget(model);
+	icp.setInputSource(data);
+
+	CloudPtr tmp(new Cloud);
+	icp.align(*tmp);
 
 	return icp.getFinalTransformation();
 }

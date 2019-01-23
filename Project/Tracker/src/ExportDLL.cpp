@@ -44,41 +44,37 @@ extern "C" __declspec(dllexport) int getImageHeight(void* context){
 extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* image, float* pose){
 
 	auto* tracker_context = static_cast<TrackerContext*>(context);
+	auto* tracker = tracker_context->m_tracker;
 
 	cv::Mat rgb, depth;
 
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
-	PointCloud* _source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 8);
-	std::shared_ptr<PointCloud> source(_source);
+	PointCloud* _target = new PointCloud(tracker->getCameraParameters(), depth, rgb, 8);
+	std::shared_ptr<PointCloud> current(_target);
 
-	if (tracker_context->m_first_frame) // first frame
+	if (tracker_context->m_first_frame)
 	{
 		tracker_context->m_first_frame = false;
-		tracker_context->m_tracker->m_previous_point_cloud = source;
-		memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));
+		tracker->m_previous_point_cloud = current;
+		memcpy(pose, tracker->m_pose.data(), 16 * sizeof(float));
 		return;
 	}
 
-	const Matrix4f delta_pose = tracker_context->m_tracker->alignNewFrame(
-		source, tracker_context->m_tracker->m_previous_point_cloud);
+	const Matrix4f delta = tracker->alignNewFrame(tracker->m_previous_point_cloud, current);
 
-	tracker_context->m_tracker->m_previous_pose = delta_pose * tracker_context->m_tracker->m_previous_pose;
-
-	memcpy(pose, tracker_context->m_tracker->m_previous_pose.data(), 16 * sizeof(float));
-
-	source->m_pose_estimation = tracker_context->m_tracker->m_previous_pose;
+	tracker->m_pose *= delta;
+	current->m_pose_estimation = tracker->m_pose;
 
 	// Produce a new point cloud (add to the buffer)
-	tracker_context->m_fusion->produce(std::shared_ptr<PointCloud>(tracker_context->m_tracker->m_previous_point_cloud));
+	tracker_context->m_fusion->produce(std::shared_ptr<PointCloud>(tracker->m_previous_point_cloud));
 
-	// Safe the last frame reference
-	tracker_context->m_tracker->m_previous_point_cloud = source;
+	tracker->m_previous_point_cloud = current;
 
-	//So turns out opencv actually uses bgr not rgb...
-	//no more opencv computations after this point
+	// Copy value to UNITY
 	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
+	memcpy(pose, tracker->m_pose.data(), 16 * sizeof(float));
 }
 
 extern "C" __declspec(dllexport) void getMeshInfo(void* context, __MeshInfo* mesh_info){

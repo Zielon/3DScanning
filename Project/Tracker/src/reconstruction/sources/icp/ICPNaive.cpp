@@ -79,6 +79,8 @@ void ICPNaive::pruneCorrespondences(
 
 	for (unsigned i = 0; i < sourceNormals.size(); i++)
 	{
+		if(matches.empty()) return;
+
 		Match match = matches[i];
 
 		// Source and target vectors can have uneven number of elements
