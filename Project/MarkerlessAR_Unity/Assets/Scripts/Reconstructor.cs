@@ -127,7 +127,7 @@ namespace Assets.Scripts
             // Apply camera poses
             var pose = Helpers.GetPose(_pose);
 
-            cameraRig.transform.position = pose.GetColumn(3)*500;
+            cameraRig.transform.position = pose.GetColumn(3);
             cameraRig.transform.rotation = pose.rotation;
 
             //   Debug.Log("Pos: " + cameraRig.transform.position);
