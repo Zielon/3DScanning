@@ -13,6 +13,7 @@
 #include <ctime>
 #include <chrono>
 #include <iomanip>
+#include <conio.h>
 #include "../../debugger/headers/Verbose.h"
 #include "../../reconstruction/headers/Mesh.h"
 #include "../../concurency/headers/ThreadManager.h"
@@ -32,6 +33,8 @@ protected:
 	Matrix4f getTrajectory(int index) const;
 
 	static int getIterations();
+
+	int wasKeyboardHit() const { return (int)_kbhit(); }
 
 private:
 	static std::vector<Matrix4f> m_trajectories;
