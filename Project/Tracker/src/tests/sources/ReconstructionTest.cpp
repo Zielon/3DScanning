@@ -177,7 +177,8 @@ void ReconstructionTest::reconstructionTest2() const
 
 			const Matrix4f delta_pose = context->m_tracker->alignNewFrame(prev_point_cloud, cloud);
 
-			trajectory = delta_pose * prev_pose;
+			//trajectory = delta_pose * prev_pose;
+			trajectory = prev_pose * delta_pose;
 		}
 
 		//std::cout << "Before scale: \n" << trajectory << std::endl;
