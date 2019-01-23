@@ -175,8 +175,7 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 	SAFE_DELETE(context);
 }
 
-void ReconstructionTest::reconstructionTestSensor() const
-{
+void ReconstructionTest::reconstructionTestSensor() const{
 	Verbose::message("START reconstructionTestSensor()");
 
 	TrackerContext* context = static_cast<TrackerContext*>(createSensorContext());
