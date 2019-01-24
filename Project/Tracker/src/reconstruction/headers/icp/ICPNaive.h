@@ -12,7 +12,7 @@ public:
 
 	~ICPNaive();
 
-	Matrix4f estimatePose(std::shared_ptr<PointCloud> source, std::shared_ptr<PointCloud> target) override;
+	Matrix4f estimatePose(std::shared_ptr<PointCloud> target, std::shared_ptr<PointCloud> source) override;
 
 private:
 	NearestNeighborSearch* m_nearestNeighbor;

@@ -7,10 +7,10 @@ class ReconstructionTest :
 public:
 	void run() override{
 		//this->reconstructionTest();
-		//this->reconstructionTestWithOurTracking();
+		this->reconstructionTestWithOurTracking();
 		//this->reconstructionTestSensor();
 		//this->pointCloudTest();
-		this->pointCloudTestWithICP();
+		//this->pointCloudTestWithICP();
 		//this->unityIntegrationTest(); 
 	};
 

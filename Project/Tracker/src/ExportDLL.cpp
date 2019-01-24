@@ -23,7 +23,8 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 		intrinsics
 	);
 
-	tracker_context->m_tracker = new Tracker(camera_parameters);
+
+	tracker_context->m_tracker = new Tracker(camera_parameters, NAIVE);
 	tracker_context->m_fusion = new Fusion(camera_parameters);
 	// Start consuming the point clouds buffer
 	tracker_context->m_fusion->consume();
@@ -63,7 +64,7 @@ extern "C" __declspec(dllexport) void * createSensorContext()
 		intrinsics
 	);
 
-	tracker_context->m_tracker = new Tracker(camera_parameters);
+	tracker_context->m_tracker = new Tracker(camera_parameters, NAIVE);
 	tracker_context->m_fusion = new Fusion(camera_parameters);
 	// Start consuming the point clouds buffer
 	tracker_context->m_fusion->consume();

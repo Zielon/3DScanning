@@ -11,15 +11,21 @@
 
 using namespace std;
 
+enum ICPType {NAIVE, PCL};
+
 /**
  * Tracks frame to frame transition and estimate the pose
  */
 class Tracker final
 {
 public:
-	Tracker(SystemParameters camera_parameters) : m_camera_parameters(camera_parameters){
-		//m_icp = new ICPNaive();
-		m_icp = new ICPComplete();
+	Tracker(SystemParameters camera_parameters, ICPType icp_type) : m_camera_parameters(camera_parameters){
+
+		switch (icp_type)
+		{
+			case NAIVE: m_icp = new ICPNaive(); break;
+			case PCL: m_icp = new ICPComplete(); break;
+		}
 	}
 
 	~Tracker();

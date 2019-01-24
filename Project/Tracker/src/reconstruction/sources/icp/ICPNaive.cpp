@@ -11,12 +11,9 @@ ICPNaive::~ICPNaive(){
 	SAFE_DELETE(m_procrustesAligner);
 }
 
-Matrix4f ICPNaive::estimatePose(std::shared_ptr<PointCloud> source, std::shared_ptr<PointCloud> target){
+Matrix4f ICPNaive::estimatePose(std::shared_ptr<PointCloud> target, std::shared_ptr<PointCloud> source){
 
 	Matrix4f pose = Matrix4f::Identity();
-
-	//std::cout << "Initial pose: " << std::endl;
-	//std::cout << pose << std::endl;
 
 	std::vector<Vector3f> sourcePoints;
 	std::vector<Vector3f> targetPoints;
@@ -48,7 +45,6 @@ Matrix4f ICPNaive::estimatePose(std::shared_ptr<PointCloud> source, std::shared_
 			// Match exists
 			sourcePoints.emplace_back(transformedPoints[j]);
 			targetPoints.emplace_back(target->getPoints()[idx]);
-			//targetNormals.emplace_back(transformedNormals[idx]);
 			targetNormals.emplace_back(target->getNormals()[idx]);
 		}
 
