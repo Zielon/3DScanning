@@ -10,6 +10,8 @@
 #include "../../debugger/headers/ProgressBar.hpp"
 #include "../../helpers/Transformations.h"
 
+const unsigned char MAX_WEIGHT = std::numeric_limits<unsigned char>::infinity();
+
 Fusion::Fusion(CameraParameters camera_parameters) : m_camera_parameters(std::move(camera_parameters)){
 	initialize();
 }
@@ -28,13 +30,9 @@ inline Vector3i round(const Vector3f& point){
 	return Vector3i(std::round(point.x()), std::round(point.y()), std::round(point.z()));
 }
 
-float Fusion::getTruncation(float depth) const{
-	return m_trunaction + depth;
-}
-
-float Fusion::getWeight(float depth) const{
-	if (depth <= 0.01f) return 1.f;
-	return 1.f / depth;
+float Fusion::getWeight(float depth, float max) const{
+	if (depth <= 0.01) return 1.f;
+	return 1.f - depth / max;
 }
 
 void Fusion::save(string name) const{
@@ -45,9 +43,9 @@ void Fusion::save(string name) const{
 }
 
 void Fusion::initialize(){
-	m_volume = new Volume(Size(-1, -4, -2), Size(2, 4, 4), 92, 1);
+	m_volume = new Volume(Size(-1, -4, -2), Size(2, 4, 4), 128, 1);
 	m_buffer = new Buffer<std::shared_ptr<PointCloud>>();
-	m_trunaction = m_volume->m_voxel_size * 2.f; // 2 voxels truncations
+	m_trunaction = m_volume->m_voxel_size * 2.f;
 }
 
 void Fusion::wait() const{
@@ -98,6 +96,10 @@ Vector3i Fusion::clamp(Vector3i value) const{
 	return Vector3i(clamp(value.x()), clamp(value.y()), clamp(value.z()));
 }
 
+bool Fusion::isSDFRange(float cell, float depth) const{
+	return cell < depth + m_trunaction && cell > depth - m_trunaction;
+}
+
 void Fusion::stopConsumers(){
 	for (auto& consumer : m_consumers)
 		consumer->stop();
@@ -108,7 +110,7 @@ void Fusion::processMesh(Mesh& mesh) const{
 	for (int x = 0; x < m_volume->m_size - 1; x++)
 		for (int y = 0; y < m_volume->m_size - 1; y++)
 			for (int z = 0; z < m_volume->m_size - 1; z++)
-				ProcessVolumeCell(m_volume, x, y, z, 0.f, &mesh);
+				ProcessVolumeCell(m_volume, x, y, z, 0.0f, &mesh);
 }
 
 void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
@@ -133,36 +135,31 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
 				cell = Transformations::reproject(cell, cloud->m_camera_parameters);
 
 				// Pixels space
-				auto pixels = round(cell);
+				auto pixels = round(cell / downsampling_factor);
 
-				float depth = cloud->getDepthImage(pixels.x() / downsampling_factor, pixels.y() / downsampling_factor);
+				const float depth = cloud->getDepthImage(pixels.x(), pixels.y());
 
 				// Depth was not found
 				if (depth == INFINITY) continue;
-
-				//m_mutex.lock();
 
 				Voxel* voxel = m_volume->getVoxel(x, y, z);
 
 				// Positive in front of the observation
 				const float sdf = depth - cell.z();
-				const float truncation = getTruncation(depth);
-				const float weight_update = getWeight(depth);
+				const float weight_update = getWeight(depth, cloud->m_camera_parameters.m_depth_max);
 
-				if (sdf > -truncation)
+				if (depth - m_trunaction > cell.z())
 				{
-					voxel->m_ctr++;
-
-					voxel->m_sdf =
-						(voxel->m_sdf * voxel->m_weight + sdf * weight_update) / (voxel->m_weight + weight_update);
-
-					voxel->m_weight =
-						min(voxel->m_weight + weight_update, std::numeric_limits<unsigned char>::infinity());
+					voxel->m_state = EMPTY; // In front of a surface
 				}
-
-				//m_mutex.unlock();
+				else if (isSDFRange(cell.z(), depth))
+				{
+					voxel->m_state = SDF;
+					voxel->m_sdf = (voxel->m_sdf * voxel->m_weight + sdf * weight_update) / (voxel->m_weight +
+						weight_update);
+					voxel->m_weight = min(voxel->m_weight + weight_update, MAX_WEIGHT);
+				}
 			}
-
 }
 
 FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld, CameraParameters camera_parameters) const{

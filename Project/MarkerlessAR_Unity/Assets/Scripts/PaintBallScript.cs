@@ -7,7 +7,7 @@ public class PaintBallScript : MonoBehaviour
 
     public GameObject SplatPrefab; 
 
-    public float speed = 5.0f; 
+    public float speed = .50f; 
   
 
     // Start is called before the first frame update

@@ -50,11 +50,11 @@ private:
 
 	Vector3i clamp(Vector3i value) const;
 
+	bool isSDFRange(float cell, float depth) const;
+
 	void stopConsumers();
 
-	float getTruncation(float depth) const;
-
-	float getWeight(float depth) const;
+	float getWeight(float depth, float max) const;
 
 	float m_trunaction = 0;
 	std::vector<std::thread> m_consumer_threads;

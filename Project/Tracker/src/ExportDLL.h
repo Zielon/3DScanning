@@ -6,6 +6,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include "reconstruction/headers/Fusion.h"
 #include "marshaling/__Mesh.h"
+#include "data-stream/headers/Xtion2StreamReader.h"
 
 
 //DLL exports of the m_tracker
@@ -15,6 +16,8 @@
 struct __MeshInfo;
 
 extern "C" __declspec(dllexport) void* createContext(const char* dataset_path);
+
+extern "C" __declspec(dllexport) void* createSensorContext();
 
 extern "C" __declspec(dllexport) int getImageWidth(void* context);
 
