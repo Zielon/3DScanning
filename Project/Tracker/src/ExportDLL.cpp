@@ -13,7 +13,7 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 	const auto width = tracker_context->m_videoStreamReader->m_width_depth;
 
 	Matrix3f intrinsics = tracker_context->m_videoStreamReader->getCameraIntrinsics();
-	const CameraParameters camera_parameters = CameraParameters(
+	const SystemParameters camera_parameters = SystemParameters(
 		intrinsics(0, 0),
 		intrinsics(1, 1),
 		intrinsics(0, 2),
@@ -53,7 +53,7 @@ extern "C" __declspec(dllexport) void * createSensorContext()
 	const auto width = tracker_context->m_videoStreamReader->m_width_depth;
 
 	Matrix3f intrinsics = tracker_context->m_videoStreamReader->getCameraIntrinsics();
-	const CameraParameters camera_parameters = CameraParameters(
+	const SystemParameters camera_parameters = SystemParameters(
 		intrinsics(0, 0),
 		intrinsics(1, 1),
 		intrinsics(0, 2),

@@ -1,4 +1,3 @@
-#pragma once
 #ifndef PROJECT_ICP_COMPLETE_H
 #define PROJECT_ICP_COMPLETE_H
 

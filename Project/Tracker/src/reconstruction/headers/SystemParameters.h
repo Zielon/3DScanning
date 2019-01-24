@@ -15,7 +15,8 @@ struct SystemParameters
 	float m_cY = 0;
 	int m_image_height = 0;
 	int m_image_width = 0;
-	float m_depth_max = 0.f;
-	float m_depth_min = 0.f;
+	float m_depth_max = INFINITY;
+	float m_depth_min = INFINITY;
+	int m_voxel_number = 128;
 	Matrix3f m_intrinsics;
 };

@@ -12,7 +12,7 @@
 
 const unsigned char MAX_WEIGHT = std::numeric_limits<unsigned char>::infinity();
 
-Fusion::Fusion(CameraParameters camera_parameters) : m_camera_parameters(std::move(camera_parameters)){
+Fusion::Fusion(SystemParameters camera_parameters) : m_camera_parameters(std::move(camera_parameters)){
 	initialize();
 }
 
@@ -162,7 +162,7 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
 			}
 }
 
-FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld, CameraParameters camera_parameters) const{
+FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld, SystemParameters camera_parameters) const{
 
 	const auto rotation = cameraToWorld.block(0, 0, 3, 3);
 	const auto translation = cameraToWorld.block(0, 3, 3, 1);

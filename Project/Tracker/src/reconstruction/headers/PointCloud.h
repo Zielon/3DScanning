@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "../../Eigen.h"
-#include "CameraParameters.h"
+#include "SystemParameters.h"
 #include <opencv2/core/mat.hpp>
 #include "../sources/NearestNeighbor.hpp"
 #include "../../files-manager/headers/DatasetManager.h"
@@ -20,7 +20,7 @@ class PointCloud
 {
 public:
 
-	PointCloud(CameraParameters camera_parameters, cv::Mat& depth, cv::Mat& rgb, int downsamplingFactor = 1);
+	PointCloud(SystemParameters camera_parameters, cv::Mat& depth, cv::Mat& rgb, int downsamplingFactor = 1);
 
 	~PointCloud();
 
@@ -41,7 +41,7 @@ public:
 	void transform(Matrix4f transformation);
 
 	Matrix4f m_pose_estimation = Matrix4f::Identity();
-	CameraParameters m_camera_parameters;
+	SystemParameters m_camera_parameters;
 	int m_current_width = 0;
 	int m_current_height = 0;
 	int m_downsampling_factor = 1;

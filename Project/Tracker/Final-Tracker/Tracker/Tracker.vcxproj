@@ -41,7 +41,7 @@
     <ClInclude Include="..\..\src\files-manager\headers\DatasetManager.h" />
     <ClInclude Include="..\..\src\helpers\Transformations.h" />
     <ClInclude Include="..\..\src\marshaling\__Mesh.h" />
-    <ClInclude Include="..\..\src\reconstruction\headers\CameraParameters.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\SystemParameters.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Fusion.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\icp\ICP.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPComplete.h" />

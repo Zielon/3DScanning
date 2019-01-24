@@ -1,4 +1,3 @@
-#pragma once
 #ifndef EXPORT_DLL_H
 #define EXPORT_DLL_H
 

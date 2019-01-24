@@ -8,6 +8,6 @@ Matrix4f Tracker::alignNewFrame(std::shared_ptr<PointCloud> model, std::shared_p
 	return m_icp->estimatePose(model, data);
 }
 
-CameraParameters Tracker::getCameraParameters() const{
+SystemParameters Tracker::getCameraParameters() const{
 	return m_camera_parameters;
 }
