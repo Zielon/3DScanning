@@ -43,8 +43,8 @@ void Fusion::save(string name) const{
 }
 
 void Fusion::initialize(){
-	//m_volume = new Volume(Size(-1, -4, -2), Size(2, 4, 4), 128, 1);
-	m_volume = new Volume(Size(-1, -4, -2), Size(2, 4, 4), 256, 1);
+	m_volume = new Volume(Size(-1, -4, -2), Size(2, 4, 4), 128, 1);
+	//m_volume = new Volume(Size(-1, -4, -2), Size(2, 4, 4), 256, 1);
 	m_buffer = new Buffer<std::shared_ptr<PointCloud>>();
 	m_trunaction = m_volume->m_voxel_size * 2.f;
 }

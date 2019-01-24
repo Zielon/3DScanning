@@ -104,7 +104,7 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 	#endif
 
 	PointCloud* _target = new PointCloud(tracker->getCameraParameters(), depth, rgb, 8);
-	//PointCloud* _target = new PointCloud(tracker->getCameraParameters(), depth, rgb, 1);
+	//PointCloud* _target = new PointCloud(tracker->getCameraParameters(), depth, rgb, 1);//Very slow
 	std::shared_ptr<PointCloud> current(_target);
 
 	if (tracker_context->m_first_frame)

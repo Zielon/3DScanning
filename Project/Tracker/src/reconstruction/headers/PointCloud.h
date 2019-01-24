@@ -51,7 +51,7 @@ private:
 
 	NearestNeighborSearch* m_nearestNeighbor;
 	std::thread* m_indexBuildingThread = nullptr;
-	bool m_filtering = true;
+	bool m_filtering = false;
 
 	std::vector<Vector3f> m_points;
 	std::vector<Vector3f> m_normals;

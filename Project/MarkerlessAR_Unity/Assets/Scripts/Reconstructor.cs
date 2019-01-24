@@ -29,7 +29,7 @@ namespace Assets.Scripts
         private Thread _thread;
 
         //general setup
-        private readonly bool _use_sensor = false;
+        private readonly bool _use_sensor = true;
         private int _w = -1;
 
         public int abortAfterNFrames = -1;
@@ -130,14 +130,14 @@ namespace Assets.Scripts
             //   Debug.Log("Pos: " + cameraRig.transform.position);
             //   Debug.Log("Rot: " + cameraRig.transform.rotation.eulerAngles);
 
-            if (_meshDtoQueue.Count > 0)
-                AddMesh(_meshDtoQueue.Dequeue());
+            /*if (_meshDtoQueue.Count > 0)
+                AddMesh(_meshDtoQueue.Dequeue());*/
 
             //get first mesh after n frames
             if (_framesProcessed % meshUpdateRate != 0 || _thread != null && _thread.IsAlive) return;
 
-            _thread = SpawnFrameMeshThread();
-            _thread.Start();
+            /*_thread = SpawnFrameMeshThread();
+            _thread.Start();*/
         }
 
         private void AddMesh(MeshDto dto)
