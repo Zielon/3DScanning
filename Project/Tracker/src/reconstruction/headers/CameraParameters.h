@@ -1,10 +1,10 @@
 #pragma once
 
-struct CameraParameters
+struct SystemParameters
 {
-	CameraParameters() = default;
+	SystemParameters() = default;
 
-	CameraParameters(float focal_length_X, float focal_length_Y, float cx, float cy, int image_height,
+	SystemParameters(float focal_length_X, float focal_length_Y, float cx, float cy, int image_height,
 	                 int image_width, Matrix3f intrinsics) :
 		m_focal_length_X(focal_length_X), m_focal_length_Y(focal_length_Y), m_cX(cx), m_cY(cy),
 		m_image_height(image_height), m_image_width(image_width), m_intrinsics(intrinsics){ }

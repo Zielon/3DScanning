@@ -11,7 +11,7 @@
 #include <thread>
 #include <mutex>
 #include <opencv2/core.hpp>
-#include "CameraParameters.h"
+#include "SystemParameters.h"
 
 struct Triangle
 {
@@ -29,7 +29,7 @@ public:
 
 	Mesh();
 
-	Mesh(cv::Mat& depthMat, cv::Mat colorMat, CameraParameters camera_parameters);
+	Mesh(cv::Mat& depthMat, cv::Mat colorMat, SystemParameters camera_parameters);
 
 	unsigned int addVertex(Vector3f& vertex);
 
