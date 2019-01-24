@@ -53,7 +53,8 @@ Matrix4f ICPComplete::estimatePose(std::shared_ptr<PointCloud> previous, std::sh
 	addNormal(model, model_normal);
 	addNormal(data, data_normal);
 
-	pcl::IterativeClosestPointWithNormals<PointNormalT, PointNormalT> icp;
+	// Levenberg–Marquardt algorithm
+	pcl::IterativeClosestPointNonLinear<PointNormalT, PointNormalT> icp;
 
 	const boost::shared_ptr<pcl::registration::WarpPointRigid3D<PointNormalT, PointNormalT>> warp_fcn
 		(new pcl::registration::WarpPointRigid3D<PointNormalT, PointNormalT>);
@@ -67,6 +68,7 @@ Matrix4f ICPComplete::estimatePose(std::shared_ptr<PointCloud> previous, std::sh
 	icp.setMaximumIterations(50);
 	icp.setMaxCorrespondenceDistance(0.04);
 	icp.setRANSACOutlierRejectionThreshold(0.04);
+	icp.setTransformationEpsilon(1e-8);
 
 	icp.setInputTarget(model_normal);
 	icp.setInputSource(data_normal);

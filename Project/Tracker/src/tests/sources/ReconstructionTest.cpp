@@ -114,7 +114,7 @@ void ReconstructionTest::reconstructionTest() const{
 
 	ProgressBar bar(size, 60, "Frames loaded");
 
-	for (int index = 0; index < size; index += 5)
+	for (int index = 0; index < size; index += 1)
 	{
 		const auto trajectory = getTrajectory(index);
 		cv::Mat rgb, depth;
@@ -169,7 +169,7 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 
 	context->m_fusion->save("mesh");
 
-	Verbose::message("DONE reconstructionTestWithOurTracking()", SUCCESS);
+	Verbose::message("DONE reconstructionTest()", SUCCESS);
 
 	delete[]img;
 	SAFE_DELETE(context);
@@ -195,8 +195,6 @@ void ReconstructionTest::reconstructionTestSensor() const{
 
 		index++;
 	}
-
-	context->m_fusion->save("mesh");
 
 	Verbose::message("DONE reconstructionTestSensor()", SUCCESS);
 
