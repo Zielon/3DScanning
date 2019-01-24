@@ -7,7 +7,6 @@
 #include "../../data-stream/headers/VideoStreamReaderBase.h"
 #include "../../data-stream/headers/DatasetVideoStreamReader.h"
 #include "icp/ICPComplete.h"
-#include "icp/ICPNaive.h"
 
 using namespace std;
 
@@ -17,9 +16,9 @@ using namespace std;
 class Tracker final
 {
 public:
-	Tracker(CameraParameters camera_parameters) : m_camera_parameters(camera_parameters){
-		m_icp = new ICPNaive();
-		//m_icp = new ICPComplete();
+	Tracker(CameraParameters camera_parameters) : m_camera_parameters(camera_parameters) {
+		//m_icp = new ICPNaive();
+		m_icp = new ICPComplete();
 	}
 
 	~Tracker();
