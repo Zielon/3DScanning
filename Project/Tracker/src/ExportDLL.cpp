@@ -105,6 +105,7 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 	const Matrix4f delta = tracker->alignNewFrame(tracker->m_previous_point_cloud, current);
 
 	tracker->m_pose *= delta;
+	//tracker->m_pose = delta * tracker->m_pose;//Correct order (Juan opinion)
 	current->m_pose_estimation = tracker->m_pose;
 
 	// Produce a new point cloud (add to the buffer)
