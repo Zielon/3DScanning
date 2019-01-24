@@ -24,7 +24,7 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 	);
 
 
-	tracker_context->m_tracker = new Tracker(camera_parameters, NAIVE);
+	tracker_context->m_tracker = new Tracker(camera_parameters, PCL);
 	tracker_context->m_fusion = new Fusion(camera_parameters);
 	// Start consuming the point clouds buffer
 	tracker_context->m_fusion->consume();
@@ -64,7 +64,7 @@ extern "C" __declspec(dllexport) void * createSensorContext()
 		intrinsics
 	);
 
-	tracker_context->m_tracker = new Tracker(camera_parameters, NAIVE);
+	tracker_context->m_tracker = new Tracker(camera_parameters, PCL);
 	tracker_context->m_fusion = new Fusion(camera_parameters);
 	// Start consuming the point clouds buffer
 	tracker_context->m_fusion->consume();
@@ -91,7 +91,20 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
+	#ifdef SENSOR_TEST
+
+	double min, max;
+	cv::Mat scaledDepth;
+	cv::minMaxIdx(depth, &min, &max);
+	cv::convertScaleAbs(depth, scaledDepth, 255 / max);
+	cv::imshow("Depth Map", scaledDepth);
+
+	cv::waitKey(1);
+
+	#endif
+
 	PointCloud* _target = new PointCloud(tracker->getCameraParameters(), depth, rgb, 8);
+	//PointCloud* _target = new PointCloud(tracker->getCameraParameters(), depth, rgb, 1);
 	std::shared_ptr<PointCloud> current(_target);
 
 	if (tracker_context->m_first_frame)

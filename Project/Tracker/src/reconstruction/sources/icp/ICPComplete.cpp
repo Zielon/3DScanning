@@ -66,8 +66,8 @@ Matrix4f ICPComplete::estimatePose(std::shared_ptr<PointCloud> previous, std::sh
 	icp.setTransformationEstimation(te);
 
 	icp.setMaximumIterations(50);
-	icp.setMaxCorrespondenceDistance(0.04);
-	icp.setRANSACOutlierRejectionThreshold(0.04);
+	icp.setMaxCorrespondenceDistance(4);//0.04
+	icp.setRANSACOutlierRejectionThreshold(4);//0.04
 	icp.setTransformationEpsilon(1e-8);
 
 	icp.setInputTarget(model_normal);

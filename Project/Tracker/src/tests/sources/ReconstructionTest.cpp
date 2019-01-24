@@ -102,7 +102,7 @@ void ReconstructionTest::unityIntegrationTest() const{
 	SAFE_DELETE(context);
 }
 
-void ReconstructionTest::reconstructionTest() const{
+void ReconstructionTest::reconstructionTest(int skip, int subsampling) const{
 
 	Verbose::message("START reconstructionTest()");
 
@@ -114,13 +114,13 @@ void ReconstructionTest::reconstructionTest() const{
 
 	ProgressBar bar(size, 60, "Frames loaded");
 
-	for (int index = 0; index < size; index += 1)
+	for (int index = 0; index < size; index += skip)
 	{
 		const auto trajectory = getTrajectory(index);
 		cv::Mat rgb, depth;
 
 		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
-		PointCloud* _cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 8);
+		PointCloud* _cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, subsampling);
 		std::shared_ptr<PointCloud> cloud(_cloud);
 
 		cloud->m_pose_estimation = trajectory;
@@ -143,7 +143,7 @@ void ReconstructionTest::reconstructionTest() const{
 	SAFE_DELETE(context);
 }
 
-void ReconstructionTest::reconstructionTestWithOurTracking() const{
+void ReconstructionTest::reconstructionTestWithOurTracking(int skip) const{
 
 	Verbose::message("START reconstructionTestWithOurTracking()");
 
@@ -157,7 +157,7 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 
 	ProgressBar bar(size, 60, "Frames loaded");
 
-	for (int index = 0; index < size; index += 1)
+	for (int index = 0; index < size; index += skip)
 	{
 		tracker(context, img, pose);
 
@@ -169,13 +169,13 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 
 	context->m_fusion->save("mesh");
 
-	Verbose::message("DONE reconstructionTest()", SUCCESS);
+	Verbose::message("DONE reconstructionTestWithOurTracking()", SUCCESS);
 
 	delete[]img;
 	SAFE_DELETE(context);
 }
 
-void ReconstructionTest::reconstructionTestSensor() const{
+void ReconstructionTest::reconstructionTestSensor(int mesh_index) const{
 	Verbose::message("START reconstructionTestSensor()");
 
 	TrackerContext* context = static_cast<TrackerContext*>(createSensorContext());
@@ -187,14 +187,19 @@ void ReconstructionTest::reconstructionTestSensor() const{
 	{
 		tracker(context, img, pose);
 
-		if (index % 100 == 0)
+		if (index % mesh_index == 0)
 		{
 			Mesh mesh;
 			context->m_fusion->processMesh(mesh);
 		}
 
 		index++;
+	
+		printf("Frame %d processed\n", index);
 	}
+
+	context->m_fusion->save("mesh");
+
 
 	Verbose::message("DONE reconstructionTestSensor()", SUCCESS);
 

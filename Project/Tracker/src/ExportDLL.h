@@ -12,6 +12,7 @@
 //DLL exports of the m_tracker
 
 #define OPENCV_TRAITS_ENABLE_DEPRECATED
+#define SENSOR_TEST
 
 struct __MeshInfo;
 
