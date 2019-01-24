@@ -8,6 +8,7 @@
 #include "../../data-stream/headers/VideoStreamReaderBase.h"
 #include "../../data-stream/headers/DatasetVideoStreamReader.h"
 #include "icp/ICPComplete.h"
+#include "icp/ICPNaive.h"
 
 using namespace std;
 

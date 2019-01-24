@@ -190,7 +190,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OPENNI2_LIB64);$(PCL_ROOT)\3rdParty\FLANN\lib;$(PCL_ROOT)\3rdParty\VTK\lib;$(PCL_ROOT)\3rdParty\Boost\lib;$(PCL_ROOT)\lib;$(OPENCV_DIR)\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>openNI2.lib;opencv_world400d.lib;pcl_common_debug.lib;pcl_recognition_debug.lib;pcl_kdtree_debug.lib;pcl_search_debug.lib;flann.lib</AdditionalDependencies>
+      <AdditionalDependencies>openNI2.lib;opencv_world400d.lib;pcl_common_debug.lib;pcl_recognition_debug.lib;pcl_kdtree_debug.lib;pcl_search_debug.lib;pcl_filters_debug.lib;pcl_features_debug.lib;pcl_registration_debug.lib;flann.lib</AdditionalDependencies>
       <RegisterOutput>false</RegisterOutput>
       <AddModuleNamesToAssembly>
       </AddModuleNamesToAssembly>
