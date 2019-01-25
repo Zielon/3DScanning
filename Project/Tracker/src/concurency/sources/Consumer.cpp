@@ -1,6 +1,6 @@
 #include "../headers/Consumer.h"
 #include "../../debugger/headers/Verbose.h"
-#include "../headers/ThreadManager.h";
+#include "../headers/ThreadManager.h"
 
 template <class T>
 void Consumer<T>::run(std::function<void(T)> func){

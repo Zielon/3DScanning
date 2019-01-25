@@ -6,11 +6,12 @@ class ReconstructionTest :
 {
 public:
 	void run() override{
-		this->reconstructionTest();
+		//this->reconstructionTest();
 		//this->reconstructionTestWithOurTracking();
 		//this->reconstructionTestSensor();
 		//this->pointCloudTest();
-		//this->pointCloudTestWithICP();
+		this->pointCloudTestWithICP();
+		//this->pointCloudNormalViz();
 		//this->unityIntegrationTest(); 
 	};
 
@@ -26,4 +27,6 @@ private:
 	void pointCloudTest() const;
 
 	void unityIntegrationTest() const;
+
+	void pointCloudNormalViz() const;
 };

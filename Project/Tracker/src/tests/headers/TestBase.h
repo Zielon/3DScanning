@@ -1,5 +1,12 @@
 #pragma once
 
+#include <boost/thread/thread.hpp>
+#include <boost/make_shared.hpp>
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_types.h>
+#include <pcl/common/common_headers.h>
+#include <pcl/features/normal_3d.h>
+
 #include "../../TrackerContext.h"
 #include "../../reconstruction/headers/Tracker.h"
 #include "../../data-stream/headers/DatasetVideoStreamReader.h"
