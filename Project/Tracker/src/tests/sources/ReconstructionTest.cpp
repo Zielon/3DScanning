@@ -264,7 +264,7 @@ void ReconstructionTest::pointCloudNormalViz() const {
 
 	Verbose::message("START pointCloudNormalViz()");
 	//pcl::PointCloud<pcl::PointXYZ>::Ptr basic_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>);
-	pcl::PointCloud<PointType>::Ptr point_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>());
+	pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>());
 	//pcl::PointCloud<pcl::PointXYZRGB>::Ptr point_cloud_ptr(new pcl::PointCloud<pcl::PointXYZRGB>);
 	pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne;
 	pcl::PointCloud<pcl::Normal>::Ptr cloud_normals1(new pcl::PointCloud<pcl::Normal>);
