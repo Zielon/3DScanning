@@ -287,7 +287,7 @@ pcl::visualization::PCLVisualizer::Ptr normalsVisColor(
 	// --------------------------------------------------------
 	pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
 	viewer->setBackgroundColor(0, 0, 0);
-	pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZRGB> single_color(cloud,0,255,0);
+	pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZRGB> single_color(cloud,200,255,100);
 	viewer->addPointCloud<pcl::PointXYZRGB>(cloud, "sample cloud");
 	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
 	viewer->addPointCloudNormals<pcl::PointXYZRGB, pcl::Normal>(cloud, normals, 10, 0.05, "normals");
