@@ -60,7 +60,7 @@ cv::Mat PointCloud::getNormalMap()
 
 	cv::Mat normals(depth_map.size(), CV_32FC3);
 
-	float depth_scale = 1000.0f;
+	float depth_scale = 5000.0f;
 
 	for (int y = 1; y < depth_map.rows - 1; y++)
 	{
@@ -91,9 +91,9 @@ cv::Mat PointCloud::getNormalMap()
 			const unsigned int idx = y * m_current_width + x;
 
 			/*auto normal = m_normals[idx];
-			normal = (normal + Eigen::Vector3f(1.0f, 1.0f, 1.0f))/2.0f * 255;*/
+			normal = (normal + Eigen::Vector3f(1.0f, 1.0f, 1.0f))/2.0f * 255;
 
-			/*cv::Vec3b & color = normal_map.at<cv::Vec3b>(y, x);
+			cv::Vec3b & color = normal_map.at<cv::Vec3b>(y, x);
 
 			color[0] = normal.x();
 			color[1] = normal.y();
@@ -102,13 +102,12 @@ cv::Mat PointCloud::getNormalMap()
 			cv::Vec3f & color = normals.at<cv::Vec3f>(y, x);
 
 			auto normal = m_normals[idx];
-			/*normal = (normal + Eigen::Vector3f(1.0f, 1.0f, 1.0f))/2.0f * 255;
 
-			cv::Vec3b & color = normal_map.at<cv::Vec3b>(y, x);*/
+			//normal = Transformations::reproject(normal, m_camera_parameters);
 
-			/*color[0] = normal.x();
+			color[0] = normal.x();
 			color[1] = normal.y();
-			color[2] = normal.z();*/
+			color[2] = normal.z();
 
 			color[0] = (color[0] * 0.5f + 0.5) * 255;
 			color[1] = (color[1] * 0.5f + 0.5f) * 255;
