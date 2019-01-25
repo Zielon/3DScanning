@@ -151,7 +151,7 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 
 	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
-	const auto size = 100; //getIterations();
+	const auto size = getIterations();
 
 	float pose[16];
 
