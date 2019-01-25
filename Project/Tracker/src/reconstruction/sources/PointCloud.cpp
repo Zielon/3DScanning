@@ -52,10 +52,85 @@ void PointCloud::transform(Matrix4f transformation){
 	}
 }
 
+cv::Mat PointCloud::getNormalMap()
+{
+	if (depth_map.type() != CV_32FC1) {
+		depth_map.convertTo(depth_map, CV_32FC1);
+	}
+
+	cv::Mat normals(depth_map.size(), CV_32FC3);
+
+	float depth_scale = 1000.0f;
+
+	for (int y = 1; y < depth_map.rows - 1; y++)
+	{
+		for (int x = 1; x < depth_map.cols - 1; x++)
+		{
+			// 3d pixels
+			 /* * * * *
+			  * * t * *
+			  * l c * *
+			  * * * * */
+
+			cv::Vec3f t(x, y + 1, depth_scale * depth_map.at<float>(y + 1, x));
+			cv::Vec3f l(x - 1, y, depth_scale * depth_map.at<float>(y, x - 1) );
+			cv::Vec3f c(x, y, depth_scale * depth_map.at<float>(y, x) );
+			cv::Vec3f d = (l - c).cross(t - c);
+			
+			cv::Vec3f n = normalize(d);
+			normals.at<cv::Vec3f>(y, x) = normalize(d);
+		}
+	}
+
+	cv::Mat normal_map(m_current_height, m_current_width, CV_8UC3, cv::Scalar(0, 0, 0));
+
+	for (auto y = 0; y < m_current_height; y++)
+	{
+		for (auto x = 0; x < m_current_width; x++)
+		{
+			const unsigned int idx = y * m_current_width + x;
+
+			/*auto normal = m_normals[idx];
+			normal = (normal + Eigen::Vector3f(1.0f, 1.0f, 1.0f))/2.0f * 255;*/
+
+			/*cv::Vec3b & color = normal_map.at<cv::Vec3b>(y, x);
+
+			color[0] = normal.x();
+			color[1] = normal.y();
+			color[2] = normal.z();*/
+
+			cv::Vec3f & color = normals.at<cv::Vec3f>(y, x);
+
+			auto normal = m_normals[idx];
+			/*normal = (normal + Eigen::Vector3f(1.0f, 1.0f, 1.0f))/2.0f * 255;
+
+			cv::Vec3b & color = normal_map.at<cv::Vec3b>(y, x);*/
+
+			/*color[0] = normal.x();
+			color[1] = normal.y();
+			color[2] = normal.z();*/
+
+			color[0] = (color[0] * 0.5f + 0.5) * 255;
+			color[1] = (color[1] * 0.5f + 0.5f) * 255;
+			color[2] = (color[2] * 0.5f + 0.5f) * 255;
+		}
+	}
+
+	normals.convertTo(normal_map, CV_8UC3);
+
+	//imshow("Normal Map", normals);
+	//cv::imwrite("normal_map.png", normal_map);
+
+	return normal_map;
+}
+
 /// Downsample image 1 time
 void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	cv::Mat image, colors;
+
+	//Juan Test
+	depth_map = depth_mat.clone();
 
 	if (m_downsampling_factor > 1)
 	{

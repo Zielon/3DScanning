@@ -142,15 +142,20 @@ void TrackerTest::processedMapsTest(){
 		minMaxIdx(bilateral_depth, &min, &max);
 		convertScaleAbs(bilateral_depth, render_depth, 255 / max);
 
-		imshow("Bilateral Filtered Depth", render_depth);
+		//imshow("Bilateral Filtered Depth", render_depth);
 
 		//Median Filter
 		cv::Mat median_depth = source->filterMap(scaled_depth, median, 7, 150.0f);
 
-		imshow("Median Filtered Depth", median_depth);
+		//imshow("Median Filtered Depth", median_depth);
+
+		//Normal maps (Pending task)
+		cv::Mat normal_map = source->getNormalMap();
+
+		imshow("Normal Map", normal_map);
 
 		cv::waitKey(10);
 
-		//Normal maps (Pending task)
+		//cin.get();
 	}
 }

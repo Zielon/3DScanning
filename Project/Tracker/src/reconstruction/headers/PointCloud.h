@@ -40,6 +40,8 @@ public:
 
 	void transform(Matrix4f transformation);
 
+	cv::Mat getNormalMap();
+
 	Matrix4f m_pose_estimation = Matrix4f::Identity();
 	SystemParameters m_camera_parameters;
 	int m_current_width = 0;
@@ -57,6 +59,9 @@ private:
 	std::vector<Vector3f> m_normals;
 	std::vector<Vector4uc> m_color_points;
 	std::vector<float> m_depth_points;
+
+	//Juan Test
+	cv::Mat depth_map;
 };
 
 #endif
