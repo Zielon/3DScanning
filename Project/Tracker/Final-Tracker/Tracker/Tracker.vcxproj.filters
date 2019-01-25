@@ -75,9 +75,6 @@
     <ClInclude Include="..\..\src\marshaling\__Mesh.h">
       <Filter>marshaling</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPComplete.h">
-      <Filter>reconstruction\headers\icp</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\reconstruction\headers\icp\ICP.h">
       <Filter>reconstruction\headers\icp</Filter>
     </ClInclude>
@@ -91,6 +88,9 @@
       <Filter>reconstruction\headers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPFeatures.h">
+      <Filter>reconstruction\headers\icp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPNonLinear.h">
       <Filter>reconstruction\headers\icp</Filter>
     </ClInclude>
   </ItemGroup>
@@ -145,9 +145,6 @@
     <ClCompile Include="..\..\src\tests\sources\TrackerTest.cpp">
       <Filter>tests\sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPComplete.cpp">
-      <Filter>reconstruction\sources\icp</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPNaive.cpp">
       <Filter>reconstruction\sources\icp</Filter>
     </ClCompile>
@@ -155,6 +152,9 @@
       <Filter>data-stream\sources</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPFeatures.cpp">
+      <Filter>reconstruction\sources\icp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPNonLinear.cpp">
       <Filter>reconstruction\sources\icp</Filter>
     </ClCompile>
   </ItemGroup>
