@@ -200,7 +200,6 @@ void ReconstructionTest::reconstructionTestSensor(int mesh_index) const{
 
 	context->m_fusion->save("mesh");
 
-
 	Verbose::message("DONE reconstructionTestSensor()", SUCCESS);
 
 	delete[]img;
