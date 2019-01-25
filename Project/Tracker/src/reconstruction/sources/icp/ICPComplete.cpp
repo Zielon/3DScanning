@@ -40,11 +40,11 @@ Matrix4f ICPComplete::estimatePose(std::shared_ptr<PointCloud> previous, std::sh
 	pcl::PointCloud<PointType>::Ptr data(new pcl::PointCloud<PointType>);
 
 	model->points.resize(previous_points.size());
-	for (int i = 0; i < previous_points.size(); i++)
+	for (int i = 0; i < previous_points.size(); i += 8)
 		model->points[i].getVector3fMap() = previous_points[i];
 
 	data->points.resize(current_points.size());
-	for (int i = 0; i < current_points.size(); i++)
+	for (int i = 0; i < current_points.size(); i += 8)
 		data->points[i].getVector3fMap() = current_points[i];
 
 	const pcl::PointCloud<PointNormalT>::Ptr model_normal(new pcl::PointCloud<PointNormalT>);
@@ -64,7 +64,6 @@ Matrix4f ICPComplete::estimatePose(std::shared_ptr<PointCloud> previous, std::sh
 	te->setWarpFunction(warp_fcn);
 
 	icp.setTransformationEstimation(te);
-
 	icp.setMaximumIterations(50);
 	icp.setMaxCorrespondenceDistance(0.04);
 	icp.setRANSACOutlierRejectionThreshold(0.04);

@@ -90,6 +90,9 @@
     <ClInclude Include="..\..\src\reconstruction\headers\SystemParameters.h">
       <Filter>reconstruction\headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPFeatures.h">
+      <Filter>reconstruction\headers\icp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -150,6 +153,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\data-stream\sources\Xtion2StreamReader.cpp">
       <Filter>data-stream\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPFeatures.cpp">
+      <Filter>reconstruction\sources\icp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

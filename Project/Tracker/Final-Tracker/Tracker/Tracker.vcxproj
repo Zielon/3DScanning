@@ -41,6 +41,7 @@
     <ClInclude Include="..\..\src\files-manager\headers\DatasetManager.h" />
     <ClInclude Include="..\..\src\helpers\Transformations.h" />
     <ClInclude Include="..\..\src\marshaling\__Mesh.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPFeatures.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\SystemParameters.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Fusion.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\icp\ICP.h" />
@@ -72,6 +73,7 @@
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Fusion.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPComplete.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPFeatures.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPNaive.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Mesh.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\PointCloud.cpp" />
@@ -295,7 +297,7 @@
       </Command>
     </PreLinkEvent>
     <PostBuildEvent>
-      <Command>echo f | xcopy /y "$(OutDir)*.dll" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\"</Command>
+      <Command>echo f | xcopy /y "$(TargetPath)" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\$(TargetFileName)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
