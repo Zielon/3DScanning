@@ -241,68 +241,115 @@ void ReconstructionTest::pointCloudTestWithICP() const{
 	SAFE_DELETE(context);
 }
 
-/*
-boost::shared_ptr<pcl::visualization::PCLVisualizer> normalsVis(
+
+pcl::visualization::PCLVisualizer::Ptr simpleVis(pcl::PointCloud<pcl::PointXYZ>::ConstPtr cloud)
+{
+	// --------------------------------------------
+	// -----Open 3D viewer and add point cloud-----
+	// --------------------------------------------
+	pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
+	viewer->setBackgroundColor(0, 0, 0);
+	viewer->addPointCloud<pcl::PointXYZ>(cloud, "sample cloud");
+	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+	viewer->addCoordinateSystem(1.0);
+	viewer->initCameraParameters();
+	return (viewer);
+}
+
+
+
+
+
+//http://pointclouds.org/documentation/tutorials/pcl_visualizer.php
+pcl::visualization::PCLVisualizer::Ptr normalsVis(
+	pcl::PointCloud<pcl::PointXYZ>::ConstPtr cloud, pcl::PointCloud<pcl::Normal>::ConstPtr normals)
+{
+	// --------------------------------------------------------
+	// -----Open 3D viewer and add point cloud and normals-----
+	// --------------------------------------------------------
+	pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
+	viewer->setBackgroundColor(0, 0, 0);
+	//pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZ> rgb(cloud);
+	viewer->addPointCloud<pcl::PointXYZ>(cloud, "sample cloud");
+	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
+	viewer->addPointCloudNormals<pcl::PointXYZ, pcl::Normal>(cloud, normals, 10, 0.05, "normals");
+	viewer->addCoordinateSystem(1.0);
+	viewer->initCameraParameters();
+	return (viewer);
+}
+
+
+pcl::visualization::PCLVisualizer::Ptr normalsVisColor(
 	pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud, pcl::PointCloud<pcl::Normal>::ConstPtr normals)
 {
 	// --------------------------------------------------------
 	// -----Open 3D viewer and add point cloud and normals-----
 	// --------------------------------------------------------
-	boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
+	pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
 	viewer->setBackgroundColor(0, 0, 0);
-	pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(cloud);
-	viewer->addPointCloud<pcl::PointXYZRGB>(cloud, rgb, "sample cloud");
+	pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZRGB> single_color(cloud,0,255,0);
+	viewer->addPointCloud<pcl::PointXYZRGB>(cloud, "sample cloud");
 	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
 	viewer->addPointCloudNormals<pcl::PointXYZRGB, pcl::Normal>(cloud, normals, 10, 0.05, "normals");
-	viewer->addCoordinateSystem(1.0);
+	viewer->addCoordinateSystem(-1.0);
 	viewer->initCameraParameters();
 	return (viewer);
 }
-*/
 
 void ReconstructionTest::pointCloudNormalViz() const {
 
 	Verbose::message("START pointCloudNormalViz()");
-	//pcl::PointCloud<pcl::PointXYZ>::Ptr basic_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>);
-	pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_ptr(new pcl::PointCloud<pcl::PointXYZ>());
-	//pcl::PointCloud<pcl::PointXYZRGB>::Ptr point_cloud_ptr(new pcl::PointCloud<pcl::PointXYZRGB>);
-	pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> ne;
-	pcl::PointCloud<pcl::Normal>::Ptr cloud_normals1(new pcl::PointCloud<pcl::Normal>);
-	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>());
-
 	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
 
-	for (int index = 0; index < getIterations(); index++)
-	{
-		cv::Mat rgb, depth;
-
-		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
-
-		PointCloud* _target = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 8);
-		std::shared_ptr<PointCloud> data(_target);
-		
-		//std::vector<Vector3f> normals = data->getNormals();
-
-		std::vector<Vector3f> current_points = data->getPoints();
-
-		point_cloud_ptr->points.resize(current_points.size());
-		for (int i = 0; i < current_points.size(); i++)
-			point_cloud_ptr->points[i].getVector3fMap() = current_points[i];
-
-		
-		ne.setInputCloud(point_cloud_ptr);
-
-		ne.setSearchMethod(tree);
-		
-		ne.setRadiusSearch(0.05);
-		ne.compute(*cloud_normals1);
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+	cv::Mat rgb, depth;
 	
+	dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(10, rgb, depth);
 
-		std::stringstream ss;
-		ss << index << ".pcd";
-		pcl::io::savePCDFile("test_pcd.pcd", *cloud_normals1);
-		//pcl::io::savePCDFileBinary(ss.str(), *cloud_normals1);
+	PointCloud* _target = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 1);
+	std::shared_ptr<PointCloud> data(_target);
 
+
+
+	std::vector<Vector3f> current_points = data->getPoints();
+	std::vector<Vector4uc> colors = data->getColors();
+
+	cloud->points.resize(current_points.size());
+	for (int i = 0; i < current_points.size(); i++) {
+		//cloud->points[i].getVector3fMap() = current_points[i];
+		//cloud->points[i].rgb.getVector4fMap() = colors[i];
+		pcl::PointXYZRGB point;
+		point.x = current_points[i].x();
+		point.y = current_points[i].y();
+		point.z = current_points[i].z();
+		point.r = colors[i].x();
+		point.g = colors[i].y();
+		point.b = colors[i].z();
+		point.a = colors[i].w();
+		cloud->points[i] = point;
+	}
+
+	cloud->width = (int)cloud->points.size();
+	cloud->height = 1;
+
+	// estimate normals
+	pcl::NormalEstimation<pcl::PointXYZRGB, pcl::Normal> ne;
+	pcl::PointCloud<pcl::Normal>::Ptr cloud_normals1(new pcl::PointCloud<pcl::Normal>);
+	pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZRGB>());
+
+	ne.setInputCloud(cloud);
+
+	ne.setSearchMethod(tree);
+
+	ne.setRadiusSearch(0.05);
+	ne.compute(*cloud_normals1);
+
+	pcl::visualization::PCLVisualizer::Ptr viewer;
+	viewer = normalsVisColor(cloud, cloud_normals1);
+
+	while (!viewer->wasStopped())
+	{
+		viewer->spinOnce();
 	}
 
 	Verbose::message("DONE pointCloudNormalViz()", SUCCESS);

@@ -10,8 +10,8 @@ public:
 		//this->reconstructionTestWithOurTracking();
 		//this->reconstructionTestSensor();
 		//this->pointCloudTest();
-		this->pointCloudTestWithICP();
-		//this->pointCloudNormalViz();
+		//this->pointCloudTestWithICP();
+		this->pointCloudNormalViz();
 		//this->unityIntegrationTest(); 
 	};
 
