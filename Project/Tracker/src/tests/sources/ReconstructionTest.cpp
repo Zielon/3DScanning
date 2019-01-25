@@ -256,10 +256,6 @@ pcl::visualization::PCLVisualizer::Ptr simpleVis(pcl::PointCloud<pcl::PointXYZ>:
 	return (viewer);
 }
 
-
-
-
-
 //http://pointclouds.org/documentation/tutorials/pcl_visualizer.php
 pcl::visualization::PCLVisualizer::Ptr normalsVis(
 	pcl::PointCloud<pcl::PointXYZ>::ConstPtr cloud, pcl::PointCloud<pcl::Normal>::ConstPtr normals)
@@ -287,11 +283,11 @@ pcl::visualization::PCLVisualizer::Ptr normalsVisColor(
 	// --------------------------------------------------------
 	pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
 	viewer->setBackgroundColor(0, 0, 0);
-	pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZRGB> single_color(cloud,200,255,100);
-	viewer->addPointCloud<pcl::PointXYZRGB>(cloud, "sample cloud");
+	pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(cloud);
+	viewer->addPointCloud<pcl::PointXYZRGB>(cloud,rgb, "sample cloud");
 	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
 	viewer->addPointCloudNormals<pcl::PointXYZRGB, pcl::Normal>(cloud, normals, 10, 0.05, "normals");
-	viewer->addCoordinateSystem(-1.0);
+	viewer->addCoordinateSystem(1.0);
 	viewer->initCameraParameters();
 	return (viewer);
 }
@@ -325,7 +321,6 @@ void ReconstructionTest::pointCloudNormalViz() const {
 		point.r = colors[i].x();
 		point.g = colors[i].y();
 		point.b = colors[i].z();
-		point.a = colors[i].w();
 		cloud->points[i] = point;
 	}
 
