@@ -131,7 +131,7 @@ bool Mesh::save(const std::string& filename){
 	//Reflection in xz
 	Matrix3f R;
 	R << 1.0, 0.0f, 0.0f,
-		0.0f, -1.0, 0.0f,
+		0.0f, 1.0, 0.0f,
 		0.0f, 0.0f, 1.0f;
 
 	// save vertices
@@ -151,7 +151,7 @@ bool Mesh::save(const std::string& filename){
 
 		Eigen::Matrix3f R = q.matrix();*/
 
-		vertex = R * vertex;
+		//vertex = R * vertex;
 
 		out_file << vertex.x() << " " << vertex.y() << " " << vertex.z() << " ";
 
