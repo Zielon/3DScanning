@@ -1,7 +1,7 @@
 #pragma once
 #include <vtkAutoInit.h>
 VTK_MODULE_INIT(vtkRenderingOpenGL);
-//#include <boost/thread/thread.hpp>
+
 #include <pcl/io/io.h>
 #include <boost/make_shared.hpp>
 #include <pcl/point_types.h>
@@ -10,7 +10,6 @@ VTK_MODULE_INIT(vtkRenderingOpenGL);
 #include <pcl/features/normal_3d.h>
 #include <pcl/visualization/pcl_visualizer.h>
 #include <pcl/features/integral_image_normal.h>
-//#include <pcl_visualization/cloud_viewer.h>
 
 #include "../../TrackerContext.h"
 #include "../../reconstruction/headers/Tracker.h"

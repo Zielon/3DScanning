@@ -242,38 +242,6 @@ void ReconstructionTest::pointCloudTestWithICP() const{
 }
 
 
-pcl::visualization::PCLVisualizer::Ptr simpleVis(pcl::PointCloud<pcl::PointXYZ>::ConstPtr cloud)
-{
-	// --------------------------------------------
-	// -----Open 3D viewer and add point cloud-----
-	// --------------------------------------------
-	pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
-	viewer->setBackgroundColor(0, 0, 0);
-	viewer->addPointCloud<pcl::PointXYZ>(cloud, "sample cloud");
-	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
-	viewer->addCoordinateSystem(1.0);
-	viewer->initCameraParameters();
-	return (viewer);
-}
-
-//http://pointclouds.org/documentation/tutorials/pcl_visualizer.php
-pcl::visualization::PCLVisualizer::Ptr normalsVis(
-	pcl::PointCloud<pcl::PointXYZ>::ConstPtr cloud, pcl::PointCloud<pcl::Normal>::ConstPtr normals)
-{
-	// --------------------------------------------------------
-	// -----Open 3D viewer and add point cloud and normals-----
-	// --------------------------------------------------------
-	pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
-	viewer->setBackgroundColor(0, 0, 0);
-	//pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZ> rgb(cloud);
-	viewer->addPointCloud<pcl::PointXYZ>(cloud, "sample cloud");
-	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
-	viewer->addPointCloudNormals<pcl::PointXYZ, pcl::Normal>(cloud, normals, 10, 0.05, "normals");
-	viewer->addCoordinateSystem(1.0);
-	viewer->initCameraParameters();
-	return (viewer);
-}
-
 
 pcl::visualization::PCLVisualizer::Ptr normalsVisColor(
 	pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr cloud, pcl::PointCloud<pcl::Normal>::ConstPtr normals)
@@ -339,6 +307,9 @@ void ReconstructionTest::pointCloudNormalViz() const {
 	ne.setRadiusSearch(0.05);
 	ne.compute(*cloud_normals1);
 
+	//pcl::io::savePCDFile("test_pcd.pcd", *cloud_normals1);
+	//std::cerr << "Saved " << cloud_normals1->points.size() << " data points to test_pcd.pcd." << std::endl;
+	
 	pcl::visualization::PCLVisualizer::Ptr viewer;
 	viewer = normalsVisColor(cloud, cloud_normals1);
 
@@ -346,7 +317,7 @@ void ReconstructionTest::pointCloudNormalViz() const {
 	{
 		viewer->spinOnce();
 	}
-
+	
 	Verbose::message("DONE pointCloudNormalViz()", SUCCESS);
 	SAFE_DELETE(context);
 	
