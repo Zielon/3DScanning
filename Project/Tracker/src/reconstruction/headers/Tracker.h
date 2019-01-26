@@ -6,12 +6,13 @@
 
 #include "../../data-stream/headers/VideoStreamReaderBase.h"
 #include "../../data-stream/headers/DatasetVideoStreamReader.h"
-#include "icp/ICPComplete.h"
+#include "icp/ICPNonLinear.h"
 #include "icp/ICPNaive.h"
+#include "icp/ICPFeatures.h"
 
 using namespace std;
 
-enum ICPType {NAIVE, PCL};
+enum ICPType { NAIVE, NON_LINEAR, FEATURES };
 
 /**
  * Tracks frame to frame transition and estimate the pose
@@ -23,8 +24,12 @@ public:
 
 		switch (icp_type)
 		{
-			case NAIVE: m_icp = new ICPNaive(); break;
-			case PCL: m_icp = new ICPComplete(); break;
+		case NAIVE: m_icp = new ICPNaive();
+			break;
+		case NON_LINEAR: m_icp = new ICPNonLinear();
+			break;
+		case FEATURES: m_icp = new ICPFeatures();
+			break;
 		}
 	}
 

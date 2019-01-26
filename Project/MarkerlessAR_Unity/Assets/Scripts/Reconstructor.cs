@@ -40,7 +40,7 @@ namespace Assets.Scripts
         public GameObject cameraRig;
 
         public GameObject frameMeshObject;
-        public int meshUpdateRate = 15;
+        public int meshUpdateRate = 2;
         public Image videoBG;
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
