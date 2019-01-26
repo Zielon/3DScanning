@@ -117,8 +117,8 @@ cv::Mat PointCloud::getNormalMap()
 
 	normals.convertTo(normal_map, CV_8UC3);
 
-	//imshow("Normal Map", normals);
-	cv::imwrite("normal_map.png", normal_map);
+	imshow("Normal Map", normals);
+	//cv::imwrite("normal_map.png", normal_map);
 
 	std::cin.get();
 

@@ -64,7 +64,7 @@ extern "C" __declspec(dllexport) void * createSensorContext()
 		intrinsics
 	);
 
-	tracker_context->m_tracker = new Tracker(camera_parameters, PCL);
+	tracker_context->m_tracker = new Tracker(camera_parameters, NON_LINEAR);
 	tracker_context->m_fusion = new Fusion(camera_parameters);
 	// Start consuming the point clouds buffer
 	tracker_context->m_fusion->consume();
