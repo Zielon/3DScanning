@@ -26,6 +26,10 @@ extern "C" __declspec(dllexport) int getImageHeight(void* context);
 
 extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* image, float* pose);
 
+extern "C" __declspec(dllexport) void getFrame(void* context, unsigned char* image, bool record);
+
+extern "C" __declspec(dllexport) void computeOfflineReconstruction(void* context, __MeshInfo* info, float* pose);
+
 extern "C" __declspec(dllexport) void enableReconstruction(void* context, bool enable); 
 
 extern "C" __declspec(dllexport) void getMeshInfo(void* context, __MeshInfo* info);

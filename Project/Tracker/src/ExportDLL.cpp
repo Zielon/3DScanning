@@ -143,3 +143,86 @@ extern "C" __declspec(dllexport) void enableReconstruction(void* context, bool e
 	auto* tracker_context = static_cast<TrackerContext*>(context);
 	tracker_context->enableReconstruction = enable;
 }
+
+
+extern "C" __declspec(dllexport) void getFrame(void* context, unsigned char* image, bool record)
+{
+	auto* tracker_context = static_cast<TrackerContext*>(context);
+
+	cv::Mat rgb, depth;
+
+	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
+
+	tracker_context->rgb_recording.push_back(rgb);
+	tracker_context->depth_recording.push_back(depth); 
+
+
+	// Copy value to UNITY
+	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
+	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
+
+}
+
+
+extern "C" __declspec(dllexport) void computeOfflineReconstruction(void* context, __MeshInfo* mesh_info, float* pose)
+{
+	TrackerContext* tracker_context = static_cast<TrackerContext*>(context);
+	const auto height = tracker_context->m_videoStreamReader->m_height_depth;
+	const auto width = tracker_context->m_videoStreamReader->m_width_depth;
+
+	Matrix3f intrinsics = tracker_context->m_videoStreamReader->getCameraIntrinsics();
+	const SystemParameters camera_parameters = SystemParameters(
+		intrinsics(0, 0),
+		intrinsics(1, 1),
+		intrinsics(0, 2),
+		intrinsics(1, 2),
+		height,
+		width,
+		intrinsics
+	);
+
+	Tracker* tracker = tracker_context->m_tracker; 
+
+	tracker_context->m_first_frame = true;
+
+	auto rgbIt = tracker_context->rgb_recording.begin(); 
+
+	for (auto depth : tracker_context->depth_recording)
+	{
+		auto rgb = *rgbIt++; 
+
+		PointCloud* _target = new PointCloud(tracker->getCameraParameters(), depth, rgb);
+		std::shared_ptr<PointCloud> current(_target);
+
+		if (tracker_context->m_first_frame)
+		{
+			tracker->m_pose = Matrix4f::Identity();
+			tracker_context->m_first_frame = false;
+			tracker->m_previous_point_cloud = current;
+			continue;
+		}
+
+		const Matrix4f delta = tracker->alignNewFrame(tracker->m_previous_point_cloud, current);
+
+		tracker->m_pose *= delta;
+		//tracker->m_pose = delta * tracker->m_pose;//Correct order (Juan opinion)
+		current->m_pose_estimation = tracker->m_pose;
+
+		// Produce a new point cloud (add to the buffer)
+		tracker_context->m_fusion->produce(std::shared_ptr<PointCloud>(tracker->m_previous_point_cloud));
+		tracker->m_previous_point_cloud = current;
+
+	}
+	tracker_context->rgb_recording.clear();
+	tracker_context->depth_recording.clear();
+
+	tracker_context->m_fusion->wait(); 
+
+	mesh_info->mesh = new Mesh();
+	tracker_context->m_fusion->processMesh(*(mesh_info->mesh));
+	mesh_info->m_index_count = mesh_info->mesh->m_triangles.size() * 3;
+	mesh_info->m_vertex_count = mesh_info->mesh->m_vertices.size();
+
+	memcpy(pose, tracker->m_pose.data(), 16 * sizeof(float));
+
+}

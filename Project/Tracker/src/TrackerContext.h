@@ -4,6 +4,8 @@
 #include "reconstruction/headers/Tracker.h"
 #include "data-stream/headers/VideoStreamReaderBase.h"
 #include "reconstruction/headers/Fusion.h"
+#include <list>
+
 
 const bool ENFORCE_REALTIME = true;
 
@@ -20,6 +22,10 @@ struct TrackerContext
 	Fusion* m_fusion;
 	bool m_first_frame = true; 
 	bool enableReconstruction = true; 
+
+	std::list<cv::Mat> rgb_recording; 
+	std::list<cv::Mat> depth_recording; 
+
 };
 
 #endif TRACKER_CONTEXT_H

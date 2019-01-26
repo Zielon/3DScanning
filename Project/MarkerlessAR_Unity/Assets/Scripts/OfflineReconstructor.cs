@@ -42,6 +42,7 @@ namespace Assets.Scripts
         public GameObject cameraRig;
         public GameObject interactUI; 
         public GameObject frameMeshObject;
+        public GameObject processingText; 
         public int meshUpdateRate = 15;
         public Image videoBG;
 
@@ -68,6 +69,14 @@ namespace Assets.Scripts
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern void enableReconstruction(IntPtr context, bool enable);
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void getFrame(IntPtr context, byte[] image, bool record);
+
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void computeOfflineReconstruction(IntPtr context, ref __MeshInfo mesh, float[] pose);
+
+
 
         // Use this for initialization
         private void Start()
@@ -117,7 +126,34 @@ namespace Assets.Scripts
             _framesProcessed++;
 
 
-            tracker(_cppContext, _image, _pose);
+            switch(currentState)
+            {
+                case ProcessingState.INITIAL:
+                    {
+                        getFrame(_cppContext, _image, false); 
+                        break; 
+                    }
+                case ProcessingState.RECORDING:
+                    {
+                        getFrame(_cppContext, _image, true);
+                        break;
+                    }
+                case ProcessingState.LOAD_MESH:
+                    {
+                        if (_meshDtoQueue.Count > 0)
+                            AddMesh(_meshDtoQueue.Dequeue());
+                        return; 
+                    }
+                case ProcessingState.INTERACT:
+                    {
+                        //tracker(_cppContext, _image, _pose);
+                        //var pose = Helpers.GetPose(_pose);
+
+                        //cameraRig.transform.position = pose.GetColumn(3);
+                        //cameraRig.transform.rotation = pose.rotation;
+                        break;
+                    }
+            }
 
             //Create texture from image
             var tex = new Texture2D(_w, _h, TextureFormat.RGB24, false);
@@ -126,19 +162,7 @@ namespace Assets.Scripts
             tex.Apply();
 
             videoBG.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
-            var pose = Helpers.GetPose(_pose);
 
-            cameraRig.transform.position = pose.GetColumn(3);
-            cameraRig.transform.rotation = pose.rotation;
-
-            // Apply camera poses
-
-
-            //   Debug.Log("Pos: " + cameraRig.transform.position);
-            //   Debug.Log("Rot: " + cameraRig.transform.rotation.eulerAngles);
-
-            if (_meshDtoQueue.Count > 0)
-                AddMesh(_meshDtoQueue.Dequeue());
 
         }
 
@@ -151,6 +175,11 @@ namespace Assets.Scripts
             frameMeshObject.GetComponent<MeshFilter>().mesh = mesh;
             frameMeshObject.GetComponent<MeshCollider>().sharedMesh = mesh;
 
+            processingText.SetActive(false);
+            var pose = Helpers.GetPose(_pose);
+
+            cameraRig.transform.position = pose.GetColumn(3);
+            cameraRig.transform.rotation = pose.rotation;
             currentState = ProcessingState.INTERACT;
             interactUI.SetActive(true); 
         }
@@ -160,7 +189,7 @@ namespace Assets.Scripts
             return new Thread(() =>
             {
                 var meshInfo = new __MeshInfo();
-                getMeshInfo(_cppContext, ref meshInfo);
+                computeOfflineReconstruction(_cppContext, ref meshInfo, _pose); 
 
                 var vertexBuffer = new Vector3[meshInfo.m_vertex_count];
                 var indexBuffer = new int[meshInfo.m_index_count];
@@ -185,17 +214,16 @@ namespace Assets.Scripts
             frameMeshObject.GetComponent<MeshFilter>().mesh = empty;
             frameMeshObject.GetComponent<MeshCollider>().sharedMesh = empty;
             currentState = ProcessingState.RECORDING;
-            enableReconstruction(_cppContext, true);
         }
 
         public void stopRecording()
         {
             Debug.Log("Stop Recording");
-
             currentState = ProcessingState.LOAD_MESH;
-            enableReconstruction(_cppContext, false);
             _thread = SpawnFrameMeshThread();
             _thread.Start();
+            processingText.SetActive(true); 
+
         }
 
     }
