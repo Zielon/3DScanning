@@ -110,7 +110,7 @@ cv::Mat PointCloud::getNormalMap()
 	}
 
 	//normals.convertTo(normal_map, CV_8UC3);
-	//cv::imwrite("normal_map.png", normal_map);
+	cv::imwrite("normal_map.png", normal_map);
 
 	return normal_map;
 }
@@ -125,12 +125,18 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	if (m_downsampling_factor > 1)
 	{
-		resize(depth_mat, image,
+		/*resize(depth_mat, image,
 		       cv::Size(depth_mat.cols / m_downsampling_factor, depth_mat.rows / m_downsampling_factor), 0, 0,
 		       cv::INTER_NEAREST);
 		resize(rgb_mat, colors,
 		       cv::Size(depth_mat.cols / m_downsampling_factor, depth_mat.rows / m_downsampling_factor), 0, 0,
-		       cv::INTER_NEAREST);
+		       cv::INTER_NEAREST);*/
+		resize(depth_mat, image,
+			cv::Size(depth_mat.cols / m_downsampling_factor, depth_mat.rows / m_downsampling_factor), 0, 0,
+			cv::INTER_LINEAR);
+		resize(rgb_mat, colors,
+			cv::Size(depth_mat.cols / m_downsampling_factor, depth_mat.rows / m_downsampling_factor), 0, 0,
+			cv::INTER_LINEAR);
 	}
 	else
 	{
@@ -155,12 +161,11 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	float depth_max = -std::numeric_limits<float>::infinity();
 
 	//Bilateral filtering to remove noise
-	cv::Mat filtered_depth;
 
 	if (m_filtering)
 	{
 		FilterType filter_type = bilateral;
-		filtered_depth = this->filterMap(depth_mat, filter_type, 9.0f, 150.0f);
+		image = this->filterMap(image, filter_type, 9.0f, 150.0f);
 	}
 
 	#pragma omp parallel for
