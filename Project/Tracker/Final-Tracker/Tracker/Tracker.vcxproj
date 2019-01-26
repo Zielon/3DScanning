@@ -41,6 +41,8 @@
     <ClInclude Include="..\..\src\files-manager\headers\DatasetManager.h" />
     <ClInclude Include="..\..\src\helpers\Transformations.h" />
     <ClInclude Include="..\..\src\marshaling\__Mesh.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\FusionBase.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\FusionGPU.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\SystemParameters.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\Fusion.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\icp\ICP.h" />
@@ -71,6 +73,7 @@
     <ClCompile Include="..\..\src\files-manager\sources\DatasetManager.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Fusion.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\FusionGPU.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPComplete.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPNaive.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Mesh.cpp" />
@@ -81,6 +84,16 @@
     <ClCompile Include="..\..\src\tests\sources\ReconstructionTest.cpp" />
     <ClCompile Include="..\..\src\tests\sources\TestBase.cpp" />
     <ClCompile Include="..\..\src\tests\sources\TrackerTest.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\shaders\Fusion.hlsl">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">true</ExcludedFromBuild>
+    </None>
+    <None Include="..\..\shaders\MarchingCubes.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">true</ExcludedFromBuild>
+      <FileType>Document</FileType>
+    </None>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -190,7 +203,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(OPENNI2_LIB64);$(PCL_ROOT)\3rdParty\FLANN\lib;$(PCL_ROOT)\3rdParty\VTK\lib;$(PCL_ROOT)\3rdParty\Boost\lib;$(PCL_ROOT)\lib;$(OPENCV_DIR)\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>openNI2.lib;opencv_world400d.lib;pcl_common_debug.lib;pcl_recognition_debug.lib;pcl_kdtree_debug.lib;pcl_search_debug.lib;pcl_filters_debug.lib;pcl_features_debug.lib;pcl_registration_debug.lib;flann.lib</AdditionalDependencies>
+      <AdditionalDependencies>openNI2.lib;opencv_world400d.lib;pcl_common_debug.lib;pcl_recognition_debug.lib;pcl_kdtree_debug.lib;pcl_search_debug.lib;pcl_filters_debug.lib;pcl_features_debug.lib;pcl_registration_debug.lib;flann.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
       <RegisterOutput>false</RegisterOutput>
       <AddModuleNamesToAssembly>
       </AddModuleNamesToAssembly>
@@ -258,7 +271,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(OPENNI2_LIB64);$(PCL_ROOT)\3rdParty\FLANN\lib;$(PCL_ROOT)\3rdParty\VTK\lib;$(PCL_ROOT)\3rdParty\Boost\lib;$(PCL_ROOT)\lib;$(OPENCV_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world400.lib;pcl_common_release.lib;pcl_recognition_release.lib;pcl_kdtree_release.lib;pcl_search_release.lib;pcl_filters_release.lib;pcl_features_release.lib;pcl_registration_release.lib;flann.lib;OpenNI2.lib</AdditionalDependencies>
+      <AdditionalDependencies>opencv_world400.lib;pcl_common_release.lib;pcl_recognition_release.lib;pcl_kdtree_release.lib;pcl_search_release.lib;pcl_filters_release.lib;pcl_features_release.lib;pcl_registration_release.lib;flann.lib;OpenNI2.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <SubSystem>Console</SubSystem>
@@ -285,7 +298,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(OPENNI2_LIB64);$(PCL_ROOT)\3rdParty\FLANN\lib;$(PCL_ROOT)\3rdParty\VTK\lib;$(PCL_ROOT)\3rdParty\Boost\lib;$(PCL_ROOT)\lib;$(OPENCV_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world400.lib;pcl_common_release.lib;pcl_recognition_release.lib;pcl_kdtree_release.lib;pcl_search_release.lib;pcl_filters_release.lib;pcl_features_release.lib;pcl_registration_release.lib;flann.lib;OpenNI2.lib</AdditionalDependencies>
+      <AdditionalDependencies>opencv_world400.lib;pcl_common_release.lib;pcl_recognition_release.lib;pcl_kdtree_release.lib;pcl_search_release.lib;pcl_filters_release.lib;pcl_features_release.lib;pcl_registration_release.lib;flann.lib;OpenNI2.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <SubSystem>Console</SubSystem>

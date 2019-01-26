@@ -114,7 +114,7 @@ void ReconstructionTest::reconstructionTest() const{
 
 	ProgressBar bar(size, 60, "Frames loaded");
 
-	for (int index = 0; index < size; index += 1)
+	for (int index = 0; index < size; index += 5)
 	{
 		const auto trajectory = getTrajectory(index);
 		cv::Mat rgb, depth;
@@ -160,6 +160,10 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 	for (int index = 0; index < size; index += 1)
 	{
 		tracker(context, img, pose);
+
+		Matrix4f mat = Matrix4f::Map(pose); 
+
+	//	std::cout << "\n" << mat << "\n" << std::endl; 
 
 		bar.set(index);
 		bar.display();

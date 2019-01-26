@@ -17,7 +17,7 @@ struct Size
 class Volume
 {
 public:
-	Volume(Size min, Size max, uint size, uint dim = 1);
+	Volume(Size min, Size max, uint size, uint dim = 1, bool allocMemory = true);
 
 	~Volume();
 
@@ -37,7 +37,6 @@ public:
 
 	int m_size;
 
-private:
 
 	//! Lower left and Upper right corner.
 	Vector3d m_min, m_max;
@@ -45,6 +44,7 @@ private:
 	//! max-min
 	Vector3d m_diag;
 
+private:
 	double m_ddx, m_ddy, m_ddz;
 
 	Voxel* m_voxels;

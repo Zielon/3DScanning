@@ -90,6 +90,12 @@
     <ClInclude Include="..\..\src\reconstruction\headers\SystemParameters.h">
       <Filter>reconstruction\headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\FusionBase.h">
+      <Filter>reconstruction\headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\FusionGPU.h">
+      <Filter>reconstruction\headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -150,6 +156,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\data-stream\sources\Xtion2StreamReader.cpp">
       <Filter>data-stream\sources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\reconstruction\sources\FusionGPU.cpp">
+      <Filter>reconstruction\sources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -219,5 +228,16 @@
     <Filter Include="reconstruction\sources\icp">
       <UniqueIdentifier>{02e34276-cadd-45f3-9b44-6f3a924352d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{7da33bd4-b6c5-449b-a0f0-16324e493209}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\shaders\MarchingCubes.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\shaders\Fusion.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
