@@ -169,7 +169,7 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 
 	context->m_fusion->save("mesh");
 
-	Verbose::message("DONE reconstructionTest()", SUCCESS);
+	Verbose::message("DONE reconstructionTestWithOurTracking()", SUCCESS);
 
 	delete[]img;
 	SAFE_DELETE(context);
@@ -195,6 +195,8 @@ void ReconstructionTest::reconstructionTestSensor() const{
 
 		index++;
 	}
+
+	context->m_fusion->save("mesh");
 
 	Verbose::message("DONE reconstructionTestSensor()", SUCCESS);
 
