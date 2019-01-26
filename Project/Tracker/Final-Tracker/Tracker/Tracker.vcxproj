@@ -216,6 +216,10 @@
     <ProjectReference>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
+    <PostBuildEvent>
+      <Command>xcopy $(ProjectDir)..\..\shaders\*.hlsl $(OutDir)shaders\ /y /s /i
+xcopy $(ProjectDir)..\..\shaders\*.hlsl $(ProjectDir)shaders\ /y /s /i</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -277,8 +281,8 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>xcopy $(ProjectDir)..\..\shaders\*.hlsl $(OutDir)shaders\ /y /s /i
+xcopy $(ProjectDir)..\..\shaders\*.hlsl $(ProjectDir)shaders\ /y /s /i</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">
@@ -308,7 +312,8 @@
       </Command>
     </PreLinkEvent>
     <PostBuildEvent>
-      <Command>echo f | xcopy /y "$(OutDir)*.dll" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\"</Command>
+      <Command>xcopy $(ProjectDir)..\..\shaders\*.hlsl $(OutDir)shaders\ /y /s /i
+xcopy $(ProjectDir)..\..\shaders\*.hlsl $(ProjectDir)shaders\ /y /s /i</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

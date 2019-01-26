@@ -120,7 +120,7 @@ void ReconstructionTest::reconstructionTest() const{
 		cv::Mat rgb, depth;
 
 		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
-		PointCloud* _cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 8);
+		PointCloud* _cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 1);
 		std::shared_ptr<PointCloud> cloud(_cloud);
 
 		cloud->m_pose_estimation = trajectory;

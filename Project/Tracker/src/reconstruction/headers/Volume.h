@@ -44,10 +44,12 @@ public:
 	//! max-min
 	Vector3d m_diag;
 
+	Voxel* m_voxels;
+
+
 private:
 	double m_ddx, m_ddy, m_ddz;
 
-	Voxel* m_voxels;
 
 	int m_length = 0;
 

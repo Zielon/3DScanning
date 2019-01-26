@@ -94,7 +94,7 @@ void main(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID)
        
     int2 pixels = (int2) round(cell.xy); 
 
-  //  if (all(pixels > int2(0, 0) && pixels < g_settings.imageDims))
+    if (all(pixels > int2(0, 0) && pixels < g_settings.imageDims))
     {
         float depth = g_currentFrame.Load(int3(pixels.xy, 0)); 
 
@@ -118,7 +118,8 @@ void main(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID)
                 v.weight = min(v.weight + weight, MAX_WEIGHT); 
 
                 g_SDF[cellIDX] = v; 
-            }     
+            }
+
 
         } // depth < INFINITY
     }//pixel in image

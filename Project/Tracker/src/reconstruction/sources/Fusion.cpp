@@ -43,7 +43,7 @@ void Fusion::save(string name){
 }
 
 void Fusion::initialize(){
-	m_volume = new Volume(Size(-1, -4, -2), Size(2, 4, 4), 256, 1);
+	m_volume = new Volume(Size(-4, -4, -4), Size(4, 4, 4), 256, 1);
 	m_buffer = new Buffer<std::shared_ptr<PointCloud>>();
 	m_trunaction = m_volume->m_voxel_size * 2.f;
 }
@@ -97,7 +97,7 @@ void Fusion::processMesh(Mesh& mesh){
 	for (int x = 0; x < m_volume->m_size - 1; x++)
 		for (int y = 0; y < m_volume->m_size - 1; y++)
 			for (int z = 0; z < m_volume->m_size - 1; z++)
-				ProcessVolumeCell(m_volume, x, y, z, 0.0f, &mesh);
+				MarchingCubes::getInstance().ProcessVolumeCell(m_volume, x, y, z, 0.0f, &mesh);
 }
 
 void Fusion::integrate(std::shared_ptr<PointCloud> cloud){

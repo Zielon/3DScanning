@@ -233,11 +233,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\shaders\MarchingCubes.hlsl">
-      <Filter>shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\shaders\Fusion.hlsl">
-      <Filter>shaders</Filter>
-    </FxCompile>
+    <None Include="..\..\shaders\Fusion.hlsl" />
+    <None Include="..\..\shaders\MarchingCubes.hlsl" />
   </ItemGroup>
 </Project>

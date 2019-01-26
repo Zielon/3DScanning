@@ -3,6 +3,8 @@
 
 #include "../../concurency/sources/Buffer.cpp"
 #include "../../concurency/sources/Consumer.cpp"
+#include "../headers/Mesh.h"
+
 #include "FusionBase.h"
 
 using namespace std; 

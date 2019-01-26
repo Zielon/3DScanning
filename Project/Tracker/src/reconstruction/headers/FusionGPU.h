@@ -19,7 +19,7 @@
 
 
 
-
+#define THREADS_PER_GROUP_DIM 4 
 
 
 class FusionGPU : public FusionBase
@@ -44,15 +44,14 @@ public:
 	void processMesh(Mesh& mesh) override;
 
 private: 
-	void initWindow();
-	void initDx11(); 
-	void initBuffers();
+	inline void initWindow();
+	inline void initDx11(); 
+	inline void initBuffers();
 	void reloadShaders(); 
 
-	void populateSettingsBuffers(); 
+	inline void populateSettingsBuffers(); 
 
-
-	void initialize(); 
+	inline void initialize(); 
 
 	__declspec(align(16)) struct FusionSettings
 	{
@@ -68,9 +67,11 @@ private:
 		float m_depth_min; 
 		float m_depth_max;
 
-		int m_image_height = 0;
 		int m_image_width = 0;
+		int m_image_height = 0;
 		int m_resolution;
+		int m_resSQ;
+
 
 	}m_fusionSettings;
 
@@ -81,8 +82,6 @@ private:
 		Vector3i frustum_min;
 		Vector3i frustum_max;
 		Vector3i numThreads; 
-
-
 	}m_fusionPerFrame;
 
 	__declspec(align(16)) struct MarchingCubesSettings
@@ -100,6 +99,8 @@ private:
 
 	ID3D11UnorderedAccessView* m_uav_sdf = NULL;
 	ID3D11Buffer* m_buf_sdf = NULL;
+	ID3D11Buffer* m_buf_sdf_copy = NULL;
+
 	ID3D11Texture2D* m_t2d_currentFrame = NULL;
 
 	ID3D11Buffer* m_cbuf_fusionConst = NULL;
