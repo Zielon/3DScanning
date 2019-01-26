@@ -2,7 +2,7 @@
 #include <opencv2/imgproc.hpp>
 #include "../../helpers/Transformations.h"
 
-PointCloud::PointCloud(CameraParameters camera_parameters, cv::Mat& depth, cv::Mat& rgb, int downsamplingFactor)
+PointCloud::PointCloud(SystemParameters camera_parameters, cv::Mat& depth, cv::Mat& rgb, int downsamplingFactor)
 	: m_camera_parameters(camera_parameters){
 
 	m_nearestNeighbor = new NearestNeighborSearchFlann();
@@ -176,7 +176,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	}
 
 	m_indexBuildingThread = new std::thread([this]()-> void{
-		m_nearestNeighbor->buildIndex(m_points);
+		//m_nearestNeighbor->buildIndex(m_points);
 	});
 
 }

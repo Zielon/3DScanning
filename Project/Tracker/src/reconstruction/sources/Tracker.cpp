@@ -4,10 +4,10 @@ Tracker::~Tracker(){
 	SAFE_DELETE(m_icp);
 }
 
-Matrix4f Tracker::alignNewFrame(std::shared_ptr<PointCloud> source, std::shared_ptr<PointCloud> target) const{
-	return m_icp->estimatePose(source, target);
+Matrix4f Tracker::alignNewFrame(std::shared_ptr<PointCloud> model, std::shared_ptr<PointCloud> data) const{
+	return m_icp->estimatePose(model, data);
 }
 
-CameraParameters Tracker::getCameraParameters() const{
+SystemParameters Tracker::getCameraParameters() const{
 	return m_camera_parameters;
 }

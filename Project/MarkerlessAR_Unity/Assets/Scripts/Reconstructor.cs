@@ -22,25 +22,26 @@ namespace Assets.Scripts
         private const string DllFilePath = @"Tracker_release";
         private readonly Queue<MeshDto> _meshDtoQueue = new Queue<MeshDto>();
         private IntPtr _cppContext;
-        private int _framesProcessed = 0;
+        private int _framesProcessed;
         private int _h = -1;
         private byte[] _image;
         private float[] _pose;
         private Thread _thread;
-        private int _w = -1;
 
         //general setup
-        bool _use_sensor = true;
+        private readonly bool _use_sensor = false;
+        private int _w = -1;
+
+        public int abortAfterNFrames = -1;
         //bool _use_reconstruction = true;
         //bool _use_fusion = true;
 
         // Unity injected vars
         public GameObject cameraRig;
-        public Image videoBG; 
-        public int abortAfterNFrames = -1;
-        public int meshUpdateRate = 15; 
 
-        public  GameObject frameMeshObject;
+        public GameObject frameMeshObject;
+        public int meshUpdateRate = 2;
+        public Image videoBG;
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr createContext(byte[] path);
@@ -67,7 +68,6 @@ namespace Assets.Scripts
         // Use this for initialization
         private void Start()
         {
-
             if (_use_sensor)
             {
                 _cppContext = createSensorContext();
@@ -75,8 +75,8 @@ namespace Assets.Scripts
             else
             {
                 var segments = new List<string>(
-                    Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
-                {"..", "Datasets", "freiburg", " "};
+                        Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
+                    {"..", "Datasets", "freiburg", " "};
 
                 var absolutePath = segments.Aggregate(
                     (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
@@ -97,18 +97,15 @@ namespace Assets.Scripts
         private void Update()
         {
             // Unity just dies if the dataset runs out
-            if(_framesProcessed > abortAfterNFrames && abortAfterNFrames > 0)
+            if (_framesProcessed > abortAfterNFrames && abortAfterNFrames > 0)
             {
-                Debug.Log("Tracking aborted"); 
-                return; 
+                Debug.Log("Tracking aborted");
+                return;
             }
-
-
-            //   Debug.Log("Update test");
 
             if (_w <= 0 || _h <= 0)
             {
-                Debug.Log("There is a problem with the stream of the tracker");
+                Debug.Log("There is a problem with the stream of the tracker [Check _use_sensor flag]");
                 return;
             }
 
@@ -150,7 +147,7 @@ namespace Assets.Scripts
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
             frameMeshObject.GetComponent<MeshFilter>().mesh = mesh;
-            frameMeshObject.GetComponent<MeshCollider>().sharedMesh = mesh; 
+            frameMeshObject.GetComponent<MeshCollider>().sharedMesh = mesh;
         }
 
         private Thread SpawnFrameMeshThread()

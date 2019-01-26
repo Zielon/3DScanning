@@ -5,15 +5,16 @@
 #include "../PointCloud.h"
 #include "ICP.h"
 
-class ICPComplete final : public ICP
+class ICPNonLinear final : public ICP
 {
 public:
 
-	~ICPComplete(){}
+	~ICPNonLinear(){}
 
-	Matrix4f estimatePose(std::shared_ptr<PointCloud> source, std::shared_ptr<PointCloud> target) override;
+	Matrix4f estimatePose(std::shared_ptr<PointCloud> model, std::shared_ptr<PointCloud> data) override;
 
 private:
+	
 };
 
 #endif //PROJECT_ICP_COMPLETE_H

@@ -12,7 +12,7 @@ public:
 
 	virtual ~ICP(){};
 
-	virtual Matrix4f estimatePose(std::shared_ptr<PointCloud> source, std::shared_ptr<PointCloud> target) = 0;
+	virtual Matrix4f estimatePose(std::shared_ptr<PointCloud> model, std::shared_ptr<PointCloud> data) = 0;
 };
 
 #endif //PROJECT_ICP_H

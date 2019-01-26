@@ -7,7 +7,7 @@
 Mesh::Mesh() = default;
 
 /// Create a mesh using naive approach to generate triangles
-Mesh::Mesh(cv::Mat& depthMat, cv::Mat colorMat, CameraParameters camera_parameters){
+Mesh::Mesh(cv::Mat& depthMat, cv::Mat colorMat, SystemParameters camera_parameters){
 
 	const float edge_threshold = 0.01f;
 

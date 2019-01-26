@@ -30,23 +30,23 @@ void TrackerTest::cameraPoseTest(){
 
 		if (i == 0) // first frame
 		{
-			tracker_context->m_tracker->m_previous_pose = Matrix4f::Identity();
+			tracker_context->m_tracker->m_pose = Matrix4f::Identity();
 			tracker_context->m_tracker->m_previous_point_cloud = source;
 			prev_trajectory = trajectory;
 			continue;
 		}
 
-		//tracker_context->m_tracker->m_previous_point_cloud->transform(tracker_context->m_tracker->m_previous_pose);
+		//tracker_context->m_tracker->m_previous_point_cloud->transform(tracker_context->m_tracker->m_pose);
 
 		//std::cout << "Previous Pose" << std::endl;
-		//std::cout << tracker_context->m_tracker->m_previous_pose << std::endl;
+		//std::cout << tracker_context->m_tracker->m_pose << std::endl;
 
 		std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
 
 		Matrix4f deltaPose = tracker_context->m_tracker->alignNewFrame(
 			source, tracker_context->m_tracker->m_previous_point_cloud);
 
-		Matrix4f pose = deltaPose * tracker_context->m_tracker->m_previous_pose;
+		Matrix4f pose = deltaPose * tracker_context->m_tracker->m_pose;
 
 		std::cout << "Vertices: source: " << source->getPoints().size() << " target: " << tracker_context
 		                                                                                  ->m_tracker->
@@ -61,7 +61,7 @@ void TrackerTest::cameraPoseTest(){
 
 		// Safe the last frame reference
 		tracker_context->m_tracker->m_previous_point_cloud = source;
-		tracker_context->m_tracker->m_previous_pose = pose;
+		tracker_context->m_tracker->m_pose = pose;
 
 		//trackerCameraPose(pc, img, pose);
 		imshow("dllTest", rgb);

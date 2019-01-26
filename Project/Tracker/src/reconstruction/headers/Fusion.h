@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include "../../Eigen.h"
-#include "CameraParameters.h"
+#include "SystemParameters.h"
 #include "Voxel.h"
 #include "PointCloud.h"
 #include "Volume.h"
@@ -25,7 +25,7 @@ struct FrustumBox
 class Fusion final
 {
 public:
-	Fusion(CameraParameters camera_parameters);
+	Fusion(SystemParameters camera_parameters);
 
 	~Fusion();
 
@@ -44,7 +44,7 @@ public:
 private:
 	void initialize();
 
-	FrustumBox computeFrustumBounds(Matrix4f cameraToWorld, CameraParameters camera_parameters) const;
+	FrustumBox computeFrustumBounds(Matrix4f cameraToWorld, SystemParameters camera_parameters) const;
 
 	int clamp(float value) const;
 
@@ -62,7 +62,7 @@ private:
 	Buffer<std::shared_ptr<PointCloud>>* m_buffer;
 	Volume* m_volume;
 	std::mutex m_mutex;
-	CameraParameters m_camera_parameters;
+	SystemParameters m_camera_parameters;
 	const int NUMBER_OF_CONSUMERS = 5;
 };
 
