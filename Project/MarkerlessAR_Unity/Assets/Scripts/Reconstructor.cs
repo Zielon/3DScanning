@@ -29,7 +29,7 @@ namespace Assets.Scripts
         private Thread _thread;
 
         //general setup
-        private readonly bool _use_sensor = false;
+        private readonly bool _use_sensor = true;
         private int _w = -1;
 
         public int abortAfterNFrames = -1;
