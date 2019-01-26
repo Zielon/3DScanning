@@ -22,6 +22,7 @@ FusionGPU::FusionGPU(SystemParameters camera_parameters) : FusionBase(camera_par
 
 FusionGPU::~FusionGPU()
 {
+	SafeRelease(m_srv_currentFrame); 
 	SafeRelease(m_uav_sdf);
 	SafeRelease(m_t2d_currentFrame);
 	SafeRelease(m_buf_sdf_copy); 
@@ -102,8 +103,12 @@ void FusionGPU::integrate(std::shared_ptr<PointCloud> cloud)
 
 	m_d3dContext->CSSetConstantBuffers(0, 2, buffers); 
 	m_d3dContext->CSSetUnorderedAccessViews(0, 1, &m_uav_sdf, 0);
+	m_d3dContext->CSSetShaderResources(0, 1, &m_srv_currentFrame); 
 	m_d3dContext->CSSetShader(m_shader_fusion, NULL, 0);
 	m_d3dContext->Dispatch(m_fusionPerFrame.numThreads.x()/ THREADS_PER_GROUP_DIM, m_fusionPerFrame.numThreads.y()/ THREADS_PER_GROUP_DIM, m_fusionPerFrame.numThreads.z()/ THREADS_PER_GROUP_DIM);
+
+
+	m_swapChain->Present(0, 0); 
 
 }
 
@@ -220,7 +225,7 @@ void FusionGPU::initBuffers()
 	D3D11_TEXTURE2D_DESC descCurrentFrameBuffer = { 0 };
 	descCurrentFrameBuffer.Width = m_camera_parameters.m_image_width;
 	descCurrentFrameBuffer.Height = m_camera_parameters.m_image_height;
-	descCurrentFrameBuffer.MipLevels = 1;
+	descCurrentFrameBuffer.MipLevels = 0;
 	descCurrentFrameBuffer.ArraySize = 1;
 	descCurrentFrameBuffer.Format = DXGI_FORMAT_R32_FLOAT;
 	descCurrentFrameBuffer.SampleDesc.Count = 1;
@@ -236,6 +241,18 @@ void FusionGPU::initBuffers()
 		std::cin.get();
 	}
 
+	D3D11_SHADER_RESOURCE_VIEW_DESC descCurrentFrameSRV; 
+	descCurrentFrameSRV.Texture2D.MipLevels = 1; 
+	descCurrentFrameSRV.Texture2D.MostDetailedMip = 0; 
+	descCurrentFrameSRV.Format = DXGI_FORMAT_R32_FLOAT; 
+	descCurrentFrameSRV.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D; 
+
+	hr = m_d3dDevice->CreateShaderResourceView(m_t2d_currentFrame, &descCurrentFrameSRV, &m_srv_currentFrame);
+	if (FAILED(hr))
+	{
+		std::cout << "failed to create SRV" << std::endl;
+		std::cin.get();
+	}
 
 
 	D3D11_BUFFER_DESC descBuffer = { 0 };

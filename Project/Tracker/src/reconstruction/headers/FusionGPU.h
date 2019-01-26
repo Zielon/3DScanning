@@ -102,6 +102,8 @@ private:
 	ID3D11Buffer* m_buf_sdf_copy = NULL;
 
 	ID3D11Texture2D* m_t2d_currentFrame = NULL;
+	ID3D11ShaderResourceView* m_srv_currentFrame = NULL;
+
 
 	ID3D11Buffer* m_cbuf_fusionConst = NULL;
 	ID3D11Buffer* m_cbuf_fusionPerFrame = NULL;
