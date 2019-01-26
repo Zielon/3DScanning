@@ -28,7 +28,7 @@ public class PaintBallScript : MonoBehaviour
         if(collision.gameObject.tag == "FrameMesh")
         {
             GameObject splat = Instantiate(SplatPrefab);
-            splat.transform.position = GetComponent<Collider>().ClosestPoint(collision.contacts[0].point) + collision.contacts[0].normal;
+            splat.transform.position = GetComponent<Collider>().ClosestPoint(collision.contacts[0].point) + collision.contacts[0].normal * 0.001f ;
             splat.transform.forward = -collision.contacts[0].normal;      
         }
 
