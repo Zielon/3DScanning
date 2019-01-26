@@ -11,8 +11,9 @@ public:
 		//this->reconstructionTestSensor(100);
 		//this->pointCloudTest();
 		//this->pointCloudTestWithICP();
-		this->pointCloudNormalViz();
+		//this->pointCloudNormalViz();
 		//this->unityIntegrationTest(); 
+		this->pointCloudPCLNormalViz();
 	};
 
 private:
@@ -29,4 +30,6 @@ private:
 	void unityIntegrationTest() const;
 
 	void pointCloudNormalViz() const;
+
+	void pointCloudPCLNormalViz() const;
 };

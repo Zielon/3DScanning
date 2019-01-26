@@ -263,12 +263,15 @@ pcl::visualization::PCLVisualizer::Ptr normalsVisColor(
 	return (viewer);
 }
 
-void ReconstructionTest::pointCloudNormalViz() const {
+void ReconstructionTest::pointCloudPCLNormalViz() const {
 
-	Verbose::message("START pointCloudNormalViz()");
+	Verbose::message("START pointCloudPCLNormalViz()");
+
 	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
 
+	pcl::PointCloud<pcl::Normal>::Ptr cloud_normals(new pcl::PointCloud<pcl::Normal>);
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+
 	cv::Mat rgb, depth;
 	for (int index = 0; index < getIterations(); index+=100)
 	{
@@ -281,31 +284,27 @@ void ReconstructionTest::pointCloudNormalViz() const {
 
 		std::vector<Vector3f> current_points = data->getPoints();
 
+		std::vector<Vector3f> current_normals = data->getNormals();
+
 		cloud->points.resize(current_points.size());
-		for (int i = 0; i < current_points.size(); i++) {
+		for (int i = 0; i < current_points.size(); i++)
 			cloud->points[i].getVector3fMap() = current_points[i];
-		}
-
-		cloud->width = (int)cloud->points.size();
-		cloud->height = 1;
-
+		
+		
 		// estimate normals
 		pcl::NormalEstimation<pcl::PointXYZRGB, pcl::Normal> ne;
-		pcl::PointCloud<pcl::Normal>::Ptr cloud_normals1(new pcl::PointCloud<pcl::Normal>);
 		pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZRGB>());
 
 		ne.setInputCloud(cloud);
-
 		ne.setSearchMethod(tree);
-
 		ne.setRadiusSearch(0.05);
-		ne.compute(*cloud_normals1);
-
+		ne.compute(*cloud_normals);
+		
 		//pcl::io::savePCDFile("test_pcd.pcd", *cloud_normals1);
 		//std::cerr << "Saved " << cloud_normals1->points.size() << " data points to test_pcd.pcd." << std::endl;
 
 		pcl::visualization::PCLVisualizer::Ptr viewer;
-		viewer = normalsVisColor(cloud, cloud_normals1);
+		viewer = normalsVisColor(cloud, cloud_normals);
 
 		while (!viewer->wasStopped())
 		{
@@ -314,8 +313,55 @@ void ReconstructionTest::pointCloudNormalViz() const {
 
 	}
 	
-	Verbose::message("DONE pointCloudNormalViz()", SUCCESS);
+	Verbose::message("DONE pointCloudPCLNormalViz()", SUCCESS);
 	SAFE_DELETE(context);
 	
+}
+
+
+void ReconstructionTest::pointCloudNormalViz() const {
+
+	Verbose::message("START pointCloudNormalViz()");
+
+	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+
+	pcl::PointCloud<pcl::Normal>::Ptr cloud_normals(new pcl::PointCloud<pcl::Normal>);
+	pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+	
+	cv::Mat rgb, depth;
+	for (int index = 0; index < getIterations(); index += 100)
+	{
+		std::cout << "Preparing the surface normals of frame:  " << index << std::endl;
+
+		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
+
+		PointCloud* _target = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 1);
+		std::shared_ptr<PointCloud> data(_target);
+
+		std::vector<Vector3f> current_points = data->getPoints();
+		std::vector<Vector3f> current_normals = data->getNormals();
+
+		cloud->points.resize(current_points.size());
+		cloud_normals->points.resize(current_normals.size());
+		for (int i = 0; i < current_points.size(); i++) {
+			cloud->points[i].getVector3fMap() = current_points[i];
+			cloud_normals->points[i].normal_x = current_normals[i].x();
+			cloud_normals->points[i].normal_y = current_normals[i].y();
+			cloud_normals->points[i].normal_z = current_normals[i].z();
+		}
+
+		pcl::visualization::PCLVisualizer::Ptr viewer;
+		viewer = normalsVisColor(cloud, cloud_normals);
+
+		while (!viewer->wasStopped())
+		{
+			viewer->spinOnce(100);
+		}
+
+	}
+
+	Verbose::message("DONE pointCloudNormalViz()", SUCCESS);
+	SAFE_DELETE(context);
+
 }
 
