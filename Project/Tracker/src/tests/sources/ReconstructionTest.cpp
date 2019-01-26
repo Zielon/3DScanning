@@ -280,17 +280,10 @@ void ReconstructionTest::pointCloudNormalViz() const {
 		std::shared_ptr<PointCloud> data(_target);
 
 		std::vector<Vector3f> current_points = data->getPoints();
-		std::vector<Vector4uc> colors = data->getColors();
 
 		cloud->points.resize(current_points.size());
 		for (int i = 0; i < current_points.size(); i++) {
-			//cloud->points[i].getVector3fMap() = current_points[i];
-			pcl::PointXYZRGB point;
-			point.x = current_points[i].x();
-			point.y = current_points[i].y();
-			point.z = current_points[i].z();
-			
-			cloud->points[i] = point;
+			cloud->points[i].getVector3fMap() = current_points[i];
 		}
 
 		cloud->width = (int)cloud->points.size();
