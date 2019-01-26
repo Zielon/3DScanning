@@ -101,13 +101,13 @@ cv::Mat PointCloud::getNormalMap()
 
 			cv::Vec3f & color = normals.at<cv::Vec3f>(y, x);
 
-			auto normal = m_normals[idx];
+			/*auto normal = m_normals[idx];
 
-			//normal = Transformations::reproject(normal, m_camera_parameters);
+			normal = Transformations::reproject(normal, m_camera_parameters);
 
 			color[0] = normal.x();
 			color[1] = normal.y();
-			color[2] = normal.z();
+			color[2] = normal.z();*/
 
 			color[0] = (color[0] * 0.5f + 0.5) * 255;
 			color[1] = (color[1] * 0.5f + 0.5f) * 255;
@@ -118,7 +118,9 @@ cv::Mat PointCloud::getNormalMap()
 	normals.convertTo(normal_map, CV_8UC3);
 
 	//imshow("Normal Map", normals);
-	//cv::imwrite("normal_map.png", normal_map);
+	cv::imwrite("normal_map.png", normal_map);
+
+	std::cin.get();
 
 	return normal_map;
 }
