@@ -233,7 +233,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\shaders\Fusion.hlsl" />
-    <None Include="..\..\shaders\MarchingCubes.hlsl" />
+    <None Include="..\..\shaders\Fusion.hlsl">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="..\..\shaders\MarchingCubes.hlsl">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

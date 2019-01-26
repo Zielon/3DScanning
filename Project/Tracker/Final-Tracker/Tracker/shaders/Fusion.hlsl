@@ -1,6 +1,6 @@
 #pragma pack_matrix(row_major)
 
-#define THREADS_PER_GROUP_DIM 4 
+#define THREADS_PER_GROUP_DIM 1 
 
 #define VOXEL_UNSEEN 0
 #define VOXEL_EMPTY 1
@@ -94,7 +94,7 @@ void main(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID)
        
     int2 pixels = (int2) round(cell.xy); 
 
-  //  if (all(pixels > int2(0, 0) && pixels < g_settings.imageDims))
+    if (all(pixels > int2(0, 0) && pixels < g_settings.imageDims))
     {
         float depth = g_currentFrame.Load(int3(pixels.xy, 0)); 
 

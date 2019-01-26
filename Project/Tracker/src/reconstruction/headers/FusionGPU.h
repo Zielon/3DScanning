@@ -19,7 +19,7 @@
 
 
 
-#define THREADS_PER_GROUP_DIM 4 
+#define THREADS_PER_GROUP_DIM 1 
 
 
 class FusionGPU : public FusionBase
