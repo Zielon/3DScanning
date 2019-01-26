@@ -10,11 +10,6 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
-    internal struct MeshDto
-    {
-        public int[] Triangles;
-        public Vector3[] Vertices;
-    }
 
     public class Reconstructor : MonoBehaviour
     {

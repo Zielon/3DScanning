@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using UnityEngine; 
 
 namespace Assets.Scripts
 {
@@ -10,4 +11,11 @@ namespace Assets.Scripts
         public int m_index_count;
         public IntPtr m_meshptr;
     }
+
+    internal struct MeshDto
+    {
+        public int[] Triangles;
+        public Vector3[] Vertices;
+    }
+
 }

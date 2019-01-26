@@ -24,7 +24,7 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 	);
 
 
-	tracker_context->m_tracker = new Tracker(camera_parameters, NAIVE);
+	tracker_context->m_tracker = new Tracker(camera_parameters, PCL);
 	tracker_context->m_fusion = new Fusion(camera_parameters);
 	// Start consuming the point clouds buffer
 	tracker_context->m_fusion->consume();
@@ -96,6 +96,7 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 
 	if (tracker_context->m_first_frame)
 	{
+		tracker->m_pose = Matrix4f::Identity(); 
 		tracker_context->m_first_frame = false;
 		tracker->m_previous_point_cloud = current;
 		memcpy(pose, tracker->m_pose.data(), 16 * sizeof(float));
@@ -108,8 +109,12 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 	//tracker->m_pose = delta * tracker->m_pose;//Correct order (Juan opinion)
 	current->m_pose_estimation = tracker->m_pose;
 
-	// Produce a new point cloud (add to the buffer)
-	tracker_context->m_fusion->produce(std::shared_ptr<PointCloud>(tracker->m_previous_point_cloud));
+
+	if (tracker_context->enableReconstruction)
+	{
+		// Produce a new point cloud (add to the buffer)
+		tracker_context->m_fusion->produce(std::shared_ptr<PointCloud>(tracker->m_previous_point_cloud));
+	}
 
 	tracker->m_previous_point_cloud = current;
 
@@ -131,4 +136,10 @@ extern "C" __declspec(dllexport) void getMeshBuffers(__MeshInfo* mesh_info, floa
 	memcpy(pVB, mesh_info->mesh->m_vertices.data(), mesh_info->m_vertex_count * 3 * sizeof(float));
 	memcpy(pIB, mesh_info->mesh->m_triangles.data(), mesh_info->m_index_count * sizeof(int));
 	delete mesh_info->mesh;
+}
+
+extern "C" __declspec(dllexport) void enableReconstruction(void* context, bool enable)
+{
+	auto* tracker_context = static_cast<TrackerContext*>(context);
+	tracker_context->enableReconstruction = enable;
 }
