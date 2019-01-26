@@ -8,6 +8,7 @@
 #include <list>
 #include <iostream>
 #include "../../Eigen.h"
+#include <Eigen/Geometry>
 #include <thread>
 #include <mutex>
 #include <opencv2/core.hpp>

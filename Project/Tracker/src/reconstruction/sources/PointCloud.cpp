@@ -254,7 +254,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	}
 
 	m_indexBuildingThread = new std::thread([this]()-> void{
-		//m_nearestNeighbor->buildIndex(m_points);
+		m_nearestNeighbor->buildIndex(m_points);
 	});
 
 }

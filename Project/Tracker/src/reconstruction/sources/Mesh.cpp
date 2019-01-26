@@ -128,6 +128,12 @@ bool Mesh::save(const std::string& filename){
 	out_file << "# LIST OF VERTICES" << std::endl;
 	out_file << "# X Y Z R G B A" << std::endl;
 
+	//Reflection in xz
+	Matrix3f R;
+	R << 1.0, 0.0f, 0.0f,
+		0.0f, -1.0, 0.0f,
+		0.0f, 0.0f, 1.0f;
+
 	// save vertices
 	for (int i = 0; i < m_vertices.size(); i++)
 	{
@@ -135,6 +141,18 @@ bool Mesh::save(const std::string& filename){
 		auto color = m_colors[i];
 
 		vertex = (vertex.x() == MINF) ? Vector3f(0.0, 0.0, 0.0) : vertex;
+		
+		//Rotate 180 degrees around x
+		/*Eigen::AngleAxisf rollAngle(0, Eigen::Vector3d::UnitZ());
+		Eigen::AngleAxisf yawAngle(0, Eigen::Vector3d::UnitY());
+		Eigen::AngleAxisf pitchAngle(M_PI, Eigen::Vector3d::UnitX());
+
+		Eigen::Quaternion<double> q = rollAngle * yawAngle * pitchAngle;
+
+		Eigen::Matrix3f R = q.matrix();*/
+
+		vertex = R * vertex;
+
 		out_file << vertex.x() << " " << vertex.y() << " " << vertex.z() << " ";
 
 		if (!m_colors.empty())

@@ -21,7 +21,7 @@ private:
 	#if _DEBUG
 	int m_number_iterations = 1;
 	#else
-	int m_number_iterations = 10;
+	int m_number_iterations = 20;
 	#endif
 
 	std::vector<Vector3f> transformPoints(const std::vector<Vector3f>& sourcePoints, const Matrix4f& pose) const;

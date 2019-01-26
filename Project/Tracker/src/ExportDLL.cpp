@@ -24,7 +24,7 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 	);
 
 
-	tracker_context->m_tracker = new Tracker(camera_parameters, NON_LINEAR);
+	tracker_context->m_tracker = new Tracker(camera_parameters, NAIVE);
 	tracker_context->m_fusion = new Fusion(camera_parameters);
 	// Start consuming the point clouds buffer
 	tracker_context->m_fusion->consume();
@@ -64,7 +64,7 @@ extern "C" __declspec(dllexport) void * createSensorContext()
 		intrinsics
 	);
 
-	tracker_context->m_tracker = new Tracker(camera_parameters, NON_LINEAR);
+	tracker_context->m_tracker = new Tracker(camera_parameters, NAIVE);
 	tracker_context->m_fusion = new Fusion(camera_parameters);
 	// Start consuming the point clouds buffer
 	tracker_context->m_fusion->consume();
@@ -91,7 +91,16 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
-	PointCloud* _target = new PointCloud(tracker->getCameraParameters(), depth, rgb);
+	cv::Mat scaledDepth;
+	double min, max;
+	cv::minMaxIdx(depth, &min, &max);
+	cv::convertScaleAbs(depth, scaledDepth, 255 / max);
+	cv::imshow("Raw Depth", scaledDepth);
+
+	cv::waitKey(1);
+
+	//PointCloud* _target = new PointCloud(tracker->getCameraParameters(), depth, rgb);
+	PointCloud* _target = new PointCloud(tracker->getCameraParameters(), depth, rgb, 8);
 	std::shared_ptr<PointCloud> current(_target);
 
 	if (tracker_context->m_first_frame)
@@ -104,9 +113,11 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 
 	const Matrix4f delta = tracker->alignNewFrame(tracker->m_previous_point_cloud, current);
 
-	tracker->m_pose *= delta;
-	//tracker->m_pose = delta * tracker->m_pose;//Correct order (Juan opinion)
+	//tracker->m_pose *= delta;
+	tracker->m_pose = delta * tracker->m_pose;//Correct order (Juan opinion)
 	current->m_pose_estimation = tracker->m_pose;
+
+	std::cout << tracker->m_pose << std::endl;
 
 	// Produce a new point cloud (add to the buffer)
 	tracker_context->m_fusion->produce(std::shared_ptr<PointCloud>(tracker->m_previous_point_cloud));
