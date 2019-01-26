@@ -9,7 +9,7 @@ void ReconstructionTest::pointCloudTest() const{
 
 	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
-	for (int index = 0; index < 600; index += 100)
+	for (int index = 0; index < 600; index += 50)
 	{
 		const auto trajectory = getTrajectory(index);
 
@@ -231,7 +231,8 @@ void ReconstructionTest::pointCloudTestWithICP() const{
 		Matrix4f delta = context->m_tracker->alignNewFrame(context->m_tracker->m_previous_point_cloud, data);
 		context->m_tracker->m_pose *= delta;
 
-		if (index % 50 == 0 || index == 1)
+
+		if (index % 50 == 0  || index == 1)
 		{
 			Mesh mesh(depth, rgb, context->m_tracker->getCameraParameters());
 			mesh.transform(context->m_tracker->m_pose);

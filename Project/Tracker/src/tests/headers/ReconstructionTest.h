@@ -33,3 +33,4 @@ private:
 
 	void pointCloudPCLNormalViz() const;
 };
+

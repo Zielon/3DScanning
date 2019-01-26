@@ -20,7 +20,7 @@ enum ICPType { NAIVE, NON_LINEAR, FEATURES };
 class Tracker final
 {
 public:
-	Tracker(SystemParameters camera_parameters, ICPType icp_type) : m_camera_parameters(camera_parameters){
+	Tracker(SystemParameters camera_parameters, ICPType icp_type) : m_camera_parameters(camera_parameters) {
 
 		switch (icp_type)
 		{

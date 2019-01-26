@@ -19,6 +19,7 @@ struct TrackerContext
 	VideoStreamReaderBase* m_videoStreamReader;
 	Fusion* m_fusion;
 	bool m_first_frame = true; 
+	bool enableReconstruction = true; 
 };
 
 #endif TRACKER_CONTEXT_H
