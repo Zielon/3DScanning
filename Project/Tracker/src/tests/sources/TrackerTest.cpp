@@ -127,7 +127,7 @@ void TrackerTest::processedMapsTest(){
 
 		dynamic_cast<DatasetVideoStreamReader*>(tracker_context->m_videoStreamReader)->readAnyFrame(i, rgb, depth);
 
-		PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb);
+		PointCloud* source = new PointCloud(tracker_context->m_tracker->getCameraParameters(), depth, rgb, 1);
 
 		cv::Mat scaled_depth, render_depth;
 		double min, max;

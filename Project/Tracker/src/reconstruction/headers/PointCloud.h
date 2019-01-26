@@ -59,6 +59,7 @@ private:
 	std::vector<Vector3f> m_normals;
 	std::vector<Vector4uc> m_color_points;
 	std::vector<float> m_depth_points;
+	std::vector<Vector3f> m_grid_normals;//Required to compute the normal map
 
 	//Juan Test
 	cv::Mat depth_map;
