@@ -40,6 +40,8 @@ public:
 
 	void transform(Matrix4f transformation);
 
+	cv::Mat getNormalMap();
+
 	Matrix4f m_pose_estimation = Matrix4f::Identity();
 	SystemParameters m_camera_parameters;
 	int m_current_width = 0;
@@ -51,12 +53,16 @@ private:
 
 	NearestNeighborSearch* m_nearestNeighbor;
 	std::thread* m_indexBuildingThread = nullptr;
-	bool m_filtering = true;
+	bool m_filtering = false;
 
 	std::vector<Vector3f> m_points;
 	std::vector<Vector3f> m_normals;
 	std::vector<Vector4uc> m_color_points;
 	std::vector<float> m_depth_points;
+	std::vector<Vector3f> m_grid_normals;//Required to compute the normal map
+
+	//Juan Test
+	cv::Mat depth_map;
 };
 
 #endif
