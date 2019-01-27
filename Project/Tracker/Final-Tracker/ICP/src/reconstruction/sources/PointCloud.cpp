@@ -14,7 +14,8 @@ PointCloud::PointCloud(SystemParameters camera_parameters, cv::Mat& depth, cv::M
 
 PointCloud::~PointCloud(){
 	SAFE_DELETE(m_nearestNeighbor);
-	SAFE_DELETE(m_depth_points);
+	SAFE_DELETE(m_depth_points_fusion);
+	SAFE_DELETE(m_depth_points_icp);
 }
 
 const std::vector<Vector3f>& PointCloud::getPoints() const{
@@ -37,7 +38,7 @@ float PointCloud::getDepthImage(int x, int y) const{
 	int idx = y * m_current_width + x;
 
 	if (idx >= 0 && idx < m_current_width * m_current_height)
-		return m_depth_points[idx];
+		return m_depth_points_fusion[idx];
 
 	return INFINITY;
 }
@@ -53,8 +54,7 @@ void PointCloud::transform(Matrix4f transformation){
 	}
 }
 
-cv::Mat PointCloud::getNormalMap()
-{
+cv::Mat PointCloud::getNormalMap(){
 	//Normal computed directly by depth maps
 	/*if (depth_map.type() != CV_32FC1) {
 		depth_map.convertTo(depth_map, CV_32FC1);
@@ -93,18 +93,19 @@ cv::Mat PointCloud::getNormalMap()
 
 			//cv::Vec3f & color = normals.at<cv::Vec3f>(y, x);//Test
 
-			cv::Vec3b & color = normal_map.at<cv::Vec3b>(y, x);
+			cv::Vec3b& color = normal_map.at<cv::Vec3b>(y, x);
 
 			auto normal = m_grid_normals[idx];
 
 			//Unvalid normal -> black color
-			if (!normal.allFinite()) { 
+			if (!normal.allFinite())
+			{
 				color[0] = color[1] = color[2] = 0.0f;
 				continue;
 			}
 
 			//Transforming normal to pixel color space
-			normal = (0.5f * normal + Eigen::Vector3f(0.5f, 0.5f, 0.5f)) * 255;
+			normal = (0.5f * normal + Vector3f(0.5f, 0.5f, 0.5f)) * 255;
 
 			color = cv::Vec3f(normal.x(), normal.y(), normal.z());
 		}
@@ -144,7 +145,8 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	auto size = m_current_width * m_current_height;
 
-	m_depth_points = new float[size];
+	m_depth_points_fusion = new float[size];
+	m_depth_points_icp = new unsigned short[size];
 	m_color_points = std::vector<Vector4uc>(size);
 
 	// Temp vector for filtering
@@ -164,6 +166,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 		filtered_depth = this->filterMap(depth_mat, filter_type, 9.0f, 150.0f);
 	}
 
+	#pragma omp parallel for
 	for (auto y = 0; y < m_current_height; y++)
 	{
 		for (auto x = 0; x < m_current_width; x++)
@@ -173,7 +176,9 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			float depth = image.at<float>(y, x);
 			auto color = colors.at<cv::Vec3b>(y, x);
 
-			m_depth_points[idx] = depth;
+			m_depth_points_icp[idx] = static_cast<unsigned short>(depth) / 5;
+			m_depth_points_fusion[idx] = depth / 5000.f;
+
 			m_color_points[idx] = Vector4uc(color[0], color[1], color[2], 0);
 
 			//Depth range check
@@ -196,62 +201,62 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	m_camera_parameters.m_depth_max = depth_max;
 	m_camera_parameters.m_depth_min = depth_min;
 
-	//#pragma omp parallel for
-	//for (auto y = 1; y < m_current_height - 1; y++)
-	//{
-	//	for (auto x = 1; x < m_current_width - 1; x++)
-	//	{
-	//		const unsigned int idx = y * m_current_width + x;
+	#pragma omp parallel for
+	for (auto y = 1; y < m_current_height - 1; y++)
+	{
+		for (auto x = 1; x < m_current_width - 1; x++)
+		{
+			const unsigned int idx = y * m_current_width + x;
 
-	//		unsigned int b = (y - 1) * m_current_width + x;
-	//		unsigned int t = (y + 1) * m_current_width + x;
-	//		unsigned int l = y * m_current_width + x - 1;
-	//		unsigned int r = y * m_current_width + x + 1;
+			unsigned int b = (y - 1) * m_current_width + x;
+			unsigned int t = (y + 1) * m_current_width + x;
+			unsigned int l = y * m_current_width + x - 1;
+			unsigned int r = y * m_current_width + x + 1;
 
-	//		//Exercise 3 Formula
-	//		const Vector3f diffX = temp_points[r] - temp_points[l];
-	//		const Vector3f diffY = temp_points[t] - temp_points[b];
+			//Exercise 3 Formula
+			const Vector3f diffX = temp_points[r] - temp_points[l];
+			const Vector3f diffY = temp_points[t] - temp_points[b];
 
-	//		temp_normals[idx] = -diffX.cross(diffY);
+			temp_normals[idx] = -diffX.cross(diffY);
 
-	//		//Kinect Fusion paper formula
-	//		/*Vector3f diffX = temp_points[l] - temp_points[idx];
-	//		Vector3f diffY = temp_points[b] - temp_points[idx];
-	//		Vector3f d = -diffX.cross(diffY);
+			//Kinect Fusion paper formula
+			/*Vector3f diffX = temp_points[l] - temp_points[idx];
+			Vector3f diffY = temp_points[b] - temp_points[idx];
+			Vector3f d = -diffX.cross(diffY);
 
-	//		temp_normals[idx] = d;*/
+			temp_normals[idx] = d;*/
 
-	//		temp_normals[idx].normalize();
-	//	}
-	//}
+			temp_normals[idx].normalize();
+		}
+	}
 
-	//// We set invalid normals for border regions.
-	//for (int u = 0; u < m_current_width; ++u)
-	//{
-	//	temp_normals[u] = Vector3f(MINF, MINF, MINF);
-	//	temp_normals[u + (m_current_height - 1) * m_current_width] = Vector3f(MINF, MINF, MINF);
-	//}
+	// We set invalid normals for border regions.
+	for (int u = 0; u < m_current_width; ++u)
+	{
+		temp_normals[u] = Vector3f(MINF, MINF, MINF);
+		temp_normals[u + (m_current_height - 1) * m_current_width] = Vector3f(MINF, MINF, MINF);
+	}
 
-	//for (int v = 0; v < m_current_height; ++v)
-	//{
-	//	temp_normals[v * m_current_width] = Vector3f(MINF, MINF, MINF);
-	//	temp_normals[(m_current_width - 1) + v * m_current_width] = Vector3f(MINF, MINF, MINF);
-	//}
+	for (int v = 0; v < m_current_height; ++v)
+	{
+		temp_normals[v * m_current_width] = Vector3f(MINF, MINF, MINF);
+		temp_normals[(m_current_width - 1) + v * m_current_width] = Vector3f(MINF, MINF, MINF);
+	}
 
-	//for (int i = 0; i < temp_points.size(); i++)
-	//{
-	//	const auto& point = temp_points[i];
-	//	const auto& normal = temp_normals[i];
+	for (int i = 0; i < temp_points.size(); i++)
+	{
+		const auto& point = temp_points[i];
+		const auto& normal = temp_normals[i];
 
-	//	m_grid_normals.push_back(normal);
+		m_grid_normals.push_back(normal);
 
-	//	//FIX This part destroy the grid property of the point cloud
-	//	if (point.allFinite() && normal.allFinite())
-	//	{
-	//		m_points.push_back(point);
-	//		m_normals.push_back(normal);
-	//	}
-	//}
+		//FIX This part destroy the grid property of the point cloud
+		if (point.allFinite() && normal.allFinite())
+		{
+			m_points.push_back(point);
+			m_normals.push_back(normal);
+		}
+	}
 
 	//m_indexBuildingThread = new std::thread([this]()-> void{
 	//	//m_nearestNeighbor->buildIndex(m_points);

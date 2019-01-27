@@ -10,6 +10,8 @@ class ICP
 {
 public:
 
+	ICP(SystemParameters parameters){};
+
 	virtual ~ICP(){};
 
 	virtual Matrix4f estimatePose(std::shared_ptr<PointCloud> model, std::shared_ptr<PointCloud> data) = 0;

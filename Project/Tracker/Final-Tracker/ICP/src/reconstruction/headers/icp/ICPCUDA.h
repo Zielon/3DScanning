@@ -6,8 +6,16 @@
 class ICPCUDA final : public ICP
 {
 public:
-	ICPCUDA(){
-		m_icpOdom = new ICPOdometry(640, 480, 319.5, 239.5, 528, 528);
+	ICPCUDA(SystemParameters parameters): ICP(parameters){
+
+		m_icpOdom = new ICPOdometry(
+			parameters.m_image_width,
+			parameters.m_image_height,
+			parameters.m_cX,
+			parameters.m_cY,
+			parameters.m_focal_length_X,
+			parameters.m_focal_length_Y);
+
 		cudaDeviceProp prop;
 		cudaGetDeviceProperties(&prop, 0);
 		std::string dev(prop.name);

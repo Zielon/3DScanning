@@ -25,13 +25,13 @@ public:
 
 		switch (icp_type)
 		{
-		case NAIVE: m_icp = new ICPNaive();
+		case NAIVE: m_icp = new ICPNaive(camera_parameters);
 			break;
-		case NON_LINEAR: m_icp = new ICPNonLinear();
+		case NON_LINEAR: m_icp = new ICPNonLinear(camera_parameters);
 			break;
-		case FEATURES: m_icp = new ICPFeatures();
+		case FEATURES: m_icp = new ICPFeatures(camera_parameters);
 			break;
-		case CUDA: m_icp = new ICPCUDA();
+		case CUDA: m_icp = new ICPCUDA(camera_parameters);
 			break;
 		}
 	}
