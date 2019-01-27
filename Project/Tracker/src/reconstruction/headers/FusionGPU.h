@@ -17,8 +17,9 @@
 #define FUSION_SHADER_PATH L"./shaders/Fusion.hlsl"
 
 
+#define FUSION_THREADS 4 
+#define MQ_THREADS 8
 
-#define THREADS_PER_GROUP_DIM 4 
 
 class FusionGPU : public FusionBase
 {
@@ -82,7 +83,7 @@ private:
 
 	__declspec(align(16)) struct MarchingCubesSettings
 	{
-		int dummy; 
+		float isolevel = 0; 
 	}m_marchingCubesSettings;
 
 	__declspec(align(16)) struct MarchingCubesPerFrame
@@ -90,12 +91,25 @@ private:
 		int dummy; 
 	}m_marchingCubesPerFrame;
 
+	struct __Triangle
+	{
+		Vector3f v0;
+		Vector3f v1;
+		Vector3f v2;
+	};
+
+
 	HINSTANCE m_hInstance; 
 	HWND m_hWindow; 
 
+	ID3D11Buffer* m_buf_vertexBuffer = NULL;
+	ID3D11Buffer* m_buf_vertexBuffer_copy = NULL;
+
+
 	ID3D11UnorderedAccessView* m_uav_sdf = NULL;
 	ID3D11Buffer* m_buf_sdf = NULL;
-	ID3D11Buffer* m_buf_sdf_copy = NULL;
+
+	//ID3D11Buffer* m_buf_sdf_copy = NULL;
 
 	ID3D11Texture2D* m_t2d_currentFrame = NULL;
 	ID3D11ShaderResourceView* m_srv_currentFrame = NULL;
@@ -113,9 +127,12 @@ private:
 
 	ID3D11ComputeShader* m_shader_fusion = NULL; 
 	ID3D11ComputeShader* m_shader_marchingCubes = NULL; 
+	ID3D11ComputeShader* m_shader_marchingCubesAttachNan = NULL;
 
 	ID3DBlob* m_blob_fusionShader = NULL; 
 	ID3DBlob* m_blob_marchingCubesShader = NULL; 
+	ID3DBlob* m_blob_marchingCubesAttachNan = NULL;
+
 
 	ID3D11Device* m_d3dDevice = NULL;
 	ID3D11DeviceContext* m_d3dContext = NULL;

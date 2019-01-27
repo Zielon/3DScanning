@@ -17,4 +17,5 @@ struct Voxel final
 	int m_state;
 };
 
+
 #endif
