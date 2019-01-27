@@ -19,7 +19,7 @@ private:
 
 	void pointCloudTestWithICP() const;
 
-	void reconstructionTestWithOurTracking(int skip) const;
+	void reconstructionTestWithOurTracking(int skip);
 
 	void reconstructionTestSensor(int mesh_index) const;
 

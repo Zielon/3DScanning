@@ -143,7 +143,28 @@ void ReconstructionTest::reconstructionTest(int skip, int subsampling) const{
 	SAFE_DELETE(context);
 }
 
-void ReconstructionTest::reconstructionTestWithOurTracking(int skip) const{
+void outputFreiburg(const std::string filename, const uint64_t & timestamp, const Eigen::Matrix4f & currentPose)
+{
+	std::ofstream file;
+	file.open(filename.c_str(), std::fstream::app);
+
+	std::stringstream strs;
+
+	strs << std::setprecision(6) << std::fixed << timestamp << " ";
+
+	Eigen::Vector3f trans = currentPose.topRightCorner(3, 1);
+	Eigen::Matrix3f rot = currentPose.topLeftCorner(3, 3);
+
+	file << strs.str() << trans(0) << " " << trans(1) << " " << trans(2) << " ";
+
+	Eigen::Quaternionf currentCameraRotation(rot);
+
+	file << currentCameraRotation.x() << " " << currentCameraRotation.y() << " " << currentCameraRotation.z() << " " << currentCameraRotation.w() << "\n";
+
+	file.close();
+}
+
+void ReconstructionTest::reconstructionTestWithOurTracking(int skip){
 
 	Verbose::message("START reconstructionTestWithOurTracking()");
 
@@ -157,12 +178,18 @@ void ReconstructionTest::reconstructionTestWithOurTracking(int skip) const{
 
 	ProgressBar bar(size, 60, "Frames loaded");
 
+	std::ofstream file;
+	file.open("output.txt", std::fstream::out);
+	file.close();
+
 	for (int index = 0; index < size; index += skip)
 	{
 		tracker(context, img, pose);
 
 		bar.set(index);
 		bar.display();
+
+		outputFreiburg("output.txt", getTimestamp(index), Matrix4f(pose));
 	}
 
 	bar.done();
