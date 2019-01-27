@@ -35,7 +35,7 @@ public:
 
 	~Tracker();
 
-	Matrix4f alignNewFrame(std::shared_ptr<PointCloud> sourcePoints, std::shared_ptr<PointCloud> targetPoints, Matrix4f previous_pose) const;
+	Matrix4f alignNewFrame(std::shared_ptr<PointCloud> sourcePoints, std::shared_ptr<PointCloud> targetPoints) const;
 
 	SystemParameters getCameraParameters() const;
 
