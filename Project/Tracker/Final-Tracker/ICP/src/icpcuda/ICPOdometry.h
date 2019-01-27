@@ -28,9 +28,9 @@ class ICPOdometry
 
         virtual ~ICPOdometry();
 
-        void initICP(unsigned short * depth, const float depthCutoff = 20.0f);
+        void initICP(float * depth, const float depthCutoff = 20.0f);
 
-        void initICPModel(unsigned short * depth, const float depthCutoff = 20.0f);
+        void initICPModel(float * depth, const float depthCutoff = 20.0f);
 
         void getIncrementalTransformation(Sophus::SE3d & T_prev_curr, int threads, int blocks);
 
@@ -38,7 +38,7 @@ class ICPOdometry
         float lastInliers;
 
     private:
-        std::vector<DeviceArray2D<unsigned short>> depth_tmp;
+        std::vector<DeviceArray2D<float>> depth_tmp;
 
         std::vector<DeviceArray2D<float>> vmaps_prev;
         std::vector<DeviceArray2D<float>> nmaps_prev;

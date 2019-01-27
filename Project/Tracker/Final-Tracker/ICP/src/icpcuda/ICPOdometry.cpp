@@ -58,9 +58,9 @@ ICPOdometry::~ICPOdometry()
 
 }
 
-void ICPOdometry::initICP(unsigned short * depth, const float depthCutoff)
+void ICPOdometry::initICP(float * depth, const float depthCutoff)
 {
-    depth_tmp[0].upload(depth, sizeof(unsigned short) * width, height, width);
+    depth_tmp[0].upload(depth, sizeof(float) * width, height, width);
 
     for(int i = 1; i < NUM_PYRS; ++i)
     {
@@ -76,9 +76,9 @@ void ICPOdometry::initICP(unsigned short * depth, const float depthCutoff)
     cudaDeviceSynchronize();
 }
 
-void ICPOdometry::initICPModel(unsigned short * depth, const float depthCutoff)
+void ICPOdometry::initICPModel(float * depth, const float depthCutoff)
 {
-    depth_tmp[0].upload(depth, sizeof(unsigned short) * width, height, width);
+    depth_tmp[0].upload(depth, sizeof(float) * width, height, width);
 
     for(int i = 1; i < NUM_PYRS; ++i)
     {

@@ -100,8 +100,7 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 		return;
 	}
 
-	const Matrix4f new_pose = static_cast<ICPCUDA*>(tracker->m_icp)->estimatePose(
-		tracker->m_previous_point_cloud, current, tracker->m_pose);
+	const Matrix4f new_pose = tracker->m_icp->estimatePose(tracker->m_previous_point_cloud, current);
 
 	tracker->m_pose = new_pose;
 	current->m_pose_estimation = new_pose;

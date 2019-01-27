@@ -12,6 +12,8 @@ public:
 		cudaGetDeviceProperties(&prop, 0);
 		std::string dev(prop.name);
 		std::cout << dev << std::endl;
+		T_wc_prev = Sophus::SE3d();
+		T_wc_curr = Sophus::SE3d();
 	}
 
 	~ICPCUDA(){
@@ -20,10 +22,10 @@ public:
 
 	Matrix4f estimatePose(std::shared_ptr<PointCloud> model, std::shared_ptr<PointCloud> data) override;
 
-	Matrix4f estimatePose(std::shared_ptr<PointCloud> model, std::shared_ptr<PointCloud> data, Matrix4f previous_pose) const;
-
 private:
 	ICPOdometry* m_icpOdom;
+	Sophus::SE3d T_wc_prev;
+	Sophus::SE3d T_wc_curr;
 };
 
 #endif

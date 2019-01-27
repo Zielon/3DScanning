@@ -84,9 +84,9 @@ void estimateStep(const Eigen::Matrix<float,3,3,Eigen::DontAlign> & R_prev_curr,
                   int threads,
                   int blocks);
 
-void pyrDown(const DeviceArray2D<unsigned short> & src, DeviceArray2D<unsigned short> & dst);
+void pyrDown(const DeviceArray2D<float> & src, DeviceArray2D<float> & dst);
 
-void createVMap(const Intr& intr, const DeviceArray2D<unsigned short> & depth, DeviceArray2D<float> & vmap, const float depthCutoff);
+void createVMap(const Intr& intr, const DeviceArray2D<float> & depth, DeviceArray2D<float> & vmap, const float depthCutoff);
 void createNMap(const DeviceArray2D<float>& vmap, DeviceArray2D<float>& nmap);
 
 #endif /* INTERNAL_HPP_ */
