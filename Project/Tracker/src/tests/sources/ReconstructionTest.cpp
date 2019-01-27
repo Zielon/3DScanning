@@ -127,7 +127,7 @@ void ReconstructionTest::reconstructionTest() const{
 		context->m_fusion->produce(cloud);
 
 		// Waits for the index building thread to finish before deleting the point cloud
-		cloud->getClosestPoint(Vector3f::Zero());
+		//cloud->getClosestPoint(Vector3f::Zero());
 
 		bar.set(index);
 		bar.display();

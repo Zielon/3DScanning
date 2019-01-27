@@ -169,13 +169,16 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetExt>.exe</TargetExt>
     <TargetName>$(ProjectName)</TargetName>
+    <CustomBuildAfterTargets>PostBuildEvent</CustomBuildAfterTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetExt>.exe</TargetExt>
     <TargetName>$(ProjectName)</TargetName>
+    <CustomBuildAfterTargets>PostBuildEvent</CustomBuildAfterTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">
     <TargetName>$(ProjectName)_release</TargetName>
+    <CustomBuildAfterTargets>PostBuildEvent</CustomBuildAfterTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -217,9 +220,15 @@
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
     <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <CustomBuildStep>
       <Command>xcopy $(ProjectDir)..\..\shaders\*.hlsl $(OutDir)shaders\ /y /s /i
 xcopy $(ProjectDir)..\..\shaders\*.hlsl $(ProjectDir)shaders\ /y /s /i</Command>
-    </PostBuildEvent>
+      <Message>Copying Shaders</Message>
+      <Outputs>GODDAMMIT VISUAL STUDIO JUST COPY MY FILES WHENEVER I WANT.lol;%(Outputs)</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -281,9 +290,15 @@ xcopy $(ProjectDir)..\..\shaders\*.hlsl $(ProjectDir)shaders\ /y /s /i</Command>
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <CustomBuildStep>
       <Command>xcopy $(ProjectDir)..\..\shaders\*.hlsl $(OutDir)shaders\ /y /s /i
 xcopy $(ProjectDir)..\..\shaders\*.hlsl $(ProjectDir)shaders\ /y /s /i</Command>
-    </PostBuildEvent>
+      <Message>Copying Shaders</Message>
+      <Outputs>GODDAMMIT VISUAL STUDIO JUST COPY MY FILES WHENEVER I WANT.lol;%(Outputs)</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">
     <ClCompile>
@@ -312,9 +327,14 @@ xcopy $(ProjectDir)..\..\shaders\*.hlsl $(ProjectDir)shaders\ /y /s /i</Command>
       </Command>
     </PreLinkEvent>
     <PostBuildEvent>
+      <Command>xcopy /y "$(OutDir)*.dll" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\"</Command>
+    </PostBuildEvent>
+    <CustomBuildStep>
       <Command>xcopy $(ProjectDir)..\..\shaders\*.hlsl $(OutDir)shaders\ /y /s /i
 xcopy $(ProjectDir)..\..\shaders\*.hlsl $(ProjectDir)shaders\ /y /s /i</Command>
-    </PostBuildEvent>
+      <Message>Copying Shaders</Message>
+      <Outputs>GODDAMMIT VISUAL STUDIO JUST COPY MY FILES WHENEVER I WANT.lol;%(Outputs)</Outputs>
+    </CustomBuildStep>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

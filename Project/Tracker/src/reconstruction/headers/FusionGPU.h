@@ -21,7 +21,6 @@
 
 #define THREADS_PER_GROUP_DIM 1 
 
-
 class FusionGPU : public FusionBase
 {
 public:
@@ -57,20 +56,18 @@ private:
 	{
 
 		Vector3f m_min;
-		Vector3f m_max;
 		float m_truncation;
+		Vector3f m_max;
 		float m_voxel_size;
 		float m_focal_length_X = 0;
 		float m_focal_length_Y = 0;
 		float m_cX = 0;
 		float m_cY = 0;
-		float m_depth_min; 
-		float m_depth_max;
 
 		int m_image_width = 0;
 		int m_image_height = 0;
-		int m_resolution;
 		int m_resSQ;
+		int m_resolution;
 
 
 	}m_fusionSettings;

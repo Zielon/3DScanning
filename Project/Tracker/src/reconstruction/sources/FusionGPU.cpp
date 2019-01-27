@@ -72,17 +72,18 @@ void FusionGPU::initialize()
 	m_fusionSettings.m_cY = m_camera_parameters.m_cY;
 	m_fusionSettings.m_focal_length_X = m_camera_parameters.m_focal_length_X;
 	m_fusionSettings.m_focal_length_Y = m_camera_parameters.m_focal_length_Y;
-	m_fusionSettings.m_depth_min = m_camera_parameters.m_depth_min; 
-	m_fusionSettings.m_depth_max = m_camera_parameters.m_depth_max;
 
 
 }
 
 void FusionGPU::integrate(std::shared_ptr<PointCloud> cloud) 
 {
-	m_fusionPerFrame.cam2world = cloud->m_pose_estimation; 
-	m_fusionPerFrame.world2cam = cloud->m_pose_estimation.inverse();
-	const auto frustum_box = computeFrustumBounds(m_fusionPerFrame.cam2world, cloud->m_camera_parameters);
+	const auto cameraToWorld = cloud->m_pose_estimation;
+	const auto worldToCamera = cameraToWorld.inverse();
+	const auto frustum_box = computeFrustumBounds(cameraToWorld, cloud->m_camera_parameters);
+
+	m_fusionPerFrame.cam2world = cameraToWorld.transpose(); //col major -> row major
+	m_fusionPerFrame.world2cam = worldToCamera.transpose(); //col major -> row major
 	m_fusionPerFrame.frustum_max = frustum_box.m_max; 
 	m_fusionPerFrame.frustum_min = frustum_box.m_min; 
 
@@ -105,7 +106,10 @@ void FusionGPU::integrate(std::shared_ptr<PointCloud> cloud)
 	m_d3dContext->CSSetUnorderedAccessViews(0, 1, &m_uav_sdf, 0);
 	m_d3dContext->CSSetShaderResources(0, 1, &m_srv_currentFrame); 
 	m_d3dContext->CSSetShader(m_shader_fusion, NULL, 0);
-	m_d3dContext->Dispatch(m_fusionPerFrame.numThreads.x()/ THREADS_PER_GROUP_DIM, m_fusionPerFrame.numThreads.y()/ THREADS_PER_GROUP_DIM, m_fusionPerFrame.numThreads.z()/ THREADS_PER_GROUP_DIM);
+	m_d3dContext->Dispatch(
+		(m_fusionPerFrame.numThreads.x()),
+		(m_fusionPerFrame.numThreads.y()),
+		(m_fusionPerFrame.numThreads.z()));
 
 
 	m_swapChain->Present(0, 0); 
@@ -155,8 +159,8 @@ void FusionGPU::processMesh(Mesh & mesh)
 
 void FusionGPU::populateSettingsBuffers()
 {
-	m_d3dContext->UpdateSubresource(m_cbuf_fusionConst, 0, NULL, &m_fusionSettings, 0, 0); 
-	m_d3dContext->UpdateSubresource(m_cbuf_marchingCubesConst, 0, NULL, &m_marchingCubesSettings, 0, 0);
+	m_d3dContext->UpdateSubresource(m_cbuf_fusionConst, 0, NULL, &m_fusionSettings, 0, -1); 
+	m_d3dContext->UpdateSubresource(m_cbuf_marchingCubesConst, 0, NULL, &m_marchingCubesSettings, 0, -1);
 }
 
 
@@ -180,7 +184,7 @@ void FusionGPU::initBuffers()
 	descSDF.StructureByteStride = sizeof(Voxel); 
 	descSDF.Usage = D3D11_USAGE_DEFAULT;
 	descSDF.CPUAccessFlags = 0; 
-	descSDF.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+	descSDF.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
 	descSDF.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED; 
 
 

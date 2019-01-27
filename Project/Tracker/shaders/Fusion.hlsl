@@ -15,17 +15,15 @@
 struct FusionSettings
 {    
     float3 m_min;
-    float3 m_max;
     float m_truncation;
+    float3 m_max;
     float m_voxel_size;
     float2 m_focal_length;
     float2 m_principalpt;
-    float m_depth_min;
-    float m_depth_max;
 
     int2 imageDims; 
+    int m_resSQ;
     int m_resolution;
-    int m_resSQ; 
 };
 
 struct FusionPerFrame
@@ -58,9 +56,19 @@ cbuffer perFrameSettings : register(b1)
     FusionPerFrame g_perFrame;
 };
 
+cbuffer MQSettings : register(b3)
+{
+    int dummy; 
+};
+
+cbuffer MQPerFrame : register(b4)
+{
+    int dummy2; 
+};
+
 RWStructuredBuffer<Voxel> g_SDF : register(u0);
 
-Texture2D<float> g_currentFrame : register(t1);
+Texture2D<float> g_currentFrame : register(t0);
 
 /*
 * ****************************** Functions **************************
@@ -73,45 +81,72 @@ float weightKernel(float depth, float max)
     return 1.f - depth / max;
 }
 
-
-
 /*
 * ****************************** Shaders **************************
 */
 
-[numthreads(THREADS_PER_GROUP_DIM, THREADS_PER_GROUP_DIM, THREADS_PER_GROUP_DIM)]
+[numthreads(1, 1, 1)]
 void main(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID)
 {
-    int3 cellIDX3 = g_perFrame.frustum_min + groupID * int3(THREADS_PER_GROUP_DIM, THREADS_PER_GROUP_DIM, THREADS_PER_GROUP_DIM) + threadIDInGroup;
-    float4 worldPos; 
+    int3 cellIDX3 = g_perFrame.frustum_min + groupID;
+    int cellIDX = dot(cellIDX3, int3(g_settings.m_resSQ, g_settings.m_resolution, 1));
 
-    worldPos.xyz = g_settings.m_min + (g_settings.m_max - g_settings.m_min) * (float3) cellIDX3 / float3(g_settings.m_resolution, g_settings.m_resolution, g_settings.m_resolution);
-    worldPos.w = 1; 
+    //g_SDF[cellIDX].sdf++;
+    ////if (!any(groupID))
+    ////{
+    ////    g_SDF[0].sdf = g_perFrame.frustum_min.x;
+    ////    g_SDF[0].weight = g_perFrame.frustum_min.y;
+    ////    g_SDF[0].state = g_perFrame.frustum_min.z;
+    ////    g_SDF[1].sdf = g_perFrame.frustum_max.x;
+    ////    g_SDF[1].weight = g_perFrame.frustum_max.y;
+    ////    g_SDF[1].state = g_perFrame.frustum_max.z;
+    ////    g_SDF[2].sdf = cellIDX3.x;
+    ////    g_SDF[2].weight = cellIDX3.y;
+    ////    g_SDF[2].state = cellIDX3.z;
+    ////    g_SDF[3].sdf = g_settings.m_resSQ;
+    ////    g_SDF[3].weight = g_settings.m_resolution;
+    ////    g_SDF[3].state = 1;
+    ////    g_SDF[4].state = cellIDX;
 
-    float3 cell = mul(g_perFrame.world2cam, worldPos).xyz; 
+    ////}
+    
+
+    //if (cellIDX >= g_settings.m_resSQ * g_settings.m_resolution)
+    //{
+    //    g_SDF[0].state++;
+
+    //}
+    //return; 
+    //return;
+
+    float4 cell; 
+
+    float invScaling = g_settings.m_resolution - 1;
+    cell.xyz = g_settings.m_min + (g_settings.m_max - g_settings.m_min) * (float3(cellIDX3) / invScaling);
+    cell.w = 1; 
+
+    cell = mul(g_perFrame.world2cam, cell); 
 
     cell.xy = cell.xy * g_settings.m_focal_length / cell.zz + g_settings.m_principalpt; 
        
     int2 pixels = (int2) round(cell.xy); 
 
-    if (all(pixels > int2(0, 0) && pixels < g_settings.imageDims))
+    if (all(pixels >= int2(0, 0) && pixels < g_settings.imageDims))
     {
         float depth = g_currentFrame.Load(int3(pixels.xy, 0)); 
 
-
         if (depth < MAX_DEPTH)
         {
-            int cellIDX = dot(cellIDX3, int3(g_settings.m_resSQ, g_settings.m_resolution, 1));
-
             float sdf = depth - cell.z; 
 
-            if(depth - g_settings.m_truncation > cell.z)
+
+            if (depth - g_settings.m_truncation > cell.z)
             {
-                g_SDF[cellIDX].state = VOXEL_EMPTY; 
+                g_SDF[cellIDX].state = VOXEL_EMPTY;
             }
             else if (abs(sdf) < g_settings.m_truncation)
             {
-                float weight = weightKernel(depth, g_settings.m_depth_max); 
+                float weight = weightKernel(depth, 5.0f); 
                 Voxel v = g_SDF[cellIDX];
                 v.state = VOXEL_SDF; 
                 v.sdf = v.sdf * v.weight + sdf * weight / (v.weight + weight);

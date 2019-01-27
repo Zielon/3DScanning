@@ -117,7 +117,6 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud){
 			{
 				// Transform from the cell world to the camera world
 				Vector3f cell = rotation * m_volume->getWorldPosition(Vector3i(x, y, z)) + translation;
-
 				// Project into a depth image
 				cell = Transformations::reproject(cell, cloud->m_camera_parameters);
 
