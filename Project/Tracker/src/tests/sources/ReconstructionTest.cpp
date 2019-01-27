@@ -9,7 +9,7 @@ void ReconstructionTest::pointCloudTest() const{
 
 	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
-	for (int index = 0; index < 600; index += 100)
+	for (int index = 0; index < 600; index += 50)
 	{
 		const auto trajectory = getTrajectory(index);
 
@@ -102,7 +102,7 @@ void ReconstructionTest::unityIntegrationTest() const{
 	SAFE_DELETE(context);
 }
 
-void ReconstructionTest::reconstructionTest() const{
+void ReconstructionTest::reconstructionTest(int skip, int subsampling) const{
 
 	Verbose::message("START reconstructionTest()");
 
@@ -113,7 +113,8 @@ void ReconstructionTest::reconstructionTest() const{
 	auto size = getIterations();
 
 	ProgressBar bar(size, 60, "Frames loaded");
-	for (int index = 0; index < size; index += 5)
+
+	for (int index = 0; index < size; index += skip)
 	{
 		const auto trajectory = getTrajectory(index);
 		cv::Mat rgb, depth;
@@ -145,7 +146,7 @@ void ReconstructionTest::reconstructionTest() const{
 	SAFE_DELETE(context);
 }
 
-void ReconstructionTest::reconstructionTestWithOurTracking() const{
+void ReconstructionTest::reconstructionTestWithOurTracking(int skip) const{
 
 	Verbose::message("START reconstructionTestWithOurTracking()");
 
@@ -159,7 +160,7 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 
 	ProgressBar bar(size, 60, "Frames loaded");
 
-	for (int index = 0; index < size; index += 1)
+	for (int index = 0; index < size; index += skip)
 	{
 		tracker(context, img, pose);
 
@@ -181,7 +182,7 @@ void ReconstructionTest::reconstructionTestWithOurTracking() const{
 	SAFE_DELETE(context);
 }
 
-void ReconstructionTest::reconstructionTestSensor() const{
+void ReconstructionTest::reconstructionTestSensor(int mesh_index) const{
 	Verbose::message("START reconstructionTestSensor()");
 
 	TrackerContext* context = static_cast<TrackerContext*>(createSensorContext());
@@ -193,13 +194,15 @@ void ReconstructionTest::reconstructionTestSensor() const{
 	{
 		tracker(context, img, pose);
 
-		if (index % 100 == 0)
+		if (index % mesh_index == 0)
 		{
 			Mesh mesh;
 			context->m_fusion->processMesh(mesh);
 		}
 
 		index++;
+	
+		printf("Frame %d processed\n", index);
 	}
 
 	context->m_fusion->save("mesh");
@@ -235,7 +238,7 @@ void ReconstructionTest::pointCloudTestWithICP() const{
 		Matrix4f delta = context->m_tracker->alignNewFrame(context->m_tracker->m_previous_point_cloud, data);
 		context->m_tracker->m_pose *= delta;
 
-		if (index % 100 == 0)
+		if (index % 50 == 0  || index == 1)
 		{
 			Mesh mesh(depth, rgb, context->m_tracker->getCameraParameters());
 			mesh.transform(context->m_tracker->m_pose);

@@ -10,9 +10,16 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
+  
 
-    public class Reconstructor : MonoBehaviour
+    public class OfflineReconstructor : MonoBehaviour
     {
+        public enum ProcessingState { INITIAL, RECORDING,LOAD_MESH, INTERACT };
+        public ProcessingState currentState = ProcessingState.INITIAL; 
+
+
+
+
         // Unity automatically find DLL files located on Assets/Plugins
         private const string DllFilePath = @"Tracker_release";
         private readonly Queue<MeshDto> _meshDtoQueue = new Queue<MeshDto>();
@@ -24,7 +31,7 @@ namespace Assets.Scripts
         private Thread _thread;
 
         //general setup
-        private readonly bool _use_sensor = false;
+        public bool _use_sensor = false;
         private int _w = -1;
 
         public int abortAfterNFrames = -1;
@@ -33,9 +40,9 @@ namespace Assets.Scripts
 
         // Unity injected vars
         public GameObject cameraRig;
-
+        public GameObject interactUI; 
         public GameObject frameMeshObject;
-        public int meshUpdateRate = 2;
+        public int meshUpdateRate = 15;
         public Image videoBG;
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
@@ -59,6 +66,8 @@ namespace Assets.Scripts
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern void getMeshBuffers(ref __MeshInfo mesh, Vector3[] vertices, int[] indices);
 
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void enableReconstruction(IntPtr context, bool enable);
 
         // Use this for initialization
         private void Start()
@@ -83,6 +92,7 @@ namespace Assets.Scripts
             _h = getImageHeight(_cppContext);
 
             Debug.Log("Created Context. Image dimensions: " + _w + "x" + _h);
+            enableReconstruction(_cppContext, false); 
 
             _pose = new float[16];
             _image = new byte[_w * _h * 3];
@@ -91,6 +101,7 @@ namespace Assets.Scripts
         // Update is called once per frame
         private void Update()
         {
+
             // Unity just dies if the dataset runs out
             if (_framesProcessed > abortAfterNFrames && abortAfterNFrames > 0)
             {
@@ -103,10 +114,10 @@ namespace Assets.Scripts
                 Debug.Log("There is a problem with the stream of the tracker [Check _use_sensor flag]");
                 return;
             }
+            _framesProcessed++;
+
 
             tracker(_cppContext, _image, _pose);
-
-            _framesProcessed++;
 
             //Create texture from image
             var tex = new Texture2D(_w, _h, TextureFormat.RGB24, false);
@@ -115,12 +126,13 @@ namespace Assets.Scripts
             tex.Apply();
 
             videoBG.sprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(.5f, .5f));
-
-            // Apply camera poses
             var pose = Helpers.GetPose(_pose);
 
             cameraRig.transform.position = pose.GetColumn(3);
             cameraRig.transform.rotation = pose.rotation;
+
+            // Apply camera poses
+
 
             //   Debug.Log("Pos: " + cameraRig.transform.position);
             //   Debug.Log("Rot: " + cameraRig.transform.rotation.eulerAngles);
@@ -128,11 +140,6 @@ namespace Assets.Scripts
             if (_meshDtoQueue.Count > 0)
                 AddMesh(_meshDtoQueue.Dequeue());
 
-            //get first mesh after n frames
-            if (_framesProcessed % meshUpdateRate != 0 || _thread != null && _thread.IsAlive) return;
-
-            _thread = SpawnFrameMeshThread();
-            _thread.Start();
         }
 
         private void AddMesh(MeshDto dto)
@@ -143,6 +150,9 @@ namespace Assets.Scripts
             mesh.RecalculateBounds();
             frameMeshObject.GetComponent<MeshFilter>().mesh = mesh;
             frameMeshObject.GetComponent<MeshCollider>().sharedMesh = mesh;
+
+            currentState = ProcessingState.INTERACT;
+            interactUI.SetActive(true); 
         }
 
         private Thread SpawnFrameMeshThread()
@@ -166,5 +176,27 @@ namespace Assets.Scripts
                 });
             });
         }
+
+
+        public void startRecording()
+        {
+            Debug.Log("Start Recording");
+            Mesh empty = new Mesh(); 
+            frameMeshObject.GetComponent<MeshFilter>().mesh = empty;
+            frameMeshObject.GetComponent<MeshCollider>().sharedMesh = empty;
+            currentState = ProcessingState.RECORDING;
+            enableReconstruction(_cppContext, true);
+        }
+
+        public void stopRecording()
+        {
+            Debug.Log("Stop Recording");
+
+            currentState = ProcessingState.LOAD_MESH;
+            enableReconstruction(_cppContext, false);
+            _thread = SpawnFrameMeshThread();
+            _thread.Start();
+        }
+
     }
 }

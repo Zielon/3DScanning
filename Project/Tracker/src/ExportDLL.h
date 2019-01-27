@@ -13,6 +13,7 @@
 //DLL exports of the m_tracker
 
 #define OPENCV_TRAITS_ENABLE_DEPRECATED
+//#define SENSOR_TEST
 
 struct __MeshInfo;
 
@@ -25,6 +26,8 @@ extern "C" __declspec(dllexport) int getImageWidth(void* context);
 extern "C" __declspec(dllexport) int getImageHeight(void* context);
 
 extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* image, float* pose);
+
+extern "C" __declspec(dllexport) void enableReconstruction(void* context, bool enable); 
 
 extern "C" __declspec(dllexport) void getMeshInfo(void* context, __MeshInfo* info);
 
