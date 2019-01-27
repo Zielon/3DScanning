@@ -113,13 +113,13 @@ void ReconstructionTest::reconstructionTest() const{
 	auto size = getIterations();
 
 	ProgressBar bar(size, 60, "Frames loaded");
-
 	for (int index = 0; index < size; index += 5)
 	{
 		const auto trajectory = getTrajectory(index);
 		cv::Mat rgb, depth;
 
 		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
+
 		PointCloud* _cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 1);
 		std::shared_ptr<PointCloud> cloud(_cloud);
 
@@ -131,6 +131,8 @@ void ReconstructionTest::reconstructionTest() const{
 
 		bar.set(index);
 		bar.display();
+
+
 	}
 
 	bar.done();

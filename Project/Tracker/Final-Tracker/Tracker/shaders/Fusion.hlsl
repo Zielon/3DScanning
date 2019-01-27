@@ -1,6 +1,7 @@
 #pragma pack_matrix(row_major)
 
-#define THREADS_PER_GROUP_DIM 1 
+#define FUSION_THREADS 4 
+#define MQ_THREADS 8
 
 #define VOXEL_UNSEEN 0
 #define VOXEL_EMPTY 1
@@ -74,21 +75,21 @@ Texture2D<float> g_currentFrame : register(t0);
 * ****************************** Functions **************************
 */
 
-float weightKernel(float depth, float max)
+float weightKernel(float depth)
 {
     if (depth <= 0.01f)
         return 1.f;
-    return 1.f - depth / max;
+    return 1.f - depth / MAX_DEPTH;
 }
 
 /*
 * ****************************** Shaders **************************
 */
 
-[numthreads(1, 1, 1)]
-void main(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID)
+[numthreads(FUSION_THREADS, FUSION_THREADS, FUSION_THREADS)]
+void CS_FUSION(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID)
 {
-    int3 cellIDX3 = g_perFrame.frustum_min + groupID;
+    int3 cellIDX3 = g_perFrame.frustum_min + groupID * int3(FUSION_THREADS, FUSION_THREADS, FUSION_THREADS) + threadIDInGroup;
     int cellIDX = dot(cellIDX3, int3(g_settings.m_resSQ, g_settings.m_resolution, 1));
 
     //g_SDF[cellIDX].sdf++;
@@ -135,18 +136,18 @@ void main(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID)
     {
         float depth = g_currentFrame.Load(int3(pixels.xy, 0)); 
 
-        if (depth < MAX_DEPTH)
+        if (depth > 0.001f && depth < MAX_DEPTH)
         {
             float sdf = depth - cell.z; 
 
 
-            if (depth - g_settings.m_truncation > cell.z)
+            if (depth - g_settings.m_truncation > cell.z && g_SDF[cellIDX].state == VOXEL_UNSEEN)
             {
                 g_SDF[cellIDX].state = VOXEL_EMPTY;
             }
-            else if (abs(sdf) < g_settings.m_truncation)
+            else if (abs(sdf) < g_settings.m_truncation && !g_SDF[cellIDX].state == VOXEL_EMPTY)
             {
-                float weight = weightKernel(depth, 5.0f); 
+                float weight = weightKernel(depth); 
                 Voxel v = g_SDF[cellIDX];
                 v.state = VOXEL_SDF; 
                 v.sdf = v.sdf * v.weight + sdf * weight / (v.weight + weight);
@@ -157,5 +158,12 @@ void main(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID)
 
         } // depth < INFINITY
     }//pixel in image
+
+}
+
+
+[numthreads( MQ_THREADS,  MQ_THREADS,  MQ_THREADS)]
+void CS_MQ(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID)
+{
 
 }

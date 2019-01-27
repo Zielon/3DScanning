@@ -104,12 +104,11 @@ void FusionGPU::integrate(std::shared_ptr<PointCloud> cloud)
 
 	m_d3dContext->CSSetConstantBuffers(0, 2, buffers); 
 	m_d3dContext->CSSetUnorderedAccessViews(0, 1, &m_uav_sdf, 0);
-	m_d3dContext->CSSetShaderResources(0, 1, &m_srv_currentFrame); 
 	m_d3dContext->CSSetShader(m_shader_fusion, NULL, 0);
 	m_d3dContext->Dispatch(
-		(m_fusionPerFrame.numThreads.x()),
-		(m_fusionPerFrame.numThreads.y()),
-		(m_fusionPerFrame.numThreads.z()));
+		(m_fusionPerFrame.numThreads.x() / THREADS_PER_GROUP_DIM + 1),
+		(m_fusionPerFrame.numThreads.y() / THREADS_PER_GROUP_DIM + 1),
+		(m_fusionPerFrame.numThreads.z()) / THREADS_PER_GROUP_DIM + 1);
 
 
 	m_swapChain->Present(0, 0); 
@@ -316,7 +315,7 @@ void FusionGPU::reloadShaders()
 	std::cout << current << std::endl; 
 
 
-	hr = D3DCompileFromFile(FUSION_SHADER_PATH, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "cs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL, &m_blob_fusionShader, &errBlob);
+	hr = D3DCompileFromFile(FUSION_SHADER_PATH, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_FUSION", "cs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL, &m_blob_fusionShader, &errBlob);
 	if (FAILED(hr))
 	{
 		std::cout << "failed to compile Fusion shader " << std::endl;
@@ -325,7 +324,7 @@ void FusionGPU::reloadShaders()
 	}
 
 
-	hr = D3DCompileFromFile(FUSION_SHADER_PATH, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "main", "cs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL, &m_blob_marchingCubesShader, &errBlob);
+	hr = D3DCompileFromFile(FUSION_SHADER_PATH, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_MQ", "cs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL, &m_blob_marchingCubesShader, &errBlob);
 	if (FAILED(hr))
 	{
 		std::cout << "failed to compile Marching Cubes shader " << std::endl;
@@ -344,6 +343,10 @@ void FusionGPU::reloadShaders()
 		std::cout << "failed to load Marching Cubes Shader " << hr << std::endl;
 		std::cin.get();
 	}
+
+	m_d3dContext->CSSetShaderResources(0, 1, &m_srv_currentFrame);
+
+
 }
 
 

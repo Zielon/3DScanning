@@ -15,11 +15,10 @@
 #define SafeRelease(p) { if ( (p) ) { (p)->Release(); (p) = 0; } }
 
 #define FUSION_SHADER_PATH L"./shaders/Fusion.hlsl"
-#define MARCHING_CUBES_SHADER_PATH L"./shaders/MarchingCubes.hlsl"
 
 
 
-#define THREADS_PER_GROUP_DIM 1 
+#define THREADS_PER_GROUP_DIM 4 
 
 class FusionGPU : public FusionBase
 {
