@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{878B3645-418B-4AE9-BD9E-B5B57D2B07DF}</ProjectGuid>
+    <RootNamespace>ICP</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 10.0.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;WIN64;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;TESTING;%(PreprocessorDefinitions);WIN32;WIN64;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(OPENNI2_INCLUDE64);$(OPENCV_INCLUDE);$(PCL_ROOT)\3rdParty\Eigen\eigen3;$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(SOPHUS_DIR);$(PCL_ROOT)\3rdParty\FLANN\include;$(CUDA_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OpenMPSupport>true</OpenMPSupport>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>$(OPENNI2_LIB64);$(PCL_ROOT)\3rdParty\FLANN\lib;$(PCL_ROOT)\3rdParty\VTK\lib;$(PCL_ROOT)\3rdParty\Boost\lib;$(PCL_ROOT)\lib;$(OPENCV_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world400.lib;pcl_common_release.lib;pcl_recognition_release.lib;pcl_kdtree_release.lib;pcl_search_release.lib;pcl_filters_release.lib;pcl_features_release.lib;pcl_registration_release.lib;flann.lib;OpenNI2.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <CudaCompile>
+      <TargetMachinePlatform>64</TargetMachinePlatform>
+      <AdditionalDeps>%(AdditionalDeps)</AdditionalDeps>
+      <Include>$(EIGEN_DIR);C:\Projects\Sophus-master;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\include\crt</Include>
+    </CudaCompile>
+    <CudaLink>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+    </CudaLink>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CudaCompile Include="src\icpcuda\Cuda\estimate.cu" />
+    <CudaCompile Include="src\icpcuda\Cuda\pyrdown.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\concurency\headers\Buffer.h" />
+    <ClInclude Include="src\concurency\headers\Consumer.h" />
+    <ClInclude Include="src\concurency\headers\Producer.h" />
+    <ClInclude Include="src\concurency\headers\ThreadManager.h" />
+    <ClInclude Include="src\data-stream\headers\DatasetVideoStreamReader.h" />
+    <ClInclude Include="src\data-stream\headers\VideoStreamReaderBase.h" />
+    <ClInclude Include="src\data-stream\headers\Xtion2StreamReader.h" />
+    <ClInclude Include="src\debugger\headers\ProgressBar.hpp" />
+    <ClInclude Include="src\debugger\headers\Verbose.h" />
+    <ClInclude Include="src\Eigen.h" />
+    <ClInclude Include="src\ExportDLL.h" />
+    <ClInclude Include="src\files-manager\headers\DatasetManager.h" />
+    <ClInclude Include="src\helpers\Transformations.h" />
+    <ClInclude Include="src\icpcuda\Cuda\containers\device_array.hpp" />
+    <ClInclude Include="src\icpcuda\Cuda\containers\device_array_impl.hpp" />
+    <ClInclude Include="src\icpcuda\Cuda\containers\device_memory.hpp" />
+    <ClInclude Include="src\icpcuda\Cuda\containers\device_memory_impl.hpp" />
+    <ClInclude Include="src\icpcuda\Cuda\containers\initialization.hpp" />
+    <ClInclude Include="src\icpcuda\Cuda\containers\kernel_containers.hpp" />
+    <ClInclude Include="src\icpcuda\Cuda\containers\safe_call.hpp" />
+    <ClInclude Include="src\icpcuda\Cuda\internal.h" />
+    <ClInclude Include="src\icpcuda\ICPOdometry.h" />
+    <ClInclude Include="src\marshaling\__Mesh.h" />
+    <ClInclude Include="src\reconstruction\headers\CameraParameters.h" />
+    <ClInclude Include="src\reconstruction\headers\Consumer.h" />
+    <ClInclude Include="src\reconstruction\headers\Fusion.h" />
+    <ClInclude Include="src\reconstruction\headers\icp\ICP.h" />
+    <ClInclude Include="src\reconstruction\headers\icp\ICPCUDA.h" />
+    <ClInclude Include="src\reconstruction\headers\icp\ICPFeatures.h" />
+    <ClInclude Include="src\reconstruction\headers\icp\ICPNaive.h" />
+    <ClInclude Include="src\reconstruction\headers\icp\ICPNonLinear.h" />
+    <ClInclude Include="src\reconstruction\headers\MarchingCubes.h" />
+    <ClInclude Include="src\reconstruction\headers\Mesh.h" />
+    <ClInclude Include="src\reconstruction\headers\PointCloud.h" />
+    <ClInclude Include="src\reconstruction\headers\SystemParameters.h" />
+    <ClInclude Include="src\reconstruction\headers\Tracker.h" />
+    <ClInclude Include="src\reconstruction\headers\Volume.h" />
+    <ClInclude Include="src\reconstruction\headers\Voxel.h" />
+    <ClInclude Include="src\reconstruction\sources\NearestNeighbor.hpp" />
+    <ClInclude Include="src\reconstruction\sources\ProcrustesAligner.hpp" />
+    <ClInclude Include="src\tests\headers\DataStreamTest.h" />
+    <ClInclude Include="src\tests\headers\ReconstructionTest.h" />
+    <ClInclude Include="src\tests\headers\TestBase.h" />
+    <ClInclude Include="src\tests\headers\TrackerTest.h" />
+    <ClInclude Include="src\TrackerContext.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\concurency\sources\Buffer.cpp" />
+    <ClCompile Include="src\concurency\sources\Consumer.cpp" />
+    <ClCompile Include="src\concurency\sources\Producer.cpp" />
+    <ClCompile Include="src\concurency\sources\ThreadManager.cpp" />
+    <ClCompile Include="src\data-stream\sources\DatasetVideoStreamReader.cpp" />
+    <ClCompile Include="src\data-stream\sources\Xtion2StreamReader.cpp" />
+    <ClCompile Include="src\debugger\sources\Verbose.cpp" />
+    <ClCompile Include="src\ExportDLL.cpp" />
+    <ClCompile Include="src\files-manager\sources\DatasetManager.cpp" />
+    <ClCompile Include="src\icpcuda\Cuda\containers\device_memory.cpp" />
+    <ClCompile Include="src\icpcuda\Cuda\containers\initialization.cpp" />
+    <ClCompile Include="src\icpcuda\ICPOdometry.cpp" />
+    <ClCompile Include="src\reconstruction\sources\Fusion.cpp" />
+    <ClCompile Include="src\reconstruction\sources\icp\ICPCUDA.cpp" />
+    <ClCompile Include="src\reconstruction\sources\icp\ICPFeatures.cpp" />
+    <ClCompile Include="src\reconstruction\sources\icp\ICPNaive.cpp" />
+    <ClCompile Include="src\reconstruction\sources\icp\ICPNonLinear.cpp" />
+    <ClCompile Include="src\reconstruction\sources\Mesh.cpp" />
+    <ClCompile Include="src\reconstruction\sources\PointCloud.cpp" />
+    <ClCompile Include="src\reconstruction\sources\Tracker.cpp" />
+    <ClCompile Include="src\reconstruction\sources\Volume.cpp" />
+    <ClCompile Include="src\tests\sources\DataStreamTest.cpp" />
+    <ClCompile Include="src\tests\sources\ReconstructionTest.cpp" />
+    <ClCompile Include="src\tests\sources\TestBase.cpp" />
+    <ClCompile Include="src\tests\sources\TrackerTest.cpp" />
+    <ClCompile Include="src\TrackerContext.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 10.0.targets" />
+  </ImportGroup>
+</Project>
