@@ -4,7 +4,7 @@ Tracker::~Tracker(){
 	SAFE_DELETE(m_icp);
 }
 
-Matrix4f Tracker::alignNewFrame(std::shared_ptr<PointCloud> model, std::shared_ptr<PointCloud> data) const{
+Matrix4f Tracker::alignNewFrame(std::shared_ptr<PointCloud> model, std::shared_ptr<PointCloud> data, Matrix4f previous_pose) const{
 	return m_icp->estimatePose(model, data);
 }
 

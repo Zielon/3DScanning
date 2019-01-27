@@ -46,7 +46,6 @@ public:
 
 	Matrix4f m_pose = Matrix4f::Identity();
 
-private:
 	ICP* m_icp = nullptr;
 
 	SystemParameters m_camera_parameters;
