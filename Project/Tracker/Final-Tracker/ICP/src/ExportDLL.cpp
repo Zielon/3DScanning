@@ -109,7 +109,7 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 	if (tracker_context->enableReconstruction)
 	{
 		// Produce a new point cloud (add to the buffer)
-		//tracker_context->m_fusion->produce(std::shared_ptr<PointCloud>(tracker->m_previous_point_cloud));
+		tracker_context->m_fusion->produce(std::shared_ptr<PointCloud>(tracker->m_previous_point_cloud));
 	}
 
 	tracker->m_previous_point_cloud = current;

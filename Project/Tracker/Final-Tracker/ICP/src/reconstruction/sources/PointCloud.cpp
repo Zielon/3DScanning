@@ -163,7 +163,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 		filtered_depth = this->filterMap(depth_mat, filter_type, 9.0f, 150.0f);
 	}
 
-	#pragma omp parallel for
+	#pragma omp parallel for num_threads(2)
 	for (auto y = 0; y < m_current_height; y++)
 	{
 		for (auto x = 0; x < m_current_width; x++)
@@ -196,67 +196,66 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	m_camera_parameters.m_depth_max = depth_max;
 	m_camera_parameters.m_depth_min = depth_min;
 
-	#pragma omp parallel for
-	for (auto y = 1; y < m_current_height - 1; y++)
-	{
-		for (auto x = 1; x < m_current_width - 1; x++)
-		{
-			const unsigned int idx = y * m_current_width + x;
+	//#pragma omp parallel for
+	//for (auto y = 1; y < m_current_height - 1; y++)
+	//{
+	//	for (auto x = 1; x < m_current_width - 1; x++)
+	//	{
+	//		const unsigned int idx = y * m_current_width + x;
 
-			unsigned int b = (y - 1) * m_current_width + x;
-			unsigned int t = (y + 1) * m_current_width + x;
-			unsigned int l = y * m_current_width + x - 1;
-			unsigned int r = y * m_current_width + x + 1;
+	//		unsigned int b = (y - 1) * m_current_width + x;
+	//		unsigned int t = (y + 1) * m_current_width + x;
+	//		unsigned int l = y * m_current_width + x - 1;
+	//		unsigned int r = y * m_current_width + x + 1;
 
-			//Exercise 3 Formula
-			const Vector3f diffX = temp_points[r] - temp_points[l];
-			const Vector3f diffY = temp_points[t] - temp_points[b];
+	//		//Exercise 3 Formula
+	//		const Vector3f diffX = temp_points[r] - temp_points[l];
+	//		const Vector3f diffY = temp_points[t] - temp_points[b];
 
-			temp_normals[idx] = -diffX.cross(diffY);
+	//		temp_normals[idx] = -diffX.cross(diffY);
 
-			//Kinect Fusion paper formula
-			/*Vector3f diffX = temp_points[l] - temp_points[idx];
-			Vector3f diffY = temp_points[b] - temp_points[idx];
-			Vector3f d = -diffX.cross(diffY);
+	//		//Kinect Fusion paper formula
+	//		/*Vector3f diffX = temp_points[l] - temp_points[idx];
+	//		Vector3f diffY = temp_points[b] - temp_points[idx];
+	//		Vector3f d = -diffX.cross(diffY);
 
-			temp_normals[idx] = d;*/
+	//		temp_normals[idx] = d;*/
 
-			temp_normals[idx].normalize();
-		}
-	}
+	//		temp_normals[idx].normalize();
+	//	}
+	//}
 
 	// We set invalid normals for border regions.
-	for (int u = 0; u < m_current_width; ++u)
-	{
-		temp_normals[u] = Vector3f(MINF, MINF, MINF);
-		temp_normals[u + (m_current_height - 1) * m_current_width] = Vector3f(MINF, MINF, MINF);
-	}
+	//for (int u = 0; u < m_current_width; ++u)
+	//{
+	//	temp_normals[u] = Vector3f(MINF, MINF, MINF);
+	//	temp_normals[u + (m_current_height - 1) * m_current_width] = Vector3f(MINF, MINF, MINF);
+	//}
 
-	for (int v = 0; v < m_current_height; ++v)
-	{
-		temp_normals[v * m_current_width] = Vector3f(MINF, MINF, MINF);
-		temp_normals[(m_current_width - 1) + v * m_current_width] = Vector3f(MINF, MINF, MINF);
-	}
+	//for (int v = 0; v < m_current_height; ++v)
+	//{
+	//	temp_normals[v * m_current_width] = Vector3f(MINF, MINF, MINF);
+	//	temp_normals[(m_current_width - 1) + v * m_current_width] = Vector3f(MINF, MINF, MINF);
+	//}
 
-	for (int i = 0; i < temp_points.size(); i++)
-	{
-		const auto& point = temp_points[i];
-		const auto& normal = temp_normals[i];
+	//for (int i = 0; i < temp_points.size(); i++)
+	//{
+	//	const auto& point = temp_points[i];
+	//	const auto& normal = temp_normals[i];
 
-		m_grid_normals.push_back(normal);
+	//	m_grid_normals.push_back(normal);
 
-		//FIX This part destroy the grid property of the point cloud
-		if (point.allFinite() && normal.allFinite())
-		{
-			m_points.push_back(point);
-			m_normals.push_back(normal);
-		}
-	}
+	//	//FIX This part destroy the grid property of the point cloud
+	//	if (point.allFinite() && normal.allFinite())
+	//	{
+	//		m_points.push_back(point);
+	//		m_normals.push_back(normal);
+	//	}
+	//}
 
-	m_indexBuildingThread = new std::thread([this]()-> void{
-		//m_nearestNeighbor->buildIndex(m_points);
-	});
-
+	//m_indexBuildingThread = new std::thread([this]()-> void{
+	//	//m_nearestNeighbor->buildIndex(m_points);
+	//});
 }
 
 std::vector<Match> PointCloud::queryNearestNeighbor(std::vector<Vector3f> points){
