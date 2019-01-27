@@ -176,8 +176,8 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			float depth = image.at<float>(y, x);
 			auto color = colors.at<cv::Vec3b>(y, x);
 
-			m_depth_points_icp[idx] = static_cast<unsigned short>(depth) / 5;
-			m_depth_points_fusion[idx] = depth / 5000.f;
+			m_depth_points_icp[idx] = static_cast<unsigned short>(depth * 1000.f);
+			m_depth_points_fusion[idx] = depth;
 
 			m_color_points[idx] = Vector4uc(color[0], color[1], color[2], 0);
 
