@@ -138,7 +138,7 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
 				// Pixels space
 				auto pixels = round(cell / downsampling_factor);
 
-				const float depth = cloud->getDepthImage(pixels.x(), pixels.y());
+				const float depth = cloud->getDepthImage(pixels.x(), pixels.y()) / 5000.f;
 
 				// Depth was not found
 				if (depth == INFINITY) continue;
