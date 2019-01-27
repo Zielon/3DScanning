@@ -9,12 +9,11 @@ class ICPNonLinear final : public ICP
 {
 public:
 
+	ICPNonLinear(SystemParameters parameters) : ICP(parameters) {}
+
 	~ICPNonLinear(){}
 
 	Matrix4f estimatePose(std::shared_ptr<PointCloud> model, std::shared_ptr<PointCloud> data) override;
-
-private:
-	
 };
 
 #endif //PROJECT_ICP_COMPLETE_H

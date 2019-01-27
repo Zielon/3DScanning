@@ -93,6 +93,9 @@
     <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPNonLinear.h">
       <Filter>reconstruction\headers\icp</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPCUDA.h">
+      <Filter>reconstruction\headers\icp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -155,6 +158,9 @@
       <Filter>reconstruction\sources\icp</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPNonLinear.cpp">
+      <Filter>reconstruction\sources\icp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPCUDA.cpp">
       <Filter>reconstruction\sources\icp</Filter>
     </ClCompile>
   </ItemGroup>

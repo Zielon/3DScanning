@@ -47,7 +47,8 @@ public:
 	int m_current_width = 0;
 	int m_current_height = 0;
 	int m_downsampling_factor = 1;
-	std::vector<float> m_depth_points;
+	unsigned short* m_depth_points_icp;
+	float* m_depth_points_fusion;
 
 private:
 	void transform(cv::Mat& depth_mat, cv::Mat& rgb_mat);
