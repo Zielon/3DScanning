@@ -6,9 +6,9 @@ class ReconstructionTest :
 {
 public:
 	void run() override{
-		//this->reconstructionTest(1, 8);
+		this->reconstructionTest(1, 1);
 		//this->reconstructionTestWithOurTracking(1);
-		this->reconstructionTestSensor(100);
+		//this->reconstructionTestSensor(100);
 		//this->pointCloudTest();
 		//this->pointCloudTestWithICP();
 		//this->unityIntegrationTest(); 

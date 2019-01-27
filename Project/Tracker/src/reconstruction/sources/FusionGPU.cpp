@@ -2,7 +2,7 @@
 #include "../headers/MarchingCubes.h"
 
 
-FusionGPU::FusionGPU(SystemParameters camera_parameters) : FusionBase(camera_parameters)
+FusionGPU::FusionGPU(SystemParameters camera_parameters, std::string shaderPath) : FusionBase(camera_parameters)
 {
 
 	initialize();
@@ -12,7 +12,7 @@ FusionGPU::FusionGPU(SystemParameters camera_parameters) : FusionBase(camera_par
 	initDx11(); 
 
 	initBuffers(); 
-	reloadShaders();
+	reloadShaders(shaderPath);
 
 
 	populateSettingsBuffers(); 
@@ -428,7 +428,7 @@ void FusionGPU::initBuffers()
 }
 
 
-void FusionGPU::reloadShaders()
+void FusionGPU::reloadShaders(std::string shaderPath)
 {
 	ID3DBlob* errBlob;
 	HRESULT hr; 
@@ -443,10 +443,9 @@ void FusionGPU::reloadShaders()
 	char current[FILENAME_MAX];
 	_getcwd(current, sizeof(current));
 
-	std::cout << current << std::endl; 
+	std::wstring wsShaderPath(shaderPath.begin(), shaderPath.end()); 
 
-
-	hr = D3DCompileFromFile(FUSION_SHADER_PATH, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_FUSION", "cs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL, &m_blob_fusionShader, &errBlob);
+	hr = D3DCompileFromFile(wsShaderPath.c_str(), NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_FUSION", "cs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL, &m_blob_fusionShader, &errBlob);
 	if (FAILED(hr))
 	{
 		std::cout << "failed to compile Fusion shader " << std::endl;
@@ -455,7 +454,7 @@ void FusionGPU::reloadShaders()
 	}
 
 
-	hr = D3DCompileFromFile(FUSION_SHADER_PATH, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_MC", "cs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL, &m_blob_marchingCubesShader, &errBlob);
+	hr = D3DCompileFromFile(wsShaderPath.c_str(), NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_MC", "cs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL, &m_blob_marchingCubesShader, &errBlob);
 	if (FAILED(hr))
 	{
 		std::cout << "failed to compile Marching Cubes shader " << std::endl;
@@ -463,7 +462,7 @@ void FusionGPU::reloadShaders()
 		std::cin.get();
 	}
 
-	hr = D3DCompileFromFile(FUSION_SHADER_PATH, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_ATTACH_DUMMY", "cs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL, &m_blob_marchingCubesAttachNan, &errBlob);
+	hr = D3DCompileFromFile(wsShaderPath.c_str(), NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_ATTACH_DUMMY", "cs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL, &m_blob_marchingCubesAttachNan, &errBlob);
 	if (FAILED(hr))
 	{
 		std::cout << "failed to compile Marching Cubes DUMMY shader " << std::endl;

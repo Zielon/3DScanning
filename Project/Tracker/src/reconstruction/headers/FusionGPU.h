@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <windowsx.h>
 
+#include <cwchar>
 
 #pragma comment (lib, "d3d11.lib")
 #include <d3d11.h>
@@ -14,7 +15,7 @@
 
 #define SafeRelease(p) { if ( (p) ) { (p)->Release(); (p) = 0; } }
 
-#define FUSION_SHADER_PATH L"./shaders/Fusion.hlsl"
+#define FUSION_SHADER_PATH "./shaders/Fusion.hlsl"
 
 
 #define FUSION_THREADS 4 
@@ -27,7 +28,7 @@
 class FusionGPU : public FusionBase
 {
 public:
-	FusionGPU(SystemParameters camera_parameters);
+	FusionGPU(SystemParameters camera_parameters, std::string shaderPath = FUSION_SHADER_PATH);
 	~FusionGPU();
 
 	//Perfect inheritance ! ! !
@@ -49,7 +50,7 @@ private:
 	inline void initWindow();
 	inline void initDx11(); 
 	inline void initBuffers();
-	void reloadShaders(); 
+	void reloadShaders(std::string shaderPath);
 
 	inline void populateSettingsBuffers(); 
 

@@ -75,7 +75,6 @@
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Fusion.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\FusionGPU.cpp" />
-    <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPComplete.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPNonLinear.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPFeatures.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPNaive.cpp" />
@@ -223,8 +222,9 @@
       </Command>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>xcopy $(ProjectDir)..\..\shaders\*.hlsl $(OutDir)shaders\ /y /s /i
-xcopy $(ProjectDir)..\..\shaders\*.hlsl $(ProjectDir)shaders\ /y /s /i</Command>
+      <Command>xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(OutDir)shaders\" /y /s /i
+xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(ProjectDir)shaders\" /y /s /i
+xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\Shaders\" /y /s /i</Command>
       <Message>Copying Shaders</Message>
       <Outputs>GODDAMMIT VISUAL STUDIO JUST COPY MY FILES WHENEVER I WANT.lol;%(Outputs)</Outputs>
     </CustomBuildStep>
@@ -293,8 +293,9 @@ xcopy $(ProjectDir)..\..\shaders\*.hlsl $(ProjectDir)shaders\ /y /s /i</Command>
       </Command>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>xcopy $(ProjectDir)..\..\shaders\*.hlsl $(OutDir)shaders\ /y /s /i
-xcopy $(ProjectDir)..\..\shaders\*.hlsl $(ProjectDir)shaders\ /y /s /i</Command>
+      <Command>xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(OutDir)shaders\" /y /s /i
+xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(ProjectDir)shaders\" /y /s /i
+xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\Shaders\" /y /s /i</Command>
       <Message>Copying Shaders</Message>
       <Outputs>GODDAMMIT VISUAL STUDIO JUST COPY MY FILES WHENEVER I WANT.lol;%(Outputs)</Outputs>
     </CustomBuildStep>
@@ -329,8 +330,9 @@ xcopy $(ProjectDir)..\..\shaders\*.hlsl $(ProjectDir)shaders\ /y /s /i</Command>
       <Command>xcopy /y "$(OutDir)*.dll" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\"</Command>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>xcopy $(ProjectDir)..\..\shaders\*.hlsl $(OutDir)shaders\ /y /s /i
-xcopy $(ProjectDir)..\..\shaders\*.hlsl $(ProjectDir)shaders\ /y /s /i</Command>
+      <Command>xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(OutDir)shaders\" /y /s /i
+xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(ProjectDir)shaders\" /y /s /i
+xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\Shaders\" /y /s /i</Command>
       <Message>Copying Shaders</Message>
       <Outputs>GODDAMMIT VISUAL STUDIO JUST COPY MY FILES WHENEVER I WANT.lol;%(Outputs)</Outputs>
     </CustomBuildStep>

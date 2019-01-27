@@ -23,9 +23,9 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 		intrinsics
 	);
 
-
+	
 	tracker_context->m_tracker = new Tracker(camera_parameters, ICPType::NON_LINEAR);
-	tracker_context->m_fusion = new FusionGPU(camera_parameters);
+	tracker_context->m_fusion = new FusionGPU(camera_parameters, std::string(dataset_path) + "../../Assets/Plugins/Shaders/Fusion.hlsl");
 	// Start consuming the point clouds buffer
 	tracker_context->m_fusion->consume();
 
