@@ -59,7 +59,7 @@ FusionGPU::~FusionGPU()
 
 void FusionGPU::initialize()
 {
-	m_volume = new Volume(Size(-4, -4, -4), Size(4, 4, 4), 256, 1, false);
+	m_volume = new Volume(Size(-4, -4, -4), Size(4, 4, 4), 512, 1, false);
 	m_trunaction = m_volume->m_voxel_size * 2.f;
 
 	m_fusionSettings.m_max = m_volume->m_max.cast<float>(); 
@@ -133,18 +133,39 @@ void FusionGPU::save(std::string name)
 
 void FusionGPU::processMesh(Mesh & mesh)
 {
+#ifdef USE_CPU_MC
+	processMeshCPU(mesh); 
+#else
+	
+	ID3D11Buffer* m_buf_vertexBuffer_copy = NULL;
+
+	D3D11_BUFFER_DESC descCopyBuf = { 0 };
+	descCopyBuf.ByteWidth = sizeof(__Triangle) * MAX_TRIANGLES;
+	descCopyBuf.StructureByteStride = sizeof(__Triangle);
+	descCopyBuf.CPUAccessFlags = 0;
+	descCopyBuf.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	descCopyBuf.Usage = D3D11_USAGE_STAGING;
+	descCopyBuf.BindFlags = 0;
+	descCopyBuf.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+
+
+	HRESULT hr = m_d3dDevice->CreateBuffer(&descCopyBuf, NULL, &m_buf_vertexBuffer_copy);
+	if (FAILED(hr))
+	{
+		std::cout << "failed to create SDF copy buffer" << std::endl;
+	}
+
 
 	D3D11_UNORDERED_ACCESS_VIEW_DESC descUAV;
 	descUAV.Buffer.FirstElement = 0;
-	descUAV.Buffer.NumElements = m_fusionSettings.m_resolution * m_fusionSettings.m_resolution* m_fusionSettings.m_resolution;
-
+	descUAV.Buffer.NumElements = MAX_TRIANGLES;
 	descUAV.Buffer.Flags = D3D11_BUFFER_UAV_FLAG_APPEND;
 	descUAV.Format = DXGI_FORMAT_UNKNOWN;
 	descUAV.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
 
 	ID3D11UnorderedAccessView* uav_triangleBuffer = NULL; 
 
-	HRESULT hr = m_d3dDevice->CreateUnorderedAccessView(m_buf_vertexBuffer, &descUAV, &uav_triangleBuffer);
+	hr = m_d3dDevice->CreateUnorderedAccessView(m_buf_vertexBuffer, &descUAV, &uav_triangleBuffer);
 	if (FAILED(hr))
 	{
 		std::cout << "failed to UAV for MQ" << std::endl;
@@ -166,17 +187,15 @@ void FusionGPU::processMesh(Mesh & mesh)
 	m_d3dContext->CSSetShader(m_shader_marchingCubes, 0, 0);
 
 	m_d3dContext->Dispatch(
-	(m_fusionPerFrame.numThreads.x() / MQ_THREADS + 1),
-	(m_fusionPerFrame.numThreads.y() / MQ_THREADS + 1),
-	(m_fusionPerFrame.numThreads.z()) / MQ_THREADS + 1);
+		(m_fusionSettings.m_resolution / MC_THREADS +1),
+		(m_fusionSettings.m_resolution / MC_THREADS +1),
+		(m_fusionSettings.m_resolution / MC_THREADS +1));
 
 	m_d3dContext->CSSetShader(m_shader_marchingCubesAttachNan, 0, 0);
 	m_d3dContext->Dispatch(1, 1, 1); 
 
 
 	m_swapChain->Present(0, 0); //Debug hook 
-
-
 
 	m_d3dContext->CopyResource(m_buf_vertexBuffer_copy, m_buf_vertexBuffer);
 
@@ -194,11 +213,11 @@ void FusionGPU::processMesh(Mesh & mesh)
 
 	__Triangle* pData = static_cast<__Triangle*>(verticesMap.pData);
 
-	for (size_t i = 0; i < m_fusionSettings.m_resolution* m_fusionSettings.m_resolution* m_fusionSettings.m_resolution;++i)
+	for (size_t i = 0; i < MAX_TRIANGLES;++i)
 	{
 		__Triangle& t = *(pData + i);
 
-		if (!t.v1.allFinite() && !t.v1.allFinite() && !t.v1.allFinite()) // dummy reached
+		if (!t.v1.allFinite() || !t.v1.allFinite() || !t.v1.allFinite()) // dummy reached
 		{
 			break; 
 		}
@@ -208,16 +227,66 @@ void FusionGPU::processMesh(Mesh & mesh)
 		mesh.m_vertices.push_back(t.v1);
 		mesh.m_vertices.push_back(t.v2);
 
-		if (i > 50000)
-			break; 
-
 	}
 	m_d3dContext->Unmap(m_buf_vertexBuffer_copy, 0);
 
 	m_swapChain->Present(0, 0); //Debug hook
 
+	SafeRelease(m_buf_vertexBuffer_copy);
+
+#endif //#ifdef USE_CPU_MC
 }
 
+void FusionGPU::processMeshCPU(Mesh& mesh)
+{
+	ID3D11Buffer* m_buf_sdf_copy = NULL;
+	D3D11_BUFFER_DESC descSDF = { 0 };
+	descSDF.ByteWidth = sizeof(Voxel) * m_fusionSettings.m_resolution * m_fusionSettings.m_resolution *m_fusionSettings.m_resolution;
+	descSDF.StructureByteStride = sizeof(Voxel);
+	descSDF.CPUAccessFlags = 0;
+	descSDF.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	descSDF.Usage = D3D11_USAGE_STAGING;
+	descSDF.BindFlags = 0;
+	descSDF.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+
+
+	HRESULT hr = m_d3dDevice->CreateBuffer(&descSDF, NULL, &m_buf_sdf_copy);
+	if (FAILED(hr))
+	{
+		std::cout << "failed to create SDF copy buffer" << std::endl;
+	}
+
+	ID3D11UnorderedAccessView* nullUAV[] = { NULL };
+	m_d3dContext->CSSetUnorderedAccessViews(0, 1, nullUAV, 0);
+	m_d3dContext->CSSetShader(0, 0, 0);
+
+	m_d3dContext->CopyResource(m_buf_sdf_copy, m_buf_sdf);
+
+	D3D11_MAPPED_SUBRESOURCE sdfMap;
+	hr = m_d3dContext->Map(m_buf_sdf_copy, 0, D3D11_MAP_READ, 0, &sdfMap);
+
+	if (FAILED(hr))
+	{
+		std::cout << "failed to map SDF to system memory" << std::endl;
+		std::cin.get();
+	}
+
+	m_volume->m_voxels = reinterpret_cast<Voxel*>(sdfMap.pData);
+
+
+#pragma omp parallel for num_threads(2)
+	for (int x = 0; x < m_volume->m_size - 1; x++)
+		for (int y = 0; y < m_volume->m_size - 1; y++)
+			for (int z = 0; z < m_volume->m_size - 1; z++)
+				MarchingCubes::getInstance().ProcessVolumeCell(m_volume, x, y, z, 0.0f, &mesh);
+
+	m_d3dContext->Unmap(m_buf_sdf_copy, 0);
+
+
+
+	SafeRelease(m_buf_sdf_copy);
+
+}
 
 
 void FusionGPU::populateSettingsBuffers()
@@ -229,7 +298,7 @@ void FusionGPU::populateSettingsBuffers()
 
 /****
 *
-*	************************************************ D3d INIT *****************************************
+*	************************************************ D3D INIT *****************************************
 *
 */
 
@@ -261,7 +330,7 @@ void FusionGPU::initBuffers()
 	delete[] zeroSDF; 
 
 
-	descSDF.ByteWidth = sizeof(__Triangle) * m_fusionSettings.m_resolution * m_fusionSettings.m_resolution *m_fusionSettings.m_resolution;
+	descSDF.ByteWidth = sizeof(__Triangle) * MAX_TRIANGLES;
 	descSDF.StructureByteStride = sizeof(__Triangle);
 
 	hr = m_d3dDevice->CreateBuffer(&descSDF, NULL, &m_buf_vertexBuffer);
@@ -270,28 +339,6 @@ void FusionGPU::initBuffers()
 		std::cout << "failed to create buffer" << std::endl;
 		std::cin.get();
 	}
-
-
-	//descSDF.Usage = D3D11_USAGE_STAGING; 
-	//descSDF.BindFlags = 0; 
-	//descSDF.CPUAccessFlags = D3D11_CPU_ACCESS_READ; 
-	//hr = m_d3dDevice->CreateBuffer(&descSDF, NULL, &m_buf_sdf_copy);
-	//if (FAILED(hr))
-	//{
-	//	std::cout << "failed to create buffer" << std::endl;
-	//	std::cin.get();
-	//}
-
-	descSDF.Usage = D3D11_USAGE_STAGING; 
-	descSDF.BindFlags = 0; 
-	descSDF.CPUAccessFlags = D3D11_CPU_ACCESS_READ; 
-	hr = m_d3dDevice->CreateBuffer(&descSDF, NULL, &m_buf_vertexBuffer_copy);
-	if (FAILED(hr))
-	{
-		std::cout << "failed to create buffer" << std::endl;
-		std::cin.get();
-	}
-
 
 	D3D11_UNORDERED_ACCESS_VIEW_DESC descSDFUAV; 
 	descSDFUAV.Buffer.FirstElement = 0; 
@@ -408,7 +455,7 @@ void FusionGPU::reloadShaders()
 	}
 
 
-	hr = D3DCompileFromFile(FUSION_SHADER_PATH, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_MQ", "cs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL, &m_blob_marchingCubesShader, &errBlob);
+	hr = D3DCompileFromFile(FUSION_SHADER_PATH, NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_MC", "cs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL, &m_blob_marchingCubesShader, &errBlob);
 	if (FAILED(hr))
 	{
 		std::cout << "failed to compile Marching Cubes shader " << std::endl;

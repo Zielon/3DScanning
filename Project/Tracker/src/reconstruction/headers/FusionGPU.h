@@ -18,7 +18,10 @@
 
 
 #define FUSION_THREADS 4 
-#define MQ_THREADS 8
+#define MC_THREADS 4
+#define MAX_TRIANGLES 4e6
+
+//#define USE_CPU_MC
 
 
 class FusionGPU : public FusionBase
@@ -51,6 +54,8 @@ private:
 	inline void populateSettingsBuffers(); 
 
 	inline void initialize(); 
+
+	inline void processMeshCPU(Mesh& mesh); 
 
 	__declspec(align(16)) struct FusionSettings
 	{
@@ -103,7 +108,6 @@ private:
 	HWND m_hWindow; 
 
 	ID3D11Buffer* m_buf_vertexBuffer = NULL;
-	ID3D11Buffer* m_buf_vertexBuffer_copy = NULL;
 
 
 	ID3D11UnorderedAccessView* m_uav_sdf = NULL;

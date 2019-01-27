@@ -1,14 +1,14 @@
 #pragma pack_matrix(row_major)
 
 #define FUSION_THREADS 4 
-#define MQ_THREADS 8
+#define MC_THREADS 4
 
 #define VOXEL_UNSEEN 0
 #define VOXEL_EMPTY 1
 #define VOXEL_SDF 2
 
 #define MAX_DEPTH 5.0f
-#define MAX_WEIGHT 1000.0f
+#define MAX_WEIGHT 50000.0f
 #define HUGE_VAL 5000.0f
 
 static const int edgeTable[256] =
@@ -308,7 +308,6 @@ static const int triTable[256][16] =
 };
 
 
-
 /*
 * ****************************** STRUCTS **************************
 */
@@ -356,6 +355,11 @@ struct Triangle
 
 };
 
+struct MC_Gridcell
+{
+    float3 p[8];
+    float val[8];
+};
 
 /*
 * ****************************** BUFFERS **************************
@@ -400,22 +404,18 @@ float weightKernel(float depth)
 
 float SampleData(int3 pos)
 {
+    //pos = clamp(pos, int3(0, 0, 0), int3(g_settings.m_resolution, g_settings.m_resolution, g_settings.m_resolution));
     int cellIDX = dot(pos, int3(g_settings.m_resSQ, g_settings.m_resolution, 1));
 
     Voxel v = g_SDF[cellIDX]; 
+   
+    if (v.state == VOXEL_EMPTY)
+        return 1.#INF;
+    else if (v.state == VOXEL_UNSEEN)
+        return -1.#INF;
+    else
+        return v.sdf; 
 
-    for (int i = 0; i < 8; i++)
-    {
-        if (v.state == VOXEL_EMPTY)
-            return HUGE_VAL;
-        else if (v.state == VOXEL_UNSEEN)
-            return -HUGE_VAL;
-        else
-            return v.sdf; 
-    }
-
-
-    return g_SDF[cellIDX].sdf;
 }
 
 float3 VertexInterp(float3 p1, float3 p2, float valp1, float valp2)
@@ -459,11 +459,11 @@ void CS_FUSION(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_Grou
 
     if (all(pixels >= int2(0, 0) && pixels < g_settings.imageDims))
     {
-        float depth = g_currentFrame.Load(int3(pixels.xy, 0)); 
+        float depth = g_currentFrame.Load(int3(pixels.xy, 0));
 
         if (depth > 0.001f && depth < MAX_DEPTH)
         {
-            float sdf = depth - cell.z; 
+            float sdf = depth - cell.z;
 
 
             if (depth - g_settings.m_truncation > cell.z && g_SDF[cellIDX].state == VOXEL_UNSEEN)
@@ -472,81 +472,72 @@ void CS_FUSION(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_Grou
             }
             else if (abs(sdf) < g_settings.m_truncation && !g_SDF[cellIDX].state == VOXEL_EMPTY)
             {
-                float weight = weightKernel(depth); 
+                float weight = weightKernel(depth);
                 Voxel v = g_SDF[cellIDX];
-                v.state = VOXEL_SDF; 
+                v.state = VOXEL_SDF;
                 v.sdf = v.sdf * v.weight + sdf * weight / (v.weight + weight);
-                v.weight = min(v.weight + weight, MAX_WEIGHT); 
+                v.weight = min(v.weight + weight, MAX_WEIGHT);
 
-                g_SDF[cellIDX] = v; 
-            }     
+                g_SDF[cellIDX] = v;
+            }
 
-        } // depth in range
-    }//pixel in image
+        } // depth < INFINITY
+    } //pixel in image
 
 }
 
 /******************************* Marching Cubes *********************************
-*Adapted from 
 *
-*https://github.com/pavelkouril/unity-marching-cubes-gpu/blob/master/Assets/MarchingCubes/Shaders/MarchingCubes.compute
+*
 *
 */
 
 
-[numthreads( MQ_THREADS,  MQ_THREADS,  MQ_THREADS)]
-void CS_MQ(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID)
+[numthreads(MC_THREADS,  MC_THREADS,  MC_THREADS)]
+void CS_MC(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID)
 {
     int3 cellIDX3 = g_perFrame.frustum_min + groupID * int3(FUSION_THREADS, FUSION_THREADS, FUSION_THREADS) + threadIDInGroup;
 
-    if (any(cellIDX3 >= int3(g_settings.m_resolution, g_settings.m_resolution, g_settings.m_resolution)))
-    {
-        return;
-    }
+    MC_Gridcell grid;
 
 
-    float3 offset = float3(-0.5, -0.5, -0.5);
 
-    float3 p[8] =
-    {
-        p[0] = getWorldPosition(cellIDX3 + float3(0, 0, 1)),
-		p[1] = getWorldPosition(cellIDX3 + float3(1, 0, 1)),
-		p[2] = getWorldPosition(cellIDX3 + float3(1, 0, 0)),
-		p[3] = getWorldPosition(cellIDX3 + float3(0, 0, 0)),
-		p[4] = getWorldPosition(cellIDX3 + float3(0, 1, 1)),
-		p[5] = getWorldPosition(cellIDX3 + float3(1, 1, 1)),
-		p[6] = getWorldPosition(cellIDX3 + float3(1, 1, 0)),
-		p[7] = getWorldPosition(cellIDX3 + float3(0, 1, 0)),
-    };
+    grid.p[0] = getWorldPosition(cellIDX3 + int3(1, 0, 0));
+    grid.p[1] = getWorldPosition(cellIDX3 + int3(0, 0, 0));
+    grid.p[2] = getWorldPosition(cellIDX3 + int3(0, 1, 0));
+    grid.p[3] = getWorldPosition(cellIDX3 + int3(1, 1, 0));
+    grid.p[4] = getWorldPosition(cellIDX3 + int3(1, 0, 1));
+    grid.p[5] = getWorldPosition(cellIDX3 + int3(0, 0, 1));
+    grid.p[6] = getWorldPosition(cellIDX3 + int3(0, 1, 1));
+    grid.p[7] = getWorldPosition(cellIDX3 + int3(1, 1, 1));
+    
 
-    float val[8] =
-    {
-        SampleData(cellIDX3 + int3(0, 0, 1)),
-		SampleData(cellIDX3 + int3(1, 0, 1)),
-		SampleData(cellIDX3 + int3(1, 0, 0)),
-		SampleData(cellIDX3 + int3(0, 0, 0)),
-		SampleData(cellIDX3 + int3(0, 1, 1)),
-		SampleData(cellIDX3 + int3(1, 1, 1)),
-		SampleData(cellIDX3 + int3(1, 1, 0)),
-		SampleData(cellIDX3 + int3(0, 1, 0))
-    };
+    grid.val[0] = SampleData(cellIDX3 + int3(1, 0, 0));
+    grid.val[1] = SampleData(cellIDX3 + int3(0, 0, 0));
+    grid.val[2] = SampleData(cellIDX3 + int3(0, 1, 0));
+    grid.val[3] = SampleData(cellIDX3 + int3(1, 1, 0));
+    grid.val[4] = SampleData(cellIDX3 + int3(1, 0, 1));
+    grid.val[5] = SampleData(cellIDX3 + int3(0, 0, 1));
+    grid.val[6] = SampleData(cellIDX3 + int3(0, 1, 1));
+    grid.val[7] = SampleData(cellIDX3 + int3(1, 1, 1));
+    
 
     int cubeIndex = 0;
-    if (val[0] < g_mqSettings.m_isolevel)
+    if (grid.val[0] < g_mqSettings.m_isolevel)
         cubeIndex |= 1;
-    if (val[1] < g_mqSettings.m_isolevel)
+    if (grid.val[1] < g_mqSettings.m_isolevel)
         cubeIndex |= 2;
-    if (val[2] < g_mqSettings.m_isolevel)
+    if (grid.val[2] < g_mqSettings.m_isolevel)
         cubeIndex |= 4;
-    if (val[3] < g_mqSettings.m_isolevel)
+    if (grid.val[3] < g_mqSettings.m_isolevel)
         cubeIndex |= 8;
-    if (val[4] < g_mqSettings.m_isolevel)
+    if (grid.val[4] < g_mqSettings.m_isolevel)
         cubeIndex |= 16;
-    if (val[5] < g_mqSettings.m_isolevel)
+    if (grid.val[5] < g_mqSettings.m_isolevel)
         cubeIndex |= 32;
-    if (val[6] < g_mqSettings.m_isolevel)
+    if (grid.val[6] < g_mqSettings.m_isolevel)
         cubeIndex |= 64;
-    if (val[7] < g_mqSettings.m_isolevel)
+    if (grid.val[7] < g_mqSettings.m_isolevel)
         cubeIndex |= 128;
 
     float3 vertlist[12];
@@ -554,29 +545,30 @@ void CS_MQ(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID)
     if (edgeTable[cubeIndex] != 0)
     {
         if (edgeTable[cubeIndex] & 1)
-            vertlist[0] = VertexInterp(p[0], p[1], val[0], val[1]);
+            vertlist[0] = VertexInterp(grid.p[0], grid.p[1], grid.val[0], grid.val[1]);
         if (edgeTable[cubeIndex] & 2)
-            vertlist[1] = VertexInterp(p[1], p[2], val[1], val[2]);
+            vertlist[1] = VertexInterp(grid.p[1], grid.p[2], grid.val[1], grid.val[2]);
         if (edgeTable[cubeIndex] & 4)
-            vertlist[2] = VertexInterp(p[2], p[3], val[2], val[3]);
+            vertlist[2] = VertexInterp(grid.p[2], grid.p[3], grid.val[2], grid.val[3]);
         if (edgeTable[cubeIndex] & 8)
-            vertlist[3] = VertexInterp(p[3], p[0], val[3], val[0]);
+            vertlist[3] = VertexInterp(grid.p[3], grid.p[0], grid.val[3], grid.val[0]);
         if (edgeTable[cubeIndex] & 16)
-            vertlist[4] = VertexInterp(p[4], p[5], val[4], val[5]);
+            vertlist[4] = VertexInterp(grid.p[4], grid.p[5], grid.val[4], grid.val[5]);
         if (edgeTable[cubeIndex] & 32)
-            vertlist[5] = VertexInterp(p[5], p[6], val[5], val[6]);
+            vertlist[5] = VertexInterp(grid.p[5], grid.p[6], grid.val[5], grid.val[6]);
         if (edgeTable[cubeIndex] & 64)
-            vertlist[6] = VertexInterp(p[6], p[7], val[6], val[7]);
+            vertlist[6] = VertexInterp(grid.p[6], grid.p[7], grid.val[6], grid.val[7]);
         if (edgeTable[cubeIndex] & 128)
-            vertlist[7] = VertexInterp(p[7], p[4], val[7], val[4]);
+            vertlist[7] = VertexInterp(grid.p[7], grid.p[4], grid.val[7], grid.val[4]);
         if (edgeTable[cubeIndex] & 256)
-            vertlist[8] = VertexInterp(p[0], p[4], val[0], val[4]);
+            vertlist[8] = VertexInterp(grid.p[0], grid.p[4], grid.val[0], grid.val[4]);
         if (edgeTable[cubeIndex] & 512)
-            vertlist[9] = VertexInterp(p[1], p[5], val[1], val[5]);
+            vertlist[9] = VertexInterp(grid.p[1], grid.p[5], grid.val[1], grid.val[5]);
         if (edgeTable[cubeIndex] & 1024)
-            vertlist[10] = VertexInterp(p[2], p[6], val[2], val[6]);
+            vertlist[10] = VertexInterp(grid.p[2], grid.p[6], grid.val[2], grid.val[6]);
         if (edgeTable[cubeIndex] & 2048)
-            vertlist[11] = VertexInterp(p[3], p[7], val[3], val[7]);
+            vertlist[11] = VertexInterp(grid.p[3], grid.p[7], grid.val[3], grid.val[7]);
+
 
         for (int i = 0; triTable[cubeIndex][i] != -1; i += 3)
         {
@@ -589,9 +581,16 @@ void CS_MQ(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID)
             //v0.vNormal = normalize(CalculateGradient(v0.vPosition));
             //v1.vNormal = normalize(CalculateGradient(v1.vPosition));
             //v2.vNormal = normalize(CalculateGradient(v2.vPosition));
-            g_triangleBuffer.Append(t); 
+
+            if (all(g_settings.m_min < t.p0) && all(t.p0 < g_settings.m_max)
+                && all(g_settings.m_min < t.p1) && all(t.p1 < g_settings.m_max)
+                && all(g_settings.m_min < t.p2) && all(t.p2 < g_settings.m_max))
+            {
+                g_triangleBuffer.Append(t);
+            }
         }
-    }
+    } //     if (edgeTable[cubeIndex] != 0)
+
 
 }
 
