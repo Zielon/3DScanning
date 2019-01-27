@@ -5,8 +5,8 @@ Matrix4f ICPCUDA::estimatePose(std::shared_ptr<PointCloud> model, std::shared_pt
 	int threads = 224;
 	int blocks = 96;
 
-	m_icpOdom->initICPModel(model->m_depth_points);
-	m_icpOdom->initICP(data->m_depth_points);
+	m_icpOdom->initICPModel((unsigned short*)model->m_depth_points);
+	m_icpOdom->initICP((unsigned short*)data->m_depth_points);
 
 	T_wc_prev = T_wc_curr;
 

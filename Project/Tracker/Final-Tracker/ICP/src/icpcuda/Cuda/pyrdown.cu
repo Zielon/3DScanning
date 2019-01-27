@@ -77,7 +77,7 @@ __global__ void pyrDownGaussKernel(const PtrStepSz<unsigned short> src, PtrStepS
     dst.ptr(y)[x] = static_cast<int>(sum /wall);
 }
 
-void pyrDown(const DeviceArray2D<float> & src, DeviceArray2D<float> & dst)
+void pyrDown(const DeviceArray2D<unsigned short> & src, DeviceArray2D<unsigned short> & dst)
 {
     dst.create(src.rows() / 2, src.cols() / 2);
 
@@ -116,7 +116,7 @@ __global__ void computeVmapKernel(const PtrStepSz<unsigned short> depth, PtrStep
     }
 }
 
-void createVMap(const Intr& intr, const DeviceArray2D<float> & depth, DeviceArray2D<float> & vmap, const float depthCutoff)
+void createVMap(const Intr& intr, const DeviceArray2D<unsigned short> & depth, DeviceArray2D<float> & vmap, const float depthCutoff)
 {
     vmap.create(depth.rows() * 3, depth.cols());
 
