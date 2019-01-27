@@ -74,7 +74,7 @@
     </Link>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
-      <Include>$(EIGEN_DIR);C:\Projects\Sophus-master;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\include\crt</Include>
+      <Include>$(EIGEN_DIR);$(SOPHUS_DIR);$(CUDA_PATH)\include\crt</Include>
       <AdditionalDeps>%(AdditionalDeps)</AdditionalDeps>
     </CudaCompile>
   </ItemDefinitionGroup>
@@ -99,7 +99,7 @@
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <AdditionalDeps>%(AdditionalDeps)</AdditionalDeps>
-      <Include>$(EIGEN_DIR);C:\Projects\Sophus-master;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\include\crt</Include>
+      <Include>$(EIGEN_DIR);$(SOPHUS_DIR);$(CUDA_PATH)\include\crt</Include>
     </CudaCompile>
     <CudaLink>
       <AdditionalLibraryDirectories>
@@ -127,7 +127,7 @@
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
       <AdditionalDeps>%(AdditionalDeps)</AdditionalDeps>
-      <Include>$(EIGEN_DIR);C:\Projects\Sophus-master;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0\include\crt</Include>
+      <Include>$(EIGEN_DIR);$(SOPHUS_DIR);$(CUDA_PATH)\include\crt</Include>
     </CudaCompile>
     <CudaLink>
       <AdditionalLibraryDirectories>
