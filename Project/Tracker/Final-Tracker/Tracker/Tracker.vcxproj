@@ -41,6 +41,7 @@
     <ClInclude Include="..\..\src\files-manager\headers\DatasetManager.h" />
     <ClInclude Include="..\..\src\helpers\Transformations.h" />
     <ClInclude Include="..\..\src\marshaling\__Mesh.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPCUDA.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPFeatures.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\FusionBase.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\FusionGPU.h" />
@@ -74,6 +75,7 @@
     <ClCompile Include="..\..\src\files-manager\sources\DatasetManager.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Fusion.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPCUDA.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\FusionGPU.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPNonLinear.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPFeatures.cpp" />
@@ -273,8 +275,8 @@ xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unit
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENNI2_INCLUDE64);$(OPENCV_INCLUDE);$(EIGEN_DIR);$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(PCL_ROOT)\3rdParty\FLANN\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;TESTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(OPENNI2_INCLUDE64);$(OPENCV_INCLUDE);$(PCL_ROOT)\3rdParty\Eigen\eigen3;$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(PCL_ROOT)\3rdParty\FLANN\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;TESTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <OpenMPSupport>true</OpenMPSupport>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
@@ -308,7 +310,7 @@ xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unit
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENNI2_INCLUDE64);$(OPENCV_INCLUDE);$(EIGEN_DIR);$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(PCL_ROOT)\3rdParty\FLANN\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(OPENNI2_INCLUDE64);$(OPENCV_INCLUDE);$(EIGEN_DIR);$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(PCL_ROOT)\3rdParty\FLANN\include;C:\Projects\Sophus-master\sophus;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;PROJECT_DIR=R"($(SolutionDir))";GOOGLE_GLOG_DLL_DECL=;CERES_USING_STATIC_LIBRARY;IDK_HOW_TO_NOT_USE_ABS_PATH_IN_THIS_SITUATION;_ENABLE_EXTENDED_ALIGNED_STORAGE;_ENABLE_EXTENDED_ALIGNED_STORAGE;NDEBUG;_CONSOLE;CERES_MSVC_USE_UNDERSCORE_PREFIXED_BESSEL_FUNCTIONS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <OpenMPSupport>true</OpenMPSupport>
       <LanguageStandard>stdcpp14</LanguageStandard>
