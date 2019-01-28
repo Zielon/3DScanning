@@ -1,8 +1,12 @@
 #include "../headers/FusionGPU.h"
 #include "../headers/MarchingCubes.h"
 
+#include "../../../shaders/precompiled/CS_MC.h"
+#include "../../../shaders/precompiled/CS_FUSION.h"
+#include "../../../shaders/precompiled/CS_ATTACH_DUMMY.h"
 
-FusionGPU::FusionGPU(SystemParameters camera_parameters, std::string shaderPath) : FusionBase(camera_parameters){
+
+FusionGPU::FusionGPU(SystemParameters camera_parameters) : FusionBase(camera_parameters){
 
 	initialize();
 
@@ -10,7 +14,7 @@ FusionGPU::FusionGPU(SystemParameters camera_parameters, std::string shaderPath)
 	initDx11();
 
 	initBuffers();
-	reloadShaders(shaderPath);
+	reloadShaders("");
 
 	populateSettingsBuffers();
 
@@ -413,49 +417,45 @@ void FusionGPU::reloadShaders(std::string shaderPath){
 	SafeRelease(m_blob_fusionShader);
 	SafeRelease(m_blob_marchingCubesShader);
 
-	char current[FILENAME_MAX];
-	_getcwd(current, sizeof(current));
+	//std::wstring wsShaderPath(shaderPath.begin(), shaderPath.end());
 
-	std::wstring wsShaderPath(shaderPath.begin(), shaderPath.end());
+	//hr = D3DCompileFromFile(wsShaderPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_FUSION", "cs_5_0",
+	//                        D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL, &m_blob_fusionShader, &errBlob);
+	//if (FAILED(hr))
+	//{
+	//	std::cout << "failed to compile Fusion shader " << std::endl;
+	//	std::cout << (char*)errBlob->GetBufferPointer() << std::endl;
+	//	std::cin.get();
+	//}
 
-	hr = D3DCompileFromFile(wsShaderPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_FUSION", "cs_5_0",
-	                        D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL, &m_blob_fusionShader, &errBlob);
-	if (FAILED(hr))
-	{
-		std::cout << "failed to compile Fusion shader " << std::endl;
-		std::cout << (char*)errBlob->GetBufferPointer() << std::endl;
-		std::cin.get();
-	}
+	//hr = D3DCompileFromFile(wsShaderPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_MC", "cs_5_0",
+	//                        D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL, &m_blob_marchingCubesShader,
+	//                        &errBlob);
+	//if (FAILED(hr))
+	//{
+	//	std::cout << "failed to compile Marching Cubes shader " << std::endl;
+	//	std::cout << (char*)errBlob->GetBufferPointer() << std::endl;
+	//	std::cin.get();
+	//}
 
-	hr = D3DCompileFromFile(wsShaderPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_MC", "cs_5_0",
-	                        D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL, &m_blob_marchingCubesShader,
-	                        &errBlob);
-	if (FAILED(hr))
-	{
-		std::cout << "failed to compile Marching Cubes shader " << std::endl;
-		std::cout << (char*)errBlob->GetBufferPointer() << std::endl;
-		std::cin.get();
-	}
+	//hr = D3DCompileFromFile(wsShaderPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_ATTACH_DUMMY",
+	//                        "cs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL,
+	//                        &m_blob_marchingCubesAttachNan, &errBlob);
+	//if (FAILED(hr))
+	//{
+	//	std::cout << "failed to compile Marching Cubes DUMMY shader " << std::endl;
+	//	std::cout << (char*)errBlob->GetBufferPointer() << std::endl;
+	//	std::cin.get();
+	//}
 
-	hr = D3DCompileFromFile(wsShaderPath.c_str(), nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, "CS_ATTACH_DUMMY",
-	                        "cs_5_0", D3DCOMPILE_DEBUG | D3DCOMPILE_ENABLE_STRICTNESS, NULL,
-	                        &m_blob_marchingCubesAttachNan, &errBlob);
-	if (FAILED(hr))
-	{
-		std::cout << "failed to compile Marching Cubes DUMMY shader " << std::endl;
-		std::cout << (char*)errBlob->GetBufferPointer() << std::endl;
-		std::cin.get();
-	}
-
-	hr = m_d3dDevice->CreateComputeShader(m_blob_fusionShader->GetBufferPointer(), m_blob_fusionShader->GetBufferSize(),
+	hr = m_d3dDevice->CreateComputeShader(g_CS_FUSION, sizeof(g_CS_FUSION),
 	                                      nullptr, &m_shader_fusion);
 	if (FAILED(hr))
 	{
 		std::cout << "failed to load Fusion Shader " << hr << std::endl;
 		std::cin.get();
 	}
-	hr = m_d3dDevice->CreateComputeShader(m_blob_marchingCubesShader->GetBufferPointer(),
-	                                      m_blob_marchingCubesShader->GetBufferSize(), nullptr,
+	hr = m_d3dDevice->CreateComputeShader(g_CS_MC, sizeof(g_CS_MC), nullptr,
 	                                      &m_shader_marchingCubes);
 	if (FAILED(hr))
 	{
@@ -463,8 +463,8 @@ void FusionGPU::reloadShaders(std::string shaderPath){
 		std::cin.get();
 	}
 
-	hr = m_d3dDevice->CreateComputeShader(m_blob_marchingCubesAttachNan->GetBufferPointer(),
-	                                      m_blob_marchingCubesAttachNan->GetBufferSize(), nullptr,
+	hr = m_d3dDevice->CreateComputeShader(g_CS_ATTACH_DUMMY,
+	                                     sizeof(g_CS_ATTACH_DUMMY), nullptr,
 	                                      &m_shader_marchingCubesAttachNan);
 	if (FAILED(hr))
 	{

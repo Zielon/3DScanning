@@ -21,10 +21,8 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 		intrinsics
 	);
 
-	const auto shader = std::string(dataset_path) + "../../Assets/Plugins/Shaders/Fusion.hlsl";
-
 	tracker_context->m_tracker = new Tracker(camera_parameters, CUDA);
-	tracker_context->m_fusion = new FusionGPU(camera_parameters, shader);
+	tracker_context->m_fusion = new FusionGPU(camera_parameters);
 	tracker_context->m_fusion->consume();
 
 	return tracker_context;
@@ -59,10 +57,8 @@ extern "C" __declspec(dllexport) void* createSensorContext(const char* dataset_p
 		width,
 		intrinsics
 	);
-	const auto shader = std::string(dataset_path) + "../../Assets/Plugins/Shaders/Fusion.hlsl";
-
 	tracker_context->m_tracker = new Tracker(camera_parameters, CUDA);
-	tracker_context->m_fusion = new FusionGPU(camera_parameters, shader);
+	tracker_context->m_fusion = new FusionGPU(camera_parameters);
 	// Start consuming the point clouds buffer
 	tracker_context->m_fusion->consume();
 

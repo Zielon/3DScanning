@@ -290,16 +290,27 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\shaders\Fusion.hlsl">
-      <Filter>shaders</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <CudaCompile Include="..\..\src\icpcuda\Cuda\estimate.cu">
       <Filter>icpcuda\Cuda</Filter>
     </CudaCompile>
     <CudaCompile Include="..\..\src\icpcuda\Cuda\pyrdown.cu">
       <Filter>icpcuda\Cuda</Filter>
     </CudaCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\shaders\CS_FUSION.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\shaders\CS_MC.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\shaders\CS_ATTACH_DUMMY.hlsl">
+      <Filter>shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\shaders\Fusion.hlsli">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

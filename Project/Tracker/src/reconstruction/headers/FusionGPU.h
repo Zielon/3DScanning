@@ -17,8 +17,6 @@
 
 #define SafeRelease(p) { if ( (p) ) { (p)->Release(); (p) = 0; } }
 
-#define FUSION_SHADER_PATH "./shaders/Fusion.hlsl"
-
 
 #define FUSION_THREADS 4 
 #define MC_THREADS 4
@@ -30,7 +28,7 @@
 class FusionGPU : public FusionBase
 {
 public:
-	FusionGPU(SystemParameters camera_parameters, std::string shaderPath = FUSION_SHADER_PATH);
+	FusionGPU(SystemParameters camera_parameters);
 	~FusionGPU();
 
 	//Perfect inheritance ! ! !

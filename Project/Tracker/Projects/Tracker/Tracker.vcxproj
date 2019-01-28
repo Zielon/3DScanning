@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -102,14 +102,64 @@
     <ClCompile Include="..\..\src\tests\sources\TrackerTest.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\shaders\Fusion.hlsl">
-      <FileType>Document</FileType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">true</ExcludedFromBuild>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <CudaCompile Include="..\..\src\icpcuda\Cuda\estimate.cu" />
     <CudaCompile Include="..\..\src\icpcuda\Cuda\pyrdown.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\shaders\CS_ATTACH_DUMMY.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_ATTACH_DUMMY</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">CS_ATTACH_DUMMY</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_ATTACH_DUMMY</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_CS_ATTACH_DUMMY</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)../shaders/precompiled/CS_ATTACH_DUMMY.h</HeaderFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">g_CS_ATTACH_DUMMY</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">$(SolutionDir)../shaders/precompiled/CS_ATTACH_DUMMY.h</HeaderFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">g_CS_ATTACH_DUMMY</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)../shaders/precompiled/CS_ATTACH_DUMMY.h</HeaderFileOutput>
+    </FxCompile>
+    <FxCompile Include="..\..\shaders\CS_FUSION.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_FUSION</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">CS_FUSION</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_FUSION</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_CS_FUSION</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)../shaders/precompiled/CS_FUSION.h</HeaderFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">g_CS_FUSION</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">$(SolutionDir)../shaders/precompiled/CS_FUSION.h</HeaderFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">g_CS_FUSION</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)../shaders/precompiled/CS_FUSION.h</HeaderFileOutput>
+    </FxCompile>
+    <FxCompile Include="..\..\shaders\CS_MC.hlsl">
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_CS_MC</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)../shaders/precompiled/CS_MC.h</HeaderFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">g_CS_MC</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">$(SolutionDir)../shaders/precompiled/CS_MC.h</HeaderFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">g_CS_MC</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)../shaders/precompiled/CS_MC.h</HeaderFileOutput>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MC</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">CS_MC</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MC</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\shaders\Fusion.hlsli" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -243,11 +293,12 @@
       </Command>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(OutDir)shaders\" /y /s /i
-xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(ProjectDir)shaders\" /y /s /i
-xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\Shaders\" /y /s /i</Command>
-      <Message>Copying Shaders</Message>
-      <Outputs>GODDAMMIT VISUAL STUDIO JUST COPY MY FILES WHENEVER I WANT.lol;%(Outputs)</Outputs>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <CudaCompile>
       <Include>$(EIGEN_DIR);$(SOPHUS_DIR);$(CUDA_PATH)\include\crt</Include>
@@ -319,11 +370,12 @@ xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unit
       </Command>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(OutDir)shaders\" /y /s /i
-xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(ProjectDir)shaders\" /y /s /i
-xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\Shaders\" /y /s /i</Command>
-      <Message>Copying Shaders</Message>
-      <Outputs>GODDAMMIT VISUAL STUDIO JUST COPY MY FILES WHENEVER I WANT.lol;%(Outputs)</Outputs>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <CudaCompile>
       <Include>$(EIGEN_DIR);$(SOPHUS_DIR);$(CUDA_PATH)\include\crt</Include>
@@ -361,11 +413,12 @@ xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unit
       <Command>echo f | xcopy /y "$(TargetPath)" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\$(TargetFileName)"</Command>
     </PostBuildEvent>
     <CustomBuildStep>
-      <Command>xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(OutDir)shaders\" /y /s /i
-xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(ProjectDir)shaders\" /y /s /i
-xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\Shaders\" /y /s /i</Command>
-      <Message>Copying Shaders</Message>
-      <Outputs>GODDAMMIT VISUAL STUDIO JUST COPY MY FILES WHENEVER I WANT.lol;%(Outputs)</Outputs>
+      <Command>
+      </Command>
+      <Message>
+      </Message>
+      <Outputs>
+      </Outputs>
     </CustomBuildStep>
     <CudaCompile>
       <Include>$(EIGEN_DIR);$(SOPHUS_DIR);$(CUDA_PATH)\include\crt;</Include>
