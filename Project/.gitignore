@@ -8,6 +8,8 @@ build/
 # Project-specific
 libs/*
 
+output.txt
+
 # =============== #
 # Unity generated #
 # =============== #

@@ -5,7 +5,7 @@
 /// y -> width
 /// x -> height
 ///
-Volume::Volume(Size min, Size max, uint size, uint dim){
+Volume::Volume(Size min, Size max, uint size, uint dim, bool allocMemory){
 	m_dim = dim;
 	m_size = size;
 	m_length = std::pow(m_size, 3);
@@ -15,7 +15,11 @@ Volume::Volume(Size min, Size max, uint size, uint dim){
 	m_min = Vector3d(min.m_depth, min.m_width, min.m_height);
 	m_max = Vector3d(max.m_depth, max.m_width, max.m_height);
 
-	m_voxels = new Voxel[m_length];
+	if (allocMemory)
+	{
+		m_voxels = new Voxel[m_length];
+	}
+
 }
 
 Volume::~Volume(){

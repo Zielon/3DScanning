@@ -3,9 +3,9 @@
 
 enum State
 {
-	UNSEEN,
-	EMPTY,
-	SDF
+	UNSEEN = 0,
+	EMPTY = 1,
+	SDF = 2
 };
 
 struct Voxel final
@@ -14,7 +14,8 @@ struct Voxel final
 
 	float m_sdf;
 	float m_weight;
-	State m_state;
+	int m_state;
 };
+
 
 #endif

@@ -35,8 +35,8 @@ float PointCloud::getDepthImage(int x, int y) const{
 
 	int idx = y * m_current_width + x;
 
-	if (idx >= 0 && idx < m_depth_points.size())
-		return m_depth_points[idx];
+	if (idx >= 0 && idx < m_current_width * m_current_height)
+		return m_depth_points_fusion[idx];
 
 	return INFINITY;
 }
@@ -52,8 +52,7 @@ void PointCloud::transform(Matrix4f transformation){
 	}
 }
 
-cv::Mat PointCloud::getNormalMap()
-{
+cv::Mat PointCloud::getNormalMap(){
 	//Normal computed directly by depth maps
 	/*if (depth_map.type() != CV_32FC1) {
 		depth_map.convertTo(depth_map, CV_32FC1);
@@ -92,18 +91,19 @@ cv::Mat PointCloud::getNormalMap()
 
 			//cv::Vec3f & color = normals.at<cv::Vec3f>(y, x);//Test
 
-			cv::Vec3b & color = normal_map.at<cv::Vec3b>(y, x);
+			cv::Vec3b& color = normal_map.at<cv::Vec3b>(y, x);
 
 			auto normal = m_grid_normals[idx];
 
 			//Unvalid normal -> black color
-			if (!normal.allFinite()) { 
+			if (!normal.allFinite())
+			{
 				color[0] = color[1] = color[2] = 0.0f;
 				continue;
 			}
 
 			//Transforming normal to pixel color space
-			normal = (0.5f * normal + Eigen::Vector3f(0.5f, 0.5f, 0.5f)) * 255;
+			normal = (0.5f * normal + Vector3f(0.5f, 0.5f, 0.5f)) * 255;
 
 			color = cv::Vec3f(normal.x(), normal.y(), normal.z());
 		}
@@ -143,7 +143,8 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	auto size = m_current_width * m_current_height;
 
-	m_depth_points = std::vector<float>(size);
+	m_depth_points_fusion = new float[size];
+	m_depth_points_icp = new unsigned short[size];
 	m_color_points = std::vector<Vector4uc>(size);
 
 	// Temp vector for filtering
@@ -173,8 +174,10 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			float depth = image.at<float>(y, x);
 			auto color = colors.at<cv::Vec3b>(y, x);
 
-			m_depth_points[idx] = depth;
 			m_color_points[idx] = Vector4uc(color[0], color[1], color[2], 0);
+
+			m_depth_points_icp[idx] = static_cast<unsigned short>(depth * 1000.f);
+			m_depth_points_fusion[idx] = depth;
 
 			//Depth range check
 			depth_min = std::min(depth_min, depth);
@@ -183,8 +186,10 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			if (depth > 0.0f)
 			{
 				// Back-projection to camera space.
-				temp_points[idx] = Transformations::backproject(x * m_downsampling_factor, y * m_downsampling_factor,
-				                                                depth, m_camera_parameters);
+				temp_points[idx] = Transformations::backproject(
+					x * m_downsampling_factor,
+					y * m_downsampling_factor,
+					depth, m_camera_parameters);
 			}
 			else
 			{
@@ -253,9 +258,9 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 		}
 	}
 
-	m_indexBuildingThread = new std::thread([this]()-> void{
-		//m_nearestNeighbor->buildIndex(m_points);
-	});
+	//m_indexBuildingThread = new std::thread([this]()-> void{
+	//	m_nearestNeighbor->buildIndex(m_points);
+	//});
 
 }
 

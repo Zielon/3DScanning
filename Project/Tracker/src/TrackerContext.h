@@ -3,7 +3,7 @@
 
 #include "reconstruction/headers/Tracker.h"
 #include "data-stream/headers/VideoStreamReaderBase.h"
-#include "reconstruction/headers/Fusion.h"
+#include "reconstruction/headers/FusionBase.h"
 #include <list>
 
 
@@ -19,7 +19,7 @@ struct TrackerContext
 
 	Tracker* m_tracker;
 	VideoStreamReaderBase* m_videoStreamReader;
-	Fusion* m_fusion;
+	FusionBase* m_fusion;
 	bool m_first_frame = true; 
 	bool enableReconstruction = true; 
 

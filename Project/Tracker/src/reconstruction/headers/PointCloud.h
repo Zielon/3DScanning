@@ -47,6 +47,8 @@ public:
 	int m_current_width = 0;
 	int m_current_height = 0;
 	int m_downsampling_factor = 1;
+	float* m_depth_points_fusion;
+	unsigned short* m_depth_points_icp;
 
 private:
 	void transform(cv::Mat& depth_mat, cv::Mat& rgb_mat);
@@ -58,7 +60,6 @@ private:
 	std::vector<Vector3f> m_points;
 	std::vector<Vector3f> m_normals;
 	std::vector<Vector4uc> m_color_points;
-	std::vector<float> m_depth_points;
 	std::vector<Vector3f> m_grid_normals;//Required to compute the normal map
 
 	//Juan Test

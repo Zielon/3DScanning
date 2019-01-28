@@ -5,6 +5,7 @@
 #include "data-stream/headers/DatasetVideoStreamReader.h"
 #include <opencv2/imgproc/imgproc.hpp>
 #include "reconstruction/headers/Fusion.h"
+#include "reconstruction/headers/FusionGPU.h"
 #include "marshaling/__Mesh.h"
 #include "data-stream/headers/Xtion2StreamReader.h"
 

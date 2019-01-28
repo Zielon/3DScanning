@@ -6,8 +6,8 @@ class ReconstructionTest :
 {
 public:
 	void run() override{
-		this->reconstructionTest(1, 8);
-		//this->reconstructionTestWithOurTracking(1);
+		//this->reconstructionTest(1, 1);
+		this->reconstructionTestWithOurTracking(1);
 		//this->reconstructionTestSensor(100);
 		//this->pointCloudTest();
 		//this->pointCloudTestWithICP();
@@ -19,7 +19,7 @@ private:
 
 	void pointCloudTestWithICP() const;
 
-	void reconstructionTestWithOurTracking(int skip) const;
+	void reconstructionTestWithOurTracking(int increment) const;
 
 	void reconstructionTestSensor(int mesh_index) const;
 

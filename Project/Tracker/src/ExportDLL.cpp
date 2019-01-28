@@ -5,9 +5,7 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 	auto* tracker_context = new TrackerContext();
 
 	tracker_context->m_videoStreamReader = new DatasetVideoStreamReader(dataset_path, false);
-
 	tracker_context->m_videoStreamReader->startReading();
-	//FIXME: Frame Info only set after first frame is read... FIXME: mb split this into seperate call?
 
 	const auto height = tracker_context->m_videoStreamReader->m_height_depth;
 	const auto width = tracker_context->m_videoStreamReader->m_width_depth;
@@ -23,17 +21,16 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 		intrinsics
 	);
 
+	const auto shader = std::string(dataset_path) + "../../Assets/Plugins/Shaders/Fusion.hlsl";
 
-	tracker_context->m_tracker = new Tracker(camera_parameters, NON_LINEAR);
-	tracker_context->m_fusion = new Fusion(camera_parameters);
-	// Start consuming the point clouds buffer
+	tracker_context->m_tracker = new Tracker(camera_parameters, CUDA);
+	tracker_context->m_fusion = new FusionGPU(camera_parameters, shader);
 	tracker_context->m_fusion->consume();
 
 	return tracker_context;
 }
 
-extern "C" __declspec(dllexport) void * createSensorContext()
-{
+extern "C" __declspec(dllexport) void* createSensorContext(){
 	TrackerContext* tracker_context = new TrackerContext();
 
 	bool realtime = true, capture = false, verbose = false;
@@ -42,7 +39,6 @@ extern "C" __declspec(dllexport) void * createSensorContext()
 			capture = true;
 			verbose = true;
 	#endif
-
 
 	//Sensor Class using OpenNI 2
 	tracker_context->m_videoStreamReader = new Xtion2StreamReader(realtime, verbose, capture);
@@ -96,19 +92,17 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 
 	if (tracker_context->m_first_frame)
 	{
-		tracker->m_pose = Matrix4f::Identity(); 
+		tracker->m_pose = Matrix4f::Identity();
 		tracker_context->m_first_frame = false;
 		tracker->m_previous_point_cloud = current;
 		memcpy(pose, tracker->m_pose.data(), 16 * sizeof(float));
 		return;
 	}
 
-	const Matrix4f delta = tracker->alignNewFrame(tracker->m_previous_point_cloud, current);
+	const Matrix4f new_pose = tracker->m_icp->estimatePose(tracker->m_previous_point_cloud, current);
 
-	tracker->m_pose *= delta;
-	//tracker->m_pose = delta * tracker->m_pose;//Correct order (Juan opinion)
-	current->m_pose_estimation = tracker->m_pose;
-
+	tracker->m_pose = new_pose;
+	current->m_pose_estimation = new_pose;
 
 	if (tracker_context->enableReconstruction)
 	{
@@ -138,8 +132,7 @@ extern "C" __declspec(dllexport) void getMeshBuffers(__MeshInfo* mesh_info, floa
 	delete mesh_info->mesh;
 }
 
-extern "C" __declspec(dllexport) void enableReconstruction(void* context, bool enable)
-{
+extern "C" __declspec(dllexport) void enableReconstruction(void* context, bool enable){
 	auto* tracker_context = static_cast<TrackerContext*>(context);
 	tracker_context->enableReconstruction = enable;
 }
