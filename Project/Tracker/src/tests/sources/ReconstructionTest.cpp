@@ -5,7 +5,7 @@ void ReconstructionTest::pointCloudTest() const{
 
 	Verbose::message("START streamPointCloudTest()");
 
-	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+	TrackerContext* context = static_cast<TrackerContext*>(createContext(m_params));
 
 	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
@@ -35,7 +35,7 @@ void ReconstructionTest::pointCloudTest() const{
 void ReconstructionTest::unityIntegrationTest() const{
 	Verbose::message("START unityIntegrationTest()");
 
-	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+	TrackerContext* context = static_cast<TrackerContext*>(createContext(m_params));
 
 	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
@@ -107,7 +107,7 @@ void ReconstructionTest::reconstructionTest(int skip, int subsampling) const{
 
 	Verbose::message("START reconstructionTest()");
 
-	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+	TrackerContext* context = static_cast<TrackerContext*>(createContext(m_params));
 
 	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
@@ -170,7 +170,7 @@ void ReconstructionTest::reconstructionTestWithOurTracking(int increment) const{
 
 	Verbose::message("START reconstructionTestWithOurTracking()");
 
-	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+	TrackerContext* context = static_cast<TrackerContext*>(createContext(m_params));
 
 	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 
@@ -207,7 +207,7 @@ void ReconstructionTest::reconstructionTestWithOurTracking(int increment) const{
 void ReconstructionTest::reconstructionTestSensor(int mesh_index) const{
 	Verbose::message("START reconstructionTestSensor()");
 
-	TrackerContext* context = static_cast<TrackerContext*>(createSensorContext(DatasetManager::getCurrentPath().data()));
+	TrackerContext* context = static_cast<TrackerContext*>(createSensorContext(m_params));
 	float pose[16];
 	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 	int index = 0;
@@ -239,7 +239,7 @@ void ReconstructionTest::pointCloudTestWithICP() const{
 
 	Verbose::message("START pointCloudTestWithICP()");
 
-	TrackerContext* context = static_cast<TrackerContext*>(createContext(DatasetManager::getCurrentPath().data()));
+	TrackerContext* context = static_cast<TrackerContext*>(createContext(m_params));
 
 	for (int index = 0; index < getIterations(); index++)
 	{

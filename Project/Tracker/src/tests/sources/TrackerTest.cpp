@@ -3,8 +3,7 @@
 void TrackerTest::cameraPoseTest(){
 	std::cout << "START cameraPoseTest()" << std::endl;
 
-	TrackerContext* tracker_context = static_cast<TrackerContext*>(createContext(
-		DatasetManager::getCurrentPath().data()));
+	TrackerContext* tracker_context = static_cast<TrackerContext*>(createContext(m_params));
 
 	Matrix4f prev_trajectory;
 	Matrix4f firs_trajectory_inverse = getTrajectory(0).inverse();
@@ -116,8 +115,7 @@ void TrackerTest::cameraPoseTest(){
 void TrackerTest::processedMapsTest(){
 	std::cout << "START processedMapsTest()" << std::endl;
 
-	TrackerContext* tracker_context = static_cast<TrackerContext*>(createContext(
-		DatasetManager::getCurrentPath().data()));
+	TrackerContext* tracker_context = static_cast<TrackerContext*>(createContext(m_params));
 
 	int nIters = 3000; //3000
 

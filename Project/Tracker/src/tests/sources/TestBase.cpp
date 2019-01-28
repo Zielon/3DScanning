@@ -13,6 +13,10 @@ TestBase::TestBase(){
 
 	m_files_manager.readTrajectoryFile(m_trajectories, m_trajectory_timestamps);
 	m_files_manager.readDepthTimeStampFile(m_depth_timestamps);
+	m_params = new __SystemParameters();
+	m_params->m_dataset_path = DatasetManager::getCurrentPath().data();
+	m_params->m_volume_size = 128;
+	m_params->m_truncation_scaling = 5.f;
 }
 
 Matrix4f TestBase::getTrajectory(int index) const{

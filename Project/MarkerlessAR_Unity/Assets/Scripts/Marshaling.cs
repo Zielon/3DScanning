@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using UnityEngine; 
+using UnityEngine;
 
 namespace Assets.Scripts
 {
@@ -12,10 +12,18 @@ namespace Assets.Scripts
         public IntPtr m_meshptr;
     }
 
-    internal struct MeshDto
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MeshDto
     {
         public int[] Triangles;
         public Vector3[] Vertices;
     }
 
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
+    public struct __SystemParameters
+    {
+        public int m_volume_size;
+        public float m_truncation_scaling;
+        public string m_dataset_path;
+    }
 }

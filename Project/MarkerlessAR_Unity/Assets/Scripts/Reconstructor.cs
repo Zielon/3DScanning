@@ -10,21 +10,20 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
-
     public class Reconstructor : MonoBehaviour
     {
         // Unity automatically find DLL files located on Assets/Plugins
         private const string DllFilePath = @"Tracker_release";
         private readonly Queue<MeshDto> _meshDtoQueue = new Queue<MeshDto>();
+
+        //general setup
+        private readonly bool _use_sensor = false;
         private IntPtr _cppContext;
         private int _framesProcessed;
         private int _h = -1;
         private byte[] _image;
         private float[] _pose;
         private Thread _thread;
-
-        //general setup
-        private readonly bool _use_sensor = false;
         private int _w = -1;
 
         public int abortAfterNFrames = -1;
@@ -39,10 +38,10 @@ namespace Assets.Scripts
         public Image videoBG;
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr createContext(byte[] path);
+        private static extern IntPtr createContext(ref __SystemParameters param);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr createSensorContext(byte[] path);
+        private static extern IntPtr createSensorContext(ref __SystemParameters param);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern void tracker(IntPtr context, byte[] image, float[] pose);
@@ -66,21 +65,21 @@ namespace Assets.Scripts
         private void Start()
         {
             var segments = new List<string>(
-            Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
-                    {"..", "Datasets", "freiburg", " "};
+                    Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
+                {"..", "Datasets", "freiburg", " "};
 
             var absolutePath = segments.Aggregate(
                 (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
-            if (_use_sensor)
-            {
-                _cppContext = createSensorContext(Encoding.ASCII.GetBytes(absolutePath));
-            }
-            else
-            {
 
+            var param = new __SystemParameters
+            {
+                m_dataset_path = absolutePath,
+                m_truncation_scaling = 7.0f,
+                m_volume_size = 128
+            };
 
-                _cppContext = createContext(Encoding.ASCII.GetBytes(absolutePath));
-            }
+            _cppContext = _use_sensor ? createSensorContext(ref param) : createContext(ref param);
+
             _w = getImageWidth(_cppContext);
             _h = getImageHeight(_cppContext);
 
@@ -139,13 +138,13 @@ namespace Assets.Scripts
         private void AddMesh(MeshDto dto)
         {
             var mesh = frameMeshObject.GetComponent<MeshFilter>().mesh;
-            mesh.Clear(); 
+            mesh.Clear();
             mesh.vertices = dto.Vertices;
-            mesh.SetIndices(dto.Triangles, MeshTopology.Triangles, 0, true); 
+            mesh.SetIndices(dto.Triangles, MeshTopology.Triangles, 0, true);
             mesh.RecalculateNormals();
             frameMeshObject.GetComponent<MeshFilter>().mesh = mesh;
             frameMeshObject.GetComponent<MeshCollider>().sharedMesh = mesh;
-         //   mesh.UploadMeshData(false);
+            //   mesh.UploadMeshData(false);
         }
 
         // This wont work with DirectCompute
@@ -189,7 +188,7 @@ namespace Assets.Scripts
             });
         }
 
-        void OnApplicationQuit()
+        private void OnApplicationQuit()
         {
             deleteContext(_cppContext);
             Debug.Log("Application ending after " + Time.time + " seconds");
