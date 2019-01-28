@@ -145,7 +145,7 @@ namespace Assets.Scripts
             mesh.RecalculateNormals();
             frameMeshObject.GetComponent<MeshFilter>().mesh = mesh;
             frameMeshObject.GetComponent<MeshCollider>().sharedMesh = mesh;
-            mesh.UploadMeshData(false);
+         //   mesh.UploadMeshData(false);
         }
 
         // This wont work with DirectCompute
@@ -179,8 +179,8 @@ namespace Assets.Scripts
             var indexBuffer = new int[meshInfo.m_index_count];
 
             getMeshBuffers(ref meshInfo, vertexBuffer, indexBuffer);
-            Debug.Log("Loaded mesh with " + vertexBuffer.Length + " vertices and " + indexBuffer.Length +
-                        " indices.");
+            //Debug.Log("Loaded mesh with " + vertexBuffer.Length + " vertices and " + indexBuffer.Length +
+            //            " indices.");
 
             _meshDtoQueue.Enqueue(new MeshDto
             {

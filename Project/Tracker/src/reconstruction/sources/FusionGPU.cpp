@@ -294,8 +294,7 @@ void FusionGPU::initBuffers(){
 
 	unsigned char* zeroSDF = new unsigned char[sizeof(Voxel) * m_fusionSettings.m_resolution * m_fusionSettings.
 		m_resolution * m_fusionSettings.m_resolution];
-	ZeroMemory(zeroSDF, sizeof(Voxel) * m_fusionSettings.m_resolution * m_fusionSettings.m_resolution *m_fusionSettings.
-m_resolution);
+	ZeroMemory(zeroSDF, sizeof(Voxel) * m_fusionSettings.m_resolution * m_fusionSettings.m_resolution *m_fusionSettings.m_resolution);
 	D3D11_SUBRESOURCE_DATA dataZeroSdf;
 	dataZeroSdf.pSysMem = zeroSDF;
 

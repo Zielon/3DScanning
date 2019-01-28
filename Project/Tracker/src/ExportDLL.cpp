@@ -100,7 +100,7 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 		return;
 	}
 
-	const Matrix4f new_pose = Matrix4f::Identity();  //tracker->m_icp->estimatePose(tracker->m_previous_point_cloud, current);
+	const Matrix4f new_pose = tracker->m_icp->estimatePose(tracker->m_previous_point_cloud, current);
 
 	tracker->m_pose = new_pose;
 	current->m_pose_estimation = new_pose;
