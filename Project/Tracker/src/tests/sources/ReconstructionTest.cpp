@@ -17,7 +17,7 @@ void ReconstructionTest::pointCloudTest() const{
 		ThreadManager::add([context, index, trajectory](){
 			cv::Mat rgb, depth;
 			dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
-			Mesh mesh(depth, rgb, context->m_tracker->getCameraParameters());
+			Mesh mesh(depth, rgb, context->m_tracker->getSystemParameters());
 			mesh.transform(trajectory);
 			mesh.save("point_cloud_" + std::to_string(index));
 		});
@@ -122,7 +122,7 @@ void ReconstructionTest::reconstructionTest(int skip, int subsampling) const{
 
 		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
 
-		PointCloud* _cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 1);
+		PointCloud* _cloud = new PointCloud(context->m_tracker->getSystemParameters(), depth, rgb, 1);
 		std::shared_ptr<PointCloud> cloud(_cloud);
 
 		cloud->m_pose_estimation = trajectory;
@@ -247,7 +247,7 @@ void ReconstructionTest::pointCloudTestWithICP() const{
 
 		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
 
-		PointCloud* _target = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 8);
+		PointCloud* _target = new PointCloud(context->m_tracker->getSystemParameters(), depth, rgb, 8);
 		std::shared_ptr<PointCloud> data(_target);
 
 		if (index == 0)
@@ -262,7 +262,7 @@ void ReconstructionTest::pointCloudTestWithICP() const{
 
 		if (index % 50 == 0 || index == 1)
 		{
-			Mesh mesh(depth, rgb, context->m_tracker->getCameraParameters());
+			Mesh mesh(depth, rgb, context->m_tracker->getSystemParameters());
 			mesh.transform(context->m_tracker->m_pose);
 			mesh.save("point_cloud_" + std::to_string(index));
 		}

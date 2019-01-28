@@ -19,7 +19,7 @@ struct FrustumBox
 class FusionBase
 {
 public:
-	explicit FusionBase(SystemParameters camera_parameters) : m_camera_parameters(std::move(camera_parameters)){};
+	explicit FusionBase(SystemParameters system_parameters) : m_system_parameters(std::move(system_parameters)){};
 
 	virtual ~FusionBase(){};
 
@@ -41,24 +41,24 @@ protected:
 		return value.cwiseMin(m_volume->m_size).cwiseMax(0);
 	}
 
-	FrustumBox computeFrustumBounds(Matrix4f cameraToWorld, SystemParameters camera_parameters) const{
+	FrustumBox computeFrustumBounds(Matrix4f cameraToWorld, SystemParameters system_parameters) const{
 		const auto rotation = cameraToWorld.block(0, 0, 3, 3);
 		const auto translation = cameraToWorld.block(0, 3, 3, 1);
 
-		auto width = camera_parameters.m_image_width;
-		auto height = camera_parameters.m_image_height;
-		auto min_depth = camera_parameters.m_depth_min;
-		auto max_depth = camera_parameters.m_depth_max;
+		auto width = system_parameters.m_image_width;
+		auto height = system_parameters.m_image_height;
+		auto min_depth = system_parameters.m_depth_min;
+		auto max_depth = system_parameters.m_depth_max;
 
 		std::vector<Vector3f> corners;
 
 		// Image -> Camera -> World -> Grid
 		for (auto depth : std::vector<float>{min_depth, max_depth})
 		{
-			corners.push_back(Transformations::backproject(0, 0, depth, camera_parameters));
-			corners.push_back(Transformations::backproject(width - 1, 0, depth, camera_parameters));
-			corners.push_back(Transformations::backproject(width - 1, height - 1, depth, camera_parameters));
-			corners.push_back(Transformations::backproject(0, height - 1, depth, camera_parameters));
+			corners.push_back(Transformations::backproject(0, 0, depth, system_parameters));
+			corners.push_back(Transformations::backproject(width - 1, 0, depth, system_parameters));
+			corners.push_back(Transformations::backproject(width - 1, height - 1, depth, system_parameters));
+			corners.push_back(Transformations::backproject(0, height - 1, depth, system_parameters));
 		}
 
 		Vector3i min;
@@ -83,7 +83,7 @@ protected:
 
 	float m_trunaction = 0;
 
-	SystemParameters m_camera_parameters;
+	SystemParameters m_system_parameters;
 };
 
 #endif
