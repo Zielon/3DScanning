@@ -102,6 +102,33 @@
     <ClInclude Include="..\..\src\reconstruction\headers\FusionGPU.h">
       <Filter>reconstruction\headers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\device_array.hpp">
+      <Filter>icpcuda\Cuda\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\device_array_impl.hpp">
+      <Filter>icpcuda\Cuda\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\device_memory.hpp">
+      <Filter>icpcuda\Cuda\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\device_memory_impl.hpp">
+      <Filter>icpcuda\Cuda\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\initialization.hpp">
+      <Filter>icpcuda\Cuda\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\kernel_containers.hpp">
+      <Filter>icpcuda\Cuda\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\safe_call.hpp">
+      <Filter>icpcuda\Cuda\containers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\icpcuda\Cuda\internal.h">
+      <Filter>icpcuda\Cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\icpcuda\ICPOdometry.h">
+      <Filter>icpcuda</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
@@ -171,6 +198,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPCUDA.cpp">
       <Filter>reconstruction\sources\icp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\icpcuda\Cuda\containers\device_memory.cpp">
+      <Filter>icpcuda\Cuda\containers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\icpcuda\Cuda\containers\initialization.cpp">
+      <Filter>icpcuda\Cuda\containers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\icpcuda\ICPOdometry.cpp">
+      <Filter>icpcuda</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -243,10 +279,27 @@
     <Filter Include="shaders">
       <UniqueIdentifier>{7da33bd4-b6c5-449b-a0f0-16324e493209}</UniqueIdentifier>
     </Filter>
+    <Filter Include="icpcuda">
+      <UniqueIdentifier>{895b84f5-2ad9-484a-a2d7-8ad3e1371f03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="icpcuda\Cuda">
+      <UniqueIdentifier>{166d2852-2b47-455a-9556-f90e3b7c8764}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="icpcuda\Cuda\containers">
+      <UniqueIdentifier>{c33dd365-e6ad-4fd3-963b-1436f4412e12}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\shaders\Fusion.hlsl">
       <Filter>shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\..\src\icpcuda\Cuda\estimate.cu">
+      <Filter>icpcuda\Cuda</Filter>
+    </CudaCompile>
+    <CudaCompile Include="..\..\src\icpcuda\Cuda\pyrdown.cu">
+      <Filter>icpcuda\Cuda</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>

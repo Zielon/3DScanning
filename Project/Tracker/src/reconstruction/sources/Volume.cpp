@@ -5,7 +5,7 @@
 /// y -> width
 /// x -> height
 ///
-Volume::Volume(Size min, Size max, uint size, uint dim,bool allocMemory){
+Volume::Volume(Size min, Size max, uint size, uint dim, bool allocMemory){
 	m_dim = dim;
 	m_size = size;
 	m_length = std::pow(m_size, 3);

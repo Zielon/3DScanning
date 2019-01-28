@@ -1,6 +1,8 @@
+#ifndef TRACKER_LIB_FUSION_GPU_H
+#define TRACKER_LIB_FUSION_GPU_H
+
+
 #include "../headers/FusionBase.h"
-
-
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <windowsx.h>
@@ -110,7 +112,6 @@ private:
 
 	ID3D11Buffer* m_buf_vertexBuffer = NULL;
 
-
 	ID3D11UnorderedAccessView* m_uav_sdf = NULL;
 	ID3D11Buffer* m_buf_sdf = NULL;
 
@@ -118,7 +119,6 @@ private:
 
 	ID3D11Texture2D* m_t2d_currentFrame = NULL;
 	ID3D11ShaderResourceView* m_srv_currentFrame = NULL;
-
 
 	ID3D11Buffer* m_cbuf_fusionConst = NULL;
 	ID3D11Buffer* m_cbuf_fusionPerFrame = NULL;
@@ -138,14 +138,11 @@ private:
 	ID3DBlob* m_blob_marchingCubesShader = NULL; 
 	ID3DBlob* m_blob_marchingCubesAttachNan = NULL;
 
-
 	ID3D11Device* m_d3dDevice = NULL;
 	ID3D11DeviceContext* m_d3dContext = NULL;
 	IDXGISwapChain* m_swapChain = NULL;
 
 	ID3D11Debug* m_d3dDebug = NULL;
-
-
-
-
 };
+
+#endif

@@ -40,6 +40,15 @@
     <ClInclude Include="..\..\src\ExportDLL.h" />
     <ClInclude Include="..\..\src\files-manager\headers\DatasetManager.h" />
     <ClInclude Include="..\..\src\helpers\Transformations.h" />
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\device_array.hpp" />
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\device_array_impl.hpp" />
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\device_memory.hpp" />
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\device_memory_impl.hpp" />
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\initialization.hpp" />
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\kernel_containers.hpp" />
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\safe_call.hpp" />
+    <ClInclude Include="..\..\src\icpcuda\Cuda\internal.h" />
+    <ClInclude Include="..\..\src\icpcuda\ICPOdometry.h" />
     <ClInclude Include="..\..\src\marshaling\__Mesh.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPCUDA.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPFeatures.h" />
@@ -73,6 +82,9 @@
     <ClCompile Include="..\..\src\debugger\sources\Verbose.cpp" />
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
     <ClCompile Include="..\..\src\files-manager\sources\DatasetManager.cpp" />
+    <ClCompile Include="..\..\src\icpcuda\Cuda\containers\device_memory.cpp" />
+    <ClCompile Include="..\..\src\icpcuda\Cuda\containers\initialization.cpp" />
+    <ClCompile Include="..\..\src\icpcuda\ICPOdometry.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\Fusion.cpp" />
     <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPCUDA.cpp" />
@@ -95,11 +107,16 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">true</ExcludedFromBuild>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\..\src\icpcuda\Cuda\estimate.cu" />
+    <CudaCompile Include="..\..\src\icpcuda\Cuda\pyrdown.cu" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{9ACCAE73-C3EF-47B9-B203-9A653F8E431E}</ProjectGuid>
     <RootNamespace>Tracker</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <ProjectName>Core</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -144,6 +161,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 10.0.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -168,16 +186,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetExt>.exe</TargetExt>
-    <TargetName>$(ProjectName)</TargetName>
+    <TargetName>$(ProjectName)_debug</TargetName>
     <CustomBuildAfterTargets>PostBuildEvent</CustomBuildAfterTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetExt>.exe</TargetExt>
-    <TargetName>$(ProjectName)</TargetName>
+    <TargetName>$(ProjectName)_release</TargetName>
     <CustomBuildAfterTargets>PostBuildEvent</CustomBuildAfterTargets>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">
-    <TargetName>$(ProjectName)_release</TargetName>
+    <TargetName>Tracker_release</TargetName>
     <CustomBuildAfterTargets>PostBuildEvent</CustomBuildAfterTargets>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -200,8 +218,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENNI2_INCLUDE64);$(OPENCV_INCLUDE);$(EIGEN_DIR);$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(PCL_ROOT)\3rdParty\FLANN\include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;TESTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(OPENNI2_INCLUDE64);$(OPENCV_INCLUDE);$(PCL_ROOT)\3rdParty\Eigen\eigen3;$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(SOPHUS_DIR);$(PCL_ROOT)\3rdParty\FLANN\include;$(CUDA_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_USE_MATH_DEFINES;_CRT_SECURE_NO_WARNINGS;TESTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
@@ -230,6 +248,9 @@ xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unit
       <Message>Copying Shaders</Message>
       <Outputs>GODDAMMIT VISUAL STUDIO JUST COPY MY FILES WHENEVER I WANT.lol;%(Outputs)</Outputs>
     </CustomBuildStep>
+    <CudaCompile>
+      <Include>$(EIGEN_DIR);$(SOPHUS_DIR);$(CUDA_PATH)\include\crt</Include>
+    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -273,10 +294,11 @@ xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unit
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENNI2_INCLUDE64);$(OPENCV_INCLUDE);$(PCL_ROOT)\3rdParty\Eigen\eigen3;$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(PCL_ROOT)\3rdParty\FLANN\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;TESTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>
+      </SDLCheck>
+      <ConformanceMode>false</ConformanceMode>
+      <AdditionalIncludeDirectories>$(OPENNI2_INCLUDE64);$(OPENCV_INCLUDE);$(PCL_ROOT)\3rdParty\Eigen\eigen3;$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(SOPHUS_DIR);$(PCL_ROOT)\3rdParty\FLANN\include;$(CUDA_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_USE_MATH_DEFINES;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;%(PreprocessorDefinitions);WIN32;WIN64;NDEBUG;_CONSOLE;TESTING</PreprocessorDefinitions>
       <OpenMPSupport>true</OpenMPSupport>
       <UndefinePreprocessorDefinitions>
       </UndefinePreprocessorDefinitions>
@@ -285,7 +307,7 @@ xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unit
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(OPENNI2_LIB64);$(PCL_ROOT)\3rdParty\FLANN\lib;$(PCL_ROOT)\3rdParty\VTK\lib;$(PCL_ROOT)\3rdParty\Boost\lib;$(PCL_ROOT)\lib;$(OPENCV_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world400.lib;pcl_common_release.lib;pcl_recognition_release.lib;pcl_kdtree_release.lib;pcl_search_release.lib;pcl_filters_release.lib;pcl_features_release.lib;pcl_registration_release.lib;flann.lib;OpenNI2.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
+      <AdditionalDependencies>opencv_world400.lib;pcl_common_release.lib;pcl_recognition_release.lib;pcl_kdtree_release.lib;pcl_search_release.lib;pcl_filters_release.lib;pcl_features_release.lib;pcl_registration_release.lib;flann.lib;OpenNI2.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <SubSystem>Console</SubSystem>
@@ -301,6 +323,10 @@ xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unit
       <Message>Copying Shaders</Message>
       <Outputs>GODDAMMIT VISUAL STUDIO JUST COPY MY FILES WHENEVER I WANT.lol;%(Outputs)</Outputs>
     </CustomBuildStep>
+    <CudaCompile>
+      <Include>$(EIGEN_DIR);$(SOPHUS_DIR);$(CUDA_PATH)\include\crt</Include>
+      <AdditionalDeps>%(AdditionalDeps)</AdditionalDeps>
+    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">
     <ClCompile>
@@ -308,10 +334,11 @@ xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unit
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>
+      </SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(OPENNI2_INCLUDE64);$(OPENCV_INCLUDE);$(EIGEN_DIR);$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(PCL_ROOT)\3rdParty\FLANN\include;C:\Projects\Sophus-master\sophus;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;PROJECT_DIR=R"($(SolutionDir))";GOOGLE_GLOG_DLL_DECL=;CERES_USING_STATIC_LIBRARY;IDK_HOW_TO_NOT_USE_ABS_PATH_IN_THIS_SITUATION;_ENABLE_EXTENDED_ALIGNED_STORAGE;_ENABLE_EXTENDED_ALIGNED_STORAGE;NDEBUG;_CONSOLE;CERES_MSVC_USE_UNDERSCORE_PREFIXED_BESSEL_FUNCTIONS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(OPENNI2_INCLUDE64);$(OPENCV_INCLUDE);$(PCL_ROOT)\3rdParty\Eigen\eigen3;$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(SOPHUS_DIR);$(PCL_ROOT)\3rdParty\FLANN\include;$(CUDA_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_USE_MATH_DEFINES;PROJECT_DIR=R"($(SolutionDir))";GOOGLE_GLOG_DLL_DECL=;CERES_USING_STATIC_LIBRARY;IDK_HOW_TO_NOT_USE_ABS_PATH_IN_THIS_SITUATION;_ENABLE_EXTENDED_ALIGNED_STORAGE;NDEBUG;_USE_MATH_DEFINES;_CONSOLE;CERES_MSVC_USE_UNDERSCORE_PREFIXED_BESSEL_FUNCTIONS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <OpenMPSupport>true</OpenMPSupport>
       <LanguageStandard>stdcpp14</LanguageStandard>
     </ClCompile>
@@ -319,7 +346,7 @@ xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unit
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(OPENNI2_LIB64);$(PCL_ROOT)\3rdParty\FLANN\lib;$(PCL_ROOT)\3rdParty\VTK\lib;$(PCL_ROOT)\3rdParty\Boost\lib;$(PCL_ROOT)\lib;$(OPENCV_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opencv_world400.lib;pcl_common_release.lib;pcl_recognition_release.lib;pcl_kdtree_release.lib;pcl_search_release.lib;pcl_filters_release.lib;pcl_features_release.lib;pcl_registration_release.lib;flann.lib;OpenNI2.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
+      <AdditionalDependencies>opencv_world400.lib;pcl_common_release.lib;pcl_recognition_release.lib;pcl_kdtree_release.lib;pcl_search_release.lib;pcl_filters_release.lib;pcl_features_release.lib;pcl_registration_release.lib;flann.lib;OpenNI2.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
       <SubSystem>Console</SubSystem>
@@ -329,7 +356,7 @@ xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unit
       </Command>
     </PreLinkEvent>
     <PostBuildEvent>
-      <Command>xcopy /y "$(OutDir)*.dll" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\"</Command>
+      <Command>echo f | xcopy /y "$(TargetPath)" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\$(TargetFileName)"</Command>
     </PostBuildEvent>
     <CustomBuildStep>
       <Command>xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(OutDir)shaders\" /y /s /i
@@ -338,8 +365,13 @@ xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unit
       <Message>Copying Shaders</Message>
       <Outputs>GODDAMMIT VISUAL STUDIO JUST COPY MY FILES WHENEVER I WANT.lol;%(Outputs)</Outputs>
     </CustomBuildStep>
+    <CudaCompile>
+      <Include>$(EIGEN_DIR);$(SOPHUS_DIR);$(CUDA_PATH)\include\crt;%(Include)</Include>
+      <AdditionalDeps>%(AdditionalDeps)</AdditionalDeps>
+    </CudaCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 10.0.targets" />
   </ImportGroup>
 </Project>

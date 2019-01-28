@@ -1,4 +1,5 @@
-#pragma once
+#ifndef TRACKER_LIB_FUSION_BASE_H
+#define TRACKER_LIB_FUSION_BASE_H
 
 #include <iostream>
 
@@ -9,21 +10,18 @@
 #include "PointCloud.h"
 #include "Volume.h"
 
-
 struct FrustumBox
 {
 	Vector3i m_max;
 	Vector3i m_min;
 };
 
-
-
 class FusionBase
 {
 public:
-	FusionBase(SystemParameters camera_parameters) : m_camera_parameters(std::move(camera_parameters)) {};
+	explicit FusionBase(SystemParameters camera_parameters) : m_camera_parameters(std::move(camera_parameters)){};
 
-	virtual ~FusionBase() {};
+	virtual ~FusionBase(){};
 
 	virtual void consume() =0;
 
@@ -37,15 +35,13 @@ public:
 
 	virtual void wait() const = 0;
 
-protected: 
+protected:
 
-	Vector3i clamp(Vector3i value) const {
+	Vector3i clamp(Vector3i value) const{
 		return value.cwiseMin(m_volume->m_size).cwiseMax(0);
 	}
 
-
-	FrustumBox computeFrustumBounds(Matrix4f cameraToWorld, SystemParameters camera_parameters) const
-	{
+	FrustumBox computeFrustumBounds(Matrix4f cameraToWorld, SystemParameters camera_parameters) const{
 		const auto rotation = cameraToWorld.block(0, 0, 3, 3);
 		const auto translation = cameraToWorld.block(0, 3, 3, 1);
 
@@ -57,7 +53,7 @@ protected:
 		std::vector<Vector3f> corners;
 
 		// Image -> Camera -> World -> Grid
-		for (auto depth : std::vector<float>{ min_depth, max_depth })
+		for (auto depth : std::vector<float>{min_depth, max_depth})
 		{
 			corners.push_back(Transformations::backproject(0, 0, depth, camera_parameters));
 			corners.push_back(Transformations::backproject(width - 1, 0, depth, camera_parameters));
@@ -88,6 +84,6 @@ protected:
 	float m_trunaction = 0;
 
 	SystemParameters m_camera_parameters;
-
-
 };
+
+#endif

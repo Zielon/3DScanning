@@ -8,7 +8,7 @@
 class ICPNaive final : public ICP
 {
 public:
-	ICPNaive();
+	ICPNaive(SystemParameters parameters);
 
 	~ICPNaive();
 

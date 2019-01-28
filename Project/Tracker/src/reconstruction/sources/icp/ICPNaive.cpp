@@ -2,7 +2,7 @@
 #include "../../../debugger/headers/Verbose.h"
 #include "../../headers/icp/ICPNaive.h"
 
-ICPNaive::ICPNaive(){
+ICPNaive::ICPNaive(SystemParameters parameters): ICP(parameters) {
 	m_procrustesAligner = new ProcrustesAligner();
 }
 

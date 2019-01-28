@@ -9,10 +9,11 @@
 #include "icp/ICPNonLinear.h"
 #include "icp/ICPNaive.h"
 #include "icp/ICPFeatures.h"
+#include "icp/ICPCUDA.h"
 
 using namespace std;
 
-enum ICPType { NAIVE, NON_LINEAR, FEATURES };
+enum ICPType { NAIVE, NON_LINEAR, FEATURES, CUDA };
 
 /**
  * Tracks frame to frame transition and estimate the pose
@@ -20,15 +21,17 @@ enum ICPType { NAIVE, NON_LINEAR, FEATURES };
 class Tracker final
 {
 public:
-	Tracker(SystemParameters camera_parameters, ICPType icp_type) : m_camera_parameters(camera_parameters) {
+	Tracker(SystemParameters camera_parameters, ICPType icp_type) : m_camera_parameters(camera_parameters){
 
 		switch (icp_type)
 		{
-		case NAIVE: m_icp = new ICPNaive();
+		case NAIVE: m_icp = new ICPNaive(camera_parameters);
 			break;
-		case NON_LINEAR: m_icp = new ICPNonLinear();
+		case NON_LINEAR: m_icp = new ICPNonLinear(camera_parameters);
 			break;
-		case FEATURES: m_icp = new ICPFeatures();
+		case FEATURES: m_icp = new ICPFeatures(camera_parameters);
+			break;
+		case CUDA: m_icp = new ICPCUDA(camera_parameters);
 			break;
 		}
 	}
@@ -43,7 +46,6 @@ public:
 
 	Matrix4f m_pose = Matrix4f::Identity();
 
-private:
 	ICP* m_icp = nullptr;
 
 	SystemParameters m_camera_parameters;

@@ -7,12 +7,12 @@
 
 #include "FusionBase.h"
 
-using namespace std; 
+using namespace std;
 
 /**
  * Volumetric m_fusion class
  */
-class Fusion final : public FusionBase  
+class Fusion final : public FusionBase
 {
 public:
 	Fusion(SystemParameters camera_parameters);

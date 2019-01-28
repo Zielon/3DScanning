@@ -132,8 +132,6 @@ void ReconstructionTest::reconstructionTest(int skip, int subsampling) const{
 
 		bar.set(index);
 		bar.display();
-
-
 	}
 
 	bar.done();
@@ -146,7 +144,28 @@ void ReconstructionTest::reconstructionTest(int skip, int subsampling) const{
 	SAFE_DELETE(context);
 }
 
-void ReconstructionTest::reconstructionTestWithOurTracking(int skip) const{
+void outputFreiburg(const std::string filename, const uint64_t& timestamp, const Matrix4f& currentPose){
+	std::ofstream file;
+	file.open(filename.c_str(), std::fstream::app);
+
+	std::stringstream strs;
+
+	strs << std::setprecision(6) << std::fixed << timestamp << " ";
+
+	Vector3f trans = currentPose.topRightCorner(3, 1);
+	Matrix3f rot = currentPose.topLeftCorner(3, 3);
+
+	file << strs.str() << trans(0) << " " << trans(1) << " " << trans(2) << " ";
+
+	Quaternionf currentCameraRotation(rot);
+
+	file << currentCameraRotation.x() << " " << currentCameraRotation.y() << " " << currentCameraRotation.z() << " " <<
+		currentCameraRotation.w() << "\n";
+
+	file.close();
+}
+
+void ReconstructionTest::reconstructionTestWithOurTracking(int increment) const{
 
 	Verbose::message("START reconstructionTestWithOurTracking()");
 
@@ -160,16 +179,18 @@ void ReconstructionTest::reconstructionTestWithOurTracking(int skip) const{
 
 	ProgressBar bar(size, 60, "Frames loaded");
 
-	for (int index = 0; index < size; index += skip)
+	std::ofstream file;
+	file.open("output.txt", std::fstream::out);
+	file.close();
+
+	for (int index = 0; index < size; index += increment)
 	{
 		tracker(context, img, pose);
 
-		Matrix4f mat = Matrix4f::Map(pose); 
-
-	//	std::cout << "\n" << mat << "\n" << std::endl; 
-
 		bar.set(index);
 		bar.display();
+
+		//outputFreiburg("output.txt", getTimestamp(index), Matrix4f(pose));
 	}
 
 	bar.done();
@@ -201,7 +222,7 @@ void ReconstructionTest::reconstructionTestSensor(int mesh_index) const{
 		}
 
 		index++;
-	
+
 		printf("Frame %d processed\n", index);
 	}
 
@@ -238,7 +259,7 @@ void ReconstructionTest::pointCloudTestWithICP() const{
 		Matrix4f delta = context->m_tracker->alignNewFrame(context->m_tracker->m_previous_point_cloud, data);
 		context->m_tracker->m_pose *= delta;
 
-		if (index % 50 == 0  || index == 1)
+		if (index % 50 == 0 || index == 1)
 		{
 			Mesh mesh(depth, rgb, context->m_tracker->getCameraParameters());
 			mesh.transform(context->m_tracker->m_pose);
