@@ -586,6 +586,10 @@ void CS_MC(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID)
                 && all(g_settings.m_min < t.p1) && all(t.p1 < g_settings.m_max)
                 && all(g_settings.m_min < t.p2) && all(t.p2 < g_settings.m_max))
             {
+                //t.p0.xyz = t.p0.xzy; 
+                //t.p1.xyz = t.p1.xzy;
+                //t.p2.xyz = t.p2.xzy;
+
                 g_triangleBuffer.Append(t);
             }
         }

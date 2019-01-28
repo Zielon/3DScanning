@@ -30,7 +30,7 @@
 class FusionGPU : public FusionBase
 {
 public:
-	FusionGPU(SystemParameters camera_parameters, std::string shaderPath = FUSION_SHADER_PATH);
+	FusionGPU(SystemParameters system_parameters, std::string shaderPath = FUSION_SHADER_PATH);
 	~FusionGPU();
 
 	//Perfect inheritance ! ! !

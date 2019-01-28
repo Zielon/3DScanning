@@ -15,7 +15,7 @@ using namespace std;
 class Fusion final : public FusionBase
 {
 public:
-	Fusion(SystemParameters camera_parameters);
+	Fusion(SystemParameters system_parameters);
 
 	~Fusion();
 

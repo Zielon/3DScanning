@@ -24,7 +24,7 @@ namespace Assets.Scripts
         private Thread _thread;
 
         //general setup
-        private readonly bool _use_sensor = false;
+        private readonly bool _use_sensor = true;
         private int _w = -1;
 
         public int abortAfterNFrames = -1;
@@ -42,7 +42,7 @@ namespace Assets.Scripts
         private static extern IntPtr createContext(byte[] path);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr createSensorContext();
+        private static extern IntPtr createSensorContext(byte[] path);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern void tracker(IntPtr context, byte[] image, float[] pose);
@@ -59,26 +59,28 @@ namespace Assets.Scripts
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern void getMeshBuffers(ref __MeshInfo mesh, Vector3[] vertices, int[] indices);
 
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void deleteContext(IntPtr context);
 
         // Use this for initialization
         private void Start()
         {
+            var segments = new List<string>(
+            Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
+                    {"..", "Datasets", "freiburg", " "};
+
+            var absolutePath = segments.Aggregate(
+                (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
             if (_use_sensor)
             {
-                _cppContext = createSensorContext();
+                _cppContext = createSensorContext(Encoding.ASCII.GetBytes(absolutePath));
             }
             else
             {
-                var segments = new List<string>(
-                        Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
-                    {"..", "Datasets", "freiburg", " "};
 
-                var absolutePath = segments.Aggregate(
-                    (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
 
                 _cppContext = createContext(Encoding.ASCII.GetBytes(absolutePath));
             }
-
             _w = getImageWidth(_cppContext);
             _h = getImageHeight(_cppContext);
 
@@ -129,42 +131,68 @@ namespace Assets.Scripts
                 AddMesh(_meshDtoQueue.Dequeue());
 
             //get first mesh after n frames
-            if (_framesProcessed % meshUpdateRate != 0 || _thread != null && _thread.IsAlive) return;
+            if (_framesProcessed % meshUpdateRate != 1 || _thread != null && _thread.IsAlive) return;
 
-            _thread = SpawnFrameMeshThread();
-            _thread.Start();
+            LoadMesh();
         }
 
         private void AddMesh(MeshDto dto)
         {
-            var mesh = new Mesh {vertices = dto.Vertices, triangles = dto.Triangles};
-
+            var mesh = frameMeshObject.GetComponent<MeshFilter>().mesh;
+            mesh.Clear(); 
+            mesh.vertices = dto.Vertices;
+            mesh.SetIndices(dto.Triangles, MeshTopology.Triangles, 0, true); 
             mesh.RecalculateNormals();
-            mesh.RecalculateBounds();
             frameMeshObject.GetComponent<MeshFilter>().mesh = mesh;
             frameMeshObject.GetComponent<MeshCollider>().sharedMesh = mesh;
+         //   mesh.UploadMeshData(false);
         }
 
-        private Thread SpawnFrameMeshThread()
+        // This wont work with DirectCompute
+        //private Thread SpawnFrameMeshThread()
+        //{
+        //    return new Thread(() =>
+        //    {
+        //        var meshInfo = new __MeshInfo();
+        //        getMeshInfo(_cppContext, ref meshInfo);
+
+        //        var vertexBuffer = new Vector3[meshInfo.m_vertex_count];
+        //        var indexBuffer = new int[meshInfo.m_index_count];
+
+        //        getMeshBuffers(ref meshInfo, vertexBuffer, indexBuffer);
+        //        Debug.Log("Loaded mesh with " + vertexBuffer.Length + " vertices and " + indexBuffer.Length +
+        //                  " indices.");
+
+        //        _meshDtoQueue.Enqueue(new MeshDto
+        //        {
+        //            Triangles = indexBuffer,
+        //            Vertices = vertexBuffer
+        //        });
+        //    });
+        //}
+        private void LoadMesh()
         {
-            return new Thread(() =>
+            var meshInfo = new __MeshInfo();
+            getMeshInfo(_cppContext, ref meshInfo);
+
+            var vertexBuffer = new Vector3[meshInfo.m_vertex_count];
+            var indexBuffer = new int[meshInfo.m_index_count];
+
+            getMeshBuffers(ref meshInfo, vertexBuffer, indexBuffer);
+            //Debug.Log("Loaded mesh with " + vertexBuffer.Length + " vertices and " + indexBuffer.Length +
+            //            " indices.");
+
+            _meshDtoQueue.Enqueue(new MeshDto
             {
-                var meshInfo = new __MeshInfo();
-                getMeshInfo(_cppContext, ref meshInfo);
-
-                var vertexBuffer = new Vector3[meshInfo.m_vertex_count];
-                var indexBuffer = new int[meshInfo.m_index_count];
-
-                getMeshBuffers(ref meshInfo, vertexBuffer, indexBuffer);
-                Debug.Log("Loaded mesh with " + vertexBuffer.Length + " vertices and " + indexBuffer.Length +
-                          " indices.");
-
-                _meshDtoQueue.Enqueue(new MeshDto
-                {
-                    Triangles = indexBuffer,
-                    Vertices = vertexBuffer
-                });
+                Triangles = indexBuffer,
+                Vertices = vertexBuffer
             });
+        }
+
+        void OnApplicationQuit()
+        {
+            deleteContext(_cppContext);
+            Debug.Log("Application ending after " + Time.time + " seconds");
         }
     }
 }

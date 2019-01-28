@@ -20,7 +20,7 @@ class PointCloud
 {
 public:
 
-	PointCloud(SystemParameters camera_parameters, cv::Mat& depth, cv::Mat& rgb, int downsamplingFactor = 1);
+	PointCloud(SystemParameters system_parameters, cv::Mat& depth, cv::Mat& rgb, int downsamplingFactor = 1);
 
 	~PointCloud();
 
@@ -43,7 +43,7 @@ public:
 	cv::Mat getNormalMap();
 
 	Matrix4f m_pose_estimation = Matrix4f::Identity();
-	SystemParameters m_camera_parameters;
+	SystemParameters m_system_parameters;
 	int m_current_width = 0;
 	int m_current_height = 0;
 	int m_downsampling_factor = 1;
@@ -62,8 +62,6 @@ private:
 	std::vector<Vector4uc> m_color_points;
 	std::vector<Vector3f> m_grid_normals;//Required to compute the normal map
 
-	//Juan Test
-	cv::Mat depth_map;
 };
 
 #endif
