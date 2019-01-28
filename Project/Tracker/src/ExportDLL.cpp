@@ -30,7 +30,7 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 	return tracker_context;
 }
 
-extern "C" __declspec(dllexport) void* createSensorContext(){
+extern "C" __declspec(dllexport) void* createSensorContext(const char* dataset_path){
 	TrackerContext* tracker_context = new TrackerContext();
 
 	bool realtime = true, capture = false, verbose = false;
@@ -59,9 +59,10 @@ extern "C" __declspec(dllexport) void* createSensorContext(){
 		width,
 		intrinsics
 	);
+	const auto shader = std::string(dataset_path) + "../../Assets/Plugins/Shaders/Fusion.hlsl";
 
-	tracker_context->m_tracker = new Tracker(camera_parameters, NON_LINEAR);
-	tracker_context->m_fusion = new Fusion(camera_parameters);
+	tracker_context->m_tracker = new Tracker(camera_parameters, CUDA);
+	tracker_context->m_fusion = new FusionGPU(camera_parameters, shader);
 	// Start consuming the point clouds buffer
 	tracker_context->m_fusion->consume();
 
@@ -99,7 +100,7 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 		return;
 	}
 
-	const Matrix4f new_pose = tracker->m_icp->estimatePose(tracker->m_previous_point_cloud, current);
+	const Matrix4f new_pose = Matrix4f::Identity();  //tracker->m_icp->estimatePose(tracker->m_previous_point_cloud, current);
 
 	tracker->m_pose = new_pose;
 	current->m_pose_estimation = new_pose;
@@ -217,5 +218,18 @@ extern "C" __declspec(dllexport) void computeOfflineReconstruction(void* context
 	mesh_info->m_vertex_count = mesh_info->mesh->m_vertices.size();
 
 	memcpy(pose, tracker->m_pose.data(), 16 * sizeof(float));
+
+}
+
+
+extern "C" __declspec(dllexport) void deleteContext(void* context)
+{
+	TrackerContext* tracker_context = static_cast<TrackerContext*>(context);
+	tracker_context->rgb_recording.clear(); 
+	tracker_context->depth_recording.clear();
+
+	SAFE_DELETE( tracker_context->m_fusion); 
+	SAFE_DELETE(tracker_context->m_tracker);
+	SAFE_DELETE(tracker_context->m_videoStreamReader);
 
 }

@@ -43,7 +43,7 @@ void ReconstructionTest::unityIntegrationTest() const{
 
 	float pose[16];
 	std::chrono::high_resolution_clock::time_point t2;
-	const int SAVE_MESH_INTERVAL = 200;
+	const int SAVE_MESH_INTERVAL = 500;
 
 	double sum_track = 0.0;
 	double sum_getMesh = 0.0;
@@ -56,7 +56,7 @@ void ReconstructionTest::unityIntegrationTest() const{
 
 		t2 = std::chrono::high_resolution_clock::now();
 
-		if (index % SAVE_MESH_INTERVAL == 0 || index == size - 1)
+		if (index % SAVE_MESH_INTERVAL == 1 || index == size - 1)
 		{
 			//			context->m_fusion->wait();
 
@@ -69,6 +69,7 @@ void ReconstructionTest::unityIntegrationTest() const{
 			t2 = std::chrono::high_resolution_clock::now();
 
 			meshinfo.mesh->save("mesh_" + std::to_string(index));
+			delete meshinfo.mesh;
 		}
 
 		std::chrono::duration<double> time_span = std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1);
@@ -97,7 +98,7 @@ void ReconstructionTest::unityIntegrationTest() const{
 	std::cout << "Average Time for getMesh frame:  " << sum_getMesh / num_mesh_frames * 1000 << "ms" << std::endl;
 
 	Verbose::message("DONE unityIntegrationTest()", SUCCESS);
-
+	deleteContext(context); 
 	delete[]img;
 	SAFE_DELETE(context);
 }
@@ -206,7 +207,7 @@ void ReconstructionTest::reconstructionTestWithOurTracking(int increment) const{
 void ReconstructionTest::reconstructionTestSensor(int mesh_index) const{
 	Verbose::message("START reconstructionTestSensor()");
 
-	TrackerContext* context = static_cast<TrackerContext*>(createSensorContext());
+	TrackerContext* context = static_cast<TrackerContext*>(createSensorContext(DatasetManager::getCurrentPath().data()));
 	float pose[16];
 	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];
 	int index = 0;

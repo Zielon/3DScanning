@@ -366,7 +366,7 @@ xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unit
       <Outputs>GODDAMMIT VISUAL STUDIO JUST COPY MY FILES WHENEVER I WANT.lol;%(Outputs)</Outputs>
     </CustomBuildStep>
     <CudaCompile>
-      <Include>$(EIGEN_DIR);$(SOPHUS_DIR);$(CUDA_PATH)\include\crt;%(Include)</Include>
+      <Include>$(EIGEN_DIR);$(SOPHUS_DIR);$(CUDA_PATH)\include\crt;</Include>
       <AdditionalDeps>%(AdditionalDeps)</AdditionalDeps>
     </CudaCompile>
   </ItemDefinitionGroup>

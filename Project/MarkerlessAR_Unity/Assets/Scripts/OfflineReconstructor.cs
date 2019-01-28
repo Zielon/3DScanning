@@ -50,7 +50,7 @@ namespace Assets.Scripts
         private static extern IntPtr createContext(byte[] path);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr createSensorContext();
+        private static extern IntPtr createSensorContext(byte[] path);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern void tracker(IntPtr context, byte[] image, float[] pose);
@@ -76,23 +76,26 @@ namespace Assets.Scripts
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern void computeOfflineReconstruction(IntPtr context, ref __MeshInfo mesh, float[] pose);
 
+        [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
+        private static extern void deleteContext(IntPtr context); 
 
-
+        
         // Use this for initialization
         private void Start()
         {
+            var segments = new List<string>(
+        Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
+                    {"..", "Datasets", "freiburg", " "};
+
+            var absolutePath = segments.Aggregate(
+                (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
             if (_use_sensor)
             {
-                _cppContext = createSensorContext();
+                _cppContext = createSensorContext(Encoding.ASCII.GetBytes(absolutePath));
             }
             else
             {
-                var segments = new List<string>(
-                        Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
-                    {"..", "Datasets", "freiburg", " "};
 
-                var absolutePath = segments.Aggregate(
-                    (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
 
                 _cppContext = createContext(Encoding.ASCII.GetBytes(absolutePath));
             }
@@ -146,11 +149,11 @@ namespace Assets.Scripts
                     }
                 case ProcessingState.INTERACT:
                     {
-                        //tracker(_cppContext, _image, _pose);
-                        //var pose = Helpers.GetPose(_pose);
+                        tracker(_cppContext, _image, _pose);
+                        var pose = Helpers.GetPose(_pose);
 
-                        //cameraRig.transform.position = pose.GetColumn(3);
-                        //cameraRig.transform.rotation = pose.rotation;
+                        cameraRig.transform.position = pose.GetColumn(3);
+                        cameraRig.transform.rotation = pose.rotation;
                         break;
                     }
             }
@@ -224,6 +227,13 @@ namespace Assets.Scripts
             _thread.Start();
             processingText.SetActive(true); 
 
+        }
+
+
+        void OnApplicationQuit()
+        {
+            deleteContext(_cppContext); 
+            Debug.Log("Application ending after " + Time.time + " seconds");
         }
 
     }

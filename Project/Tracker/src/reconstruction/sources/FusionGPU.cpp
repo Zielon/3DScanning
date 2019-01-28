@@ -1,6 +1,7 @@
 #include "../headers/FusionGPU.h"
 #include "../headers/MarchingCubes.h"
 
+
 FusionGPU::FusionGPU(SystemParameters camera_parameters, std::string shaderPath) : FusionBase(camera_parameters){
 
 	initialize();
@@ -16,6 +17,11 @@ FusionGPU::FusionGPU(SystemParameters camera_parameters, std::string shaderPath)
 }
 
 FusionGPU::~FusionGPU(){
+
+	m_d3dContext->ClearState();
+	m_d3dContext->Flush(); 
+
+	SafeRelease(m_buf_vertexBuffer); 
 	SafeRelease(m_srv_currentFrame);
 	SafeRelease(m_uav_sdf);
 	SafeRelease(m_t2d_currentFrame);
@@ -38,20 +44,21 @@ FusionGPU::~FusionGPU(){
 	SafeRelease(m_blob_marchingCubesAttachNan);
 	SafeRelease(m_blob_fusionShader);
 	SafeRelease(m_blob_marchingCubesShader);
-
 	SafeRelease(m_swapChain)
 	SafeRelease(m_d3dContext);
 	SafeRelease(m_d3dDevice);
-
-	#ifdef _DEBUG
+#ifdef _DEBUG
 	m_d3dDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+#endif //_DEBUG
+	SafeRelease(m_d3dDebug); 
+	DestroyWindow(m_hWindow);
+	UnregisterClass("MarkerlessAR", m_hInstance); 
 
-	#endif //_DEBUG
 }
 
 void FusionGPU::initialize(){
-	m_volume = new Volume(Size(-4, -4, -4), Size(4, 4, 4), 512, 1, false);
-	m_trunaction = m_volume->m_voxel_size * 2.f;
+	m_volume = new Volume(Size(-4, -4, -4), Size(4, 4, 4), 128, 1, false);
+	m_trunaction = m_volume->m_voxel_size * 16.f;
 
 	m_fusionSettings.m_max = m_volume->m_max.cast<float>();
 	m_fusionSettings.m_min = m_volume->m_min.cast<float>();
@@ -105,7 +112,7 @@ void FusionGPU::integrate(std::shared_ptr<PointCloud> cloud){
 		(m_fusionPerFrame.numThreads.y() / FUSION_THREADS + 1),
 		(m_fusionPerFrame.numThreads.z()) / FUSION_THREADS + 1);
 
-	m_swapChain->Present(0, 0); //Debug hook 
+	//m_swapChain->Present(0, 0); //Debug hook 
 
 }
 
@@ -175,8 +182,6 @@ void FusionGPU::processMesh(Mesh& mesh){
 	m_d3dContext->CSSetShader(m_shader_marchingCubesAttachNan, nullptr, 0);
 	m_d3dContext->Dispatch(1, 1, 1);
 
-	m_swapChain->Present(0, 0); //Debug hook 
-
 	m_d3dContext->CopyResource(m_buf_vertexBuffer_copy, m_buf_vertexBuffer);
 
 	D3D11_MAPPED_SUBRESOURCE verticesMap;
@@ -209,7 +214,7 @@ void FusionGPU::processMesh(Mesh& mesh){
 	}
 	m_d3dContext->Unmap(m_buf_vertexBuffer_copy, 0);
 
-	m_swapChain->Present(0, 0); //Debug hook
+//	m_swapChain->Present(0, 0); //Debug hook
 
 	SafeRelease(m_buf_vertexBuffer_copy);
 
@@ -575,6 +580,7 @@ void FusionGPU::initWindow(){
 		m_hInstance,
 		nullptr);
 
+	
 	if (!m_hWindow)
 	{
 		MessageBox(nullptr, "Failed to create Window! ", "ERROR!", MB_OK);

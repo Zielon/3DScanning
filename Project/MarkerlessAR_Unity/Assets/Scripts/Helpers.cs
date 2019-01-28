@@ -31,7 +31,7 @@ namespace Assets.Scripts
             ret.SetTRS(new Vector3(fourthCol.x, fourthCol.z, fourthCol.y), Quaternion.Euler(rot), Vector3.one);
             Debug.Log(cameraToWorld + "\n" + ret);
 
-            return cameraToWorld;
+            return ret;
         }
     }
 }
