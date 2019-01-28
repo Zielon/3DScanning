@@ -1,8 +1,7 @@
 #include "../headers/FusionGPU.h"
 #include "../headers/MarchingCubes.h"
 
-
-FusionGPU::FusionGPU(SystemParameters camera_parameters, std::string shaderPath) : FusionBase(camera_parameters){
+FusionGPU::FusionGPU(SystemParameters system_parameters, std::string shaderPath) : FusionBase(system_parameters){
 
 	initialize();
 
@@ -19,9 +18,9 @@ FusionGPU::FusionGPU(SystemParameters camera_parameters, std::string shaderPath)
 FusionGPU::~FusionGPU(){
 
 	m_d3dContext->ClearState();
-	m_d3dContext->Flush(); 
+	m_d3dContext->Flush();
 
-	SafeRelease(m_buf_vertexBuffer); 
+	SafeRelease(m_buf_vertexBuffer);
 	SafeRelease(m_srv_currentFrame);
 	SafeRelease(m_uav_sdf);
 	SafeRelease(m_t2d_currentFrame);
@@ -47,18 +46,19 @@ FusionGPU::~FusionGPU(){
 	SafeRelease(m_swapChain)
 	SafeRelease(m_d3dContext);
 	SafeRelease(m_d3dDevice);
-#ifdef _DEBUG
+	#ifdef _DEBUG
 	m_d3dDebug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
-#endif //_DEBUG
-	SafeRelease(m_d3dDebug); 
+	#endif //_DEBUG
+	SafeRelease(m_d3dDebug);
 	DestroyWindow(m_hWindow);
-	UnregisterClass("MarkerlessAR", m_hInstance); 
+	UnregisterClass("MarkerlessAR", m_hInstance);
 
+	SAFE_DELETE(m_volume);
 }
 
 void FusionGPU::initialize(){
 	m_volume = new Volume(Size(-4, -4, -4), Size(4, 4, 4), 128, 1, false);
-	m_trunaction = m_volume->m_voxel_size * 16.f;
+	m_trunaction = m_volume->m_voxel_size * 6.f;
 
 	m_fusionSettings.m_max = m_volume->m_max.cast<float>();
 	m_fusionSettings.m_min = m_volume->m_min.cast<float>();
@@ -68,19 +68,18 @@ void FusionGPU::initialize(){
 	m_fusionSettings.m_truncation = m_trunaction;
 	m_fusionSettings.m_voxel_size = m_volume->m_voxel_size;
 
-	m_fusionSettings.m_image_height = m_camera_parameters.m_image_height;
-	m_fusionSettings.m_image_width = m_camera_parameters.m_image_width;
-	m_fusionSettings.m_cX = m_camera_parameters.m_cX;
-	m_fusionSettings.m_cY = m_camera_parameters.m_cY;
-	m_fusionSettings.m_focal_length_X = m_camera_parameters.m_focal_length_X;
-	m_fusionSettings.m_focal_length_Y = m_camera_parameters.m_focal_length_Y;
-
+	m_fusionSettings.m_image_height = m_system_parameters.m_image_height;
+	m_fusionSettings.m_image_width = m_system_parameters.m_image_width;
+	m_fusionSettings.m_cX = m_system_parameters.m_cX;
+	m_fusionSettings.m_cY = m_system_parameters.m_cY;
+	m_fusionSettings.m_focal_length_X = m_system_parameters.m_focal_length_X;
+	m_fusionSettings.m_focal_length_Y = m_system_parameters.m_focal_length_Y;
 }
 
 void FusionGPU::integrate(std::shared_ptr<PointCloud> cloud){
 	const auto cameraToWorld = cloud->m_pose_estimation;
 	const auto worldToCamera = cameraToWorld.inverse();
-	const auto frustum_box = computeFrustumBounds(cameraToWorld, cloud->m_camera_parameters);
+	const auto frustum_box = computeFrustumBounds(cameraToWorld, cloud->m_system_parameters);
 
 	m_fusionPerFrame.cam2world = cameraToWorld.transpose(); //col major -> row major
 	m_fusionPerFrame.world2cam = worldToCamera.transpose(); //col major -> row major
@@ -214,7 +213,7 @@ void FusionGPU::processMesh(Mesh& mesh){
 	}
 	m_d3dContext->Unmap(m_buf_vertexBuffer_copy, 0);
 
-//	m_swapChain->Present(0, 0); //Debug hook
+	//	m_swapChain->Present(0, 0); //Debug hook
 
 	SafeRelease(m_buf_vertexBuffer_copy);
 
@@ -294,7 +293,8 @@ void FusionGPU::initBuffers(){
 
 	unsigned char* zeroSDF = new unsigned char[sizeof(Voxel) * m_fusionSettings.m_resolution * m_fusionSettings.
 		m_resolution * m_fusionSettings.m_resolution];
-	ZeroMemory(zeroSDF, sizeof(Voxel) * m_fusionSettings.m_resolution * m_fusionSettings.m_resolution *m_fusionSettings.m_resolution);
+	ZeroMemory(zeroSDF, sizeof(Voxel) * m_fusionSettings.m_resolution * m_fusionSettings.m_resolution *m_fusionSettings.
+m_resolution);
 	D3D11_SUBRESOURCE_DATA dataZeroSdf;
 	dataZeroSdf.pSysMem = zeroSDF;
 
@@ -332,8 +332,8 @@ void FusionGPU::initBuffers(){
 	}
 
 	D3D11_TEXTURE2D_DESC descCurrentFrameBuffer = {0};
-	descCurrentFrameBuffer.Width = m_camera_parameters.m_image_width;
-	descCurrentFrameBuffer.Height = m_camera_parameters.m_image_height;
+	descCurrentFrameBuffer.Width = m_system_parameters.m_image_width;
+	descCurrentFrameBuffer.Height = m_system_parameters.m_image_height;
 	descCurrentFrameBuffer.MipLevels = 0;
 	descCurrentFrameBuffer.ArraySize = 1;
 	descCurrentFrameBuffer.Format = DXGI_FORMAT_R32_FLOAT;
@@ -486,8 +486,8 @@ void FusionGPU::initDx11(){
 
 	DXGI_SWAP_CHAIN_DESC descSwapChain;
 	ZeroMemory(&descSwapChain, sizeof(DXGI_SWAP_CHAIN_DESC));
-	descSwapChain.BufferDesc.Height = m_camera_parameters.m_image_height;
-	descSwapChain.BufferDesc.Width = m_camera_parameters.m_image_width;
+	descSwapChain.BufferDesc.Height = m_system_parameters.m_image_height;
+	descSwapChain.BufferDesc.Width = m_system_parameters.m_image_width;
 	descSwapChain.BufferDesc.RefreshRate.Denominator = 1;
 	descSwapChain.BufferDesc.RefreshRate.Numerator = 60;
 	descSwapChain.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
@@ -573,13 +573,12 @@ void FusionGPU::initWindow(){
 		"MarkerlessAR",
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT,
-		m_camera_parameters.m_image_width, m_camera_parameters.m_image_height,
+		m_system_parameters.m_image_width, m_system_parameters.m_image_height,
 		nullptr,
 		nullptr,
 		m_hInstance,
 		nullptr);
 
-	
 	if (!m_hWindow)
 	{
 		MessageBox(nullptr, "Failed to create Window! ", "ERROR!", MB_OK);

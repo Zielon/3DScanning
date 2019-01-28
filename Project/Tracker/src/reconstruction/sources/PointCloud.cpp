@@ -2,8 +2,8 @@
 #include <opencv2/imgproc.hpp>
 #include "../../helpers/Transformations.h"
 
-PointCloud::PointCloud(SystemParameters camera_parameters, cv::Mat& depth, cv::Mat& rgb, int downsamplingFactor)
-	: m_camera_parameters(camera_parameters){
+PointCloud::PointCloud(SystemParameters system_parameters, cv::Mat& depth, cv::Mat& rgb, int downsamplingFactor)
+	: m_system_parameters(system_parameters){
 
 	m_nearestNeighbor = new NearestNeighborSearchFlann();
 	m_nearestNeighbor->setMatchingMaxDistance(max_distance);
@@ -188,8 +188,8 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 				temp_points[idx] = Transformations::backproject(
 					x * m_downsampling_factor,
 					y * m_downsampling_factor,
-					depth, m_camera_parameters);
-				 depth, m_camera_parameters));
+					depth, m_system_parameters);
+				 depth, m_system_parameters));
 			}
 			else
 			{
@@ -201,7 +201,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 				auto v = Transformations::backproject(
 					x * m_downsampling_factor,
 					y * m_downsampling_factor,
-					depth, m_camera_parameters); 
+					depth, m_system_parameters); 
 				if(v.allFinite())
 					m_points.push_back(v);
 			}
@@ -210,8 +210,8 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 		}
 	}
 
-	m_camera_parameters.m_depth_max = depth_max;
-	m_camera_parameters.m_depth_min = depth_min;
+	m_system_parameters.m_depth_max = depth_max;
+	m_system_parameters.m_depth_min = depth_min;
 
 #ifdef SupportNativeICP
 

@@ -11,7 +11,7 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 	const auto width = tracker_context->m_videoStreamReader->m_width_depth;
 
 	Matrix3f intrinsics = tracker_context->m_videoStreamReader->getCameraIntrinsics();
-	const SystemParameters camera_parameters = SystemParameters(
+	const SystemParameters system_parameters = SystemParameters(
 		intrinsics(0, 0),
 		intrinsics(1, 1),
 		intrinsics(0, 2),
@@ -23,8 +23,8 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 
 	const auto shader = std::string(dataset_path) + "../../Assets/Plugins/Shaders/Fusion.hlsl";
 
-	tracker_context->m_tracker = new Tracker(camera_parameters, CUDA);
-	tracker_context->m_fusion = new FusionGPU(camera_parameters, shader);
+	tracker_context->m_tracker = new Tracker(system_parameters, CUDA);
+	tracker_context->m_fusion = new FusionGPU(system_parameters, shader);
 	tracker_context->m_fusion->consume();
 
 	return tracker_context;
@@ -42,15 +42,13 @@ extern "C" __declspec(dllexport) void* createSensorContext(const char* dataset_p
 
 	//Sensor Class using OpenNI 2
 	tracker_context->m_videoStreamReader = new Xtion2StreamReader(realtime, verbose, capture);
-
 	tracker_context->m_videoStreamReader->startReading();
-	//FIXME: Frame Info only set after first frame is read... FIXME: mb split this into seperate call?
 
 	const auto height = tracker_context->m_videoStreamReader->m_height_depth;
 	const auto width = tracker_context->m_videoStreamReader->m_width_depth;
 
 	Matrix3f intrinsics = tracker_context->m_videoStreamReader->getCameraIntrinsics();
-	const SystemParameters camera_parameters = SystemParameters(
+	const SystemParameters system_parameters = SystemParameters(
 		intrinsics(0, 0),
 		intrinsics(1, 1),
 		intrinsics(0, 2),
@@ -61,8 +59,8 @@ extern "C" __declspec(dllexport) void* createSensorContext(const char* dataset_p
 	);
 	const auto shader = std::string(dataset_path) + "../../Assets/Plugins/Shaders/Fusion.hlsl";
 
-	tracker_context->m_tracker = new Tracker(camera_parameters, CUDA);
-	tracker_context->m_fusion = new FusionGPU(camera_parameters, shader);
+	tracker_context->m_tracker = new Tracker(system_parameters, CUDA);
+	tracker_context->m_fusion = new FusionGPU(system_parameters, shader);
 	// Start consuming the point clouds buffer
 	tracker_context->m_fusion->consume();
 
@@ -88,7 +86,7 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
-	PointCloud* _target = new PointCloud(tracker->getCameraParameters(), depth, rgb);
+	PointCloud* _target = new PointCloud(tracker->getSystemParameters(), depth, rgb);
 	std::shared_ptr<PointCloud> current(_target);
 
 	if (tracker_context->m_first_frame)
@@ -165,7 +163,7 @@ extern "C" __declspec(dllexport) void computeOfflineReconstruction(void* context
 	const auto width = tracker_context->m_videoStreamReader->m_width_depth;
 
 	Matrix3f intrinsics = tracker_context->m_videoStreamReader->getCameraIntrinsics();
-	const SystemParameters camera_parameters = SystemParameters(
+	const SystemParameters system_parameters = SystemParameters(
 		intrinsics(0, 0),
 		intrinsics(1, 1),
 		intrinsics(0, 2),
@@ -185,7 +183,7 @@ extern "C" __declspec(dllexport) void computeOfflineReconstruction(void* context
 	{
 		auto rgb = *rgbIt++; 
 
-		PointCloud* _target = new PointCloud(tracker->getCameraParameters(), depth, rgb);
+		PointCloud* _target = new PointCloud(tracker->getSystemParameters(), depth, rgb);
 		std::shared_ptr<PointCloud> current(_target);
 
 		if (tracker_context->m_first_frame)

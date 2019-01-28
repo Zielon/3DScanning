@@ -12,7 +12,7 @@
 
 const unsigned char MAX_WEIGHT = std::numeric_limits<unsigned char>::infinity();
 
-Fusion::Fusion(SystemParameters camera_parameters) : FusionBase(camera_parameters){
+Fusion::Fusion(SystemParameters system_parameters) : FusionBase(system_parameters){
 	initialize();
 }
 
@@ -106,7 +106,7 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud){
 
 	const auto rotation = worldToCamera.block(0, 0, 3, 3);
 	const auto translation = worldToCamera.block(0, 3, 3, 1);
-	const auto frustum_box = computeFrustumBounds(cameraToWorld, cloud->m_camera_parameters);
+	const auto frustum_box = computeFrustumBounds(cameraToWorld, cloud->m_system_parameters);
 
 	const int downsampling_factor = cloud->m_downsampling_factor;
 
@@ -118,7 +118,7 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud){
 				// Transform from the cell world to the camera world
 				Vector3f cell = rotation * m_volume->getWorldPosition(Vector3i(x, y, z)) + translation;
 				// Project into a depth image
-				cell = Transformations::reproject(cell, cloud->m_camera_parameters);
+				cell = Transformations::reproject(cell, cloud->m_system_parameters);
 
 				// Pixels space
 				auto pixels = round(cell / downsampling_factor);
@@ -132,7 +132,7 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud){
 
 				// Positive in front of the observation
 				const float sdf = depth - cell.z();
-				const float weight_update = getWeight(depth, cloud->m_camera_parameters.m_depth_max);
+				const float weight_update = getWeight(depth, cloud->m_system_parameters.m_depth_max);
 
 				if (depth - m_trunaction > cell.z())
 				{
