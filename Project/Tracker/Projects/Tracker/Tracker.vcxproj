@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseDLL|Win32">
+      <Configuration>ReleaseDLL</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseDLL|x64">
+      <Configuration>ReleaseDLL</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\concurency\headers\Buffer.h" />
+    <ClInclude Include="..\..\src\concurency\headers\Consumer.h" />
+    <ClInclude Include="..\..\src\concurency\headers\Producer.h" />
+    <ClInclude Include="..\..\src\concurency\headers\ThreadManager.h" />
+    <ClInclude Include="..\..\src\data-stream\headers\DatasetVideoStreamReader.h" />
+    <ClInclude Include="..\..\src\data-stream\headers\VideoStreamReaderBase.h" />
+    <ClInclude Include="..\..\src\data-stream\headers\Xtion2StreamReader.h" />
+    <ClInclude Include="..\..\src\debugger\headers\ProgressBar.hpp" />
+    <ClInclude Include="..\..\src\debugger\headers\Verbose.h" />
+    <ClInclude Include="..\..\src\Eigen.h" />
+    <ClInclude Include="..\..\src\ExportDLL.h" />
+    <ClInclude Include="..\..\src\files-manager\headers\DatasetManager.h" />
+    <ClInclude Include="..\..\src\helpers\Transformations.h" />
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\device_array.hpp" />
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\device_array_impl.hpp" />
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\device_memory.hpp" />
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\device_memory_impl.hpp" />
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\initialization.hpp" />
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\kernel_containers.hpp" />
+    <ClInclude Include="..\..\src\icpcuda\Cuda\containers\safe_call.hpp" />
+    <ClInclude Include="..\..\src\icpcuda\Cuda\internal.h" />
+    <ClInclude Include="..\..\src\icpcuda\ICPOdometry.h" />
+    <ClInclude Include="..\..\src\marshaling\__Mesh.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPCUDA.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPFeatures.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\FusionBase.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\FusionGPU.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\SystemParameters.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\Fusion.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICP.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPNonLinear.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPNaive.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\MarchingCubes.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\Mesh.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\PointCloud.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\Tracker.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\Volume.h" />
+    <ClInclude Include="..\..\src\reconstruction\headers\Voxel.h" />
+    <ClInclude Include="..\..\src\reconstruction\sources\NearestNeighbor.hpp" />
+    <ClInclude Include="..\..\src\reconstruction\sources\ProcrustesAligner.hpp" />
+    <ClInclude Include="..\..\src\tests\headers\DataStreamTest.h" />
+    <ClInclude Include="..\..\src\tests\headers\ReconstructionTest.h" />
+    <ClInclude Include="..\..\src\tests\headers\TestBase.h" />
+    <ClInclude Include="..\..\src\tests\headers\TrackerTest.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\concurency\sources\Buffer.cpp" />
+    <ClCompile Include="..\..\src\concurency\sources\Consumer.cpp" />
+    <ClCompile Include="..\..\src\concurency\sources\Producer.cpp" />
+    <ClCompile Include="..\..\src\concurency\sources\ThreadManager.cpp" />
+    <ClCompile Include="..\..\src\data-stream\sources\DatasetVideoStreamReader.cpp" />
+    <ClCompile Include="..\..\src\data-stream\sources\Xtion2StreamReader.cpp" />
+    <ClCompile Include="..\..\src\debugger\sources\Verbose.cpp" />
+    <ClCompile Include="..\..\src\ExportDLL.cpp" />
+    <ClCompile Include="..\..\src\files-manager\sources\DatasetManager.cpp" />
+    <ClCompile Include="..\..\src\icpcuda\Cuda\containers\device_memory.cpp" />
+    <ClCompile Include="..\..\src\icpcuda\Cuda\containers\initialization.cpp" />
+    <ClCompile Include="..\..\src\icpcuda\ICPOdometry.cpp" />
+    <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\Fusion.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPCUDA.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\FusionGPU.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPNonLinear.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPFeatures.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\icp\ICPNaive.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\Mesh.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\PointCloud.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\Tracker.cpp" />
+    <ClCompile Include="..\..\src\reconstruction\sources\Volume.cpp" />
+    <ClCompile Include="..\..\src\tests\sources\DataStreamTest.cpp" />
+    <ClCompile Include="..\..\src\tests\sources\ReconstructionTest.cpp" />
+    <ClCompile Include="..\..\src\tests\sources\TestBase.cpp" />
+    <ClCompile Include="..\..\src\tests\sources\TrackerTest.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\shaders\Fusion.hlsl">
+      <FileType>Document</FileType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">true</ExcludedFromBuild>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\..\src\icpcuda\Cuda\estimate.cu" />
+    <CudaCompile Include="..\..\src\icpcuda\Cuda\pyrdown.cu" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{9ACCAE73-C3EF-47B9-B203-9A653F8E431E}</ProjectGuid>
+    <RootNamespace>Tracker</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <ProjectName>Core</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 10.0.props" />
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetExt>.exe</TargetExt>
+    <TargetName>$(ProjectName)_debug</TargetName>
+    <CustomBuildAfterTargets>PostBuildEvent</CustomBuildAfterTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetExt>.exe</TargetExt>
+    <TargetName>$(ProjectName)_release</TargetName>
+    <CustomBuildAfterTargets>PostBuildEvent</CustomBuildAfterTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">
+    <TargetName>Tracker_release</TargetName>
+    <CustomBuildAfterTargets>PostBuildEvent</CustomBuildAfterTargets>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(FLANN_DIR)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world343.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(OPENNI2_INCLUDE64);$(OPENCV_INCLUDE);$(PCL_ROOT)\3rdParty\Eigen\eigen3;$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(SOPHUS_DIR);$(PCL_ROOT)\3rdParty\FLANN\include;$(CUDA_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_USE_MATH_DEFINES;_CRT_SECURE_NO_WARNINGS;TESTING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(OPENNI2_LIB64);$(PCL_ROOT)\3rdParty\FLANN\lib;$(PCL_ROOT)\3rdParty\VTK\lib;$(PCL_ROOT)\3rdParty\Boost\lib;$(PCL_ROOT)\lib;$(OPENCV_DIR)\lib</AdditionalLibraryDirectories>
+      <AdditionalDependencies>openNI2.lib;opencv_world400d.lib;pcl_common_debug.lib;pcl_recognition_debug.lib;pcl_kdtree_debug.lib;pcl_search_debug.lib;pcl_filters_debug.lib;pcl_features_debug.lib;pcl_registration_debug.lib;flann.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
+      <RegisterOutput>false</RegisterOutput>
+      <AddModuleNamesToAssembly>
+      </AddModuleNamesToAssembly>
+      <AssemblyLinkResource>
+      </AssemblyLinkResource>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(OutDir)shaders\" /y /s /i
+xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(ProjectDir)shaders\" /y /s /i
+xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\Shaders\" /y /s /i</Command>
+      <Message>Copying Shaders</Message>
+      <Outputs>GODDAMMIT VISUAL STUDIO JUST COPY MY FILES WHENEVER I WANT.lol;%(Outputs)</Outputs>
+    </CustomBuildStep>
+    <CudaCompile>
+      <Include>$(EIGEN_DIR);$(SOPHUS_DIR);$(CUDA_PATH)\include\crt</Include>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(FLANN_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world343.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|Win32'">
+    <ClCompile>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(OPENCV_INCLUDE);$(EIGEN_DIR);$(FLANN_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(OPENCV_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world343.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>
+      </SDLCheck>
+      <ConformanceMode>false</ConformanceMode>
+      <AdditionalIncludeDirectories>$(OPENNI2_INCLUDE64);$(OPENCV_INCLUDE);$(PCL_ROOT)\3rdParty\Eigen\eigen3;$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(SOPHUS_DIR);$(PCL_ROOT)\3rdParty\FLANN\include;$(CUDA_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_USE_MATH_DEFINES;_CRT_SECURE_NO_WARNINGS;_USE_MATH_DEFINES;%(PreprocessorDefinitions);WIN32;WIN64;NDEBUG;_CONSOLE;TESTING</PreprocessorDefinitions>
+      <OpenMPSupport>true</OpenMPSupport>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(OPENNI2_LIB64);$(PCL_ROOT)\3rdParty\FLANN\lib;$(PCL_ROOT)\3rdParty\VTK\lib;$(PCL_ROOT)\3rdParty\Boost\lib;$(PCL_ROOT)\lib;$(OPENCV_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world400.lib;pcl_common_release.lib;pcl_recognition_release.lib;pcl_kdtree_release.lib;pcl_search_release.lib;pcl_filters_release.lib;pcl_features_release.lib;pcl_registration_release.lib;flann.lib;OpenNI2.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(OutDir)shaders\" /y /s /i
+xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(ProjectDir)shaders\" /y /s /i
+xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\Shaders\" /y /s /i</Command>
+      <Message>Copying Shaders</Message>
+      <Outputs>GODDAMMIT VISUAL STUDIO JUST COPY MY FILES WHENEVER I WANT.lol;%(Outputs)</Outputs>
+    </CustomBuildStep>
+    <CudaCompile>
+      <Include>$(EIGEN_DIR);$(SOPHUS_DIR);$(CUDA_PATH)\include\crt</Include>
+      <AdditionalDeps>%(AdditionalDeps)</AdditionalDeps>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseDLL|x64'">
+    <ClCompile>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>
+      </SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(OPENNI2_INCLUDE64);$(OPENCV_INCLUDE);$(PCL_ROOT)\3rdParty\Eigen\eigen3;$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1;$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68;$(PCL_INCLUDE);$(SOPHUS_DIR);$(PCL_ROOT)\3rdParty\FLANN\include;$(CUDA_PATH)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_FPOS_SEEKPOS_DEPRECATION_WARNING;_USE_MATH_DEFINES;PROJECT_DIR=R"($(SolutionDir))";GOOGLE_GLOG_DLL_DECL=;CERES_USING_STATIC_LIBRARY;IDK_HOW_TO_NOT_USE_ABS_PATH_IN_THIS_SITUATION;_ENABLE_EXTENDED_ALIGNED_STORAGE;NDEBUG;_USE_MATH_DEFINES;_CONSOLE;CERES_MSVC_USE_UNDERSCORE_PREFIXED_BESSEL_FUNCTIONS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <OpenMPSupport>true</OpenMPSupport>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(OPENNI2_LIB64);$(PCL_ROOT)\3rdParty\FLANN\lib;$(PCL_ROOT)\3rdParty\VTK\lib;$(PCL_ROOT)\3rdParty\Boost\lib;$(PCL_ROOT)\lib;$(OPENCV_DIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opencv_world400.lib;pcl_common_release.lib;pcl_recognition_release.lib;pcl_kdtree_release.lib;pcl_search_release.lib;pcl_filters_release.lib;pcl_features_release.lib;pcl_registration_release.lib;flann.lib;OpenNI2.lib;cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>
+      </DelayLoadDLLs>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <PreLinkEvent>
+      <Command>
+      </Command>
+    </PreLinkEvent>
+    <PostBuildEvent>
+      <Command>echo f | xcopy /y "$(TargetPath)" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\$(TargetFileName)"</Command>
+    </PostBuildEvent>
+    <CustomBuildStep>
+      <Command>xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(OutDir)shaders\" /y /s /i
+xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(ProjectDir)shaders\" /y /s /i
+xcopy "$(ProjectDir)..\..\shaders\*.hlsl" "$(SolutionDir)..\..\MarkerlessAR_Unity\Assets\Plugins\Shaders\" /y /s /i</Command>
+      <Message>Copying Shaders</Message>
+      <Outputs>GODDAMMIT VISUAL STUDIO JUST COPY MY FILES WHENEVER I WANT.lol;%(Outputs)</Outputs>
+    </CustomBuildStep>
+    <CudaCompile>
+      <Include>$(EIGEN_DIR);$(SOPHUS_DIR);$(CUDA_PATH)\include\crt;%(Include)</Include>
+      <AdditionalDeps>%(AdditionalDeps)</AdditionalDeps>
+    </CudaCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\CUDA 10.0.targets" />
+  </ImportGroup>
+</Project>

@@ -3,6 +3,18 @@
 
 #include "Volume.h"
 #include "Mesh.h"
+#include <vector>
+
+class MarchingCubes
+{
+
+public: 
+	static MarchingCubes& getInstance()
+	{
+		static MarchingCubes instance; 
+		return instance; 
+	}
+
 
 struct MC_Triangle
 {
@@ -417,7 +429,7 @@ int Polygonise(MC_Gridcell grid, double isolevel, MC_Triangle* triangles){
 bool ProcessVolumeCell(Volume* volume, int x, int y, int z, double iso, Mesh* mesh){
 	MC_Gridcell cell;
 
-	auto voxels = vector<Voxel*>();
+	auto voxels = std::vector<Voxel*>();
 
 	voxels.push_back(volume->getVoxel(Vector3i(x + 1, y, z)));
 	voxels.push_back(volume->getVoxel(Vector3i(x, y, z)));
@@ -485,5 +497,8 @@ bool ProcessVolumeCell(Volume* volume, int x, int y, int z, double iso, Mesh* me
 
 	return true;
 }
+
+};
+
 
 #endif // MARCHING_CUBES_H

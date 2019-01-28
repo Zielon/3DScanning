@@ -120,14 +120,15 @@ void ReconstructionTest::reconstructionTest(int skip, int subsampling) const{
 		cv::Mat rgb, depth;
 
 		dynamic_cast<DatasetVideoStreamReader*>(context->m_videoStreamReader)->readAnyFrame(index, rgb, depth);
-		PointCloud* _cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, subsampling);
+
+		PointCloud* _cloud = new PointCloud(context->m_tracker->getCameraParameters(), depth, rgb, 1);
 		std::shared_ptr<PointCloud> cloud(_cloud);
 
 		cloud->m_pose_estimation = trajectory;
 		context->m_fusion->produce(cloud);
 
 		// Waits for the index building thread to finish before deleting the point cloud
-		cloud->getClosestPoint(Vector3f::Zero());
+		//cloud->getClosestPoint(Vector3f::Zero());
 
 		bar.set(index);
 		bar.display();
@@ -143,7 +144,28 @@ void ReconstructionTest::reconstructionTest(int skip, int subsampling) const{
 	SAFE_DELETE(context);
 }
 
-void ReconstructionTest::reconstructionTestWithOurTracking(int skip) const{
+void outputFreiburg(const std::string filename, const uint64_t& timestamp, const Matrix4f& currentPose){
+	std::ofstream file;
+	file.open(filename.c_str(), std::fstream::app);
+
+	std::stringstream strs;
+
+	strs << std::setprecision(6) << std::fixed << timestamp << " ";
+
+	Vector3f trans = currentPose.topRightCorner(3, 1);
+	Matrix3f rot = currentPose.topLeftCorner(3, 3);
+
+	file << strs.str() << trans(0) << " " << trans(1) << " " << trans(2) << " ";
+
+	Quaternionf currentCameraRotation(rot);
+
+	file << currentCameraRotation.x() << " " << currentCameraRotation.y() << " " << currentCameraRotation.z() << " " <<
+		currentCameraRotation.w() << "\n";
+
+	file.close();
+}
+
+void ReconstructionTest::reconstructionTestWithOurTracking(int increment) const{
 
 	Verbose::message("START reconstructionTestWithOurTracking()");
 
@@ -157,12 +179,18 @@ void ReconstructionTest::reconstructionTestWithOurTracking(int skip) const{
 
 	ProgressBar bar(size, 60, "Frames loaded");
 
-	for (int index = 0; index < size; index += skip)
+	std::ofstream file;
+	file.open("output.txt", std::fstream::out);
+	file.close();
+
+	for (int index = 0; index < size; index += increment)
 	{
 		tracker(context, img, pose);
 
 		bar.set(index);
 		bar.display();
+
+		//outputFreiburg("output.txt", getTimestamp(index), Matrix4f(pose));
 	}
 
 	bar.done();
@@ -194,7 +222,7 @@ void ReconstructionTest::reconstructionTestSensor(int mesh_index) const{
 		}
 
 		index++;
-	
+
 		printf("Frame %d processed\n", index);
 	}
 
@@ -231,7 +259,7 @@ void ReconstructionTest::pointCloudTestWithICP() const{
 		Matrix4f delta = context->m_tracker->alignNewFrame(context->m_tracker->m_previous_point_cloud, data);
 		context->m_tracker->m_pose *= delta;
 
-		if (index % 50 == 0  || index == 1)
+		if (index % 50 == 0 || index == 1)
 		{
 			Mesh mesh(depth, rgb, context->m_tracker->getCameraParameters());
 			mesh.transform(context->m_tracker->m_pose);

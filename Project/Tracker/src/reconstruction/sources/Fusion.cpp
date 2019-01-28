@@ -12,7 +12,7 @@
 
 const unsigned char MAX_WEIGHT = std::numeric_limits<unsigned char>::infinity();
 
-Fusion::Fusion(SystemParameters camera_parameters) : m_camera_parameters(std::move(camera_parameters)){
+Fusion::Fusion(SystemParameters camera_parameters) : FusionBase(camera_parameters){
 	initialize();
 }
 
@@ -27,7 +27,7 @@ Fusion::~Fusion(){
 }
 
 inline Vector3i round(const Vector3f& point){
-	return Vector3i(std::round(point.x()), std::round(point.y()), std::round(point.z()));
+	return point.array().round().matrix().cast<int>(); 
 }
 
 float Fusion::getWeight(float depth, float max) const{
@@ -35,7 +35,7 @@ float Fusion::getWeight(float depth, float max) const{
 	return 1.f - depth / max;
 }
 
-void Fusion::save(string name) const{
+void Fusion::save(string name){
 	wait();
 	Mesh mesh;
 	processMesh(mesh);
@@ -43,8 +43,7 @@ void Fusion::save(string name) const{
 }
 
 void Fusion::initialize(){
-	m_volume = new Volume(Size(-1, -4, -2), Size(2, 4, 4), 128, 1);
-	//m_volume = new Volume(Size(-1, -4, -2), Size(2, 4, 4), 256, 1);
+	m_volume = new Volume(Size(-4, -4, -4), Size(4, 4, 4), 256, 1);
 	m_buffer = new Buffer<std::shared_ptr<PointCloud>>();
 	m_trunaction = m_volume->m_voxel_size * 2.f;
 }
@@ -68,7 +67,7 @@ void Fusion::wait() const{
 
 /// Buffer has a certain capacity when it is exceeded 
 /// this method will block the execution
-void Fusion::produce(std::shared_ptr<PointCloud> cloud) const{
+void Fusion::produce(std::shared_ptr<PointCloud> cloud){
 	m_buffer->add(cloud);
 }
 
@@ -88,33 +87,20 @@ void Fusion::consume(){
 	}
 }
 
-int Fusion::clamp(float value) const{
-	const auto max = float(m_volume->m_size);
-	return int(max(0.f, min(max, value)));
-}
-
-Vector3i Fusion::clamp(Vector3i value) const{
-	return Vector3i(clamp(value.x()), clamp(value.y()), clamp(value.z()));
-}
-
-bool Fusion::isSDFRange(float cell, float depth) const{
-	return cell < depth + m_trunaction && cell > depth - m_trunaction;
-}
-
 void Fusion::stopConsumers(){
 	for (auto& consumer : m_consumers)
 		consumer->stop();
 }
 
-void Fusion::processMesh(Mesh& mesh) const{
+void Fusion::processMesh(Mesh& mesh){
 	#pragma omp parallel for num_threads(2)
 	for (int x = 0; x < m_volume->m_size - 1; x++)
 		for (int y = 0; y < m_volume->m_size - 1; y++)
 			for (int z = 0; z < m_volume->m_size - 1; z++)
-				ProcessVolumeCell(m_volume, x, y, z, 0.0f, &mesh);
+				MarchingCubes::getInstance().ProcessVolumeCell(m_volume, x, y, z, 0.0f, &mesh);
 }
 
-void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
+void Fusion::integrate(std::shared_ptr<PointCloud> cloud){
 	const auto cameraToWorld = cloud->m_pose_estimation;
 	const auto worldToCamera = cameraToWorld.inverse();
 
@@ -131,7 +117,6 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
 			{
 				// Transform from the cell world to the camera world
 				Vector3f cell = rotation * m_volume->getWorldPosition(Vector3i(x, y, z)) + translation;
-
 				// Project into a depth image
 				cell = Transformations::reproject(cell, cloud->m_camera_parameters);
 
@@ -153,51 +138,13 @@ void Fusion::integrate(std::shared_ptr<PointCloud> cloud) const{
 				{
 					voxel->m_state = EMPTY; // In front of a surface
 				}
-				else if (isSDFRange(cell.z(), depth))
+				else if (fabs(sdf)<m_trunaction)
 				{
 					voxel->m_state = SDF;
 					voxel->m_sdf = (voxel->m_sdf * voxel->m_weight + sdf * weight_update) / (voxel->m_weight +
 						weight_update);
-					voxel->m_weight = min(voxel->m_weight + weight_update, MAX_WEIGHT);
+					voxel->m_weight = std::min(voxel->m_weight + weight_update, (float) MAX_WEIGHT);
 				}
 			}
 }
 
-FrustumBox Fusion::computeFrustumBounds(Matrix4f cameraToWorld, SystemParameters camera_parameters) const{
-
-	const auto rotation = cameraToWorld.block(0, 0, 3, 3);
-	const auto translation = cameraToWorld.block(0, 3, 3, 1);
-
-	auto width = camera_parameters.m_image_width;
-	auto height = camera_parameters.m_image_height;
-	auto min_depth = camera_parameters.m_depth_min;
-	auto max_depth = camera_parameters.m_depth_max;
-
-	std::vector<Vector3f> corners;
-
-	// Image -> Camera -> World -> Grid
-	for (auto depth : std::vector<float>{min_depth, max_depth})
-	{
-		corners.push_back(Transformations::backproject(0, 0, depth, camera_parameters));
-		corners.push_back(Transformations::backproject(width - 1, 0, depth, camera_parameters));
-		corners.push_back(Transformations::backproject(width - 1, height - 1, depth, camera_parameters));
-		corners.push_back(Transformations::backproject(0, height - 1, depth, camera_parameters));
-	}
-
-	Vector3i min;
-	Vector3i max;
-
-	for (int i = 0; i < 8; i++)
-	{
-		auto grid = m_volume->getGridPosition(rotation * corners[i] + translation);
-		min = min.cwiseMin(grid).eval();
-		max = max.cwiseMax(grid).eval();
-	}
-
-	FrustumBox box;
-
-	box.m_min = clamp(min);
-	box.m_max = clamp(max);
-
-	return box;
-}

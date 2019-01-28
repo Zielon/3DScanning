@@ -18,6 +18,19 @@ namespace Assets.Scripts
             cameraToWorld.SetColumn(2, thirdCol);
             cameraToWorld.SetColumn(3, fourthCol);
 
+            var rot = cameraToWorld.rotation.eulerAngles;
+
+            rot = new Vector3(rot.x, rot.z, rot.y);
+
+            //   cameraToWorld.SetColumn(3, new Vector4(fourthCol.x, -fourthCol.z, fourthCol.y, 1));
+
+            Debug.Log(rot + "\n" + Quaternion.Euler(rot).eulerAngles.ToString());
+
+
+            var ret = Matrix4x4.identity;
+            ret.SetTRS(new Vector3(fourthCol.x, fourthCol.z, fourthCol.y), Quaternion.Euler(rot), Vector3.one);
+            Debug.Log(cameraToWorld + "\n" + ret);
+
             return cameraToWorld;
         }
     }
