@@ -21,11 +21,6 @@ namespace Assets.Scripts
             var rot = cameraToWorld.rotation.eulerAngles;
 
             rot = new Vector3(rot.x, rot.y +180 ,rot.z );
-
-            //   cameraToWorld.SetColumn(3, new Vector4(fourthCol.x, -fourthCol.z, fourthCol.y, 1));
-
-            // Debug.Log(rot + "\n" + Quaternion.Euler(rot).eulerAngles.ToString());
-            Debug.Log(cameraToWorld); 
             var ret = Matrix4x4.identity;
             ret.SetTRS(new Vector3(fourthCol.x, -fourthCol.y, fourthCol.z), Quaternion.Euler(rot), Vector3.one);
            // Debug.Log(cameraToWorld + "\n" + ret);
