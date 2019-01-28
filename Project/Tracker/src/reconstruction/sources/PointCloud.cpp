@@ -176,8 +176,9 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 			m_color_points[idx] = Vector4uc(color[0], color[1], color[2], 0);
 
+			//ICP Cuda works in milimetres and Fusion in meters
 			m_depth_points_icp[idx] = static_cast<unsigned short>(depth * 1000.f);
-			m_depth_points_fusion[idx] = depth;
+			m_depth_points_fusion[idx] = depth; //depth map already in meters
 
 			//Depth range check
 			depth_min = std::min(depth_min, depth);
