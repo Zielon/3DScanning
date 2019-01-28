@@ -7,7 +7,7 @@
 Mesh::Mesh() = default;
 
 /// Create a mesh using naive approach to generate triangles
-Mesh::Mesh(cv::Mat& depthMat, cv::Mat colorMat, SystemParameters camera_parameters){
+Mesh::Mesh(cv::Mat& depthMat, cv::Mat colorMat, SystemParameters system_parameters){
 
 	const float edge_threshold = 0.01f;
 
@@ -32,7 +32,7 @@ Mesh::Mesh(cv::Mat& depthMat, cv::Mat colorMat, SystemParameters camera_paramete
 			if (depth > 0.0f)
 			{
 				// Back-projection to camera space.
-				m_vertices[idx] = Transformations::backproject(x, y, depth, camera_parameters);
+				m_vertices[idx] = Transformations::backproject(x, y, depth, system_parameters);
 			}
 			else
 			{

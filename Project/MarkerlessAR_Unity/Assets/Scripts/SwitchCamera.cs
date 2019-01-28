@@ -7,6 +7,8 @@ public class SwitchCamera : MonoBehaviour
 
     public Material frameMeshTransparent;
     public Material frameMeshOpaque;
+    public Material frameMeshWireframe;
+
     public GameObject frameMeshObject;
 
     public Camera[] cameras;
@@ -64,6 +66,11 @@ public class SwitchCamera : MonoBehaviour
             {
                  frameMeshObject.GetComponent<MeshRenderer>().material = frameMeshOpaque;
                  break;
+            }
+            case CameraSettings.MeshRenderMode.WIREFRAME:
+            {
+                frameMeshObject.GetComponent<MeshRenderer>().material = frameMeshWireframe;
+                break;
             }
         }
     }

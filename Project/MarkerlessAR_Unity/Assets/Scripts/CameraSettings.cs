@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CameraSettings : MonoBehaviour
 {
-    public enum MeshRenderMode { DISABLED, TRANSPARENT, OPAQUE };
+    public enum MeshRenderMode { DISABLED, TRANSPARENT, OPAQUE, WIREFRAME };
 
     public MeshRenderMode meshRenderMode = MeshRenderMode.TRANSPARENT; 
 }

@@ -2,8 +2,8 @@
 #include <opencv2/imgproc.hpp>
 #include "../../helpers/Transformations.h"
 
-PointCloud::PointCloud(SystemParameters camera_parameters, cv::Mat& depth, cv::Mat& rgb, int downsamplingFactor)
-	: m_camera_parameters(camera_parameters){
+PointCloud::PointCloud(SystemParameters system_parameters, cv::Mat& depth, cv::Mat& rgb, int downsamplingFactor)
+	: m_system_parameters(system_parameters){
 
 	m_nearestNeighbor = new NearestNeighborSearchFlann();
 	m_nearestNeighbor->setMatchingMaxDistance(max_distance);
@@ -120,9 +120,6 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	cv::Mat image, colors;
 
-	//Juan Test
-	depth_map = depth_mat.clone();
-
 	if (m_downsampling_factor > 1)
 	{
 		resize(depth_mat, image,
@@ -149,7 +146,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 	// Temp vector for filtering
 	auto temp_points = std::vector<Vector3f>(size);
-	auto temp_normals = std::vector<Vector3f>(size);
+	//auto temp_normals = std::vector<Vector3f>(size);
 
 	//Depth range check
 	float depth_min = std::numeric_limits<float>::infinity();
@@ -164,7 +161,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 		filtered_depth = this->filterMap(depth_mat, filter_type, 9.0f, 150.0f);
 	}
 
-	#pragma omp parallel for
+	//#pragma omp parallel for
 	for (auto y = 0; y < m_current_height; y++)
 	{
 		for (auto x = 0; x < m_current_width; x++)
@@ -183,23 +180,40 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			depth_min = std::min(depth_min, depth);
 			depth_max = std::max(depth_max, depth);
 
+#ifdef SupportNativeICP
+
 			if (depth > 0.0f)
 			{
 				// Back-projection to camera space.
 				temp_points[idx] = Transformations::backproject(
 					x * m_downsampling_factor,
 					y * m_downsampling_factor,
-					depth, m_camera_parameters);
+					depth, m_system_parameters);
+				 depth, m_system_parameters));
 			}
 			else
 			{
 				temp_points[idx] = Vector3f(MINF, MINF, MINF);
 			}
+#else
+		if (depth > 0.0f && x>1 && y> 1 && y < m_current_height-1 && x < m_current_width-1)
+			{
+				auto v = Transformations::backproject(
+					x * m_downsampling_factor,
+					y * m_downsampling_factor,
+					depth, m_system_parameters); 
+				if(v.allFinite())
+					m_points.push_back(v);
+			}
+#endif // SupportNativeICP
+	
 		}
 	}
 
-	m_camera_parameters.m_depth_max = depth_max;
-	m_camera_parameters.m_depth_min = depth_min;
+	m_system_parameters.m_depth_max = depth_max;
+	m_system_parameters.m_depth_min = depth_min;
+
+#ifdef SupportNativeICP
 
 	#pragma omp parallel for
 	for (auto y = 1; y < m_current_height - 1; y++)
@@ -258,9 +272,10 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 		}
 	}
 
-	//m_indexBuildingThread = new std::thread([this]()-> void{
-	//	m_nearestNeighbor->buildIndex(m_points);
-	//});
+	m_indexBuildingThread = new std::thread([this]()-> void{
+		m_nearestNeighbor->buildIndex(m_points);
+	});
+#endif // SupportNativeICP
 
 }
 

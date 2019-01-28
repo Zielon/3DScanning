@@ -19,7 +19,7 @@ struct __MeshInfo;
 
 extern "C" __declspec(dllexport) void* createContext(const char* dataset_path);
 
-extern "C" __declspec(dllexport) void* createSensorContext();
+extern "C" __declspec(dllexport) void* createSensorContext(const char* dataset_path);
 
 extern "C" __declspec(dllexport) int getImageWidth(void* context);
 
@@ -27,10 +27,17 @@ extern "C" __declspec(dllexport) int getImageHeight(void* context);
 
 extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* image, float* pose);
 
+extern "C" __declspec(dllexport) void getFrame(void* context, unsigned char* image, bool record);
+
+extern "C" __declspec(dllexport) void computeOfflineReconstruction(void* context, __MeshInfo* info, float* pose);
+
 extern "C" __declspec(dllexport) void enableReconstruction(void* context, bool enable); 
 
 extern "C" __declspec(dllexport) void getMeshInfo(void* context, __MeshInfo* info);
 
 extern "C" __declspec(dllexport) void getMeshBuffers(__MeshInfo* _mesh_info, float* pVB, int* pIB);
+
+extern "C" __declspec(dllexport) void deleteContext(void* context);
+
 
 #endif //EXPORT_DLL_H

@@ -29,7 +29,7 @@ public:
 
 	Mesh();
 
-	Mesh(cv::Mat& depthMat, cv::Mat colorMat, SystemParameters camera_parameters);
+	Mesh(cv::Mat& depthMat, cv::Mat colorMat, SystemParameters system_parameters);
 
 	unsigned int addVertex(Vector3f& vertex);
 
