@@ -44,7 +44,6 @@ extern "C" __declspec(dllexport) void* createSensorContext(){
 	tracker_context->m_videoStreamReader = new Xtion2StreamReader(realtime, verbose, capture);
 
 	tracker_context->m_videoStreamReader->startReading();
-	//FIXME: Frame Info only set after first frame is read... FIXME: mb split this into seperate call?
 
 	const auto height = tracker_context->m_videoStreamReader->m_height_depth;
 	const auto width = tracker_context->m_videoStreamReader->m_width_depth;
@@ -60,9 +59,10 @@ extern "C" __declspec(dllexport) void* createSensorContext(){
 		intrinsics
 	);
 
-	tracker_context->m_tracker = new Tracker(camera_parameters, NON_LINEAR);
-	tracker_context->m_fusion = new Fusion(camera_parameters);
-	// Start consuming the point clouds buffer
+	const auto shader = "C:/Users/Lukas/Desktop/3DScanning/Project/MarkerlessAR_Unity/Assets/Plugins/Shaders/Fusion.hlsl";
+
+	tracker_context->m_tracker = new Tracker(camera_parameters, CUDA);
+	tracker_context->m_fusion = new FusionGPU(camera_parameters, shader);
 	tracker_context->m_fusion->consume();
 
 	return tracker_context;
