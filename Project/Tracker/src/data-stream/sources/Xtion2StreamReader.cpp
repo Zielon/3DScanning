@@ -162,8 +162,9 @@ bool Xtion2StreamReader::startReading() {
 	}
 
 	//Setting sensor intrinsics
-	m_height_rgb = colorFrame.getHeight();
-	m_width_rgb = colorFrame.getWidth();
+	m_height_rgb = m_height_depth = colorFrame.getHeight();
+	m_width_rgb = m_width_depth = colorFrame.getWidth();
+
 	m_fov_x = m_color_stream.getHorizontalFieldOfView();
 	m_fov_y = m_color_stream.getVerticalFieldOfView();
 	m_depth_stream.getMaxPixelValue();//10000
