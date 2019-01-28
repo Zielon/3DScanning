@@ -5,19 +5,16 @@
 ### Visual Studio
 In the Visual Studio solutions we are using a few environment paths:
 
-| NAME            | VALUE  														  |
+| NAME            | VALUE  														                            |
 |-----------------|---------------------------------------------------------------|
 |OPENCV_DIR       |`C:\OpenCV\opencv\build\x64\vc15`                              |
 |OPENCV_INCLUDE   |`C:\OpenCV\opencv\build\include`                               |
 |OPENNI2_INCLUDE64|`C:\Program Files\OpenNI2\Include\`                            |
 |OPENNI2_LIB64    |`C:\Program Files\OpenNI2\Lib\`                                |
-|$(PCL_ROOT)\3rdParty\Eigen\eigen3                            | -----             |
-|$(PCL_ROOT)\3rdParty\VTK\include\vtk-8.1                     | -----             |
-|$(PCL_ROOT)\3rdParty\Boost\include\boost-1_68                | -----             |
-|$(PCL_INCLUDE)                                              | C:\Program Files\PCL 1.9.1\include\pcl-1.9                           |
-|$(SOPHUS_DIR)                                               | C:\Projects\Sophus-master                                            |
-|$(PCL_ROOT)\3rdParty\FLANN\include                          | -----                                                                |
-|$(EIGEN_DIR)                                                | commit (`83f9cb78d3f455e56653412b7fdb1c0bc3d40ba2`) eigen-git-mirror |
+|PCL_ROOT         |`C:\Program Files\PCL 1.9.1`                                   |
+|PCL_INCLUDE      |`C:\Program Files\PCL 1.9.1\include\pcl-1.9`                   |
+|SOPHUS_DIR       |`C:\Projects\Sophus-master`                                    |                                     
+|EIGEN_DIR        |commit (`83f9cb78d3f455e56653412b7fdb1c0bc3d40ba2`) eigen-git-mirror |
 
 Please set them on your Windows machine!
 
