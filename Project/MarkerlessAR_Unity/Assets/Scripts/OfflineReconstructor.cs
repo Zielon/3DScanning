@@ -22,7 +22,7 @@ namespace Assets.Scripts
 
         // Unity automatically find DLL files located on Assets/Plugins
         private const string DllFilePath = @"Tracker_release";
-        private readonly Queue<MeshDto> _meshDtoQueue = new Queue<MeshDto>();
+        private readonly Queue<__MeshDto> _meshDtoQueue = new Queue<__MeshDto>();
         private IntPtr _cppContext;
         private int _framesProcessed;
         private int _h = -1;
@@ -169,7 +169,7 @@ namespace Assets.Scripts
 
         }
 
-        private void AddMesh(MeshDto dto)
+        private void AddMesh(__MeshDto dto)
         {
             var mesh = new Mesh {vertices = dto.Vertices, triangles = dto.Triangles};
 
@@ -201,7 +201,7 @@ namespace Assets.Scripts
                 Debug.Log("Loaded mesh with " + vertexBuffer.Length + " vertices and " + indexBuffer.Length +
                           " indices.");
 
-                _meshDtoQueue.Enqueue(new MeshDto
+                _meshDtoQueue.Enqueue(new __MeshDto
                 {
                     Triangles = indexBuffer,
                     Vertices = vertexBuffer

@@ -3,8 +3,7 @@
 void DataStreamTest::vidReadTest(){
 	std::cout << "START vidReadTest()" << std::endl;
 
-	VideoStreamReaderBase* videoInputReader = new DatasetVideoStreamReader(
-		DatasetManager::getCurrentPath().data(), false);
+	VideoStreamReaderBase* videoInputReader = new DatasetVideoStreamReader(m_params->m_dataset_path, false);
 
 	if (!videoInputReader->startReading())
 	{

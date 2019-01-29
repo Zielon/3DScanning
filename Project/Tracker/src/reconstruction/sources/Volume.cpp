@@ -15,15 +15,16 @@ Volume::Volume(Size min, Size max, uint size, uint dim, bool allocMemory){
 	m_min = Vector3d(min.m_depth, min.m_width, min.m_height);
 	m_max = Vector3d(max.m_depth, max.m_width, max.m_height);
 
+	m_voxels = nullptr;
+
 	if (allocMemory)
 	{
 		m_voxels = new Voxel[m_length];
 	}
-
 }
 
 Volume::~Volume(){
-	delete[] m_voxels;
+	SAFE_DELETE_ARRAY(m_voxels);
 }
 
 void Volume::forAll(std::function<void(Voxel*, int)> func) const{

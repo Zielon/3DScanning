@@ -27,6 +27,8 @@ public:
 
 	virtual void run() = 0;
 
+	__SystemParameters* m_params;
+
 protected:
 	DatasetManager m_files_manager;
 
@@ -34,7 +36,9 @@ protected:
 
 	static int getIterations();
 
-	int wasKeyboardHit() const { return (int)_kbhit(); }
+	int wasKeyboardHit() const{
+		return (int)_kbhit();
+	}
 
 private:
 	static std::vector<Matrix4f> m_trajectories;

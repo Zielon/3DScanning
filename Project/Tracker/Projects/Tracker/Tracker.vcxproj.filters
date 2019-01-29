@@ -129,6 +129,9 @@
     <ClInclude Include="..\..\src\icpcuda\ICPOdometry.h">
       <Filter>icpcuda</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\marshaling\__SystemParameters.h">
+      <Filter>marshaling</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ExportDLL.cpp" />
