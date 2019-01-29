@@ -24,7 +24,8 @@ namespace Assets.Scripts
         private Thread _thread;
 
         //general setup
-        private readonly bool _use_sensor = true;
+        //private readonly bool _use_sensor = true;
+        public bool _use_sensor = false;//Parameter is set in Unity Editor (CameraRig component).
         private int _w = -1;
 
         public int abortAfterNFrames = -1;
