@@ -93,7 +93,7 @@ namespace Assets.Scripts
         private void Update()
         {
             // Unity just dies if the dataset runs out
-            if (_framesProcessed > abortAfterNFrames && abortAfterNFrames > 0)
+            if (!_use_sensor & _framesProcessed > abortAfterNFrames && abortAfterNFrames > 0 && ! _use_sensor)
             {
                 Debug.Log("Tracking aborted");
                 return;

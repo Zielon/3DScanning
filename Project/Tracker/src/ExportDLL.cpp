@@ -24,10 +24,8 @@ extern "C" __declspec(dllexport) void* createContext(__SystemParameters* _parame
 		_parameters->m_truncation
 	);
 
-	const auto shader = std::string(_parameters->m_dataset_path) + "../../Assets/Plugins/Shaders/Fusion.hlsl";
-
 	tracker_context->m_tracker = new Tracker(system_parameters, CUDA);
-	tracker_context->m_fusion = new FusionGPU(system_parameters, shader);
+	tracker_context->m_fusion = new FusionGPU(system_parameters);
 	tracker_context->m_fusion->consume();
 
 	return tracker_context;
@@ -63,10 +61,8 @@ extern "C" __declspec(dllexport) void* createSensorContext(__SystemParameters* _
 		_parameters->m_truncation
 	);
 
-	const auto shader = std::string(_parameters->m_dataset_path) + "../../Assets/Plugins/Shaders/Fusion.hlsl";
-
 	tracker_context->m_tracker = new Tracker(system_parameters, CUDA);
-	tracker_context->m_fusion = new FusionGPU(system_parameters, shader);
+	tracker_context->m_fusion = new FusionGPU(system_parameters);
 	tracker_context->m_fusion->consume();
 
 	return tracker_context;
