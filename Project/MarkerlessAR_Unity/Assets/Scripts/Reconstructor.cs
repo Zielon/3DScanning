@@ -23,6 +23,7 @@ namespace Assets.Scripts
         private byte[] _image;
         private float[] _pose;
         private Thread _thread;
+        public bool _use_sensor = false;//Parameter is set in Unity Editor (CameraRig component).
         private int _w = -1;
 
         public int abortAfterNFrames = -1;
