@@ -1880,6 +1880,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31c7d86c210395044bcaf2f7797dcf1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _use_sensor: 0
   abortAfterNFrames: 750
   cameraRig: {fileID: 1080673627}
   frameMeshObject: {fileID: 1277081663}
@@ -2418,6 +2419,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4957133096910197796, guid: 50cd0bb2038247545b3fab83ca1387ae,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4957133096910197796, guid: 50cd0bb2038247545b3fab83ca1387ae,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4957133096910197796, guid: 50cd0bb2038247545b3fab83ca1387ae,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5012278789383980705, guid: 50cd0bb2038247545b3fab83ca1387ae,
         type: 3}
@@ -3621,6 +3637,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6977968972763939286, guid: fc55555ed19b9324d8782cbb00870511,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6977968972763939286, guid: fc55555ed19b9324d8782cbb00870511,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6977968972763939286, guid: fc55555ed19b9324d8782cbb00870511,
+        type: 3}
+      propertyPath: m_Size.z
+      value: 1.5
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4474601992899574039, guid: fc55555ed19b9324d8782cbb00870511, type: 3}
