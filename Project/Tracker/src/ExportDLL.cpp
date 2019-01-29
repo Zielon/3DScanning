@@ -1,16 +1,18 @@
 #include "ExportDLL.h"
+#include "marshaling/__SystemParameters.h"
 
-extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
+extern "C" __declspec(dllexport) void* createContext(__SystemParameters* _parameters){
 
 	auto* tracker_context = new TrackerContext();
 
-	tracker_context->m_videoStreamReader = new DatasetVideoStreamReader(dataset_path, false);
+	tracker_context->m_videoStreamReader = new DatasetVideoStreamReader(_parameters->m_dataset_path, false);
 	tracker_context->m_videoStreamReader->startReading();
 
 	const auto height = tracker_context->m_videoStreamReader->m_height_depth;
 	const auto width = tracker_context->m_videoStreamReader->m_width_depth;
 
 	Matrix3f intrinsics = tracker_context->m_videoStreamReader->getCameraIntrinsics();
+
 	const SystemParameters system_parameters = SystemParameters(
 		intrinsics(0, 0),
 		intrinsics(1, 1),
@@ -18,7 +20,8 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 		intrinsics(1, 2),
 		height,
 		width,
-		intrinsics
+		_parameters->m_volume_size,
+		_parameters->m_truncation
 	);
 
 	tracker_context->m_tracker = new Tracker(system_parameters, CUDA);
@@ -28,7 +31,7 @@ extern "C" __declspec(dllexport) void* createContext(const char* dataset_path){
 	return tracker_context;
 }
 
-extern "C" __declspec(dllexport) void* createSensorContext(const char* dataset_path){
+extern "C" __declspec(dllexport) void* createSensorContext(__SystemParameters* _parameters){
 	TrackerContext* tracker_context = new TrackerContext();
 
 	bool realtime = true, capture = false, verbose = false;
@@ -46,6 +49,7 @@ extern "C" __declspec(dllexport) void* createSensorContext(const char* dataset_p
 	const auto width = tracker_context->m_videoStreamReader->m_width_depth;
 
 	Matrix3f intrinsics = tracker_context->m_videoStreamReader->getCameraIntrinsics();
+
 	const SystemParameters system_parameters = SystemParameters(
 		intrinsics(0, 0),
 		intrinsics(1, 1),
@@ -53,7 +57,8 @@ extern "C" __declspec(dllexport) void* createSensorContext(const char* dataset_p
 		intrinsics(1, 2),
 		height,
 		width,
-		intrinsics
+		_parameters->m_volume_size,
+		_parameters->m_truncation
 	);
 	tracker_context->m_tracker = new Tracker(system_parameters, CUDA);
 	tracker_context->m_fusion = new FusionGPU(system_parameters);
@@ -132,9 +137,7 @@ extern "C" __declspec(dllexport) void enableReconstruction(void* context, bool e
 	tracker_context->enableReconstruction = enable;
 }
 
-
-extern "C" __declspec(dllexport) void getFrame(void* context, unsigned char* image, bool record)
-{
+extern "C" __declspec(dllexport) void getFrame(void* context, unsigned char* image, bool record){
 	auto* tracker_context = static_cast<TrackerContext*>(context);
 
 	cv::Mat rgb, depth;
@@ -142,8 +145,7 @@ extern "C" __declspec(dllexport) void getFrame(void* context, unsigned char* ima
 	tracker_context->m_videoStreamReader->getNextFrame(rgb, depth, false);
 
 	tracker_context->rgb_recording.push_back(rgb);
-	tracker_context->depth_recording.push_back(depth); 
-
+	tracker_context->depth_recording.push_back(depth);
 
 	// Copy value to UNITY
 	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
@@ -151,9 +153,7 @@ extern "C" __declspec(dllexport) void getFrame(void* context, unsigned char* ima
 
 }
 
-
-extern "C" __declspec(dllexport) void computeOfflineReconstruction(void* context, __MeshInfo* mesh_info, float* pose)
-{
+extern "C" __declspec(dllexport) void computeOfflineReconstruction(void* context, __MeshInfo* mesh_info, float* pose){
 	TrackerContext* tracker_context = static_cast<TrackerContext*>(context);
 	const auto height = tracker_context->m_videoStreamReader->m_height_depth;
 	const auto width = tracker_context->m_videoStreamReader->m_width_depth;
@@ -166,18 +166,19 @@ extern "C" __declspec(dllexport) void computeOfflineReconstruction(void* context
 		intrinsics(1, 2),
 		height,
 		width,
-		intrinsics
+		128,
+		5.f
 	);
 
-	Tracker* tracker = tracker_context->m_tracker; 
+	Tracker* tracker = tracker_context->m_tracker;
 
 	tracker_context->m_first_frame = true;
 
-	auto rgbIt = tracker_context->rgb_recording.begin(); 
+	auto rgbIt = tracker_context->rgb_recording.begin();
 
 	for (auto depth : tracker_context->depth_recording)
 	{
-		auto rgb = *rgbIt++; 
+		auto rgb = *rgbIt++;
 
 		PointCloud* _target = new PointCloud(tracker->getSystemParameters(), depth, rgb);
 		std::shared_ptr<PointCloud> current(_target);
@@ -199,12 +200,11 @@ extern "C" __declspec(dllexport) void computeOfflineReconstruction(void* context
 		// Produce a new point cloud (add to the buffer)
 		tracker_context->m_fusion->produce(std::shared_ptr<PointCloud>(tracker->m_previous_point_cloud));
 		tracker->m_previous_point_cloud = current;
-
 	}
 	tracker_context->rgb_recording.clear();
 	tracker_context->depth_recording.clear();
 
-	tracker_context->m_fusion->wait(); 
+	tracker_context->m_fusion->wait();
 
 	mesh_info->mesh = new Mesh();
 	tracker_context->m_fusion->processMesh(*(mesh_info->mesh));
@@ -215,15 +215,11 @@ extern "C" __declspec(dllexport) void computeOfflineReconstruction(void* context
 
 }
 
-
-extern "C" __declspec(dllexport) void deleteContext(void* context)
-{
+extern "C" __declspec(dllexport) void deleteContext(void* context){
 	TrackerContext* tracker_context = static_cast<TrackerContext*>(context);
-	tracker_context->rgb_recording.clear(); 
+
+	tracker_context->rgb_recording.clear();
 	tracker_context->depth_recording.clear();
 
-	SAFE_DELETE( tracker_context->m_fusion); 
-	SAFE_DELETE(tracker_context->m_tracker);
-	SAFE_DELETE(tracker_context->m_videoStreamReader);
-
+	SAFE_DELETE(tracker_context);
 }

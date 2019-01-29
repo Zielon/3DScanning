@@ -3,29 +3,26 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
-
     public class Reconstructor : MonoBehaviour
     {
         // Unity automatically find DLL files located on Assets/Plugins
         private const string DllFilePath = @"Tracker_release";
-        private readonly Queue<MeshDto> _meshDtoQueue = new Queue<MeshDto>();
+        private readonly Queue<__MeshDto> _meshDtoQueue = new Queue<__MeshDto>();
+
+        //general setup
         private IntPtr _cppContext;
         private int _framesProcessed;
         private int _h = -1;
         private byte[] _image;
         private float[] _pose;
         private Thread _thread;
-
-        //general setup
-        //private readonly bool _use_sensor = true;
-        public bool _use_sensor = false;//Parameter is set in Unity Editor (CameraRig component).
+        public bool _use_sensor = false;
         private int _w = -1;
 
         public int abortAfterNFrames = -1;
@@ -40,10 +37,10 @@ namespace Assets.Scripts
         public Image videoBG;
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr createContext(byte[] path);
+        private static extern IntPtr createContext(ref __SystemParameters param);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
-        private static extern IntPtr createSensorContext(byte[] path);
+        private static extern IntPtr createSensorContext(ref __SystemParameters param);
 
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern void tracker(IntPtr context, byte[] image, float[] pose);
@@ -67,21 +64,21 @@ namespace Assets.Scripts
         private void Start()
         {
             var segments = new List<string>(
-            Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
-                    {"..", "Datasets", "freiburg", " "};
+                    Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
+                {"..", "Datasets", "freiburg", " "};
 
             var absolutePath = segments.Aggregate(
                 (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
-            if (_use_sensor)
-            {
-                _cppContext = createSensorContext(Encoding.ASCII.GetBytes(absolutePath));
-            }
-            else
-            {
 
+            var param = new __SystemParameters
+            {
+                m_dataset_path = absolutePath,
+                m_truncation_scaling = 7.0f,
+                m_volume_size = 128
+            };
 
-                _cppContext = createContext(Encoding.ASCII.GetBytes(absolutePath));
-            }
+            _cppContext = _use_sensor ? createSensorContext(ref param) : createContext(ref param);
+
             _w = getImageWidth(_cppContext);
             _h = getImageHeight(_cppContext);
 
@@ -90,6 +87,7 @@ namespace Assets.Scripts
             _pose = new float[16];
             _image = new byte[_w * _h * 3];
         }
+
 
         // Update is called once per frame
         private void Update()
@@ -137,40 +135,18 @@ namespace Assets.Scripts
             LoadMesh();
         }
 
-        private void AddMesh(MeshDto dto)
+        private void AddMesh(__MeshDto dto)
         {
             var mesh = frameMeshObject.GetComponent<MeshFilter>().mesh;
-            mesh.Clear(); 
+            mesh.Clear();
             mesh.vertices = dto.Vertices;
-            mesh.SetIndices(dto.Triangles, MeshTopology.Triangles, 0, true); 
+            mesh.SetIndices(dto.Triangles, MeshTopology.Triangles, 0, true);
             mesh.RecalculateNormals();
             frameMeshObject.GetComponent<MeshFilter>().mesh = mesh;
             frameMeshObject.GetComponent<MeshCollider>().sharedMesh = mesh;
-         //   mesh.UploadMeshData(false);
+            //   mesh.UploadMeshData(false);
         }
 
-        // This wont work with DirectCompute
-        //private Thread SpawnFrameMeshThread()
-        //{
-        //    return new Thread(() =>
-        //    {
-        //        var meshInfo = new __MeshInfo();
-        //        getMeshInfo(_cppContext, ref meshInfo);
-
-        //        var vertexBuffer = new Vector3[meshInfo.m_vertex_count];
-        //        var indexBuffer = new int[meshInfo.m_index_count];
-
-        //        getMeshBuffers(ref meshInfo, vertexBuffer, indexBuffer);
-        //        Debug.Log("Loaded mesh with " + vertexBuffer.Length + " vertices and " + indexBuffer.Length +
-        //                  " indices.");
-
-        //        _meshDtoQueue.Enqueue(new MeshDto
-        //        {
-        //            Triangles = indexBuffer,
-        //            Vertices = vertexBuffer
-        //        });
-        //    });
-        //}
         private void LoadMesh()
         {
             var meshInfo = new __MeshInfo();
@@ -183,14 +159,14 @@ namespace Assets.Scripts
             //Debug.Log("Loaded mesh with " + vertexBuffer.Length + " vertices and " + indexBuffer.Length +
             //            " indices.");
 
-            _meshDtoQueue.Enqueue(new MeshDto
+            _meshDtoQueue.Enqueue(new __MeshDto
             {
                 Triangles = indexBuffer,
                 Vertices = vertexBuffer
             });
         }
 
-        void OnApplicationQuit()
+        private void OnApplicationQuit()
         {
             deleteContext(_cppContext);
             Debug.Log("Application ending after " + Time.time + " seconds");

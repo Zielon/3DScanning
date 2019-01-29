@@ -50,6 +50,7 @@
     <ClInclude Include="..\..\src\icpcuda\Cuda\internal.h" />
     <ClInclude Include="..\..\src\icpcuda\ICPOdometry.h" />
     <ClInclude Include="..\..\src\marshaling\__Mesh.h" />
+    <ClInclude Include="..\..\src\marshaling\__SystemParameters.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPCUDA.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\icp\ICPFeatures.h" />
     <ClInclude Include="..\..\src\reconstruction\headers\FusionBase.h" />
