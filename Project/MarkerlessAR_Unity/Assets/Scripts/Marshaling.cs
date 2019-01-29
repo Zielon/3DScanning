@@ -17,7 +17,7 @@ namespace Assets.Scripts
     {
         public int[] Triangles;
         public Vector3[] Vertices;
-    }s
+    }
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct __SystemParameters

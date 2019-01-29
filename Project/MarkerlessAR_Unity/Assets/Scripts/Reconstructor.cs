@@ -16,14 +16,13 @@ namespace Assets.Scripts
         private readonly Queue<__MeshDto> _meshDtoQueue = new Queue<__MeshDto>();
 
         //general setup
-        private readonly bool _use_sensor = false;
         private IntPtr _cppContext;
         private int _framesProcessed;
         private int _h = -1;
         private byte[] _image;
         private float[] _pose;
         private Thread _thread;
-        public bool _use_sensor = false;//Parameter is set in Unity Editor (CameraRig component).
+        public bool _use_sensor = false;
         private int _w = -1;
 
         public int abortAfterNFrames = -1;
