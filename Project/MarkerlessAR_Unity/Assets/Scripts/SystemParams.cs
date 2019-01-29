@@ -49,7 +49,6 @@ namespace Assets.Scripts
 
         }
 
-
         public void switchScene(string scene)
         {
             SceneManager.LoadScene(scene);
