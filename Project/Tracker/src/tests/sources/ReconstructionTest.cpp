@@ -107,7 +107,7 @@ void ReconstructionTest::reconstructionTest(int skip, int subsampling) const{
 
 	Verbose::message("START reconstructionTest()");
 
-	//m_params->m_volume_size = 128;
+	m_params->m_volume_size = 1024;
 
 	TrackerContext* context = static_cast<TrackerContext*>(createContext(m_params));
 
