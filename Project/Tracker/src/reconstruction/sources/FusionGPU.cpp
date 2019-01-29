@@ -12,7 +12,6 @@ FusionGPU::FusionGPU(SystemParameters system_parameters, std::string shaderPath)
 	reloadShaders(shaderPath);
 
 	populateSettingsBuffers();
-
 }
 
 FusionGPU::~FusionGPU(){
@@ -57,8 +56,8 @@ FusionGPU::~FusionGPU(){
 }
 
 void FusionGPU::initialize(){
-	m_volume = new Volume(Size(-4, -4, -4), Size(4, 4, 4), 128, 1, false);
-	m_trunaction = m_volume->m_voxel_size * 6.f;
+	m_volume = new Volume(Size(-4, -4, -4), Size(4, 4, 4), m_system_parameters.m_volume_size, 1, false);
+	m_trunaction = m_volume->m_voxel_size * m_system_parameters.m_truncation;
 
 	m_fusionSettings.m_max = m_volume->m_max.cast<float>();
 	m_fusionSettings.m_min = m_volume->m_min.cast<float>();
