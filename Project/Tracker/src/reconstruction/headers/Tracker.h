@@ -34,6 +34,8 @@ public:
 		case CUDA: m_icp = new ICPCUDA(system_parameters);
 			break;
 		}
+
+		this->icp_type = icp_type;
 	}
 
 	~Tracker();
@@ -47,6 +49,8 @@ public:
 	Matrix4f m_pose = Matrix4f::Identity();
 
 	ICP* m_icp = nullptr;
+
+	ICPType icp_type;
 
 	SystemParameters m_system_parameters;
 };

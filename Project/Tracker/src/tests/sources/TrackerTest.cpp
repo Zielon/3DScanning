@@ -13,7 +13,6 @@ void TrackerTest::cameraPoseTest(){
 	Matrix4f prev_trajectory, trajectory;
 	Matrix4f firs_trajectory_inverse = getTrajectory(0).inverse();
 
-	int nIters = 700; //3000
 	const auto size = getIterations();//3000
 	ProgressBar bar(size, 60, "Frames loaded");
 
@@ -40,8 +39,8 @@ void TrackerTest::cameraPoseTest(){
 
 		Matrix4f new_pose = tracker_context->m_tracker->alignNewFrame(tracker_context->m_tracker->m_previous_point_cloud, current);
 
-		std::cout << "Vertices: source: " << current->getPoints().size() << " target: " << 
-			tracker_context->m_tracker->m_previous_point_cloud-> getPoints().size() << std::endl;
+		/*std::cout << "Vertices: source: " << current->getPoints().size() << " target: " << 
+			tracker_context->m_tracker->m_previous_point_cloud-> getPoints().size() << std::endl;*/
 
 		std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
 
@@ -82,9 +81,13 @@ void TrackerTest::cameraPoseTest(){
 		avg_error += fabs(final_error - prev_drift);
 		avg_displacement_error += fabs(displacement_error - prev_displacement_drift);
 
-		std::cout << "\n ------- Error: " << i << " -------- \n" << final_error
+		/*std::cout << "\n ------- Error: " << i << " -------- \n" << final_error
 			<< "\n ------- Translational Error: " << i << " -------- \n" << displacement_error
-			<< "\n------------------------ " << std::endl;
+			<< "\n------------------------ " << std::endl;*/
+
+		//Update progress bar
+		bar.set(i);
+		bar.display();
 	}
 
 	std::cout << "Average ICP time:  " << 1000.0 * icp_time / size << " ms\n";
