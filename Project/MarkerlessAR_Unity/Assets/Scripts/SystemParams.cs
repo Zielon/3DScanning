@@ -1,58 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Threading;
-
 
 namespace Assets.Scripts
 {
-
     public class SystemParams : MonoBehaviour
     {
-        public __SystemParameters m_systemParameters;
-
-        public InputField truncationInput;
-        public InputField volumeSizeInput;
         public InputField datesetPathInput;
-        public Toggle useSensorInput; 
-
-        public bool useSensor = false; 
+        public InputField meshUpdateInput;
+        public InputField truncationInput;
+        public Toggle useSensorInput;
+        public InputField volumeSizeInput;
 
         // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
-            DontDestroyOnLoad(this.gameObject);
+            DontDestroyOnLoad(gameObject);
 
             var segments = new List<string>(
-        Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
+                    Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
                 {"..", "Datasets", "freiburg", " "};
 
             var absolutePath = segments.Aggregate(
                 (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
 
-            volumeSizeInput.text = "256";
+            meshUpdateInput.text = "5";
+            volumeSizeInput.text = "128";
             truncationInput.text = "7.0";
-            datesetPathInput.text = absolutePath; 
+            datesetPathInput.text = absolutePath;
         }
 
         // Update is called once per frame
-        void Update()
+        private void Update()
         {
-            m_systemParameters.m_dataset_path = datesetPathInput.text;
-            useSensor = useSensorInput.isOn; 
-            int.TryParse(volumeSizeInput.text, out m_systemParameters.m_volume_size);
-            float.TryParse(truncationInput.text, out m_systemParameters.m_truncation_scaling);
-
+            PlayerPrefs.SetInt("volume_size", int.Parse(volumeSizeInput.text));
+            PlayerPrefs.SetFloat("truncation", float.Parse(truncationInput.text));
+            PlayerPrefs.SetInt("mesh_update", int.Parse(meshUpdateInput.text));
+            PlayerPrefs.SetString("use_sensor", useSensorInput.isOn.ToString());
+            PlayerPrefs.SetString("dataset_path", datesetPathInput.text);
         }
 
         public void switchScene(string scene)
         {
             SceneManager.LoadScene(scene);
         }
-
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using UnityEngine;
@@ -22,7 +20,7 @@ namespace Assets.Scripts
         private byte[] _image;
         private float[] _pose;
         private Thread _thread;
-        public bool _use_sensor = false;
+        public bool _use_sensor;
         private int _w = -1;
 
         public int abortAfterNFrames = -1;
@@ -63,36 +61,17 @@ namespace Assets.Scripts
         // Use this for initialization
         private void Start()
         {
+            Debug.Log("Basic Physics scene");
 
-            Debug.Log("Basic Physics scene"); 
-
-            var segments = new List<string>(
-                    Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
-                {"..", "Datasets", "freiburg", " "};
-
-            var absolutePath = segments.Aggregate(
-                (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
+            meshUpdateRate = PlayerPrefs.GetInt("mesh_update");
+            _use_sensor = bool.Parse(PlayerPrefs.GetString("use_sensor"));
 
             var param = new __SystemParameters
             {
-                m_dataset_path = absolutePath,
-                m_truncation_scaling = 7.0f,
-                m_volume_size = 128
+                m_dataset_path = PlayerPrefs.GetString("dataset_path"),
+                m_truncation = PlayerPrefs.GetFloat("truncation"),
+                m_volume_size = PlayerPrefs.GetInt("volume_size")
             };
-
-
-            SystemParams paramObj = FindObjectOfType<SystemParams>(); 
-            if(paramObj != null)
-            {
-                _use_sensor = paramObj.useSensor;
-                param = paramObj.m_systemParameters; 
-            }
-            else
-            {
-                Debug.Log("Could not find system Params, start project by launching Menu scene!"); 
-            }
-
-
 
             _cppContext = _use_sensor ? createSensorContext(ref param) : createContext(ref param);
 
@@ -110,7 +89,7 @@ namespace Assets.Scripts
         private void Update()
         {
             // Unity just dies if the dataset runs out
-            if (!_use_sensor & _framesProcessed > abortAfterNFrames && abortAfterNFrames > 0 && ! _use_sensor)
+            if (!_use_sensor & (_framesProcessed > abortAfterNFrames) && abortAfterNFrames > 0 && !_use_sensor)
             {
                 Debug.Log("Tracking aborted");
                 return;
@@ -140,14 +119,10 @@ namespace Assets.Scripts
             cameraRig.transform.position = pose.GetColumn(3);
             cameraRig.transform.rotation = pose.rotation;
 
-            //   Debug.Log("Pos: " + cameraRig.transform.position);
-            //   Debug.Log("Rot: " + cameraRig.transform.rotation.eulerAngles);
-
             if (_meshDtoQueue.Count > 0)
                 AddMesh(_meshDtoQueue.Dequeue());
 
-            //get first mesh after n frames
-            if (_framesProcessed % meshUpdateRate != 1 || _thread != null && _thread.IsAlive) return;
+            if (_framesProcessed % meshUpdateRate != 0) return;
 
             LoadMesh();
         }
@@ -173,8 +148,6 @@ namespace Assets.Scripts
             var indexBuffer = new int[meshInfo.m_index_count];
 
             getMeshBuffers(ref meshInfo, vertexBuffer, indexBuffer);
-            //Debug.Log("Loaded mesh with " + vertexBuffer.Length + " vertices and " + indexBuffer.Length +
-            //            " indices.");
 
             _meshDtoQueue.Enqueue(new __MeshDto
             {
