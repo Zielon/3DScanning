@@ -16,7 +16,6 @@ namespace Assets.Scripts
         private readonly Queue<__MeshDto> _meshDtoQueue = new Queue<__MeshDto>();
 
         //general setup
-        private readonly bool _use_sensor = false;
         private IntPtr _cppContext;
         private int _framesProcessed;
         private int _h = -1;
