@@ -21,7 +21,7 @@ extern "C" __declspec(dllexport) void* createContext(__SystemParameters* _parame
 		height,
 		width,
 		_parameters->m_volume_size,
-		_parameters->m_truncation_scaling
+		_parameters->m_truncation
 	);
 
 	const auto shader = std::string(_parameters->m_dataset_path) + "../../Assets/Plugins/Shaders/Fusion.hlsl";
@@ -60,7 +60,7 @@ extern "C" __declspec(dllexport) void* createSensorContext(__SystemParameters* _
 		height,
 		width,
 		_parameters->m_volume_size,
-		_parameters->m_truncation_scaling
+		_parameters->m_truncation
 	);
 
 	const auto shader = std::string(_parameters->m_dataset_path) + "../../Assets/Plugins/Shaders/Fusion.hlsl";

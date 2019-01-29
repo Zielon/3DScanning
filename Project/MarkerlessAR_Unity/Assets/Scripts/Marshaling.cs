@@ -13,11 +13,11 @@ namespace Assets.Scripts
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct MeshDto
+    public struct __MeshDto
     {
         public int[] Triangles;
         public Vector3[] Vertices;
-    }
+    }s
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct __SystemParameters

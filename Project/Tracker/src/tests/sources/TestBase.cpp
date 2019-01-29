@@ -17,7 +17,7 @@ TestBase::TestBase(){
 
 	strcpy(m_params->m_dataset_path, DatasetManager::getCurrentPath().c_str());
 	m_params->m_volume_size = 128;
-	m_params->m_truncation_scaling = 5.f;
+	m_params->m_truncation = 5.f;
 }
 
 Matrix4f TestBase::getTrajectory(int index) const{
