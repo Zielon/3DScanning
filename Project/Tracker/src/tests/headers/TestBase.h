@@ -15,6 +15,7 @@
 #include <iomanip>
 #include <conio.h>
 #include "../../debugger/headers/Verbose.h"
+#include "../../debugger/headers/ProgressBar.hpp"
 #include "../../reconstruction/headers/Mesh.h"
 #include "../../concurency/headers/ThreadManager.h"
 
