@@ -61,7 +61,6 @@ extern "C" __declspec(dllexport) void* createSensorContext(const char* dataset_p
 
 	tracker_context->m_tracker = new Tracker(system_parameters, CUDA);
 	tracker_context->m_fusion = new FusionGPU(system_parameters, shader);
-	// Start consuming the point clouds buffer
 	tracker_context->m_fusion->consume();
 
 	return tracker_context;
