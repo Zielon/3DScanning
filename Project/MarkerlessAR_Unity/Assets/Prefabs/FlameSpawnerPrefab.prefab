@@ -92,7 +92,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: 1.5
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &2403897381216532466
 MonoBehaviour:
@@ -108,7 +108,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SplatPrefab: {fileID: 1901245927194888, guid: bb98861c48ad2024ca93498c7dd93a6c,
     type: 3}
-  speed: 0.9
+  speed: 5
   deleteAfter: 15
 --- !u!54 &6562895199422405928
 Rigidbody:

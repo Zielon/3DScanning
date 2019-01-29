@@ -3539,7 +3539,7 @@ MonoBehaviour:
   FireSpawnerPrefab: {fileID: 5291548149468981827, guid: f7d3831e49ad12a4fa7e99e719e96f1c,
     type: 3}
   FlameThrower: {fileID: 1691811294}
-  spawnFireIntervall: 0.45
+  spawnFireIntervall: 0.25
   solidBallSpeed: 1
 --- !u!1 &1990215441
 GameObject:

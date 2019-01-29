@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 3193763009030739551}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.025, y: 0.025, z: 0.025}
+  m_LocalScale: {x: 0.05, y: 0.05, z: 0.05}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -92,7 +92,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.75
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &5475985427077169209
 MonoBehaviour:
@@ -108,7 +108,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SplatPrefab: {fileID: 2387208673431519711, guid: e447c31f8f7e5434c8a897feccf8af68,
     type: 3}
-  speed: 0.75
+  speed: 5
+  deleteAfter: 5000
 --- !u!54 &6980633876191930133
 Rigidbody:
   m_ObjectHideFlags: 0
