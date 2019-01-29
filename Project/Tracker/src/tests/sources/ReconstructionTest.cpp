@@ -219,7 +219,7 @@ void ReconstructionTest::reconstructionTestSensor(int mesh_index) const{
 		if (index % mesh_index == 0)
 		{
 			Mesh mesh;
-			context->m_fusion->processMesh(mesh);
+			//context->m_fusion->processMesh(mesh);
 		}
 
 		index++;
