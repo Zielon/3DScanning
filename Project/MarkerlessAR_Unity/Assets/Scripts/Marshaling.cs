@@ -23,7 +23,7 @@ namespace Assets.Scripts
     public struct __SystemParameters
     {
         public int m_volume_size;
-        public float m_truncation_scaling;
+        public float m_truncation;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string m_dataset_path;
