@@ -17,9 +17,9 @@
 
 struct __MeshInfo;
 
-extern "C" __declspec(dllexport) void* createContext(__SystemParameters* parameters);
+extern "C" __declspec(dllexport) void* createContext(__SystemParameters* _parameters);
 
-extern "C" __declspec(dllexport) void* createSensorContext(__SystemParameters* parameters);
+extern "C" __declspec(dllexport) void* createSensorContext(__SystemParameters* _parameters);
 
 extern "C" __declspec(dllexport) int getImageWidth(void* context);
 

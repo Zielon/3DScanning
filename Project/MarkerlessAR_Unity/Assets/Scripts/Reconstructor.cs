@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
@@ -89,6 +88,7 @@ namespace Assets.Scripts
             _image = new byte[_w * _h * 3];
         }
 
+
         // Update is called once per frame
         private void Update()
         {
@@ -147,28 +147,6 @@ namespace Assets.Scripts
             //   mesh.UploadMeshData(false);
         }
 
-        // This wont work with DirectCompute
-        //private Thread SpawnFrameMeshThread()
-        //{
-        //    return new Thread(() =>
-        //    {
-        //        var meshInfo = new __MeshInfo();
-        //        getMeshInfo(_cppContext, ref meshInfo);
-
-        //        var vertexBuffer = new Vector3[meshInfo.m_vertex_count];
-        //        var indexBuffer = new int[meshInfo.m_index_count];
-
-        //        getMeshBuffers(ref meshInfo, vertexBuffer, indexBuffer);
-        //        Debug.Log("Loaded mesh with " + vertexBuffer.Length + " vertices and " + indexBuffer.Length +
-        //                  " indices.");
-
-        //        _meshDtoQueue.Enqueue(new MeshDto
-        //        {
-        //            Triangles = indexBuffer,
-        //            Vertices = vertexBuffer
-        //        });
-        //    });
-        //}
         private void LoadMesh()
         {
             var meshInfo = new __MeshInfo();

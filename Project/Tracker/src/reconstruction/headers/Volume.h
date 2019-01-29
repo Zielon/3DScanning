@@ -37,7 +37,6 @@ public:
 
 	int m_size;
 
-
 	//! Lower left and Upper right corner.
 	Vector3d m_min, m_max;
 
@@ -46,10 +45,8 @@ public:
 
 	Voxel* m_voxels;
 
-
 private:
 	double m_ddx, m_ddy, m_ddz;
-
 
 	int m_length = 0;
 

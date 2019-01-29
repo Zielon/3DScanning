@@ -201,7 +201,8 @@ void ReconstructionTest::reconstructionTestWithOurTracking(int increment) const{
 	Verbose::message("DONE reconstructionTestWithOurTracking()", SUCCESS);
 
 	delete[]img;
-	SAFE_DELETE(context);
+
+	deleteContext(context);
 }
 
 void ReconstructionTest::reconstructionTestSensor(int mesh_index) const{
