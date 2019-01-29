@@ -1,6 +1,6 @@
 #include "../headers/TrackerTest.h"
 
-void TrackerTest::cameraPoseTest(){
+void TrackerTest::cameraPoseTest(int skip, int subsampling){
 	std::cout << "START cameraPoseTest()" << std::endl;
 
 	TrackerContext* tracker_context = static_cast<TrackerContext*>(createContext(m_params));
@@ -16,14 +16,14 @@ void TrackerTest::cameraPoseTest(){
 	const auto size = getIterations();//3000
 	ProgressBar bar(size, 60, "Frames loaded");
 
-	for (int i = 0; i < size; i++)
+	for (int i = 0; i < size; i += skip)
 	{
 		trajectory = firs_trajectory_inverse * getTrajectory(i); //get camera trajectory of index from testBase class
 		cv::Mat rgb, depth;
 
 		dynamic_cast<DatasetVideoStreamReader*>(tracker_context->m_videoStreamReader)->readAnyFrame(i, rgb, depth);
 
-		PointCloud* _target = new PointCloud(tracker_context->m_tracker->getSystemParameters(), depth, rgb);
+		PointCloud* _target = new PointCloud(tracker_context->m_tracker->getSystemParameters(), depth, rgb, subsampling);
 		std::shared_ptr<PointCloud> current(_target);
 
 		if (tracker_context->m_first_frame)

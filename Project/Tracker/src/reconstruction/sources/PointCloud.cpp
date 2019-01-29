@@ -183,6 +183,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 
 #ifdef SupportNativeICP
 
+
 			if (depth > 0.0f)
 			{
 				// Back-projection to camera space.
@@ -190,7 +191,6 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 					x * m_downsampling_factor,
 					y * m_downsampling_factor,
 					depth, m_system_parameters);
-				 depth, m_system_parameters));
 			}
 			else
 			{
