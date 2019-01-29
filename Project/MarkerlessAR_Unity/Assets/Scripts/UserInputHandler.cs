@@ -5,7 +5,7 @@ using UnityEngine;
 public class UserInputHandler : MonoBehaviour
 {
 
-    public enum InputMode {IM_None, IM_SolidBall, IM_PaintBall, IM_PlaceObject };
+    public enum InputMode {IM_None, IM_SolidBall, IM_PaintBall, IM_PlaceObject, IM_FIRE };
 
     public InputMode currentMode = InputMode.IM_None;
     public Camera firstPersonCamera; 
@@ -14,7 +14,12 @@ public class UserInputHandler : MonoBehaviour
     public GameObject PaintBallPrefab;
     public GameObject PlaceObjectPrefab;
 
-    public GameObject placeObjectGhost; 
+    public GameObject placeObjectGhost;
+
+    public GameObject FireSpawnerPrefab;
+    public GameObject FlameThrower;
+    public float spawnFireIntervall = 0.25f;
+    private float spawnFireTimer = 0.0f; 
 
     public float solidBallSpeed = 0.3f;
 
@@ -31,6 +36,8 @@ public class UserInputHandler : MonoBehaviour
     {
 
         RaycastHit hit;
+        FlameThrower.SetActive(false);
+
         placeObjectGhost.SetActive(false);
         if (currentMode == InputMode.IM_PlaceObject &&
             Physics.Raycast(firstPersonCamera.ScreenPointToRay(Input.mousePosition), out hit, 1000))
@@ -50,13 +57,31 @@ public class UserInputHandler : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1)) //RMB
         {
-            currentMode = InputMode.IM_None; 
+            currentMode = InputMode.IM_None;
         }
+        else if (Input.GetKey(KeyCode.F))
+        {
+            FlameThrower.SetActive(true);
+            spawnFireTimer -= Time.deltaTime;
+
+            if (spawnFireTimer < 0)
+            {
+                GameObject o = Instantiate(FireSpawnerPrefab);
+                o.transform.position = firstPersonCamera.transform.position;
+                o.transform.forward = firstPersonCamera.ScreenPointToRay(Input.mousePosition).direction;
+
+                spawnFireTimer = Random.Range(-0.75f, 2.0f) * spawnFireIntervall;
+            }
+            FlameThrower.transform.forward = firstPersonCamera.ScreenPointToRay(Input.mousePosition).direction;
+            FlameThrower.transform.position = firstPersonCamera.transform.position + firstPersonCamera.ScreenPointToRay(Input.mousePosition).direction * 0.05f;
+            
+        } 
 
 
         if (Input.GetMouseButtonDown(0)&&!mouseOverButton) //LMB
         {
-            switch(currentMode)
+
+            switch (currentMode)
             {
                 case InputMode.IM_PaintBall:
                 {
@@ -82,6 +107,7 @@ public class UserInputHandler : MonoBehaviour
                     }
                     break;
                 }
+
             }
         }
 

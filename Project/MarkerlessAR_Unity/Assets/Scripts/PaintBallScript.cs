@@ -7,8 +7,11 @@ public class PaintBallScript : MonoBehaviour
 
     public GameObject SplatPrefab; 
 
-    public float speed = .50f; 
-  
+    public float speed = .50f;
+
+    public double deleteAfter = 5000;
+
+    GameObject spawnedObject; 
 
     // Start is called before the first frame update
     void Start()
@@ -19,7 +22,16 @@ public class PaintBallScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position += transform.forward * speed * Time.deltaTime; 
+        transform.position += transform.forward * speed * Time.deltaTime;
+
+        deleteAfter -= Time.deltaTime;
+
+        if(deleteAfter<0)
+        {
+            Destroy(spawnedObject);
+            Destroy(gameObject); 
+        }
+
     }
 
 
@@ -27,12 +39,14 @@ public class PaintBallScript : MonoBehaviour
     {
         if(collision.gameObject.tag == "FrameMesh")
         {
-            GameObject splat = Instantiate(SplatPrefab);
-            splat.transform.position = GetComponent<Collider>().ClosestPoint(collision.contacts[0].point) + collision.contacts[0].normal * 0.001f ;
-            splat.transform.forward = -collision.contacts[0].normal;      
+            GameObject spawnedObject = Instantiate(SplatPrefab);
+            spawnedObject.transform.position = GetComponent<Collider>().ClosestPoint(collision.contacts[0].point) + collision.contacts[0].normal * 0.001f ;
+            spawnedObject.transform.forward = -collision.contacts[0].normal;      
         }
 
-        Destroy(gameObject); 
+        GetComponent<Collider>().enabled = false;
+        GetComponent<MeshRenderer>().enabled = false; 
+
     }
 
 }

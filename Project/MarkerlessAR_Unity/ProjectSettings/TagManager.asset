@@ -19,7 +19,7 @@ TagManager:
   - PostProcessing
   - Background Image
   - Checkerboard
-  - 
+  - IgnoreCollisionWithThis
   - 
   - 
   - 
