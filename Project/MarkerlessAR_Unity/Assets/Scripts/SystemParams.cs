@@ -40,7 +40,13 @@ namespace Assets.Scripts
             PlayerPrefs.SetFloat("truncation", float.Parse(truncationInput.text));
             PlayerPrefs.SetInt("mesh_update", int.Parse(meshUpdateInput.text));
             PlayerPrefs.SetString("use_sensor", useSensorInput.isOn.ToString());
-            PlayerPrefs.SetString("dataset_path", datesetPathInput.text);
+
+            var path = datesetPathInput.text;
+            if (path.LastOrDefault() != Path.DirectorySeparatorChar ||
+                path.LastOrDefault() != Path.AltDirectorySeparatorChar)
+                path += Path.AltDirectorySeparatorChar;
+
+            PlayerPrefs.SetString("dataset_path", path);
         }
 
         public void switchScene(string scene)
