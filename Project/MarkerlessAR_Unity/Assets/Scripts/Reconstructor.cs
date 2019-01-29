@@ -63,6 +63,9 @@ namespace Assets.Scripts
         // Use this for initialization
         private void Start()
         {
+
+            Debug.Log("Basic Physics scene"); 
+
             var segments = new List<string>(
                     Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
                 {"..", "Datasets", "freiburg", " "};
@@ -76,6 +79,20 @@ namespace Assets.Scripts
                 m_truncation_scaling = 7.0f,
                 m_volume_size = 128
             };
+
+
+            SystemParams paramObj = FindObjectOfType<SystemParams>(); 
+            if(paramObj != null)
+            {
+                _use_sensor = paramObj.useSensor;
+                param = paramObj.m_systemParameters; 
+            }
+            else
+            {
+                Debug.Log("Could not find system Params, start project by launching Menu scene!"); 
+            }
+
+
 
             _cppContext = _use_sensor ? createSensorContext(ref param) : createContext(ref param);
 

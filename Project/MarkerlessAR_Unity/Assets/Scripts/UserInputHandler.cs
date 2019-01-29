@@ -41,6 +41,7 @@ public class UserInputHandler : MonoBehaviour
                 Collider collider = placeObjectGhost.GetComponent<Collider>();
                 collider.enabled = true; 
                 placeObjectGhost.transform.position = hit.point + hit.normal * Vector3.Dot(hit.normal, collider.bounds.extents) * 1.01f;
+                placeObjectGhost.transform.up = hit.normal; 
                 Debug.DrawRay(hit.point, hit.normal * 1000);
                 collider.enabled = false; 
             }
