@@ -68,6 +68,7 @@ void FusionGPU::initialize(){
 	m_fusionSettings.m_min = m_volume->m_min.cast<float>();
 	m_fusionSettings.m_resolution = m_volume->m_size;
 	m_fusionSettings.m_resSQ = m_volume->m_size * m_volume->m_size;
+	m_fusionSettings.m_max_depth = m_system_parameters.m_depth_max;
 
 	m_fusionSettings.m_truncation = m_trunaction;
 	m_fusionSettings.m_voxel_size = m_volume->m_voxel_size;

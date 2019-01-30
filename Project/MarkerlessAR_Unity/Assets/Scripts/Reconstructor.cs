@@ -70,7 +70,8 @@ namespace Assets.Scripts
             {
                 m_dataset_path = PlayerPrefs.GetString("dataset_path"),
                 m_truncation = PlayerPrefs.GetFloat("truncation"),
-                m_volume_size = PlayerPrefs.GetInt("volume_size")
+                m_volume_size = PlayerPrefs.GetInt("volume_size"),
+                m_max_depth = PlayerPrefs.GetFloat("max_depth")
             };
 
             _cppContext = _use_sensor ? createSensorContext(ref param) : createContext(ref param);

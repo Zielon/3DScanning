@@ -211,7 +211,9 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 		}
 	}
 
-	m_system_parameters.m_depth_max = depth_max;
+	if(m_system_parameters.m_depth_max == INFINITY)
+		m_system_parameters.m_depth_max = depth_max;
+
 	m_system_parameters.m_depth_min = depth_min;
 
 #ifdef SupportNativeICP

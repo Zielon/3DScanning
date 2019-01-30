@@ -10,6 +10,7 @@ namespace Assets.Scripts
     public class SystemParams : MonoBehaviour
     {
         public InputField datesetPathInput;
+        public InputField maxDepthInput;
         public InputField meshUpdateInput;
         public InputField truncationInput;
         public Toggle useSensorInput;
@@ -27,6 +28,7 @@ namespace Assets.Scripts
             var absolutePath = segments.Aggregate(
                 (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
 
+            maxDepthInput.text = "5";
             meshUpdateInput.text = "5";
             volumeSizeInput.text = "128";
             truncationInput.text = "7.0";
@@ -40,6 +42,7 @@ namespace Assets.Scripts
             PlayerPrefs.SetFloat("truncation", float.Parse(truncationInput.text));
             PlayerPrefs.SetInt("mesh_update", int.Parse(meshUpdateInput.text));
             PlayerPrefs.SetString("use_sensor", useSensorInput.isOn.ToString());
+            PlayerPrefs.SetFloat("max_depth", float.Parse(maxDepthInput.text));
 
             var path = datesetPathInput.text;
             if (path.LastOrDefault() != Path.DirectorySeparatorChar ||

@@ -7,7 +7,6 @@
 #define VOXEL_EMPTY 1
 #define VOXEL_SDF 2
 
-#define MAX_DEPTH 5.0f
 #define MAX_WEIGHT 50000.0f
 #define HUGE_VAL 5000.0f
 
@@ -316,6 +315,7 @@ struct FusionSettings
     float3 m_min;
     float m_truncation;
     float3 m_max;
+	float m_max_depth;
     float m_voxel_size;
     float2 m_focal_length;
     float2 m_principalpt;
@@ -395,11 +395,11 @@ AppendStructuredBuffer<Triangle> g_triangleBuffer : register(u1);
 * ****************************** Functions **************************
 */
 
-float weightKernel(float depth)
+float weightKernel(float depth, float max)
 {
     if (depth <= 0.01f)
         return 1.f;
-    return 1.f - depth / MAX_DEPTH;
+    return 1.f - depth / max;
 }
 
 float SampleData(int3 pos)
@@ -430,7 +430,6 @@ float3 getWorldPosition(int3 cellIDX3)
 
 }
 
-
 /*
 * ****************************** Shaders **************************
 */
@@ -447,6 +446,7 @@ void CS_FUSION(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_Grou
 
     float4 cell; 
 
+	float max_depth = g_settings.m_max_depth;
     float invScaling = g_settings.m_resolution - 1;
     cell.xyz = g_settings.m_min + (g_settings.m_max - g_settings.m_min) * (float3(cellIDX3) / invScaling);
     cell.w = 1; 
@@ -461,7 +461,7 @@ void CS_FUSION(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_Grou
     {
         float depth = g_currentFrame.Load(int3(pixels.xy, 0));
 
-        if (depth > 0.001f && depth < MAX_DEPTH)
+        if (depth > 0.001f && depth < max_depth)
         {
             float sdf = depth - cell.z;
 
@@ -472,7 +472,7 @@ void CS_FUSION(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_Grou
             }
             else if (abs(sdf) < g_settings.m_truncation && !g_SDF[cellIDX].state == VOXEL_EMPTY)
             {
-                float weight = weightKernel(depth);
+                float weight = weightKernel(depth, max_depth);
                 Voxel v = g_SDF[cellIDX];
                 v.state = VOXEL_SDF;
                 v.sdf = v.sdf * v.weight + sdf * weight / (v.weight + weight);

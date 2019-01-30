@@ -64,6 +64,7 @@ private:
 		Vector3f m_min;
 		float m_truncation;
 		Vector3f m_max;
+		float m_max_depth;
 		float m_voxel_size;
 		float m_focal_length_X = 0;
 		float m_focal_length_Y = 0;

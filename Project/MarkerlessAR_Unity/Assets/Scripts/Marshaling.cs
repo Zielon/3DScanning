@@ -24,6 +24,7 @@ namespace Assets.Scripts
     {
         public int m_volume_size;
         public float m_truncation;
+        public float m_max_depth;
 
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
         public string m_dataset_path;
