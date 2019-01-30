@@ -16,6 +16,8 @@
 
 enum FilterType { bilateral, median };
 
+//#define SupportNativeICP
+
 class PointCloud
 {
 public:

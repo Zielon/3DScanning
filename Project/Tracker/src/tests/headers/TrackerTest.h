@@ -6,12 +6,12 @@ class TrackerTest :
 {
 public:
 	void run() override{
-		//this->cameraPoseTest();
-		this->processedMapsTest();
+		this->cameraPoseTest(1, 1);
+		//this->processedMapsTest();
 	};
 private:
 
-	void cameraPoseTest();
+	void cameraPoseTest(int skip, int subsampling);
 
 	void processedMapsTest();
 };
