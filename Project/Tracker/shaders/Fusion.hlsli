@@ -395,11 +395,11 @@ AppendStructuredBuffer<Triangle> g_triangleBuffer : register(u1);
 * ****************************** Functions **************************
 */
 
-float weightKernel(float depth, float max)
+float weightKernel(float depth, float max_depth)
 {
     if (depth <= 0.01f)
         return 1.f;
-    return 1.f - depth / max;
+    return 1.f - depth / max_depth;
 }
 
 float SampleData(int3 pos)

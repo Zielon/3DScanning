@@ -63,15 +63,15 @@ namespace Assets.Scripts
         {
             Debug.Log("Basic Physics scene");
 
-            meshUpdateRate = PlayerPrefs.GetInt("mesh_update");
-            _use_sensor = bool.Parse(PlayerPrefs.GetString("use_sensor"));
+            meshUpdateRate = PlayerPrefs.GetInt(Settings.MESH_UPDATE);
+            _use_sensor = bool.Parse(PlayerPrefs.GetString(Settings.USE_SENSOR));
 
             var param = new __SystemParameters
             {
-                m_dataset_path = PlayerPrefs.GetString("dataset_path"),
-                m_truncation = PlayerPrefs.GetFloat("truncation"),
-                m_volume_size = PlayerPrefs.GetInt("volume_size"),
-                m_max_depth = PlayerPrefs.GetFloat("max_depth")
+                m_dataset_path = PlayerPrefs.GetString(Settings.DATASET_PATH),
+                m_truncation = PlayerPrefs.GetFloat(Settings.TRUNCATION),
+                m_volume_size = PlayerPrefs.GetInt(Settings.VOLUME_SIZE),
+                m_max_depth = PlayerPrefs.GetFloat(Settings.MAX_DEPTH)
             };
 
             _cppContext = _use_sensor ? createSensorContext(ref param) : createContext(ref param);

@@ -7,6 +7,16 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts
 {
+    internal static class Settings
+    {
+        public const string VOLUME_SIZE = "volume_size";
+        public const string TRUNCATION = "truncation";
+        public const string MESH_UPDATE = "mesh_update";
+        public const string USE_SENSOR = "use_sensor";
+        public const string MAX_DEPTH = "max_depth";
+        public const string DATASET_PATH = "dataset_path";
+    }
+
     public class SystemParams : MonoBehaviour
     {
         public InputField datesetPathInput;
@@ -28,7 +38,7 @@ namespace Assets.Scripts
             var absolutePath = segments.Aggregate(
                 (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
 
-            maxDepthInput.text = "5";
+            maxDepthInput.text = "4";
             meshUpdateInput.text = "5";
             volumeSizeInput.text = "128";
             truncationInput.text = "7.0";
@@ -38,18 +48,18 @@ namespace Assets.Scripts
         // Update is called once per frame
         private void Update()
         {
-            PlayerPrefs.SetInt("volume_size", int.Parse(volumeSizeInput.text));
-            PlayerPrefs.SetFloat("truncation", float.Parse(truncationInput.text));
-            PlayerPrefs.SetInt("mesh_update", int.Parse(meshUpdateInput.text));
-            PlayerPrefs.SetString("use_sensor", useSensorInput.isOn.ToString());
-            PlayerPrefs.SetFloat("max_depth", float.Parse(maxDepthInput.text));
+            PlayerPrefs.SetInt(Settings.VOLUME_SIZE, int.Parse(volumeSizeInput.text));
+            PlayerPrefs.SetFloat(Settings.TRUNCATION, float.Parse(truncationInput.text));
+            PlayerPrefs.SetInt(Settings.MESH_UPDATE, int.Parse(meshUpdateInput.text));
+            PlayerPrefs.SetString(Settings.USE_SENSOR, useSensorInput.isOn.ToString());
+            PlayerPrefs.SetFloat(Settings.MAX_DEPTH, float.Parse(maxDepthInput.text));
 
             var path = datesetPathInput.text;
             if (path.LastOrDefault() != Path.DirectorySeparatorChar ||
                 path.LastOrDefault() != Path.AltDirectorySeparatorChar)
                 path += Path.AltDirectorySeparatorChar;
 
-            PlayerPrefs.SetString("dataset_path", path);
+            PlayerPrefs.SetString(Settings.DATASET_PATH, path);
         }
 
         public void switchScene(string scene)
