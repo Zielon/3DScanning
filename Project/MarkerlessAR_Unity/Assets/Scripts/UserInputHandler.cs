@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEditor;
 
 public class UserInputHandler : MonoBehaviour
 {
@@ -114,7 +114,11 @@ public class UserInputHandler : MonoBehaviour
 
     public void Menu()
     {
-        SceneManager.LoadSceneAsync(0);
+#if UNITY_EDITOR
+        EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 
     //Button args didnt work for some reason :x

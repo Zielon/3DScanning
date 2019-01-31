@@ -36,6 +36,9 @@ namespace Assets.Scripts
 
         public void Exit()
         {
+            // WARNING!
+            // Delete context throws an error in the cpp code in the FusionGPU destructor
+            // At this moment in the build mode we cannot properly destroy this scene!
             deleteContext(_cppContext);
             Debug.Log("The current Tracker context has been deleted!");
         }
