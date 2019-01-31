@@ -37,6 +37,8 @@ protected:
 
 	static int getIterations();
 
+	static int getTimestamp(int index);
+
 	int wasKeyboardHit() const{
 		return (int)_kbhit();
 	}

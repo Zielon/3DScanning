@@ -38,6 +38,10 @@ Matrix4f TestBase::getTrajectory(int index) const{
 	return m_trajectories[idx];
 }
 
+int TestBase::getTimestamp(int index) {
+	return m_depth_timestamps[index];
+};
+
 int TestBase::getIterations(){
 	return m_depth_timestamps.size();
 };

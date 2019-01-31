@@ -191,7 +191,7 @@ void ReconstructionTest::reconstructionTestWithOurTracking(int increment) const{
 		bar.set(index);
 		bar.display();
 
-		//outputFreiburg("output.txt", getTimestamp(index), Matrix4f(pose));
+		outputFreiburg("output.txt", getTimestamp(index), Matrix4f(pose));
 	}
 
 	bar.done();
