@@ -104,9 +104,10 @@ public class UserInputHandler : MonoBehaviour
                 }
                 case InputMode.IM_PlaceObject:
                 {
-                    if (placeObjectGhost.activeSelf) //obj can be placed in scene
-                        Instantiate(PlaceObjectPrefab, placeObjectGhost.transform.position,
-                            placeObjectGhost.transform.rotation);
+                    if(placeObjectGhost.activeSelf) //obj can be placed in scene
+                    {
+                        Instantiate(PlaceObjectPrefab, placeObjectGhost.transform.position, placeObjectGhost.transform.rotation * PlaceObjectPrefab.transform.rotation); 
+                    }
                     break;
                 }
             }
