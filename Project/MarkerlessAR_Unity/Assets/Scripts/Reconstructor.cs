@@ -34,6 +34,17 @@ namespace Assets.Scripts
         public int meshUpdateRate = 2;
         public Image videoBG;
 
+        public void Exit()
+        {
+            deleteContext(_cppContext);
+            Debug.Log("The current Tracker context has been deleted!");
+        }
+
+        void OnDestroy()
+        {
+            Exit();
+        }
+
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr createContext(ref __SystemParameters param);
 
@@ -155,12 +166,6 @@ namespace Assets.Scripts
                 Triangles = indexBuffer,
                 Vertices = vertexBuffer
             });
-        }
-
-        private void OnApplicationQuit()
-        {
-            deleteContext(_cppContext);
-            Debug.Log("Application ending after " + Time.time + " seconds");
         }
     }
 }

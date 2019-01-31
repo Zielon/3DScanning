@@ -315,13 +315,12 @@ struct FusionSettings
     float3 m_min;
     float m_truncation;
     float3 m_max;
-	float m_max_depth;
     float m_voxel_size;
     float2 m_focal_length;
     float2 m_principalpt;
 
     int2 imageDims; 
-    int m_resSQ;
+	float m_max_depth;
     int m_resolution;
 };
 
@@ -405,7 +404,7 @@ float weightKernel(float depth, float max_depth)
 float SampleData(int3 pos)
 {
     //pos = clamp(pos, int3(0, 0, 0), int3(g_settings.m_resolution, g_settings.m_resolution, g_settings.m_resolution));
-    int cellIDX = dot(pos, int3(g_settings.m_resSQ, g_settings.m_resolution, 1));
+    int cellIDX = dot(pos, int3(g_settings.m_resolution * g_settings.m_resolution, g_settings.m_resolution, 1));
 
     Voxel v = g_SDF[cellIDX]; 
    
@@ -442,7 +441,7 @@ float3 getWorldPosition(int3 cellIDX3)
 void CS_FUSION(uint3 threadIDInGroup : SV_GroupThreadID, uint3 groupID : SV_GroupID)
 {
     int3 cellIDX3 = g_perFrame.frustum_min + groupID * int3(FUSION_THREADS, FUSION_THREADS, FUSION_THREADS) + threadIDInGroup;
-    int cellIDX = dot(cellIDX3, int3(g_settings.m_resSQ, g_settings.m_resolution, 1));
+    int cellIDX = dot(cellIDX3, int3(g_settings.m_resolution * g_settings.m_resolution, g_settings.m_resolution, 1));
 
     float4 cell; 
 

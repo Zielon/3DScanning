@@ -38,16 +38,23 @@ namespace Assets.Scripts
             var absolutePath = segments.Aggregate(
                 (path, segment) => path += Path.AltDirectorySeparatorChar + segment).Trim();
 
-            maxDepthInput.text = "4";
+            maxDepthInput.text = "2";
             meshUpdateInput.text = "5";
-            volumeSizeInput.text = "128";
-            truncationInput.text = "7.0";
+            volumeSizeInput.text = "256";
+            truncationInput.text = "7";
             datesetPathInput.text = absolutePath;
+        }
+
+        public void AppExit()
+        {
+            Application.Quit();
         }
 
         // Update is called once per frame
         private void Update()
         {
+            if(volumeSizeInput == null) return;
+
             PlayerPrefs.SetInt(Settings.VOLUME_SIZE, int.Parse(volumeSizeInput.text));
             PlayerPrefs.SetFloat(Settings.TRUNCATION, float.Parse(truncationInput.text));
             PlayerPrefs.SetInt(Settings.MESH_UPDATE, int.Parse(meshUpdateInput.text));
@@ -62,7 +69,7 @@ namespace Assets.Scripts
             PlayerPrefs.SetString(Settings.DATASET_PATH, path);
         }
 
-        public void switchScene(string scene)
+        public void SwitchScene(string scene)
         {
             SceneManager.LoadScene(scene);
         }

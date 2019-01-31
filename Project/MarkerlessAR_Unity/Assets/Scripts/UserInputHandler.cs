@@ -1,58 +1,61 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UserInputHandler : MonoBehaviour
 {
-
-    public enum InputMode {IM_None, IM_SolidBall, IM_PaintBall, IM_PlaceObject, IM_FIRE };
+    public enum InputMode
+    {
+        IM_None,
+        IM_SolidBall,
+        IM_PaintBall,
+        IM_PlaceObject,
+        IM_FIRE
+    }
 
     public InputMode currentMode = InputMode.IM_None;
-    public Camera firstPersonCamera; 
-
-    public GameObject SolidBallPrefab;
-    public GameObject PaintBallPrefab;
-    public GameObject PlaceObjectPrefab;
-
-    public GameObject placeObjectGhost;
 
     public GameObject FireSpawnerPrefab;
+    public Camera firstPersonCamera;
     public GameObject FlameThrower;
-    public float spawnFireIntervall = 0.25f;
-    private float spawnFireTimer = 0.0f; 
+
+    private bool mouseOverButton;
+    public GameObject PaintBallPrefab;
+
+    public GameObject placeObjectGhost;
+    public GameObject PlaceObjectPrefab;
+
+    public GameObject SolidBallPrefab;
 
     public float solidBallSpeed = 0.3f;
-
-    private bool mouseOverButton = false; 
+    public float spawnFireIntervall = 0.25f;
+    private float spawnFireTimer;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         placeObjectGhost.SetActive(false);
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-
         RaycastHit hit;
         FlameThrower.SetActive(false);
 
         placeObjectGhost.SetActive(false);
         if (currentMode == InputMode.IM_PlaceObject &&
             Physics.Raycast(firstPersonCamera.ScreenPointToRay(Input.mousePosition), out hit, 1000))
-        {
-            if(hit.collider.tag == "FrameMesh" || hit.collider.tag == "PlacedObject")
+            if (hit.collider.tag == "FrameMesh" || hit.collider.tag == "PlacedObject")
             {
                 placeObjectGhost.SetActive(true);
-                Collider collider = placeObjectGhost.GetComponent<Collider>();
-                collider.enabled = true; 
-                placeObjectGhost.transform.position = hit.point + hit.normal * Vector3.Dot(hit.normal, collider.bounds.extents) * 1.01f;
-                placeObjectGhost.transform.up = hit.normal; 
+                var collider = placeObjectGhost.GetComponent<Collider>();
+                collider.enabled = true;
+                placeObjectGhost.transform.position =
+                    hit.point + hit.normal * Vector3.Dot(hit.normal, collider.bounds.extents) * 1.01f;
+                placeObjectGhost.transform.up = hit.normal;
                 Debug.DrawRay(hit.point, hit.normal * 1000);
-                collider.enabled = false; 
+                collider.enabled = false;
             }
-        }
 
 
         if (Input.GetMouseButtonDown(1)) //RMB
@@ -66,64 +69,65 @@ public class UserInputHandler : MonoBehaviour
 
             if (spawnFireTimer < 0)
             {
-                GameObject o = Instantiate(FireSpawnerPrefab);
+                var o = Instantiate(FireSpawnerPrefab);
                 o.transform.position = firstPersonCamera.transform.position;
                 o.transform.forward = firstPersonCamera.ScreenPointToRay(Input.mousePosition).direction;
 
                 spawnFireTimer = Random.Range(-0.75f, 2.0f) * spawnFireIntervall;
             }
+
             FlameThrower.transform.forward = firstPersonCamera.ScreenPointToRay(Input.mousePosition).direction;
-            FlameThrower.transform.position = firstPersonCamera.transform.position + firstPersonCamera.ScreenPointToRay(Input.mousePosition).direction * 0.05f;
-            
-        } 
+            FlameThrower.transform.position = firstPersonCamera.transform.position +
+                                              firstPersonCamera.ScreenPointToRay(Input.mousePosition).direction * 0.05f;
+        }
 
 
-        if (Input.GetMouseButtonDown(0)&&!mouseOverButton) //LMB
-        {
-
+        if (Input.GetMouseButtonDown(0) && !mouseOverButton) //LMB
             switch (currentMode)
             {
                 case InputMode.IM_PaintBall:
                 {
-                    GameObject o = Instantiate(PaintBallPrefab);
+                    var o = Instantiate(PaintBallPrefab);
                     o.transform.position = firstPersonCamera.transform.position;
                     o.transform.forward = firstPersonCamera.ScreenPointToRay(Input.mousePosition).direction;
 
 
-                     break; 
+                    break;
                 }
                 case InputMode.IM_SolidBall:
                 {
-                    GameObject o = Instantiate(SolidBallPrefab);
+                    var o = Instantiate(SolidBallPrefab);
                     o.transform.position = firstPersonCamera.transform.position;
-                    o.GetComponent<Rigidbody>().velocity = firstPersonCamera.ScreenPointToRay(Input.mousePosition).direction * solidBallSpeed;
+                    o.GetComponent<Rigidbody>().velocity =
+                        firstPersonCamera.ScreenPointToRay(Input.mousePosition).direction * solidBallSpeed;
                     break;
                 }
                 case InputMode.IM_PlaceObject:
                 {
-                    if(placeObjectGhost.activeSelf) //obj can be placed in scene
-                    {
-                        Instantiate(PlaceObjectPrefab, placeObjectGhost.transform.position, placeObjectGhost.transform.rotation); 
-                    }
+                    if (placeObjectGhost.activeSelf) //obj can be placed in scene
+                        Instantiate(PlaceObjectPrefab, placeObjectGhost.transform.position,
+                            placeObjectGhost.transform.rotation);
                     break;
                 }
-
             }
-        }
+    }
 
-
-
+    public void Menu()
+    {
+        SceneManager.LoadScene(0);
     }
 
     //Button args didnt work for some reason :x
     public void SetInputModeSolidBall()
     {
-        currentMode = InputMode.IM_SolidBall; 
+        currentMode = InputMode.IM_SolidBall;
     }
+
     public void SetInputModePaintBall()
     {
         currentMode = InputMode.IM_PaintBall;
     }
+
     public void SetInputModePlaceObject()
     {
         currentMode = InputMode.IM_PlaceObject;
@@ -131,12 +135,11 @@ public class UserInputHandler : MonoBehaviour
 
     public void buttonMouseOverEnter()
     {
-        mouseOverButton = true; 
+        mouseOverButton = true;
     }
 
     public void buttonMouseOverExit()
     {
         mouseOverButton = false;
     }
-
 }
