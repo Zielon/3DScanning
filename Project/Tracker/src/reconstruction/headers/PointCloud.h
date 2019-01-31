@@ -14,7 +14,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-enum FilterType { bilateral, median };
+enum FilterType { BILATERAL, MEDIAN };
 
 //#define SupportNativeICP
 
