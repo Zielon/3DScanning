@@ -107,8 +107,6 @@ void ReconstructionTest::reconstructionTest(int skip, int subsampling) const{
 
 	Verbose::message("START reconstructionTest()");
 
-	m_params->m_volume_size = 1024;
-
 	TrackerContext* context = static_cast<TrackerContext*>(createContext(m_params));
 
 	auto* img = new unsigned char[getImageWidth(context) * getImageHeight(context) * 3];

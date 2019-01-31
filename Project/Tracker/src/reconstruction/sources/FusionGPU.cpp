@@ -5,7 +5,6 @@
 #include "../../../shaders/precompiled/CS_FUSION.h"
 #include "../../../shaders/precompiled/CS_ATTACH_DUMMY.h"
 
-
 FusionGPU::FusionGPU(SystemParameters camera_parameters) : FusionBase(camera_parameters){
 
 	initialize();
@@ -67,7 +66,7 @@ void FusionGPU::initialize(){
 	m_fusionSettings.m_max = m_volume->m_max.cast<float>();
 	m_fusionSettings.m_min = m_volume->m_min.cast<float>();
 	m_fusionSettings.m_resolution = m_volume->m_size;
-	m_fusionSettings.m_resSQ = m_volume->m_size * m_volume->m_size;
+	m_fusionSettings.m_max_depth = m_system_parameters.m_depth_max;
 
 	m_fusionSettings.m_truncation = m_trunaction;
 	m_fusionSettings.m_voxel_size = m_volume->m_voxel_size;
@@ -464,7 +463,7 @@ void FusionGPU::reloadShaders(std::string shaderPath){
 	}
 
 	hr = m_d3dDevice->CreateComputeShader(g_CS_ATTACH_DUMMY,
-	                                     sizeof(g_CS_ATTACH_DUMMY), nullptr,
+	                                      sizeof(g_CS_ATTACH_DUMMY), nullptr,
 	                                      &m_shader_marchingCubesAttachNan);
 	if (FAILED(hr))
 	{

@@ -34,6 +34,20 @@ namespace Assets.Scripts
         public int meshUpdateRate = 2;
         public Image videoBG;
 
+        public void Exit()
+        {
+            // WARNING!
+            // Delete context throws an error in the cpp code in the FusionGPU destructor
+            // At this moment in the build mode we cannot properly destroy this scene!
+            deleteContext(_cppContext);
+            Debug.Log("The current Tracker context has been deleted!");
+        }
+
+        void OnDestroy()
+        {
+            Exit();
+        }
+
         [DllImport(DllFilePath, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr createContext(ref __SystemParameters param);
 
@@ -63,14 +77,15 @@ namespace Assets.Scripts
         {
             Debug.Log("Basic Physics scene");
 
-            meshUpdateRate = PlayerPrefs.GetInt("mesh_update");
-            _use_sensor = bool.Parse(PlayerPrefs.GetString("use_sensor"));
+            meshUpdateRate = PlayerPrefs.GetInt(Settings.MESH_UPDATE);
+            _use_sensor = bool.Parse(PlayerPrefs.GetString(Settings.USE_SENSOR));
 
             var param = new __SystemParameters
             {
-                m_dataset_path = PlayerPrefs.GetString("dataset_path"),
-                m_truncation = PlayerPrefs.GetFloat("truncation"),
-                m_volume_size = PlayerPrefs.GetInt("volume_size")
+                m_dataset_path = PlayerPrefs.GetString(Settings.DATASET_PATH),
+                m_truncation = PlayerPrefs.GetFloat(Settings.TRUNCATION),
+                m_volume_size = PlayerPrefs.GetInt(Settings.VOLUME_SIZE),
+                m_max_depth = PlayerPrefs.GetFloat(Settings.MAX_DEPTH)
             };
 
             _cppContext = _use_sensor ? createSensorContext(ref param) : createContext(ref param);
@@ -154,12 +169,6 @@ namespace Assets.Scripts
                 Triangles = indexBuffer,
                 Vertices = vertexBuffer
             });
-        }
-
-        private void OnApplicationQuit()
-        {
-            deleteContext(_cppContext);
-            Debug.Log("Application ending after " + Time.time + " seconds");
         }
     }
 }
