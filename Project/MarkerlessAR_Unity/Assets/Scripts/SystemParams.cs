@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -27,10 +28,8 @@ namespace Assets.Scripts
         public InputField volumeSizeInput;
 
         // Start is called before the first frame update
-        private void Start()
+        void Start()
         {
-            DontDestroyOnLoad(gameObject);
-
             var segments = new List<string>(
                     Application.dataPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar))
                 {"..", "Datasets", "freiburg", " "};
@@ -45,15 +44,23 @@ namespace Assets.Scripts
             datesetPathInput.text = absolutePath;
         }
 
+        private void OnDestroy()
+        {
+        }
+
         public void AppExit()
         {
+#if UNITY_EDITOR
+            EditorApplication.isPlaying = false;
+#else
             Application.Quit();
+#endif
         }
 
         // Update is called once per frame
         private void Update()
         {
-            if(volumeSizeInput == null) return;
+            if(!SceneManager.GetActiveScene().isLoaded) return;
 
             PlayerPrefs.SetInt(Settings.VOLUME_SIZE, int.Parse(volumeSizeInput.text));
             PlayerPrefs.SetFloat(Settings.TRUNCATION, float.Parse(truncationInput.text));

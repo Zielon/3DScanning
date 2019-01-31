@@ -114,7 +114,7 @@ public class UserInputHandler : MonoBehaviour
 
     public void Menu()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadSceneAsync(0);
     }
 
     //Button args didnt work for some reason :x
