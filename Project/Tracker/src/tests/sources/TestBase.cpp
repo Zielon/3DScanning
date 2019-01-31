@@ -16,8 +16,9 @@ TestBase::TestBase(){
 	m_params = new __SystemParameters();
 
 	strcpy(m_params->m_dataset_path, DatasetManager::getCurrentPath().c_str());
-	m_params->m_volume_size = 128;
+	m_params->m_volume_size = 256;
 	m_params->m_truncation = 5.f;
+	m_params->m_max_depth = 4.f;
 }
 
 Matrix4f TestBase::getTrajectory(int index) const{

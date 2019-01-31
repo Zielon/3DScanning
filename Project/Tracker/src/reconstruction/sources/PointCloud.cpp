@@ -153,13 +153,8 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	float depth_max = -std::numeric_limits<float>::infinity();
 
 	//Bilateral filtering to remove noise
-	cv::Mat filtered_depth;
 
-	if (m_filtering)
-	{
-		FilterType filter_type = bilateral;
-		filtered_depth = this->filterMap(depth_mat, filter_type, 9.0f, 150.0f);
-	}
+	cv::Mat filtered_depth = filterMap(depth_mat, BILATERAL, 5.0f, 30.0f);
 
 	//#pragma omp parallel for
 	for (auto y = 0; y < m_current_height; y++)
@@ -168,21 +163,22 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 		{
 			const unsigned int idx = y * m_current_width + x;
 
-			float depth = image.at<float>(y, x);
+			float depth = filtered_depth.at<float>(y, x);
 			auto color = colors.at<cv::Vec3b>(y, x);
 
 			m_color_points[idx] = Vector4uc(color[0], color[1], color[2], 0);
 
 			//ICP Cuda works in milimetres and Fusion in meters
 			m_depth_points_icp[idx] = static_cast<unsigned short>(depth * 1000.f);
-			m_depth_points_fusion[idx] = depth; //depth map already in meters
+
+			// Use original depths
+			m_depth_points_fusion[idx] = image.at<float>(y, x); //depth map already in meters
 
 			//Depth range check
 			depth_min = std::min(depth_min, depth);
 			depth_max = std::max(depth_max, depth);
 
-#ifdef SupportNativeICP
-
+			#ifdef SupportNativeICP
 
 			if (depth > 0.0f)
 			{
@@ -196,25 +192,26 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 			{
 				temp_points[idx] = Vector3f(MINF, MINF, MINF);
 			}
-#else
-		if (depth > 0.0f && x>1 && y> 1 && y < m_current_height-1 && x < m_current_width-1)
+			#else
+			if (depth > 0.0f && x > 1 && y > 1 && y < m_current_height - 1 && x < m_current_width - 1)
 			{
 				auto v = Transformations::backproject(
 					x * m_downsampling_factor,
 					y * m_downsampling_factor,
-					depth, m_system_parameters); 
-				if(v.allFinite())
+					depth, m_system_parameters);
+				if (v.allFinite())
 					m_points.push_back(v);
 			}
-#endif // SupportNativeICP
-	
+			#endif // SupportNativeICP
 		}
 	}
 
-	m_system_parameters.m_depth_max = depth_max;
+	if (m_system_parameters.m_depth_max == INFINITY)
+		m_system_parameters.m_depth_max = depth_max;
+
 	m_system_parameters.m_depth_min = depth_min;
 
-#ifdef SupportNativeICP
+	#ifdef SupportNativeICP
 
 	#pragma omp parallel for
 	for (auto y = 1; y < m_current_height - 1; y++)
@@ -276,7 +273,7 @@ void PointCloud::transform(cv::Mat& depth_mat, cv::Mat& rgb_mat){
 	m_indexBuildingThread = new std::thread([this]()-> void{
 		m_nearestNeighbor->buildIndex(m_points);
 	});
-#endif // SupportNativeICP
+	#endif // SupportNativeICP
 
 }
 
@@ -311,11 +308,11 @@ cv::Mat PointCloud::filterMap(cv::Mat map, FilterType filter_type, int diameter,
 
 	switch (filter_type)
 	{
-	case bilateral:
+	case BILATERAL:
 		bilateralFilter(map, result, diameter, sigma, sigma);
 		break;
 
-	case median:
+	case MEDIAN:
 		medianBlur(map, result, diameter);
 		break;
 

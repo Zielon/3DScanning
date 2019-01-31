@@ -13,7 +13,7 @@ extern "C" __declspec(dllexport) void* createContext(__SystemParameters* _parame
 
 	Matrix3f intrinsics = tracker_context->m_videoStreamReader->getCameraIntrinsics();
 
-	const SystemParameters system_parameters = SystemParameters(
+	SystemParameters system_parameters = SystemParameters(
 		intrinsics(0, 0),
 		intrinsics(1, 1),
 		intrinsics(0, 2),
@@ -23,6 +23,8 @@ extern "C" __declspec(dllexport) void* createContext(__SystemParameters* _parame
 		_parameters->m_volume_size,
 		_parameters->m_truncation
 	);
+
+	system_parameters.m_depth_max = _parameters->m_max_depth;
 
 	tracker_context->m_tracker = new Tracker(system_parameters, CUDA);
 	tracker_context->m_fusion = new FusionGPU(system_parameters);

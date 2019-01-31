@@ -122,7 +122,7 @@ void TrackerTest::processedMapsTest(){
 		imshow("Raw Depth", scaled_depth);
 
 		//Bilateral filter
-		cv::Mat bilateral_depth = source->filterMap(depth, bilateral, 9, 32.0f);
+		cv::Mat bilateral_depth = source->filterMap(depth, BILATERAL, 9, 32.0f);
 
 		minMaxIdx(bilateral_depth, &min, &max);
 		convertScaleAbs(bilateral_depth, render_depth, 255 / max);
@@ -130,7 +130,7 @@ void TrackerTest::processedMapsTest(){
 		//imshow("Bilateral Filtered Depth", render_depth);
 
 		//Median Filter
-		cv::Mat median_depth = source->filterMap(scaled_depth, median, 7, 150.0f);
+		cv::Mat median_depth = source->filterMap(scaled_depth, MEDIAN, 7, 150.0f);
 
 		//imshow("Median Filtered Depth", median_depth);
 
