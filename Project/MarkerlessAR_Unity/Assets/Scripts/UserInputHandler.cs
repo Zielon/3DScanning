@@ -103,7 +103,7 @@ public class UserInputHandler : MonoBehaviour
                 {
                     if(placeObjectGhost.activeSelf) //obj can be placed in scene
                     {
-                        Instantiate(PlaceObjectPrefab, placeObjectGhost.transform.position, placeObjectGhost.transform.rotation); 
+                        Instantiate(PlaceObjectPrefab, placeObjectGhost.transform.position, placeObjectGhost.transform.rotation * PlaceObjectPrefab.transform.rotation); 
                     }
                     break;
                 }
