@@ -25,6 +25,8 @@ struct TrackerContext
 
 	std::list<cv::Mat> rgb_recording; 
 	std::list<cv::Mat> depth_recording; 
+
+	bool use_sensor = false;
 };
 
 #endif TRACKER_CONTEXT_H
