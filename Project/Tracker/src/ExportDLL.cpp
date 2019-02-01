@@ -66,6 +66,7 @@ extern "C" __declspec(dllexport) void* createSensorContext(__SystemParameters* _
 	tracker_context->m_tracker = new Tracker(system_parameters, CUDA);
 	tracker_context->m_fusion = new FusionGPU(system_parameters);
 	tracker_context->m_fusion->consume();
+	tracker_context->use_sensor = true;
 
 	return tracker_context;
 }
@@ -114,8 +115,10 @@ extern "C" __declspec(dllexport) void tracker(void* context, unsigned char* imag
 
 	tracker->m_previous_point_cloud = current;
 
+	if (!tracker_context->use_sensor)
+		cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);//sensor image is already RGB
+
 	// Copy value to UNITY
-	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
 	memcpy(pose, tracker->m_pose.data(), 16 * sizeof(float));
 }
@@ -149,8 +152,10 @@ extern "C" __declspec(dllexport) void getFrame(void* context, unsigned char* ima
 	tracker_context->rgb_recording.push_back(rgb);
 	tracker_context->depth_recording.push_back(depth);
 
+	if(!tracker_context->use_sensor)
+		cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);//sensor image is already RGB
+
 	// Copy value to UNITY
-	cvtColor(rgb, rgb, cv::COLOR_BGR2RGB);
 	std::memcpy(image, rgb.data, rgb.rows * rgb.cols * sizeof(unsigned char) * 3);
 
 }
